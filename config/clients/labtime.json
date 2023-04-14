@@ -1,0 +1,47 @@
+{
+  "name": "labtime",
+  "clientName": "labtime",
+  "ip": "172.16.45.7",
+  "telegraf": "cabin_cn",
+  "subscribeTopics": {
+    "all": "PROJECT/#"
+  },
+  "publishTopics": {
+    "user": "PROJECT/user/influx/MY_CLIENT_NAME/TELEGRAF"
+  },
+  "metrics": {},
+
+  "pages": {
+    "Expt": {
+      "pageName": "Experiment"
+    },
+    "DOE": {
+      "pageName": "DOE"
+    },
+    "MQTT": {
+      "pageName": "MQTT"
+    },
+    "Grafana": {
+      "pageName": "Grafana"
+    },
+    "Admin": {
+      "pageName": "Administration"
+    }
+  },
+  "clients": {
+    "all": {
+      "name": "Select all"
+    },
+    "admin": {},
+    "project": {},
+    "labtime": {},
+    "arduino2": {},
+    "arduino3": {},
+    "arduino4": {},
+    "arduino5": {},
+    "epiclc": {},
+    "riolc": {}
+  },
+
+  "msgTypes": {}
+}

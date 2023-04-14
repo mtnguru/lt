@@ -1,0 +1,118 @@
+Microsoft Teams, Office
+   james@upstreamproductions.ca      Temporary: Bof46701
+
+JSPlayer
+   What is this?
+
+HTML player
+   supported across webkit
+   Apple or PC
+
+AWS
+   Broadcast WebKit
+   RTMP server? outputs different resolutions
+   converts different formats
+   AccountID: 303393982628
+   Sign-in URL: https://303393982628.signin.aws.amazon.com/console
+   User name: JamesSorensen 
+   Password: MtnPlasma42!    old Jg[zx)mE*1DsWWp
+   Stay connected with AWS by creating a profile: https://pages.awscloud.com/IAM-communication-preferences.html
+
+WebRTC - HTML five protocol
+
+Drupal
+
+Deliver by January 1
+
+NPM being sabotaged
+
+Teams
+
+Upstream
+
+OBS
+   NDI plugin - transmits data
+
+RTMP
+
+MediaLive
+
+Slido
+
+Need an embeddable player that we can embed into the web server
+
+Replace Sprout is currently embedding the video
+   Embed video
+   Display CC
+   :q
+   Lead capture - sign in
+
+Create website from WIX to Drupal site
+
+Use Drupal site for 
+   
+Phase sprout
+
+Video Ninja
+
+captions.js - player.js
+
+Display the player
+Breakpoints
+
+Still need video player
+   OBS has a plugin
+   Need to allow to enable/disable CC
+ 
+Closed captioning
+   Use google speech
+
+OBS
+   Install closed captioning voice to text - google
+   Sends CC along with the stream
+   
+Player accepts RTMP stream from OBS
+   Web socket
+
+Luc
+   High end sales meetings
+      currently teams or zoom
+      issue with connections, etc.
+   
+Customers
+    
+
+Player page - enterprise
+   Email capture gate
+      First, Last name, email address
+      Call to action
+         Go here to complete a survey
+        
+   Slido on the side
+
+   Play, pause, live
+   
+Unity - GPU
+
+VIdeo Ninja
+
+Hosting
+  
+AWS
+
+Western Union
+
+Landing page
+Kevin says:
+   https://www.upstreamproductions.ca/0123-pms-pr-en
+   https://www.upstreamproductions.ca/0123-pms-reg-en-aap
+   https://www.upstreamproductions.ca/0123-pms-confirm-en-aap
+   https://www.upstreamproductions.ca/0123-pms-en-survey
+   https://www.upstreamproductions.ca/0123-pms-en
+
+Look into web RTC
+Look into web sockets
+
+
+
+ 

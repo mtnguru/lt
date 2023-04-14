@@ -1,0 +1,91 @@
+
+Use the HTML 5 video element.
+I had this working already /var/www/html/videojs
+
+Definitions 
+   Production - A configurable Template for creating events
+      Determines Player Page layout, content and behavior
+   Event - An instance of a production
+   Client - Programs which communicate through MQTT broker.
+   Directors - Customer personnel responsible for a production
+
+   MQTT - publish, subscribe
+
+   VideoTime      Elapsed time
+   UserID         email address  
+   ProductionID   'P' + Drupal NID
+   EventID        'E' + Drupal NID
+   SessionID      Use the UUID as per Kevins calculation
+   TelegrafID     String which describes format of MQTT payload
+
+MQTT Clients
+
+   Server client
+      When clients start they request configuration 
+         If client is a Player 
+            Receive EventID from player
+            Read in client configuration json file
+            Load event record from Drupal
+            Load production record from Drupal
+            Create configuration from above - publish to MQTT
+         If client is a production
+            Server reads in specified json file and publishes to client
+
+   Producer clients 
+      One instance per active production/event
+      Production client only runs during an event
+      Wakes stupid, gets configuration from ltserver based on start options
+      Boot straps Drupal
+         Connects to Drupal database
+         Provides access to all Drupal API calls, services, etc.
+      First field of mqtt topic is the EventID 
+      Subscribes to activities from Player and saves them to Drupal
+      Calculates production stats? # viewers # questions, # chats
+      Keeps history of chats, questions, polls for this event
+      Players upon boot can request a list of chats, questions, polls
+      Calculates and maintains poll results - 
+         published on request or update.
+
+   Player clients 
+      One instance per viewer.
+      Extracts eventID from webpage URL
+      Wakes up stupid
+         Request configuration from server - pass in event ID
+         Request state from production client
+            Receive list of chats, question and polls (or just poll summary)
+      
+      mqtt publish
+         Activity - Custom Drupal Entity with Bundles.
+            Video Stop - videoTime
+            Video Start - videoTime
+         Chat - Single record
+            Video
+         Polls - Not sure what these are yet.
+            Use webform to define poll forms.
+
+MQTT Topics
+   EventID/UserID/Type/Activity/TelegrafID
+      Type: Player, Chat, Question, Poll, Status Request, Status, Error
+      Activity: Post, Start, Stop, 
+
+Activity entity (with bundles)
+   Fields
+      Bundle - Player, Chat, Poll, Question, Error
+      2 dates - Start/VideoTime, End 
+      Content 
+         Player:   empty?
+         Chat:     message text
+         Poll:     json - could be complicated
+         Question: Response - text 
+      UserID - user email address
+      EventID - Is first field of topic
+      SessionID - Use the UUID  
+
+   Activities are sent to MQTT broker - Topic, EventID/UserID/Activity/ActivityType/TelegrafID
+   Production client subscribes to activity and saves to Drupal.
+
+Telegraf and Historian
+   ? Does it make sense to store activity data into influx ? 
+   Telegraf subscribes to fifth field of topic
+
+   

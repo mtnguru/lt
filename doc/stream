@@ -1,0 +1,22 @@
+
+Need two audio tracks
+   French and English
+   Does this mean switching two video tracks.
+   Closed 
+
+   HLS or Dash - mp4
+
+   Create a player that can run in an IFRAME
+      Viewer can select different streams - languages EN and FR
+      Display only live stream
+      Closed captioning
+      Current 4 streams
+         En, Fr - captions, no captions
+
+      Eventually the player can select quality
+         1080 3.5MByte/second
+         1080 8MByte/second
+
+      H264 :w
+
+

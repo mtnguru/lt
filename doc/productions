@@ -1,0 +1,21 @@
+
+A production defines the web pages, data content, and behavior of a production.
+
+Initially there will be 1 production per customer.
+
+A production can only have one event in process at a time.
+
+An event is an instance of a production - for example the Accounting dept monthly meeting
+
+A MQTT production event is started 1 hour before each production and runs during the full period the production is broadcasting, and possibly some time after.  
+
+Production names are designated as P1, P2, P3
+
+Example production ids are the $CID: $CID_prod1, $CID_prod2, 
+
+Each customer is assigned a two letter acronym called the CID 
+   Use it to precede metrics -- IN_FILES
+
+
+
+  

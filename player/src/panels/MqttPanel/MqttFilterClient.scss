@@ -1,0 +1,17 @@
+@import "../../styles/colors";
+@import "../../styles/base";
+
+.mqtt-filter-client {
+  display: inline;
+  .client-list {
+    padding: 10px;
+    background: $bg1-color;
+    border-radius: 4px;
+    &.all-selected {
+      background: lighten($bg1-color, 20%);
+      input:checked {
+        background: #555;
+      }
+    }
+  }
+}

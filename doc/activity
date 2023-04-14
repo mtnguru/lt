@@ -1,0 +1,20 @@
+
+Activities - entity type in Drupal
+   Start Date
+   End Date
+   Video Time
+   EventID
+   ProjectID - can be derived from Event
+   UserID - email address
+   Description - 255 chars?
+   Content - infinite characters
+     
+   Function:Activity
+      msg: chat, question, poll, notify, notes
+      act: play, pause, enter, leave, elapsed
+           volume_up, volumn_down
+           full_screen, normal_screen
+           cc_on, cc_off
+      alm: on, off
+      cod: warning, error, debug
+   

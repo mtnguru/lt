@@ -1,0 +1,41 @@
+
+
+   Topic Format:   PROJECT/FUNCTION/CLIENTID/USERID/+TELEGRAF
+         Examples: p1/act/player/james@ecosleuth.com 
+                   p2/usr/player/james@ecosleuth.com 
+                   p3/inp/arduino2/na/telegraf.influx
+                   a/cmd/server/james@ecosleuth.com
+                   a/rsp/arduino2
+     
+   Project - Video Production - Experiment/Reactor
+      1-2 characters
+      a    admin
+      p1   project 1
+      pt   project test
+      
+   Function
+     cmd   send command a client - getConfig, setDebug, getStatus, setAlarm
+     rsp   respond to a command
+     rpt   report status
+     inp   input - post from Edge device the temperature, voltage, etc.
+     usr   user input - User pressed button, moved slider, selected item, etc.
+     out   output - tell Edge device to set temperature, voltage, etc.
+     alm   alarm - alarm occurred - do something 
+     msg   notify, notes, chat, question, poll
+     act   user events - start/end ui, start/play/pause video, save video currentTime, player events
+     cod   warning, error, debug
+     cms   Drupal
+
+   ClientID
+      The MQTT client associated with this message
+         This is not always the publishing client
+      All players will have the same clientID - player
+         Distinguish session by using the UserID - email.random_number
+
+   UserID
+      email address / login of user
+
+   TelegrafID - Optional
+      Name of telegraf instance which loads data into Historian
+         subscribe to   +/+/+/+/+/TelegrafID
+

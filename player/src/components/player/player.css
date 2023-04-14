@@ -1,0 +1,90 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  max-width: 1500px;
+  margin: 0 auto;
+  background-color: #def;
+}
+
+.left-content {
+  position: relative;
+  background-color: #89d;
+  padding: 1.2vw;
+  width: calc(100% - 300px);
+}
+
+.communications-container {
+  float: right;
+  width: 300px;
+  padding: 0 1.2vw 5px;
+  background-color: #abe;
+}
+
+.communications-container h4 {
+  margin: 6px 5px 0; 
+  height: calc(100%-100px);
+}
+
+header {
+  line-height: 65px;
+  height: 65px;
+  display: flex;
+}
+
+.customer-logo img{
+   height: 65px;
+   float: left;
+}
+
+.event-date,
+.event-title {
+  float: left;
+  margin-left: 40px;
+  font-size: 150%;
+}
+
+.event-date {
+  margin-left: 60px;
+  font-size: 120%;
+}
+
+.communications-container h4::before {
+  content: 'v';
+  font-family: 'courier';
+  display: inline-block;
+  margin: 0 8px 5px 0; 
+  font-size: 90%;
+  font-weight: 500;
+}
+
+.communications-container h4::after {
+  float: right;
+  content: '+';
+  font-family: 'courier';
+  display: inline-block;
+  margin: 0 8px 5px 0; 
+  font-size: 130%;
+  font-weight: 800;
+}
+
+.communications-container .list {
+  margin: 2px 0px;
+  border: 1px solid #999;
+  min-height: 200px;
+  background-color: #bcf;
+}
+
+.video-footer {
+  height: 30px;
+  line-height: 30px;
+  background: #bdf; 
+}
+
+.elapsed {
+  margin-left: 20px;
+}
+
+video {
+  margin: 0 auto;

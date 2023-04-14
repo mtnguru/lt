@@ -1,0 +1,1 @@
+scp -r ../build/* thoth:src/hmi/build

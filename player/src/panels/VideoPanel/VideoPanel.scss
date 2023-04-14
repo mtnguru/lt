@@ -1,0 +1,10 @@
+@import "../../styles/base";
+@import "../../styles/colors";
+
+#video-panel  {
+  width: calc(100% - 30%);
+  background: green;
+  h2 {
+    margin-bottom: 0;
+  }
+}

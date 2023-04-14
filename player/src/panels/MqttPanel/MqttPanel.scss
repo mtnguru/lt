@@ -1,0 +1,24 @@
+@import "../../styles/base";
+@import "../../styles/colors";
+
+.mqtt-panel {
+  h2 {
+    margin-bottom: 0;
+  }
+  .filters {
+    font-size:90%;
+    width: 145px;
+    margin-right:10px;
+  }
+  header {
+    width: 100%;
+  }
+  .content {
+    display: flex;
+    width: 100%;
+  }
+  .nitems {
+    font-weight: bold;
+    margin: -30px 0 10px;
+  }
+}

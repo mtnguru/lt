@@ -1,0 +1,14 @@
+@import "../../styles/base";
+
+.select-pretty {
+  display: inline-block;
+  select {
+    text-align: center;
+    background-color: #5500cc;
+    color: white;
+    border-radius: 5px;
+    font-size: 110%;
+    padding: 2px;
+  }
+}
+

@@ -1,0 +1,126 @@
+
+Redundancy/Redis
+
+Start Date Time
+End Date Time
+User
+Ticket Type
+   Login/Logout
+   Video - Start/Stop/Pause/Leave
+      Position - Start/Stop
+      Event ID
+   Settings
+      CC On/Off
+   Forms
+      Webform ID
+   Chat
+   Questions
+   Polls?
+
+MQTT
+   Topic
+      $production/$activity/
+   $production
+      
+   $activity
+      admin
+      player
+      webform
+
+MQTT broker
+   Mosquitto - open source - free
+   Runs on web host
+
+ProducerMQTT
+   Runs continuously on web host
+   Connects to Drupal DB 
+   Subscribes
+      /$producer/admin - reset, set debug level
+      /$producer/chat - all chat messages for this producer?
+   Publishes
+      /$producter/admin/status
+      /$producer/
+      /$producer/chat/$topic
+   Stateful, can keep track of 'sessions'
+      Chat history
+      Ticket history
+      Viewer stats - # viewers
+
+PlayerMQTT
+   Runs in viewers browser - JavaScript, REACT?
+   Login
+      User logins with
+         First name
+         Last name
+         Password - avoid this with OAuth
+         Email - avoid this with OAuth
+      If this is a new login then
+         create a new user entity - 
+         save a cookie in their browser to avoid future logins
+      Redirect them to a dashboard
+   User dashboard
+      Display company logo, company name and list of productions
+      Display last access, list of previous events?
+      Display upcoming events
+         Show if registered
+      Producer - Present an event
+         Video
+            Closed captions
+            Language selection
+            Quality selection
+         Slido
+            User controls?
+         Chat 
+            share links, images, documents?
+         Questions
+         Chat
+   Admin dashboard 
+      Displays a single event at a time
+      Header company logo, company name
+      List of events for this production
+      List of contacts
+      Producer for current event (same as above)
+         Video
+            Closed captions
+            Language selection
+            Quality selection
+         Slido
+            User controls?
+         Chat
+            share links, images, documents?
+         Questions
+         Chat
+
+      Stats for current event 
+         Registered # viewers
+         Current # viewers - are they currently streaming?
+         List registered viewers and designate if viewing now.
+         # questions - list questions
+         # chat messages - list chat messages
+         # chat users - list users that have contributed to chat
+    
+
+      
+         
+      
+   
+      
+   
+      
+      customer - 
+   Subscribes
+      /$producer/ticket/chat - all chat messages for this producer?
+      /$producer/admin/$activity
+         $activity - reset, status, setDebuglevel
+   Publishes
+      /$producer/ticket/$activity
+         $activity - video, chat, form, login, automatic 
+      
+ 
+      
+      Video Position
+      Event ID
+      Language - change language
+   CC On/Off 
+
+   

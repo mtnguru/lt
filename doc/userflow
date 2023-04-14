@@ -1,0 +1,35 @@
+   User receives email with Video URL
+      User clicks URL to start player page - /upstreamproductions.ca/customername/EventID
+      Drupal generates page as normal using production specific template file
+      video.js
+         Check local storage for UpEventID
+         if found then user has already been authorized.
+         if not found then popup authorization form over player
+         User passes, remove popup and reveal player
+   User presses start, stop, pause, continue
+      Publish activity - START, STOP, PAUSE, CONTINUE, REWIND, FORWARD
+      Producer keeps track of # viewers
+         Publish # viewers to all Players
+   Users leaves or enters web page
+      Publish activity - FOCUS, BLUR
+      Producer updates status
+   User closes page
+      Publish activity - EXIT
+   User requests Closed Captions
+      UpCCLanguage local variable
+      Popup to select language
+
+   User posts chat message
+      Publish chat to MQTT
+      MQTT distributes chat to all Players
+      Producer adds chat to list
+   User posts poll message
+      Publish poll to MQTT
+      Producer updates poll results - creates summary - publishes to all users
+   User posts question
+      Publish question to MQTT
+      MQTT distributes question to all Players
+      Producer keeps track of questions
+      Director
+
+
