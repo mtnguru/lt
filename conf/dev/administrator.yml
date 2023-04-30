@@ -1,0 +1,137 @@
+clientId: administrator
+name: Administrator
+# background: "#630"
+debugLevel: 2
+userId: Gandalf
+mqtt:  # Each client must have it's own mqtt config
+# ip:   http://172.16.45.7   # merlin
+  url:  http://labtime.org
+  username: data
+  password: datawp
+  port: 1883
+  websocket: 8081
+topics:
+  subscribe:
+    cmd: a/cmd/administrator
+  publish:
+    rsp: a/rsp/DCLIENTID
+    hum: a/rsp/DCLIENTID/DUSERID
+    adm: a/rsp/CLIENTID
+projects:
+  rf:
+    name: Cabin in Red Feather
+    clients:
+      labtime:
+        name: LabTime
+      # background: "#a51"
+        userId: bilbo
+        format: yml
+        clients:
+          all:
+            clientId: all
+            name: All
+          labtime: {}
+          administrator: {}
+          epiclc: {}
+          riolc: {}
+          arduino2: {}
+          arduino3: {}
+          arduino4: {}
+          arduino5: {}
+        topics:
+          subscribe:
+#           fart: darnit/#
+#           all: PROJECTID/#
+            inp: PROJECTID/inp/#
+#           out: PROJECTID/out/#
+#           hum: PROJECTID/hum/#
+#           alm: PROJECTID/alm/#
+#           msg: PROJECTID/msg/#
+#           cmd: PROJECTID/cmd/CLIENTID/#
+          publish:
+            msg: PROJECTID/msg/CLIENTID
+            cod: PROJECTID/cod/CLIENTID
+        metrics: project
+        msgTypes: {}
+      epiclc:
+        name: EpicLC
+        ip: 172.16.45.3
+        url: https://epiclc
+      # background: "#52a"
+        model: epic
+        sampleInterval: 10000
+        topics: edge
+        headers:
+          apiKey: mnMmq5awnB3DwMsmwFFVToYTqeHtJ8Xf
+          Content-Type: application/json; charset utf-8;
+          _rejectUnauthorized: false
+      riolc:
+        name: RioLC
+        ip: 172.16.45.4
+        url: https://riolc
+      # background: "#821"
+        model: riolc
+        sampleInterval: 10000
+        topics: edge
+        headers:
+          apiKey: yedg7SAJWgtf3jZNjPYfR5XTjWRrX59X
+          Content-Type: application/json; charset utf-8;
+          _rejectUnauthorized: false
+      arduino2:
+        name: Arduino2
+        ip: 172.16.45.32
+      # background: "#040"
+        model: arduino
+        sampleInterval: 10000
+        topics: edge
+      arduino3:
+        name: Arduino3
+        ip: 172.16.45.33
+      # background: "#090"
+        model: arduino
+        sampleInterval: 10000
+        topics: edge
+      arduino4:
+        name: Arduino4
+        ip: 172.16.45.121
+      # background: "#029"
+        model: arduino
+        sampleInterval: 10000
+        topics: edge
+      arduino5:
+        name: Arduino5
+        ip: 172.16.45.56
+      # background: "#03d"
+        model: arduino
+        sampleInterval: 10000
+        topics: edge
+    topics:
+      edge:
+        subscribe:
+          adm: a/cmd/CLIENTID
+          out: PROJECTID/out/CLIENTID/#
+        publish:
+          inp: PROJECTID/inp/CLIENTID/USERID/cabin_lt
+          cod: PROJECTID/cod/CLIENTID
+          msg: PROJECTID/msg/CLIENTID
+          adm: PROJECTID/rsp/CLIENTID
+  up:
+    name: Uphold Productions
+    clients:
+      player:
+        userId: email
+        format: yml
+        topics:
+          subscribe:
+            msg:  PROJECTID/msg/+/all/#
+            hum:  PROJECTID/msg/+/SUSERID/#
+          publish:
+            act:  PROJECTID/act/CLIENTID/all
+      drupal:
+        topics:
+          subscribe:
+            cms:  PROJECTID/cms/#
+          publish:
+            act:  PROJECTID/act/all
+            msg:  PROJECTID/msg/all
+            cod:  PROJECTID/cod/all

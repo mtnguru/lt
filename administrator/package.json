@@ -1,10 +1,10 @@
 {
-  "name": "admin",
+  "name": "administrator",
   "version": "1.0.0",
   "description": "Configuration server for the cn project",
-  "main": "admin.js",
+  "main": "administrator.js",
   "scripts": {
-    "start": "nodemon admin.js",
+    "start": "nodemon administrator.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -13,7 +13,9 @@
     "dotenv": "^16.0.1",
     "get-current-line": "^6.6.0",
     "mqtt": "^4.3.7",
-    "nodemon": "^2.0.16"
+    "nodemon": "^2.0.16",
+    "yaml": "^2.2.1",
+    "yaml-parser": "^3.5.3"
   },
   "devDependencies": {
     "fs": "^0.0.1-security"

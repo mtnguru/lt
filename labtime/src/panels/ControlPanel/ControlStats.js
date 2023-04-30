@@ -26,9 +26,9 @@ const ControlStats = (props) => {
       }
     }
 
-    setMetric(findMetric(props.metricName))
-    mqttRegisterMetricCB(props.metricName, metricCB)
-  }, [props.metricName])
+    setMetric(findMetric(props.metricId))
+    mqttRegisterMetricCB(props.metricId, metricCB)
+  }, [props.metricId])
 
 //if (register) {
 //  mqttRegisterMetricCB(props.metric, metricCB)
@@ -37,8 +37,8 @@ const ControlStats = (props) => {
 
   return (
     <div className="control-stats">
-      <h3>{metric.label}</h3>
-      <div className="metric">{metric.metricName}</div>
+      <h3>{metric && metric.label}</h3>
+      <div className="metric">{metric && metric.metricId}</div>
       <div className="stat">{stat}</div>
     </div>
   )

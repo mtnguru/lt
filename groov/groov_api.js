@@ -54,8 +54,8 @@ const readChannel = async (name, sensor, cb) => {
   const f = "groov_api.js::readChannel"
   let client = global.aaa
   // Create the API URL
-  let url = sprintf('https://%s/%s/modules/%s/channels/%s/%s/status',
-    client.name,
+  let url = sprintf('%s/%s/modules/%s/channels/%s/%s/status',
+    client.url,
     route,
     sensor['module'],
     sensor['channel'],
@@ -64,7 +64,7 @@ const readChannel = async (name, sensor, cb) => {
   let payload;
   let res;
   try {
-    let metric = global.aaa.metrics[name];
+    let metric = global.aaa.inputs[name];
     if (metric) {
       res = await axios.get(url,{headers: client.headers});
       console.log(f,' channel read ', res.data.value)

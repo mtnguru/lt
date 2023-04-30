@@ -12,46 +12,6 @@ const {findMetric} = require('./metrics')
 let mqttClient;
 let topicCB = {}
 
-// console.log(msg);
-
-// Fill in variables in MQTT subscribe topics
-const completeTopics = (config) => {
-  const f = "mqttNode::completeTopics"
-  for (let topicType in config.subscribeTopics) {
-    let topic = config.subscribeTopics[topicType]
-    config.subscribeTopics[topicType] = topic.
-    replace('PROJECT',global.aaa.project).
-    replace('MY_CLIENT_NAME',config.clientName).
-    replace('MY_IP',  config.ip)
-    msg(1,f,DEBUG,'subscribe ', config.subscribeTopics[topicType])
-  }
-  for (let topicType in config.publishTopics) {
-    let topic = config.publishTopics[topicType]
-    config.publishTopics[topicType] = topic.
-    replace('PROJECT',       global.aaa.project).
-    replace('MY_CLIENT_NAME',config.clientName).
-    replace('MY_IP',         config.ip).
-    replace('TELEGRAF',      config.telegraf)
-    msg(1,f,DEBUG,'publish ', config.publishTopics[topicType])
-  }
-}
-
-// Create the topic string from msgType, action, options
-const makeTopic = (msgType, action, options) => {
-  const f = "mqttNode::makeTopic."
-  options = (options) ? options : {}
-  const clientName = ("clientName" in options) ? options.clientName : global.aaa.clientName
-  const telegraf = ("telegraf" in options) ? options.telegraf : ''
-  let topic = global.aaa.project + '/' +
-    msgE[msgType] + '/' +
-    action + '/' +
-    clientName
-  if (telegraf) {
-    topic += '/' + telegraf
-  }
-  return topic
-}
-
 /**
  * connect - connect to the MQTT broker, set callback, subscribe to topics
  * @param cb
@@ -66,9 +26,9 @@ const connect = (messageCB) => {
     const f = "mqttNode::onConnectPromise"
     return new Promise((resolve, reject) => {
       mqttClient.on('connect', (event) => {
-//      msg(3,f,NOTIFY,'Connected to MQTT broker')
-//      mqttClient.unsubscribe((Object.values(global.aaa.subscribeTopics)), () => {})
-        mqttClient.subscribe(Object.values(global.aaa.subscribeTopics), () => {
+        msg(1,f,NOTIFY,'Connected to MQTT broker ' + mc.url)
+        mqttClient.unsubscribe((Object.values(global.aaa.topics.subscribe)), () => {})
+        mqttClient.subscribe(Object.values(global.aaa.topics.subscribe), () => {
           mqttClient.on('message', (inTopic, payloadRaw) => {
             msg(3,f,NOTIFY,'MQTT message received ', inTopic)
             messageCB(inTopic, payloadRaw)
@@ -79,8 +39,8 @@ const connect = (messageCB) => {
     })
   }
 
-  mqttClient = mqtt.connect(mc.url, {
-                            clientId: `mqtt_${Math.random().toString(16).slice(3)}`,
+  mqttClient = mqtt.connect((mc.ip) ? mc.ip: mc.url, {
+                            clientId: global.aaa.clientId ? global.aaa.clientId : 'unknown',
                             clean: true,
                             protocol: 'MQTT',
                             username: mc.username,
@@ -88,14 +48,13 @@ const connect = (messageCB) => {
                             reconnectPeriod: mc.reconnectPeriod,
                             connectTimeout: mc.connectTimeout,
                           });
- console.log('connected it up')
- mqttClient.on("error", (error) => {
-   console.log(f, "Not Connected", error)
- })
+  msg(1,f,NOTIFY,'Connect to MQTT broker ' + mc.url)
+  mqttClient.on("error", (error) => {
+    msg(1,f,ERROR,'Error connecting ',error)
+  })
 
-  console.log('wait for the On event')
   onConnectPromise(messageCB)
-  console.log(f,'exit')
+  msg(1,f,NOTIFY,'exit')
 }
 
 const connected = () => {
@@ -151,17 +110,17 @@ const registerTopicCB = (topic, cb) => {
  * @param metric
  * @param cb
  */
-const registerMetricCB = (metricName, cb) => {
+const registerMetricCB = (metricId, cb) => {
   const f = "mqttNode::registerMetricCB"
   // If necessary intialize new metric
-  const metric = global.aaa.metrics[metricName.toLowerCase()]
+  const metric = global.aaa.metrics[metricId.toLowerCase()]
   if (!metric) {
-    mgError(f,'Cannot find metric ', metricName);
+    mgError(f,'Cannot find metric ', metricId);
     return
   }
   if (metric.cbs) {
     if (metric.cbs.includes(cb)) {
-      mgWarning.log(f, "already registered ", metricName)
+      mgWarning.log(f, "already registered ", metricId)
     } else {
       metric.cbs.push(cb)
     }
@@ -187,17 +146,17 @@ const processInflux = (topic, payloadStr) => {
   const msgType = topic.split("/")[1]
   const {tags, values} = extractFromTags(payloadStr)
   if (tags["Metric"]) {
-    const metricName = tags["Metric"]
-    const metric = findMetric(metricName)
+    const metricId = tags["Metric"]
+    const metric = findMetric(metricId)
     if (metric == null) {
-      msg(1,f,ERROR, "Metric not found ",metricName);
+      msg(1,f,ERROR, "Metric not found ",metricId);
     }
-    console.log(f, 'Metric found ', metricName)
+    console.log(f, 'Metric found ', metricId)
 
     switch (msgType) {
       case 'input':
         if (!metric.input) {
-          msg(0,f,WARNING, 'Metric does not have a input',metric.metricName)
+          msg(0,f,WARNING, 'Metric does not have a input',metric.metricId)
         } else {
           metric.input.value = values.value
         }
@@ -205,7 +164,7 @@ const processInflux = (topic, payloadStr) => {
         break;
       case 'output':
         if (!metric.output) {
-          msg(0,f, WARNING, 'Metric does not have a output',metric.metricName)
+          msg(0,f, WARNING, 'Metric does not have a output',metric.metricId)
         } else {
           metric.output.value = values.value
         }
@@ -213,7 +172,7 @@ const processInflux = (topic, payloadStr) => {
         break;
       case 'user':
         if (!metric.user) {
-          msg(0,f, WARNING, 'Metric does not have a user',metric.metricName)
+          msg(0,f, WARNING, 'Metric does not have a user',metric.metricId)
         } else {
           metric.user.value = values.value
         }
@@ -223,7 +182,7 @@ const processInflux = (topic, payloadStr) => {
         return;
     }
     if (!metric.cbs) {
-      msg(1,f, DEBUG, "Metric does not have any callbacks: ", metric.metricName);
+      msg(1,f, DEBUG, "Metric does not have any callbacks: ", metric.metricId);
       return;
     }
     for (let cb of metric.cbs) {
@@ -257,28 +216,11 @@ const processCB = (topic, payload) => {
   }
 }
 
-/*
-export {
-  connect,
-  connected,
-  publish,
-  subscribe,
-  unsubscribe,
-  completeTopics,
-  makeTopic,
-  registerTopicCB,
-  registerMetricCB,
-  processCB,
-}
-*/
-
 module.exports.connect =  connect
 module.exports.connected = connected
 module.exports.publish =  publish
 module.exports.subscribe = subscribe
 module.exports.unsubscribe = unsubscribe
-module.exports.completeTopics = completeTopics
-module.exports.makeTopic = makeTopic
 module.exports.registerTopicCB = registerTopicCB
 module.exports.registerMetricCB = registerMetricCB
 module.exports.processCB = processCB

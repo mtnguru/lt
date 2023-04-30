@@ -1,5 +1,8 @@
 import React from 'react'
 import './Client.scss'
+
+import { Container } from '@chakra-ui/react'
+
 import ControlButton from '../../panels/ControlPanel/ControlButton.js';
 import SelectDebugLevel from './SelectDebugLevel.js';
 
@@ -37,22 +40,21 @@ function Client (props) {
   }
 
   return (
-    <div className={`checkbox ${props.id}`} key={`${props.id}`}>
+    <Container bg={props.client.background} className={`checkbox ${props.client.clientId}`} key={`${props.client.id}`}>
       <div className="row1">
-        <input id={props.id} type='checkbox' name={props.id} onChange={props.onChangeH} checked={props.selected ? "checked" : ""} />
-        <label htmlFor={props.id}>{props.name}</label>
+        <input id={props.id} type='checkbox' name={props.client.id} onChange={props.onChangeH} checked={props.client.selected ? "checked" : ""} />
+        <label htmlFor={props.client.clientId}>{props.client.name}</label>
       </div>
       {props.id !== 'all' &&
         <div className="row2">
-          <ControlButton id={props.name} client={props.name} title="Reset"  label="R" cname="reset"
+          <ControlButton id={props.client.name} client={props.client.name} title="Reset"  label="R" cname="reset"
                          clickH={clickH}></ControlButton>
-          <ControlButton id={props.name} client={props.name} title="Status" label="S" cname="status"
+          <ControlButton id={props.client.name} client={props.client.name} title="Status" label="S" cname="status"
                          clickH={clickH}></ControlButton>
-          <SelectDebugLevel id={props.name} client={props.name} title="Debug Level" label={""} cname="debug-level"
+          <SelectDebugLevel id={props.client.name} client={props.client.name} title="Debug Level" label={""} cname="debug-level"
                   onChangeH={selectH} />
         </div>
       }
-    </div> )
+    </Container> )
 }
 export default Client;
-

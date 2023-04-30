@@ -1,0 +1,43 @@
+
+
+Each Upstream production is a project
+Each Labtime experiment/reactor is a project
+
+There is one administrator per mqtt server - but this doesn't have to be
+It would be nice to have multiple administrator 
+   ease of editing configuration files
+   test administrator
+If I start the administrator with an id I can organize my config files per administrator.
+
+When clients request config all administrators will get the request
+If a client is not in the client list then notify not found - for debugging
+
+Administrator builds the project list, client list and metric list by accessing
+all files in the appropriate directory.
+
+Each administrator can have multiple projects
+
+Administrator needs to know the root path and adminId before it can load files
+
+Each clients needs to know the - this can be deleted from files
+The administrator is the only client that can get this from a file.
+Programs running on a client with a files system can get in from the .env file.
+  mqttIp
+  mqttUsername
+  mqttPassword
+  port | websocket
+  
+administrator - prod dev
+
+  administrator.json
+  mstTypes.json
+
+  projects
+    p1
+      clients
+      metrics
+    p2
+      clients
+      metrics
+
+  

@@ -6,36 +6,25 @@ import {findMetric} from './metrics'
 let mqttClient;
 let topicCB = {}
 
-// Create the topic string from msgType, action, options
-const mqttMakeTopic = (msgType, action, options) => {
-//const f = "mqttCn::mqttMakeTopic"
-  options = (options) ? options : {}
-  const clientName = ("clientName" in options) ? options.clientName : global.aaa.name
-  const telegraf = ("telegraf" in options) ? options.telegraf : ''
-  let topic = global.aaa.project + '/' +
-    msgType + '/' +
-    action + '/' +
-    clientName
-  if (telegraf) {
-    topic += '/' + telegraf
-  }
-  return topic
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
 }
 
 const onConnectPromise = (cb) => {
   const f = "mqttReact::onConnectPromise"
-  mqttClient.on("error", (error) => {
-    console.log(f, "MQTT Error - ", error)
-  })
-  return new Promise((resolve, reject) => {
+  return new Promise((resoxOxlve, reject) => {
     mqttClient.on('connect', (event) => {
       console.log(f,"connected ", mqttClient.connected)
-//    mqttClient.unsubscribe(mc.subTopics, () => {})
-      mqttClient.subscribe(global.aaa.subscribeTopics, () => {
-        console.log(f, 'subscribed', global.aaa.subscribeTopics)
+//    mqttClient.unsubscribe(Object.values(global.aaa.topics.subscribe, () => { 500}))
+      mqttClient.subscribe(Object.values(global.aaa.topics.subscribe,{qos: 0}), () => {
+        console.log(f, 'subscribed')
         mqttClient.on('message', cb);
       })
-      resolve('connected')
+//    resolve('connected')
     })
   })
 }
@@ -64,10 +53,6 @@ const mqttConnect = (cb) => {
   onConnectPromise(cb)
   console.log(f,'we\'re on')
 
-  mqttClient.subscribe(global.aaa.subscribeTopics.admin, () => {
-    console.log(f, 'subscribed', global.aaa.subscribeTopics.admin)
-  })
-
   mqttClient.on('message', cb);
   console.log(f,'exit')
 }
@@ -81,7 +66,7 @@ const mqttSubscribe = (topics) => {
   console.log(f, "enter ")
   for (let name in topics) {
     console.log(f, "topic: ", topics[name])
-    mqttClient.subscribe(topics[name])
+    mqttClient.subscribe(topics[name],{qos: 0})
   }
 }
 
@@ -107,18 +92,19 @@ const mqttRegisterTopicCB = (topic, cb) => {
   const f = "mqttReact::mqttRegisterTopicCB"
   // If necessary intialize new topic
   mgDebug(f, "Register topic", topic)
-  if (!topicCB[topic]) {
-    console.log(f, "Initialize topic", topic)
-    topicCB[topic] = [];
+  const stopic = topic.replace(/\#/,'')
+  if (!topicCB[stopic]) {
+    console.log(f, "Initialize topic", stopic)
+    topicCB[stopic] = [];
   }
-  for (let rcb in topicCB[topic]) {
+  for (let rcb in topicCB[stopic]) {
     if (rcb === cb) {
-      console.log(f, "Already added", topic)
+      console.log(f, "Already added", stopic)
       return;
     }
   }
-  console.log(f, "add topic", topic)
-  topicCB[topic].push(cb);
+  console.log(f, "add topic", stopic)
+  topicCB[stopic].push(cb);
 }
 
 const mqttUnregisterTopicCB = (topic, cb) => {
@@ -138,18 +124,19 @@ const mqttUnregisterTopicCB = (topic, cb) => {
   }
 }
 
-const mqttRegisterMetricCB = (metricName, cb) => {
+const mqttRegisterMetricCB = (metricId, cb) => {
   const f = "mqttReact::mqttRegisterMetricCB"
   // If necessary intialize new metric
-  const metric = global.aaa.metrics[metricName.toLowerCase()]
+  const lmetricId = metricId.toLowerCase()
+  const metric = global.aaa.metrics[lmetricId.toLowerCase()]
   console.log(f, 'enter')
   if (!metric) {
-    mgError(f,'Cannot find metric ', metricName);
+    mgError(f,'Cannot find metric ', metricId);
     return
   }
   if (metric.cbs) {
     if (metric.cbs.includes(cb)) {
-      mgWarning.log(f, "already registered ", metricName)
+      mgWarning.log(f, "already registered ", metricId)
     } else {
       metric.cbs.push(cb)
     }
@@ -162,8 +149,8 @@ const mqttUnregisterMetricCB = (metric, cb) => {
 }
 
 const mqttReqFile = (name, path, cb) => {
-  let pubTopic = `${global.aaa.project}/admin/fileReq/${global.aaa.clientName}`
-  let subTopic = `${global.aaa.project}/admin/file/${global.aaa.clientName}`
+  let pubTopic = `${global.aaa.projectId}/admin/fileReq/${global.aaa.clientId}`
+  let subTopic = `${global.aaa.projectId}/admin/file/${global.aaa.clientId}`
 
   const onLoadCB = (inTopic, inJson) => {
     const inPayload = JSON.parse(inJson);
@@ -193,7 +180,7 @@ const processInflux = (topic, payloadStr) => {
     switch (msgType) {
       case 'input':
         if (!metric.input) {
-          mgWarning(f,'Metric does not have a input',metric.metricName)
+          mgWarning(f,'Metric does not have a input',metric.metricId)
         } else {
           metric.input.value = values.value
         }
@@ -202,7 +189,7 @@ const processInflux = (topic, payloadStr) => {
 
       case 'output':
         if (!metric.output) {
-//        mgWarning(f,'Metric does not have a output',metric.metricName)
+//        mgWarning(f,'Metric does not have a output',metric.metricId)
         } else {
           metric.output.value = values.value
         }
@@ -210,7 +197,7 @@ const processInflux = (topic, payloadStr) => {
         break;
       case 'user':
         if (!metric.user) {
-          mgWarning(f,'Metric does not have a user',metric.metricName)
+          mgWarning(f,'Metric does not have a user',metric.metricId)
         } else {
           metric.user.value = values.value
         }
@@ -220,7 +207,7 @@ const processInflux = (topic, payloadStr) => {
         return;
     }
     if (!metric.cbs) {
-//    mgDebug(f, "Metric does not have any registered Callbacks: ", metric.metricName);
+//    mgDebug(f, "Metric does not have any registered Callbacks: ", metric.metricId);
     } else {
       for (let cb of metric.cbs) {
         cb(metric, topic, payloadStr, tags, values)
@@ -266,7 +253,6 @@ export {
   mqttUnregisterMetricCB,
   mqttRegisterTopicCB,
   mqttUnregisterTopicCB,
-  mqttMakeTopic,
   mqttProcessCB,
   mqttReqFile,
 }

@@ -15,7 +15,7 @@ const MqttItem = (props) => {
     } else if (props.pretty === 'topic') {
       payloadStr = ''
     } else {
-      if (props.item.action === 'configReq') {
+      if (props.item.action === 'requestConfig') {
         payloadStr = 'Request Configuration - who am I'
       } else if (props.item.action === 'reset') {
         payloadStr = 'Request Reset'
@@ -28,9 +28,9 @@ const MqttItem = (props) => {
           if (props.pretty === "pretty") {
             if (payload.content) {
               payloadStr = `${payload.function} - ${payload.content}`
-            } else if (props.item.type === 'output') {
+            } else if (props.item.func === 'output') {
               payloadStr = `${payload.metric} - ${payload.value}`
-            } else if (props.item.type === 'input') {
+            } else if (props.item.func === 'input') {
               payloadStr = `shit ${payload.metric} - ${payload.value}`
             } else {
               payloadStr = payloadStr
@@ -46,10 +46,10 @@ const MqttItem = (props) => {
             }
           }
         } else if (props.pretty === "pretty" &&
-               (props.item.type === 'input' || props.item.type === 'user' || props.item.type === 'output')) {
+               (props.item.func === 'inp' || props.item.func === 'hum' || props.item.func === 'out')) {
           let {tags, values} = extractFromTags(props.item.payload)
-          payloadStr = `${tags["Metric"]} -- ${values["value"]}`
-        } else if (props.item.type === 'admin') {
+          payloadStr = `${tags["MetricId"]} -- ${values["value"]}`
+        } else if (props.item.func === 'shit') {
           if (props.item.action === 'configReq') {
             payloadStr = 'Request configuration - who am I and why am I here?'
           }
@@ -57,17 +57,17 @@ const MqttItem = (props) => {
       }
     }
     setPayloadOut(payloadStr)
-  }, [props.item.action, props.item.type, props.item.payload, props.pretty])
+  }, [props.item.action, props.item.func, props.item.payload, props.pretty])
 
   return (
-    <div className='mqtt-item mqtt-type-bg'>
-      <Card type={props.item.type} className={props.pretty}>
+    <div className='mqtt-item'>
+      <Card type={props.item.func} className={props.pretty}>
         <div className='right'>
           <span className='date'>{props.item.date}</span>
           <span className='nitems'>{props.item.nitems.toString()}</span>
         </div>
         <div className={`left mqtt-client-bg`}>
-          <span className={`source ${props.item.source}`}>{props.item.source}</span>
+          <span className={`clientId ${props.item.clientId}`}>{props.item.clientId}</span>
           <span className='topic'>{props.item.topic}</span>
         </div>
         <pre><code className='payload'>{payloadOut}</code></pre>

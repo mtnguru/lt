@@ -27,17 +27,18 @@ const setDebugLevel = (level) => {
 const msg = (level, func, msgType, ...snippets) => {
   if (level > global.debugLevel) return;
 
-  let payload = {
-    function: func,
+//let payload = {
+//  function: func,
 //  program: global.aaa.program,
-    msgType: msgE[msgType],
-    content: snippets.join(' '),
-  }
+//  msgType: msgE[msgType],
+//  content: snippets.join(' '),
+//}
+
 //const topic = mqttNode.makeTopic(msgType,"post")
 //const jpayload = JSON.stringify(payload);
 //if (mqttNode.connected()) {
 //  mqttNode.publish(topic, jpayload);
-// 
+//
 
   let type = msgE[msgType]
   if (msgType == ERROR) {
@@ -47,15 +48,15 @@ const msg = (level, func, msgType, ...snippets) => {
   } else if (msgType == WARNING) {
     type = '!!!!!!!!!! WARNING'
   }
-  console.log(type, func, ...snippets);
-}
-
-const shit = () => {
-   console.log('shit');
+  if (snippets.length > 0) {
+    console.log(type, func, ...snippets)
+  } else {
+    console.log(type, func);
+  }
 }
 
 module.exports = {
   msg: msg,
-  msgn: msg,
+//msgn: msg,
   setDebugLevel: setDebugLevel,
 }

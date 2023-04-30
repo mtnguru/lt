@@ -6,19 +6,20 @@ const { readInputs } = require('./readInputs')
 const mqttNode  = require('./utils/mqttNode')
 const { msg, setDebugLevel } = require('./utils/msg')
 const groov_api = require('./groov_api')
+let started = false
+const sampling = false
 
 const f = "groov:main"
 
-let clientName = process.env.CLIENT_NAME
+let clientId = process.env.CLIENTID
 if (process.argv[2]) {
-  clientName = process.argv[2]
+  clientId = process.argv[2]
 }
 
-console.log ("Start ", clientName)
+console.log ("Start ", clientId)
 
 global.aaa = {
-  clientName: clientName,
-  project: 'lab1',
+  clientId: clientId,
   mqtt: {
     url: process.env.MQTT_URL,
     username: process.env.MQTT_USER,
@@ -26,8 +27,15 @@ global.aaa = {
     connectTimeout: 4000,
     reconnectPeriod: 10000
   },
-  subscribeTopics: {
-    admin: `lab1/admin/config/${clientName}`
+  topics: {
+    publish: {
+      adm: "a/cmd/administrator"
+    },
+    subscribe: {
+      adm: `a/rsp/${clientId}`,
+      cli: `a/cmd/${clientId}`,
+      all: "a/cmd/all"
+    }
   }
 }
 
@@ -37,10 +45,10 @@ global.aaa = {
 const reqConfig = () => {
   const f = 'groov::reqConfig'
 
-  const topic = `${global.aaa.project}/admin/configReq/${global.aaa.clientName}`
-  const payloadStr = "{}"
-  mqttNode.publish(topic, payloadStr)
-  mqttNode.registerTopicCB(`${global.aaa.project}/admin/config/${global.aaa.clientName}`, loadClientConfigCB)
+  msg(f, DEBUG, 'enter ')
+  const payloadStr = `{\"clientId\": \"${clientId}\", \"cmd\": \"requestConfig\"}`
+  mqttNode.publish(global.aaa.topics.publish.adm, payloadStr)
+  mqttNode.registerTopicCB(`a/rsp/${global.aaa.clientId}`, loadClientConfigCB)
   msg(f,DEBUG,'exit')
 }
 
@@ -49,14 +57,12 @@ const loadClientConfigCB = (topic, payload) => {
   msg(f, DEBUG, 'enter ', topic)
 
   global.aaa = JSON.parse(payload.toString())
-  mqttNode.subscribe(global.aaa.subscribeTopics)
+  mqttNode.subscribe(global.aaa.topics.subscribe)
 
-  for (let metricName in global.aaa.metrics) {
+  for (let metricId in global.aaa.outputs) {
     // Register the metrics that have an output
-    const metric = global.aaa.metrics[metricName]
-    if (metric.output) {
-      mqttNode.registerMetricCB(metricName, metricCB)
-    }
+    const output = global.aaa.outputs[metricId]
+    mqttNode.registerMetricCB(metricId, outputCB)
   }
 
   startGroov()
@@ -67,11 +73,14 @@ const loadClientConfigCB = (topic, payload) => {
  */
 const startGroov = () => {
   msg('groov::startGroov',DEBUG,'enter')
-  readInputs();
+  if (!started) {  // Prevents multiple samplers from being started
+    started = true
+    readInputs();
+  }
 }
 
-const metricCB = (metric, topic, payload, tags, values) => {
-  const f = "groov::metricCB"
+const outputCB = (metric, topic, payload, tags, values) => {
+  const f = "groov::outputCB"
   msg(f,DEBUG, "enter ", topic)
 
   let value;
@@ -85,10 +94,12 @@ const metricCB = (metric, topic, payload, tags, values) => {
     value = false
   }
 
-  groov_api.writeChannel(metric.metricName, metric.output, `\{"value": ${value}\}`)
+  groov_api.writeChannel(metric.metricId, metric.output, `\{"value": ${value}\}`)
 }
 console.log(f,' - connect ')
 mqttNode.connect(mqttNode.processCB);
-console.log(f,' - requestConfig ')
-reqConfig();
+setTimeout(() => {
+  console.log(f,' - requestConfig ')
+  reqConfig();
+},1000)
 console.log(f,' - exit main thread ')

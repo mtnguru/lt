@@ -10,7 +10,7 @@ function MqttList(props) {
   return (
     <div className="mqtt-display">
       <div className="nitems">{list.length}</div>
-       <div className="mqtt-list">
+       <div className="mqtt-list mqtt-func-bg mqtt-client-bg">
           {list.map(item => <MqttItem key={item.key} item={item} pretty={props.pretty}/>) }
        </div>
     </div>

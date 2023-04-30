@@ -4,8 +4,10 @@ On startup clients only know the MQTT server IP, name:password and possibly thei
 They connect to the MQTT server and request their configuration file.
   P a/cmd/server
       CLIENTID = Command line option | CLIENT_NAME | IP
+
   S a/cmd/all
   S a/cmd/CLIENTID
+  S a/rsp/CLIENTID      # Receive status messages
 
 if CLIENTID = IP then change to CLIENT_NAME after bootstrap - why?
    

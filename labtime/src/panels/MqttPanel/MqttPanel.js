@@ -3,7 +3,7 @@
 import React, {useState} from 'react';
 
 
-import MqttFilterType from './MqttFilterType';
+import MqttFilterFunc from './MqttFilterFunc';
 import MqttFilterClient from './MqttFilterClient';
 import MqttDisplayActions from './MqttDisplayActions';
 import MqttList from './MqttList';
@@ -48,14 +48,13 @@ const MqttPanel = (props) => {
       ('0' + date.getSeconds()).slice(-2)+ ' - ' +
       ('00' + date.getMilliseconds()).slice(-3)
 
-//  const [loc, type, action, source, telegraf] = topic.split('/')
-    const [loc, type, action, source] = topic.split('/')
+    const [project, func, clientId] = topic.split('/')
     let rnd = Math.random().toString(16).slice(3)
-    let key = `${source}-${time.toString()}-${rnd})}`
+    let key = `${clientId}-${time.toString()}-${rnd})}`
     if (nitems) {
     }
 //  console.log("nitems ", nitems, ni);
-    let item = { key, date: dateStr, loc, type, action, source, topic, payload, nitems: ni }
+    let item = { key, date: dateStr, project, func, clientId, topic, payload, nitems: ni }
 
     setNItems((prevNItems) => {
       return ni = prevNItems + 1
@@ -81,21 +80,21 @@ const MqttPanel = (props) => {
 
   if (!registered) {
     registered = true;
-    mqttRegisterTopicCB('lab1/', mqttCB)
+    mqttRegisterTopicCB('rf/', mqttCB)
 
   }
 
   const validMsg = (item) => {
-    const [,type,,clientName] = item.topic.split('/')
+    const [,func,clientId] = item.topic.split('/')
     if (global.aaa.clients.all.selected) {
     } else {
-      if (global.aaa.clients[clientName] && !global.aaa.clients[clientName].selected) {
+      if (global.aaa.clients[clientId] && !global.aaa.clients[clientId].selected) {
         return false;
       }
     }
     if (global.aaa.msgTypes.all.selected) {
     } else {
-      if (global.aaa.msgTypes[type] && !global.aaa.msgTypes[type].selected) {
+      if (global.aaa.msgTypes[func] && !global.aaa.msgTypes[func].selected) {
         return false;
       }
     }
@@ -125,7 +124,7 @@ const MqttPanel = (props) => {
       <div className="content">
         <div className='filters'>
           <MqttFilterClient onChangeH={onFilterClientChangeH} />
-          <MqttFilterType onChangeH={onFilterTypeChangeH} />
+          <MqttFilterFunc onChangeH={onFilterTypeChangeH} />
         </div>
         <div className="mqtt-display">
           <MqttDisplayActions actions={{onClearList, onPretty}} pretty={pretty}></MqttDisplayActions>

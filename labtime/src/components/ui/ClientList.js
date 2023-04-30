@@ -12,8 +12,7 @@ function ClientList (props) {
   return (
     <div className='client-list'>
       {Object.keys(props.list).map(key => {
-        return <Client onChangeH={onChangeH} className={key} key={key} id={key}
-                         name={props.list[key].name} selected={props.list[key].selected} />
+        return <Client onChangeH={onChangeH} className={key} key={key} id={key} client={props.list[key]} />
       })}
     </div>
   );

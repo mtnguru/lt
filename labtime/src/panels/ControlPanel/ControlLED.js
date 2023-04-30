@@ -25,9 +25,9 @@ const ControlButton = (props) => {
       })
       topic = 'lab1/user/influx/' + props.client
 
-      const metric = findMetric(props.metricName)
+      const metric = findMetric(props.metricId)
       if (metric == null) return;
-      payload = `${makeTagsFromMetric(props.metricName)} value=${btnState ? "1" : "0"}`
+      payload = `${makeTagsFromMetric(props.metricId)} value=${btnState ? "1" : "0"}`
     }
     console.log('   send ', topic, payload)
 //  props.onclick(event)

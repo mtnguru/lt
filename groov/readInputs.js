@@ -25,9 +25,9 @@ const readInput = async (name,input,ctime) => {
   console.log(f, 'enter ', name)
 
   const channelReadCB = (data) => {
-    const f = 'readInputs::channelReadCB'
+    const f = 'readInput::channelReadCB'
     console.log(f,'enter')
-    const topic = global.aaa.publishTopics['input'];
+    const topic = global.aaa.topics.publish.inp;
     let payload = `${input.tags} value=${data.value.toFixed(2)}`
     mqttNode.publish(topic, payload)
   }
@@ -63,11 +63,9 @@ const readInputs = async () => {
     const ntime = new Date().getTime() * 1000000;
 
     const funcs = [];
-    for (let name in global.aaa.metrics) {
-      let input = global.aaa.metrics[name].input;
-      if (input) {
-        funcs.push(readInput(name,input,ntime));
-      }
+    for (let name in global.aaa.inputs) {
+      let input = global.aaa.inputs[name].input;
+      funcs.push(readInput(name,input,ntime));
     }
 
     await Promise.all(funcs)

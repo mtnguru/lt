@@ -4,28 +4,34 @@ import './index.scss';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 
-import {mqttConnect, mqttPublish, mqttSubscribe, mqttUnsubscribe, mqttProcessCB, mqttRegisterTopicCB} from './utils/mqttReact.js';
+import {mqttConnect, mqttPublish, mqttSubscribe, mqttProcessCB, mqttRegisterTopicCB} from './utils/mqttReact.js';
 
 const f = "index::main - "
 global.aaastarted = false;
+const clientId = "labtime"
 
 global.aaa = {
-  name: "hmi1",
+  clientId: clientId,
   mqtt: {
     clientId: `mqtt_${Math.random().toString(16).slice(3)}`, // create a random id
     protocolId: 'MQTT',
     protocolVersion: 4,
-//  connectUrl: 'mqtt://194.195.214.212:8081',
+    connectUrl: 'mqtt://194.195.214.212:8081',
 //  connectUrl: 'mqtt://labtime.webhop.net:8081',
-    connectUrl: 'mqtt://172.16.45.7:8081',
+//  connectUrl: 'mqtt://172.16.45.7:8081',
     username: 'data',
     password: 'datawp',
     connectTimeout: 10000,
     reconnectPeriod: 120000,
     keepAlive: 5000,
   },
-  subscribeTopics: {
-    admin: 'lab1/admin/+/hmi1'
+  topics: {
+    subscribe: {
+      adm: 'a/#'
+    },
+    publish: {
+      adm: 'a/cmd/administrator'
+    }
   },
 }
 
@@ -38,29 +44,28 @@ const loadConfigCB = (topic, payload) => {
 
   try {
     // Unsubscribe from all any current topics
-    mqttUnsubscribe(global.aaa.subscribeTopics);
+//  mqttUnsubscribe(global.aaa.topics.subscribe);
 
     // Replace global.aaa object with new configuration
     global.aaa = JSON.parse(payload.toString(0));
 
     // Subscribe to topics
-    console.log(f, 'do subscribe', Object.values(global.aaa.subscribeTopics))
-    mqttSubscribe(global.aaa.subscribeTopics)
+    console.log(f, 'do subscribe', Object.values(global.aaa.topics.subscribe))
+    mqttSubscribe(global.aaa.topics.subscribe)
 
     // Create full list of inputs and outputs by combining them from all clients
     global.aaa.inputs = {}
     global.aaa.outputs = {}
-    for (let clientName in global.aaa.clients) {
-      if (clientName !== "server") {
-        const client = global.aaa.clients[clientName]
+    for (var clientId in global.aaa.clients) {
+      if (clientId !== "administrator") {
+        const client = global.aaa.clients[clientId]
         if (!client) {
-          console.log('Client not found ' + clientName);
+          console.log('Client not found ' + clientId);
           continue;
         }
         for (let inputName in client.inputs) {
           const input = client.inputs[inputName]
           global.aaa.inputs[inputName.toLowerCase()] = input;
-
         }
         for (let outputName in client.outputs) {
           const output = client.outputs[outputName]
@@ -79,16 +84,17 @@ const loadConfigCB = (topic, payload) => {
 const getConfig = () => {
   const f = "index::getConfig - "
   console.log(f,'enter')
-  const topic = 'lab1/admin/configReq/hmi1'
-  const payloadStr = "{}"
-  mqttPublish(topic, payloadStr)
-  mqttRegisterTopicCB('lab1/admin/config/hmi1', loadConfigCB)
+  const payloadStr = `{"cmd": "requestConfig", "clientId": "${clientId}"}`
+  mqttPublish(global.aaa.topics.publish.adm, payloadStr)
+  mqttRegisterTopicCB(global.aaa.topics.subscribe.adm, loadConfigCB)
   console.log(f,'exit')
 }
 
 mqttConnect(mqttProcessCB);
 console.log(f,'requestConfig - ')
 getConfig();
+//setTimeout(() => {
+//}, 1000)
 
 // const configCB = () => {
 //   const promise = new Promise ((resolve, reject) => {

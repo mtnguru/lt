@@ -23,7 +23,7 @@ const f = "project:main"
 //
 
 global.aaa = {
-  clientName: 'project',
+  clientId: 'project',
   project: 'lab1',
   mqtt: {
     url: "mqtt://labtime.org:1883",
@@ -50,9 +50,9 @@ const loadClientConfigCB = (inTopic, inPayload) => {
   // Create full list of inputs and outputs by combining them from all clients
   config.inputs = {}
   config.outputs = {}
-  for (let clientName in config.clients) {
-    if (clientName !== "server") {
-      const client = config.clients[clientName]
+  for (let clientId in config.clients) {
+    if (clientId !== "server") {
+      const client = config.clients[clientId]
       for (let inputName in client.inputs) {
         const input = client.inputs[inputName]
         config.inputs[inputName.toLowerCase()] = input;
@@ -90,14 +90,14 @@ const metricUserCB = (metric, inTopic, inPayload, inTags, inValues) => {
   const f = "project::metricUserCB"
   msg(2,f,DEBUG, "enter ", inTopic)
 
-  const [project, msgType, action, srcClientName] = inTopic.split("/")
+  const [project, msgType, action, clientId] = inTopic.split("/")
   try {
     const {tags, values, time} = influx.extractFromTags(inPayload)
 
     if (msgType === "user") {
       // Create an output message
-      const outTopic = mqttNode.makeTopic(OUTPUT, 'influx', {clientName: srcClientName})
-      const outPayload = `${influx.makeTagsFromMetric(tags['Metric'], 'O')} value=${values['value']}`
+      const outTopic = mqttNode.makeTopic(OUTPUT, 'influx', {clientId: clientId})
+      const outPayload = `${influx.makeTagsFromMetric(tags['Metric'], 'O', 'unknown')} value=${values['value']}`
       msg(2,f, DEBUG, 'payload ', outPayload)
       mqttNode.publish(outTopic, outPayload)
     }
@@ -127,15 +127,15 @@ const startProject = () => {
     mqttNode.registerTopicCB(flds, '/', adminCB);
 
     // Subscribe to topics
-    for (let metricName in global.aaa.metrics) {
-      const metric = global.aaa.metrics[metricName]
+    for (let metricId in global.aaa.metrics) {
+      const metric = global.aaa.metrics[metricId]
       if (metric.user) {
-        msg(2,f, DEBUG, 'register user Metric', metricName)
-        mqttNode.registerMetricCB(metricName, metricUserCB)
+        msg(2,f, DEBUG, 'register user Metric', metricId)
+        mqttNode.registerMetricCB(metricId, metricUserCB)
       }
       if (metric.input) {
-        msg(2,f, DEBUG, 'register input Metric', metricName)
-        mqttNode.registerMetricCB(metricName, metricInputCB)
+        msg(2,f, DEBUG, 'register input Metric', metricId)
+        mqttNode.registerMetricCB(metricId, metricInputCB)
       }
 //    if (metric.output) {
 //      mqttNode.registerTopicCB(metric, outputCB)
