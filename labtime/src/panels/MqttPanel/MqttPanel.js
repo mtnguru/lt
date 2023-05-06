@@ -80,8 +80,9 @@ const MqttPanel = (props) => {
 
   if (!registered) {
     registered = true;
-    mqttRegisterTopicCB('rf/', mqttCB)
-
+    for (let n in global.aaa.topics.subscribe) {
+      mqttRegisterTopicCB(global.aaa.topics.subscribe[n], mqttCB)
+    }
   }
 
   const validMsg = (item) => {

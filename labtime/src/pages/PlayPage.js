@@ -2,7 +2,7 @@ import ControlPanel from '../panels/ControlPanel/ControlPanel.js';
 import ControlSliderPanel from "../panels/ControlPanel/ControlSliderPanel";
 import DoePanel from "../panels/DoePanel/DoePanel";
 import ControlExptPanel from "../panels/ControlPanel/ControlExptPanel";
-import MqttPanel from "../panels/MqttPanel/MqttPanel";
+//import MqttPanel from "../panels/MqttPanel/MqttPanel";
 
 function PlayPage() {
   return (

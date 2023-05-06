@@ -73,6 +73,7 @@ const resetServer = () => {
 const processCB = (topic, payloadRaw) => {
   const f = 'administrator::processCB'
   msg(1,f,DEBUG, 'enter');
+  readConfig();
   let out;
   let outTopic;
   try {
@@ -147,6 +148,111 @@ const findProject = (projectId) => {
   }
 }
 
+const initMetrics = (projectId, project) => {
+  // Read in the metrics for this project
+  var path = `${process.env.ROOT_PATH}/${stageId}/${projectId}/metrics.yml`
+  project.metrics = YAML.safeLoad(fs.readFileSync(path));
+  // for each metric in project
+  for (var oMetricId in project.metrics) {
+    var metric = project.metrics[oMetricId]
+    var metricId = oMetricId.toLowerCase();
+    metric.name = oMetricId
+    metric.metricId = metricId
+    metric.projectId = projectId
+    var flds = metric.name.split('_')
+    metric.units = flds[flds.length - 1]
+    if (metricId != oMetricId) {
+      delete project.metrics[oMetricId]
+      project.metrics[metricId] = metric
+    }
+
+    // assign inputs, outputs and human to correct clients
+    var client
+    if (metric.input) {
+      if (client = project.clients[metric.input.clientId]) {
+        if (!client.inputs) client.inputs = {}
+        client.inputs[metricId] = metric
+        metric.input.tags = influx.makeTagsFromMetricId(metric.name, "I", projectId)
+      }
+    }
+    if (metric.output) {
+      if (client = project.clients[metric.output.clientId]) {
+        if (!client.outputs) client.outputs = {}
+        client.outputs[metricId] = metric
+        metric.output.tags = influx.makeTagsFromMetricId(metric.name, "O", projectId)
+      }
+    }
+    if (metric.human) {
+      if (client = project.clients[metric.human.clientId]) {
+        if (!client.humans) client.humans = {}
+        client.humans[metricId] = metric
+        metric.human.tags = influx.makeTagsFromMetricId(metric.name, "H", projectId)
+      }
+    }
+  } // for each metric in project
+}
+
+const initClients = (projectId, project, msgTypes) => {
+  // For each client create lookup lists by clientId and IP
+  for (var clientId in project.clients) {
+    var client = project.clients[clientId]
+    if (client) {
+//    var flds = metric.name.split('_')
+      client.clientId = clientId
+      client.projectId = projectId
+
+      global.aaa.clients[clientId] = client;
+      if (client.ip) {
+        global.aaa.ips[client.ip] = client;
+      }
+
+      if (client.metrics && client.metrics === 'project') {
+        client.metrics = project.metrics
+      }
+
+      if (client.topics) {
+        var project = findProject(client.projectId)
+        if (project.topics && project.topics[client.topics]) {
+          var topics = project.topics[client.topics]
+          client.topics = {}
+          client.topics.subscribe = Topics.completeTopics(JSON.parse(JSON.stringify(topics.subscribe)), client);
+          client.topics.publish = Topics.completeTopics(JSON.parse(JSON.stringify(topics.publish)), client);
+        } else {
+          client.topics.subscribe = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.subscribe)), client);
+          client.topics.publish = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.publish)), client);
+        }
+      }
+
+      if (client.msgTypes) {
+        client.msgTypes = msgTypes;
+      }
+    } // if project.clients[clientId]
+  } // for each client
+
+  // Now that the clients are complete, copy them into the client.clients
+  for (var clientId in project.clients) {
+    var client = project.clients[clientId]
+    if (client && client.clients) {
+      for (var clientId2 in client.clients) {
+        if (clientId2 === 'administrator') {
+          client.clients.administrator = {
+            clientId: global.aaa.clientId,
+            name: global.aaa.name,
+          }
+        } else if (clientId2 === 'all') {
+          // Ignore all
+        } else {
+          if (project.clients[clientId2]) {
+            client.clients[clientId2] = JSON.parse(JSON.stringify(project.clients[clientId2]))
+          } else {
+            msg(2, f, ERROR, `${clientId} - Client not found ${clientId2} in administrator config`);
+          }
+        }
+      }
+    } // if project.clients[clientId]
+  } // for each client
+}
+
 const readConfig = () => {
   console.log('Read in administrator configuration')
   let ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${stageId}/administrator.yml`)
@@ -164,106 +270,9 @@ const readConfig = () => {
     }
     var project = global.aaa.projects[projectId]
 
-    // Read in the metrics for this project
-    var path = `${process.env.ROOT_PATH}/${stageId}/${projectId}/metrics.yml`
-    project.metrics = YAML.safeLoad(fs.readFileSync(path));
-    // for each metric in project
-    for (var oMetricId in project.metrics) {
-      var metric = project.metrics[oMetricId]
-      var metricId = oMetricId.toLowerCase();
-      metric.name = oMetricId
-      metric.metricId = metricId
-      metric.projectId = projectId
-      var flds = metric.name.split('_')
-      metric.units = flds[flds.length - 1]
-      if (metricId != oMetricId) {
-        delete project.metrics[oMetricId]
-        project.metrics[metricId] = metric
-      }
-
-      // assign inputs, outputs and human to correct clients
-      var client
-      if (metric.input) {
-        if (client = project.clients[metric.input.clientId]) {
-          if (!client.inputs) client.inputs = {}
-          client.inputs[metricId] = metric
-          metric.input.tags = influx.makeTagsFromMetricId(metric.name, "I", projectId)
-        }
-      }
-      if (metric.output) {
-        if (client = project.clients[metric.output.clientId]) {
-          if (!client.outputs) client.outputs = {}
-          client.outputs[metricId] = metric
-          metric.output.tags = influx.makeTagsFromMetricId(metric.name, "O", projectId)
-        }
-      }
-      if (metric.human) {
-        if (client = project.clients[metric.human.clientId]) {
-          if (!client.humans) client.humans = {}
-          client.humans[metricId] = metric
-          metric.human.tags = influx.makeTagsFromMetricId(metric.name, "H", projectId)
-        }
-      }
-    } // for each metric in project
-
-    // For each client create lookup lists by clientId and IP
-    for (var clientId in project.clients) {
-//    console.log('Client ', clientId)
-      var client = project.clients[clientId]
-      if (client) {
-        var flds = metric.name.split('_')
-        client.clientId = clientId
-        client.projectId = projectId
-
-        global.aaa.clients[clientId] = client;
-        if (client.ip) {
-          global.aaa.ips[client.ip] = client;
-        }
-
-        if (client.metrics && client.metrics === 'project') {
-           client.metrics = project.metrics
-        }
-
-        if (client.topics) {
-          var project = findProject(client.projectId)
-          if (project.topics && project.topics[client.topics]) {
-            var topics = project.topics[client.topics]
-            client.topics = {}
-            client.topics.subscribe = Topics.completeTopics(JSON.parse(JSON.stringify(topics.subscribe)), client);
-            client.topics.publish = Topics.completeTopics(JSON.parse(JSON.stringify(topics.publish)), client);
-          } else {
-            client.topics.subscribe = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.subscribe)), client);
-            client.topics.publish = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.publish)), client);
-          }
-        }
-
-        if (client.msgTypes) {
-          client.msgTypes = msgTypes;
-        }
-
-        if (client.clients) {
-          for (var clientId2 in client.clients) {
-            const id = clientId2.replace(/circ_/,'')
-            if (id === 'administrator') {
-              client.clients.administrator = {
-                clientId: global.aaa.clientId,
-                name: global.aaa.name,
-//              background: global.aaa.background
-              }
-            } else if (id === 'all') {
-              // Ignore all
-            } else {
-              if (project.clients[id]) {
-                client.clients[id] = JSON.parse(JSON.stringify(project.clients[id]))
-              } else {
-                  msg(2, f, ERROR, `${clientId} - Client not found ${id} in administrator config`);
-              }
-            }
-          }
-        }
-      } // if project.clients[clientId]
-    } // for each client
-  } /// for each project
+    initMetrics(projectId, project)
+    initClients(projectId, project, msgTypes)
+  } // for each project
 }
 
 readConfig();

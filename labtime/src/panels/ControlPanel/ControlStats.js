@@ -10,6 +10,8 @@ const ControlStats = (props) => {
   const [stat, setStat] = useState(0);
   const [metric, setMetric] = useState({});
 
+  const { metricId } = props
+
   useEffect(() => {
     const metricCB = (metric, topic, payload, tags, values) => {
       const f = "ControlStats::metricCB"
@@ -26,9 +28,9 @@ const ControlStats = (props) => {
       }
     }
 
-    setMetric(findMetric(props.metricId))
-    mqttRegisterMetricCB(props.metricId, metricCB)
-  }, [props.metricId])
+    setMetric(findMetric(metricId))
+    mqttRegisterMetricCB(metricId, metricCB)
+  }, [metricId])
 
 //if (register) {
 //  mqttRegisterMetricCB(props.metric, metricCB)

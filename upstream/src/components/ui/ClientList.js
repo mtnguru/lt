@@ -1,4 +1,4 @@
-// import './ClientList.scss'
+// import './MqttClientList.scss'
 import Client from './Client.js'
 
 function ClientList (props) {
@@ -6,7 +6,7 @@ function ClientList (props) {
 //  console.log(props.list[item]);
 //}
   const onChangeH = (event) => {
-    console.log('ClientList::onChangeH - ',event.target.id, event.target.checked)
+    console.log('MqttClientList::onChangeH - ',event.target.id, event.target.checked)
     props.onChangeH(event)
   }
   return (

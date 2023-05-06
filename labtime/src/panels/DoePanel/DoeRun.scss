@@ -1,3 +1,6 @@
+@import "../../styles/base";
+@import "../../styles/colors";
+
 .doe-run {
   .button {
     margin-left: 20px;
@@ -10,7 +13,7 @@ form.doe-form {
     margin-bottom: 10px;
   }
   textarea {
-    color: white;
+    color: $input-fg-color;
     padding: 4px;
     height: 6rem;
     width: 100%;

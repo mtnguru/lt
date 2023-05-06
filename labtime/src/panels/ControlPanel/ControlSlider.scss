@@ -1,3 +1,6 @@
+@import "../../styles/base";
+@import "../../styles/colors";
+
 .control-slider {
   margin-bottom: 6px;
   font-size: 100%;
@@ -50,7 +53,7 @@
   }
 
   input {
-    border: 1px white solid;
+    border: 1px solid $input-bd-color;
     width: 300px;
   }
 }

@@ -4,7 +4,7 @@ import './index.scss';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 
-import {mqttConnect, mqttPublish, mqttSubscribe, mqttProcessCB, mqttRegisterTopicCB} from './utils/mqttReact.js';
+import {mqttConnect, mqttPublish, mqttSubscribe, mqttUnsubscribe, mqttProcessCB, mqttRegisterTopicCB} from './utils/mqttReact.js';
 
 const f = "index::main - "
 global.aaastarted = false;
@@ -16,8 +16,10 @@ global.aaa = {
     clientId: `mqtt_${Math.random().toString(16).slice(3)}`, // create a random id
     protocolId: 'MQTT',
     protocolVersion: 4,
-    connectUrl: 'mqtt://194.195.214.212:8081',
+    connectUrl: 'mqtt://labtime.org:8081',
+//  connectUrl: 'mqtt://194.195.214.212:8081',
 //  connectUrl: 'mqtt://labtime.webhop.net:8081',
+//  connectUrl: 'mqtt://192.168.122.90:8081',
 //  connectUrl: 'mqtt://172.16.45.7:8081',
     username: 'data',
     password: 'datawp',
@@ -27,10 +29,10 @@ global.aaa = {
   },
   topics: {
     subscribe: {
-      adm: 'a/#'
+      rsp: 'a/rsp/labtime',
     },
     publish: {
-      adm: 'a/cmd/administrator'
+      cmd: 'a/cmd/administrator'
     }
   },
 }
@@ -52,6 +54,7 @@ const loadConfigCB = (topic, payload) => {
     // Subscribe to topics
     console.log(f, 'do subscribe', Object.values(global.aaa.topics.subscribe))
     mqttSubscribe(global.aaa.topics.subscribe)
+//  mqttRegisterTopicCB
 
     // Create full list of inputs and outputs by combining them from all clients
     global.aaa.inputs = {}
@@ -60,7 +63,7 @@ const loadConfigCB = (topic, payload) => {
       if (clientId !== "administrator") {
         const client = global.aaa.clients[clientId]
         if (!client) {
-          console.log('Client not found ' + clientId);
+          console.log('MqttClient not found ' + clientId);
           continue;
         }
         for (let inputName in client.inputs) {
@@ -85,16 +88,14 @@ const getConfig = () => {
   const f = "index::getConfig - "
   console.log(f,'enter')
   const payloadStr = `{"cmd": "requestConfig", "clientId": "${clientId}"}`
-  mqttPublish(global.aaa.topics.publish.adm, payloadStr)
-  mqttRegisterTopicCB(global.aaa.topics.subscribe.adm, loadConfigCB)
+  mqttPublish(global.aaa.topics.publish.cmd, payloadStr)
+  mqttRegisterTopicCB(global.aaa.topics.subscribe.rsp, loadConfigCB)
   console.log(f,'exit')
 }
 
 mqttConnect(mqttProcessCB);
 console.log(f,'requestConfig - ')
 getConfig();
-//setTimeout(() => {
-//}, 1000)
 
 // const configCB = () => {
 //   const promise = new Promise ((resolve, reject) => {

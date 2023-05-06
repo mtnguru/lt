@@ -31,13 +31,10 @@ function App() {
       <MainNavigation />
       <main>
         <Routes>
-          <Route path='/'         element={<DemoPage />}  />
-          <Route path='/expt'     element={<ExptPage />}  />
+          <Route path='/'         element={<MqttPage />}  />
           <Route path='/mqtt'     element={<MqttPage />}  />
+          <Route path='/expt'     element={<ExptPage />}  />
           <Route path='/admin'    element={<AdminPage />} />
-          <Route path='/doe'      element={<DoePage />}   />
-          <Route path='/grafana'  element={<GrafanaPage />}  />
-          <Route path='/play'     element={<PlayPage />}  />
         </Routes>
       </main>
       <Footer />

@@ -6,44 +6,35 @@ alm:
   name: Alarm
   num: 6
   enabled: true
-# background: "#911"
 hum:
   name: Human
   num: 9
   enabled: true
-# background: "#962"
 inp:
   name: Input
   num: 10
   enabled: true
-# background: "#236"
 out:
   name: Output
   num: 11
   enabled: true
-# background: "#062"
 msg:
   name: Messages
   num: 8
   enabled: true
-# background: "#a0d"
 cmd:
   name: Command
   num: 5
   enabled: true
-# background: "#555"
 rsp:
   name: Response
   num: 4
   enabled: true
-# background: "#777"
 act:
   name: Activity
   num: 2
   enabled: true
-# background: "#62c"
 cod:
   name: Code
   num: 1
   enabled: true
-# background: "#111"

@@ -26,4 +26,4 @@ Buttons
 
 List devices
 
-MQTT Client
+MQTT MqttClient

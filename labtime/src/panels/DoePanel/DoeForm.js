@@ -19,7 +19,7 @@ const DoeForm = (props) => {
     event.preventDefault()
     console.log(f, 'notes ', notes)
     props.payload.notes = notes;
-    const topic = 'lab1/doe/post/hmi1'
+    const topic = 'rf/doe/post/hmi1'
     mqttPublish(topic,JSON.stringify(props.payload))
     props.closeH(event)
   }

@@ -1,0 +1,55 @@
+{
+  "ip": "172.16.45.56",
+  "model": "arduino",
+  "sampleInterval": 10000,
+  "topics": {
+    "subscribe": {
+      "adm": "a/cmd/arduino5",
+      "out": "rf/out/arduino5/#"
+    },
+    "publish": {
+      "inp": "rf/inp/arduino5/Gandalf/cabin_lt",
+      "cod": "rf/cod/arduino5",
+      "msg": "rf/msg/arduino5"
+    }
+  },
+  "inputs": {
+    "cabin_k_livingroomdesk_f": {
+      "label": "Living room desk",
+      "desc": "Living room desk - K thermocouple",
+      "value": 0,
+      "decimals": 2,
+      "input": {
+        "clientId": "arduino5",
+        "type": "MAX6675",
+        "channels": "2,4,5",
+        "tags": "F,MetricId=Cabin_K_LivingRoomDesk_F,MetricName=I_Cabin_K_LivingRoomDesk_F,Type=I,ProjectId=rf,Component=Cabin,Device=K,Position=LivingRoomDesk"
+      },
+      "name": "Cabin_K_LivingRoomDesk_F",
+      "metricId": "cabin_k_livingroomdesk_f",
+      "projectId": "rf",
+      "units": "F"
+    }
+  },
+  "outputs": {
+    "arduino5_led_onboard_on": {
+      "label": "Arduino5 Onboard LED",
+      "desc": "Arduino5 Onboard LED",
+      "value": 0,
+      "decimals": 0,
+      "output": {
+        "clientId": "arduino5",
+        "type": "digital",
+        "channel": "16",
+        "tags": "On,MetricId=arduino5_LED_Onboard_On,MetricName=O_arduino5_LED_Onboard_On,Type=O,ProjectId=rf,Component=arduino5,Device=LED,Position=Onboard"
+      },
+      "name": "arduino5_LED_Onboard_On",
+      "metricId": "arduino5_led_onboard_on",
+      "projectId": "rf",
+      "units": "On"
+    }
+  },
+  "clientId": "arduino5",
+  "projectId": "rf",
+  "cmd": "requestConfig"
+}

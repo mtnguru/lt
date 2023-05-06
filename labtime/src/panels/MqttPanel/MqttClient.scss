@@ -1,0 +1,41 @@
+@import "../../styles/base";
+@import "../../styles/colors";
+
+.clients {
+  /*
+  .control-button {
+    float: none;
+    margin: 0 1px;
+    padding: 0;
+
+    &.reset {
+      display: inline-block;
+      margin-left: 51px;
+    }
+    &.status {
+      display: inline-block;
+    }
+    button {
+      padding: 0 2px;
+      font-size: 75%;
+      background: #446;
+    }
+  }
+  */
+
+  .select {
+    display: inline-block;
+    select {
+      font-size: 76%;
+      color: $fg-color;
+      background: $button-bg-color;
+      padding: 2px;
+      border-radius: 3px;
+    }
+  }
+
+  .row2 {
+    @include clearfix;
+  }
+
+}

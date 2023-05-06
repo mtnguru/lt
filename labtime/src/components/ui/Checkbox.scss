@@ -2,9 +2,6 @@
 .checkbox {
   margin-bottom: 2px;
   border-radius: 4px;
-  &.all {
-    margin-bottom: 10px;
-  }
   padding: 1px 0;
   input {
     margin: 4px 4px;
@@ -12,6 +9,12 @@
   label {
     display: inline-block;
     margin-left: 4px;
-    width: calc(100% - 40px);
+    width: calc(100% - 30px);
+  }
+  &.all {
+    margin-bottom: 10px;
+    label {
+      width: 70px;
+    }
   }
 }

@@ -27,7 +27,7 @@
 }
 
 .mqtt-display textarea {
-  color: #001b54;
+  color: $input-bg-color;
   overflow-y: visible;
   white-space: nowrap;
   background: #00C0E0;

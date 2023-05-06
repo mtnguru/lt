@@ -1,6 +1,8 @@
+@import "../../styles/base";
+@import "../../styles/colors";
 
 .control-stats {
-  border: 1px white solid;
+  border: 1px solid white;
   width: 150px;
   margin: 8px;
   padding: 5px;
@@ -16,7 +18,7 @@
   .stat {
     font-weight: bold;
     font-size: 150%;
-    color: #ccff33;
+    color: $stat-fg-color;
     margin: 8px 0 4px;
   }
 }

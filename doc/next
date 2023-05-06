@@ -1,3 +1,8 @@
+Get the old hmi working on labtime.org.
+First clone the entire lt.old directory lt.test
+Change c alias to l - add a new t alias - interferes with $t - temporary only
+
+
 
 Get server loading
    Substitute CAPS for variables

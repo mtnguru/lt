@@ -55,7 +55,7 @@ function MqttFilterFunc(props) {
 
   return (
     <Container className="mqtt-filter-func">
-      <Heading as="h2">Msg Function</Heading>
+      <Heading as="h3">Function</Heading>
       <Container className={`select mqtt-func-bg ${allSelected ? "all-selected" : ""}`}>
         <CheckboxList list={global.aaa.msgTypes} onChangeH={onChangeH} />
       </Container>

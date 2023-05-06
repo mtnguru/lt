@@ -11,8 +11,8 @@
     margin-left: 10px;
   }
   button {
-    color: white;
-    background-color: #225;
+    color: $button-fg-color;
+    background-color: $button-bg-color;
     padding: 5px 12px;
     border-radius: 5px;
     &.on {

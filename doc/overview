@@ -6,7 +6,7 @@ Definitions
    Production - A configurable Template for creating events
       Determines Player Page layout, content and behavior
    Event - An instance of a production
-   Client - Programs which communicate through MQTT broker.
+   MqttClient - Programs which communicate through MQTT broker.
    Directors - Customer personnel responsible for a production
 
    MQTT - publish, subscribe

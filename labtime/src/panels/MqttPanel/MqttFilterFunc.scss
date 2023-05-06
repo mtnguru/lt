@@ -3,13 +3,18 @@
 
 .mqtt-filter-func {
   display: inline;
+
+  h3 {
+    margin-bottom: 3px;
+  }
+
   .select {
-    padding: 10px;
+    padding: 6px;
     background: $bg1-color;
     border-radius: 4px;
-    width: calc(100% - 20px);
+    width: calc(100% - 12px);
     &.all-selected {
-      background: lighten($bg1-color, 20%);
+      background: lighten($bg1-color, 10%);
       input:checked {
         background: #555;
       }

@@ -16,7 +16,7 @@ function sleep(milliseconds) {
 
 const onConnectPromise = (cb) => {
   const f = "mqttReact::onConnectPromise"
-  return new Promise((resoxOxlve, reject) => {
+  return new Promise((resolve, reject) => {
     mqttClient.on('connect', (event) => {
       console.log(f,"connected ", mqttClient.connected)
 //    mqttClient.unsubscribe(Object.values(global.aaa.topics.subscribe, () => { 500}))
@@ -24,7 +24,7 @@ const onConnectPromise = (cb) => {
         console.log(f, 'subscribed')
         mqttClient.on('message', cb);
       })
-//    resolve('connected')
+      resolve('connected')
     })
   })
 }
@@ -52,6 +52,10 @@ const mqttConnect = (cb) => {
   console.log(f,'wait for the On event')
   onConnectPromise(cb)
   console.log(f,'we\'re on')
+
+  mqttClient.subscribe(global.aaa.topics.subscribe.rsp, () => {
+    console.log(f, 'subscribed', global.aaa.topics.subscribe.rsp)
+  })
 
   mqttClient.on('message', cb);
   console.log(f,'exit')
@@ -88,23 +92,23 @@ const mqttPublish = (topic, payload) => {
   return res
 }
 
-const mqttRegisterTopicCB = (topic, cb) => {
+const mqttRegisterTopicCB = (_topic, cb) => {
   const f = "mqttReact::mqttRegisterTopicCB"
   // If necessary intialize new topic
+  const topic = _topic.replace(/\#/,'')
   mgDebug(f, "Register topic", topic)
-  const stopic = topic.replace(/\#/,'')
-  if (!topicCB[stopic]) {
-    console.log(f, "Initialize topic", stopic)
-    topicCB[stopic] = [];
+  if (!topicCB[topic]) {
+    console.log(f, "Initialize topic", topic)
+    topicCB[topic] = [];
   }
-  for (let rcb in topicCB[stopic]) {
+  for (let rcb in topicCB[topic]) {
     if (rcb === cb) {
-      console.log(f, "Already added", stopic)
+      console.log(f, "Already added", topic)
       return;
     }
   }
-  console.log(f, "add topic", stopic)
-  topicCB[stopic].push(cb);
+  console.log(f, "add topic", topic)
+  topicCB[topic].push(cb);
 }
 
 const mqttUnregisterTopicCB = (topic, cb) => {
@@ -124,12 +128,12 @@ const mqttUnregisterTopicCB = (topic, cb) => {
   }
 }
 
-const mqttRegisterMetricCB = (metricId, cb) => {
+const mqttRegisterMetricCB = (_metricId, cb) => {
   const f = "mqttReact::mqttRegisterMetricCB"
-  // If necessary intialize new metric
-  const lmetricId = metricId.toLowerCase()
-  const metric = global.aaa.metrics[lmetricId.toLowerCase()]
   console.log(f, 'enter')
+  // If necessary intialize new metric
+  const metricId = _metricId.toLowerCase()
+  const metric = global.aaa.metrics[metricId]
   if (!metric) {
     mgError(f,'Cannot find metric ', metricId);
     return

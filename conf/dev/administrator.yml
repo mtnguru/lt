@@ -5,6 +5,8 @@ debugLevel: 2
 userId: Gandalf
 mqtt:  # Each client must have it's own mqtt config
 # ip:   http://172.16.45.7   # merlin
+# url:  http://172.16.45.7
+# url:  http://192.168.122.90
   url:  http://labtime.org
   username: data
   password: datawp
@@ -21,38 +23,6 @@ projects:
   rf:
     name: Cabin in Red Feather
     clients:
-      labtime:
-        name: LabTime
-      # background: "#a51"
-        userId: bilbo
-        format: yml
-        clients:
-          all:
-            clientId: all
-            name: All
-          labtime: {}
-          administrator: {}
-          epiclc: {}
-          riolc: {}
-          arduino2: {}
-          arduino3: {}
-          arduino4: {}
-          arduino5: {}
-        topics:
-          subscribe:
-#           fart: darnit/#
-#           all: PROJECTID/#
-            inp: PROJECTID/inp/#
-#           out: PROJECTID/out/#
-#           hum: PROJECTID/hum/#
-#           alm: PROJECTID/alm/#
-#           msg: PROJECTID/msg/#
-#           cmd: PROJECTID/cmd/CLIENTID/#
-          publish:
-            msg: PROJECTID/msg/CLIENTID
-            cod: PROJECTID/cod/CLIENTID
-        metrics: project
-        msgTypes: {}
       epiclc:
         name: EpicLC
         ip: 172.16.45.3
@@ -105,6 +75,38 @@ projects:
         model: arduino
         sampleInterval: 10000
         topics: edge
+      labtime:
+        name: LabTime
+        # background: "#a51"
+        userId: bilbo
+        format: yml
+        clients:
+          all:
+            clientId: all
+            name: All
+          labtime: {}
+          administrator: {}
+          epiclc: {}
+          riolc: {}
+          arduino2: {}
+          arduino3: {}
+          arduino4: {}
+          arduino5: {}
+        topics:
+          subscribe:
+            adm: a/#
+            inp: PROJECTID/inp/#
+          # out: PROJECTID/out/#
+          # hum: PROJECTID/hum/#
+          # alm: PROJECTID/alm/#
+          # msg: PROJECTID/msg/#
+          # cmd: PROJECTID/cmd/CLIENTID/#
+          publish:
+            msg: PROJECTID/msg/CLIENTID
+            cod: PROJECTID/cod/CLIENTID
+            hum: PROJECTID/hum/CLIENTID
+        metrics: project
+        msgTypes: {}
     topics:
       edge:
         subscribe:

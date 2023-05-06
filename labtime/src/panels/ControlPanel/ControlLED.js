@@ -17,13 +17,13 @@ const ControlButton = (props) => {
     let topic;
     let payload;
     if (props.type === "push") {
-      topic = 'lab1/admin/reset/' + props.client
+      topic = 'rf/admin/reset/' + props.client
       payload = ''
     } else if (props.type === "toggle") {
       setBtnState((prevState) => {
         return !prevState
       })
-      topic = 'lab1/user/influx/' + props.client
+      topic = 'rf/user/influx/' + props.client
 
       const metric = findMetric(props.metricId)
       if (metric == null) return;

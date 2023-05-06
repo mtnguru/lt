@@ -1,19 +1,22 @@
+@import "../../styles/base";
+@import "../../styles/colors";
+
 .doe-panel {
   table {
-    border: 2px solid #345;
+    border: 2px solid $table-bd-color;
   }
   thead {
     th {
       padding: 10px;
-      background-color: #125;
+      background-color: $table-head-bg-color;
     }
   }
   tbody {
     tr:nth-child(odd) {
-      background-color: #248;
+      background-color: $table-odd-bg-color;
     }
     tr:nth-child(even) {
-      background-color: #36a;
+      background-color: $table-even-bg-color;
     }
   }
 }

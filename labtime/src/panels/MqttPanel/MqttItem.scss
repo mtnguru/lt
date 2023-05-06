@@ -1,10 +1,12 @@
+@import "../../styles/colors";
+
 .mqtt-item {
   font-size: 80%;
   .right {
     float: right;
   }
   .topic {
-    color: #ccc;
+    color: $topic-fg-color;
   }
   .type {
     font-size: 90%;
@@ -12,7 +14,7 @@
   }
   .date {
     display: inline-block;
-    color: #ff0;
+    color: $date-fg-color;
 //  width: 90px;
     margin-right: 1rem;
   }

@@ -1,33 +1,52 @@
+// @import "styles/colors.scss";
+
+$fg-color: #f0fcf0;
+$topic-fg-color: #fc2;
+$date-fg-color: #ff4;
+$title-fg-color: #ddff88; 
+
 $bg-color: #111133;
 $bg1-color: #332266;
-$fg-color: #f0fff0;
+
+$input-fg-color: #ff8;
+$input-bd-color: #593cb3;
+$input-bg-color: #001b54;
+
 $button-fg-color: #ffffff;
 $button-bg-color: #5500cc;
+$button-bd-color: #593cb3;
+
+$table-head-bg-color: #125;
+$table-bd-color: #345;
+$table-odd-bg-color: #245;
+$table-even-bg-color: #36a;
+
+$stat-fg-color: #ccff33;
 
 .mqtt-func-bg {
   // MQTT Message function
-  .Activity, .act    { background-color: #c60; }
-  .Alarm,    .alm    { background-color: #911; }
-  .Input,    .inp    { background-color: #228; }
-  .Output,   .out    { background-color: #082; }
-  .Code,     .cod    { background-color: #111; }
-  .Human,    .hum    { background-color: #962; }
-  .Command,  .cmd    { background-color: #777; }
-  .Response, .rsp    { background-color: #90c; }
-  .Message,  .msg    { background-color: #2aa; }
+  .Activity, .act    { background-color: #420; }
+  .Alarm,    .alm    { background-color: #600; }
+  .Input,    .inp    { background-color: #118; }
+  .Output,   .out    { background-color: #040; }
+  .Code,     .cod    { background-color: #000; }
+  .Human,    .hum    { background-color: #830; }
+  .Command,  .cmd    { background-color: #333; }
+  .Response, .rsp    { background-color: #105; }
+  .Message,  .msg    { background-color: #033; }
 }
 
 .mqtt-client-bg {
   // MQTT message client
-  .riolc         { background-color: #921 }
-  .epiclc        { background-color: #52a; }
-  .arduino2      { background-color: #050; }
+  .riolc         { background-color: #802 }
+  .epiclc        { background-color: #70b; }
+  .arduino2      { background-color: #052; }
   .arduino3      { background-color: #080 }
-  .arduino4      { background-color: #029 }
-  .arduino5      { background-color: #04e }
+  .arduino4      { background-color: #039 }
+  .arduino5      { background-color: #05e }
   .player        { background-color: #a51; }
-  .labtime       { background-color: #719; }
-  .administrator { background-color: #630; }
+  .labtime       { background-color: #b50; }
+  .administrator { background-color: #641; }
   .mqtt_sim      { background-color: #666; }
 }
 

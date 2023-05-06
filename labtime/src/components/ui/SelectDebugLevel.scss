@@ -1,4 +1,5 @@
 @import "../../styles/base";
+@import "../../styles/colors";
 
 .control-button {
   float: none;
@@ -7,7 +8,7 @@
 
   &.reset {
     display: inline-block;
-    margin-left: 51px;
+    margin-left: 48px;
   }
   &.status {
     display: inline-block;
@@ -21,10 +22,11 @@
 .select-debug-level {
   display: inline-block;
   select {
-    font-size: 76%;
-    color: white;
-    background: #446;
-    padding: 2px;
+    font-size: 80%;
+    color: $fg-color;
+    background: $button-bg-color;
+    padding: 0px;
+    margin-left: 2px;
     border-radius: 3px;
   }
 }
@@ -33,6 +35,7 @@
   @include clearfix;
 }
 
+/*
 .checkbox {
   margin-bottom: 2px;
   border-radius: 4px;
@@ -49,3 +52,4 @@
     width: calc(100% - 30px);
   }
 }
+*/

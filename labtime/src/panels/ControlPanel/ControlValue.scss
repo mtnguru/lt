@@ -1,8 +1,10 @@
+@import "../../styles/base";
+@import "../../styles/colors";
 
 .control-value {
   position: absolute;
   transform: translate(-50%, -50%);
-  border: 1px lightblue solid;
+  border: 1px solid $input-bd-color;
   margin: .5vw;
   padding: .3vw .5vw;
   border-radius: 5px;
@@ -17,6 +19,6 @@
   .stat {
     font-weight: bold;
     font-size: 3vw;
-    color: #ccff33;
+    color: $stat-fg-color;
   }
 }
