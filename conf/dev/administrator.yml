@@ -1,6 +1,6 @@
 clientId: administrator
 name: Administrator
-# background: "#630"
+clientType: administrator
 debugLevel: 2
 userId: Gandalf
 mqtt:  # Each client must have it's own mqtt config
@@ -27,9 +27,10 @@ projects:
         name: EpicLC
         ip: 172.16.45.3
         url: https://epiclc
-      # background: "#52a"
         model: epic
+        clientType: edge
         sampleInterval: 10000
+        sampling: true
         topics: edge
         headers:
           apiKey: mnMmq5awnB3DwMsmwFFVToYTqeHtJ8Xf
@@ -39,9 +40,10 @@ projects:
         name: RioLC
         ip: 172.16.45.4
         url: https://riolc
-      # background: "#821"
         model: riolc
+        clientType: edge
         sampleInterval: 10000
+        sampling: true
         topics: edge
         headers:
           apiKey: yedg7SAJWgtf3jZNjPYfR5XTjWRrX59X
@@ -50,34 +52,39 @@ projects:
       arduino2:
         name: Arduino2
         ip: 172.16.45.32
-      # background: "#040"
         model: arduino
+        clientType: edge
         sampleInterval: 10000
+        sampling: true
         topics: edge
       arduino3:
         name: Arduino3
         ip: 172.16.45.33
-      # background: "#090"
         model: arduino
+        clientType: edge
         sampleInterval: 10000
+        sampling: true
         topics: edge
       arduino4:
         name: Arduino4
         ip: 172.16.45.121
-      # background: "#029"
         model: arduino
+        clientType: edge
         sampleInterval: 10000
+        sampling: true
         topics: edge
       arduino5:
         name: Arduino5
         ip: 172.16.45.56
-      # background: "#03d"
+#       ip: 192.168.0.102
         model: arduino
+        clientType: edge
         sampleInterval: 10000
+        sampling: true
         topics: edge
       labtime:
         name: LabTime
-        # background: "#a51"
+        clientType: hmi
         userId: bilbo
         format: yml
         clients:
@@ -96,11 +103,12 @@ projects:
           subscribe:
             adm: a/#
             inp: PROJECTID/inp/#
-          # out: PROJECTID/out/#
-          # hum: PROJECTID/hum/#
-          # alm: PROJECTID/alm/#
-          # msg: PROJECTID/msg/#
-          # cmd: PROJECTID/cmd/CLIENTID/#
+            out: PROJECTID/out/#
+            hum: PROJECTID/hum/#
+            alm: PROJECTID/alm/#
+            cod: PROJECTID/cod/#
+            msg: PROJECTID/msg/#
+            cmd: PROJECTID/cmd/CLIENTID/#
           publish:
             msg: PROJECTID/msg/CLIENTID
             cod: PROJECTID/cod/CLIENTID

@@ -8,7 +8,7 @@ function MainNavigation() {
       <div className={classes.logo}><h2>LabTime - HMI</h2></div>
       <nav>
         <ul>
-          <li key="home"><Link to='/'>Experiment</Link></li>
+          <li key="expt"><Link to='/expt'>Experiment</Link></li>
           <li key="mqtt"><Link to='/mqtt'>MQTT</Link></li>
           <li key="play"><Link to='/admin'>Administration</Link></li>
         </ul>

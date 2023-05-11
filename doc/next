@@ -1,11 +1,38 @@
-Get the old hmi working on labtime.org.
-First clone the entire lt.old directory lt.test
-Change c alias to l - add a new t alias - interferes with $t - temporary only
+Try to reconnect in arduino
+Get chat working
+   Use msg stuff created earlier
+   
 
 
 
-Get server loading
-   Substitute CAPS for variables
-   List variables
 
-PROJECT   msg
+Today - work on the experiment page
+
+  Experiment page
+    Cabin image of all temperature sensors
+    Chat window
+    Control block
+      Slider sends information to the controller
+      Controller slowly changes output in increments of 1 
+      Display three things - human, output, input
+
+
+MQTT monitor
+   Break this off as a separate program
+
+HMI
+  When changing pages -
+    - subscribe and unsubscribe from topics to minimize mqtt load
+    - unregister and reregister all topics
+
+Arduino
+ *Reset works
+ *Input works
+ *Get status working from arduino
+ *Start sending mqtt cod messages from arduino
+ *Try Mqtt connect multiple times 
+     10 times - wait 25 milliseconds - try again = total of 250 milliseconds
+  Get output working on the arduino
+  Wire an arduino to connect an output back to an input
+    Output a voltage and measure the input
+

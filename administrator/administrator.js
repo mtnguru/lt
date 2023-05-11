@@ -73,7 +73,7 @@ const resetServer = () => {
 const processCB = (topic, payloadRaw) => {
   const f = 'administrator::processCB'
   msg(1,f,DEBUG, 'enter');
-  readConfig();
+//readConfig();
   let out;
   let outTopic;
   try {

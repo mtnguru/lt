@@ -4,6 +4,7 @@ import {extractFromTags} from '../../utils/influxr'
 import ('./MqttItem.scss')
 
 const MqttItem = (props) => {
+  const f = 'MqttItem';
   const [payloadOut, setPayloadOut] = useState('')
 
   // Format the payload - Raw, JSON, Pretty
@@ -23,8 +24,14 @@ const MqttItem = (props) => {
         payloadStr = 'Request Status Report'
       } else {
         if (props.item.payload[0] === '{') {    // if this payload is JSON
-          const payload = JSON.parse(props.item.payload);
-          payloadStr = JSON.stringify(payload, null, 3)
+          var payload = {};
+          console.log("dude: " + props.item.payload)
+          try {
+            payload = JSON.parse(props.item.payload);
+            payloadStr = JSON.stringify(payload, null, 3)
+          } catch(err) {
+            console.log(f, 'ERROR parsing JSON payload: ' + err)
+          }
           if (props.pretty === "pretty") {
             if (payload.content) {
               payloadStr = `${payload.function} - ${payload.content}`

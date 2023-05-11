@@ -1,0 +1,421 @@
+
+
+Disconnected, attempt reconnect
+
+mqtt not connected - 1
+
+mqtt not connected - 2
+
+mqtt not connected - 3
+
+mqtt not connected - 4
+
+mqtt not connected - 5
+
+mqtt not connected - 6
+
+mqtt not connected - 7
+
+mqtt not connected - 8
+
+mqtt not connected - 9
+
+mqtt not connected - 10
+
+mqtt not connected - 11
+
+mqtt not connected - 12
+
+mqtt not connected - 13
+
+mqtt not connected - 14
+
+mqtt not connected - 15
+
+mqtt not connected - 16
+
+mqtt not connected - 17
+
+mqtt not connected - 18
+
+mqtt not connected - 19
+
+mqtt not connected - 20
+
+mqtt not connected - 21
+
+mqtt not connected - 22
+
+mqtt not connected - 23
+
+mqtt not connected - 24
+
+mqtt not connected - 25
+
+mqtt not connected - 26
+
+mqtt not connected - 27
+
+mqtt not connected - 28
+
+mqtt not connected - 29
+
+mqtt not connected - 30
+
+mqtt not connected - 31
+
+mqtt not connected - 32
+
+mqtt not connected - 33
+
+mqtt not connected - 34
+
+mqtt not connected - 35
+
+mqtt not connected - 36
+
+mqtt not connected - 37
+
+mqtt not connected - 38
+
+mqtt not connected - 39
+
+mqtt not connected - 40
+
+mqtt not connected - 41
+
+mqtt not connected - 42
+
+mqtt not connected - 43
+
+mqtt not connected - 44
+
+mqtt not connected - 45
+
+mqtt not connected - 46
+
+mqtt not connected - 47
+
+mqtt not connected - 48
+
+mqtt not connected - 49
+
+mqtt not connected - 50
+
+mqtt not connected - 51
+
+mqtt not connected - 52
+
+mqtt not connected - 53
+
+mqtt not connected - 54
+
+mqtt not connected - 55
+
+mqtt not connected - 56
+
+mqtt not connected - 57
+
+mqtt not connected - 58
+
+mqtt not connected - 59
+
+mqtt not connected - 60
+
+mqtt not connected - 61
+
+mqtt not connected - 62
+
+mqtt not connected - 63
+
+mqtt not connected - 64
+
+mqtt not connected - 65
+
+mqtt not connected - 66
+
+mqtt not connected - 67
+
+mqtt not connected - 68
+
+mqtt not connected - 69
+
+mqtt not connected - 70
+
+mqtt not connected - 71
+
+mqtt not connected - 72
+
+mqtt not connected - 73
+
+mqtt not connected - 74
+
+mqtt not connected - 75
+
+mqtt not connected - 76
+
+mqtt not connected - 77
+
+mqtt not connected - 78
+
+mqtt not connected - 79
+
+mqtt not connected - 80
+
+mqtt not connected - 81
+
+mqtt not connected - 82
+
+mqtt not connected - 83
+
+mqtt not connected - 84
+
+mqtt not connected - 85
+
+mqtt not connected - 86
+
+mqtt not connected - 87
+
+mqtt not connected - 88
+
+mqtt not connected - 89
+
+mqtt not connected - 90
+
+mqtt not connected - 91
+
+mqtt not connected - 92
+
+mqtt not connected - 93
+
+mqtt not connected - 94
+
+mqtt not connected - 95
+
+mqtt not connected - 96
+
+mqtt not connected - 97
+
+mqtt not connected - 98
+
+mqtt not connected - 99
+
+mqtt not connected - 100
+
+Number of calls to mqttConnected() - 100
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconnect - Subscribe to  - lab1/admin/config/172.16.45.56
+
+  Debug - reqConfig - enter
+
+  Debug - reqConfig - exit
+
+  Debug - mqttReconnect - Attempting MQTT connection...
+
+  Debug - mqttReconnect - connected
+
+  Debug - mqttReconn

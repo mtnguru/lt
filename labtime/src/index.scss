@@ -17,6 +17,7 @@ body {
 #root {
   background: $bg-color;
   color: $fg-color;
+  overflow: hidden;
 }
 
 code {

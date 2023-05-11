@@ -61,8 +61,8 @@ const MqttPanel = (props) => {
     })
 
     setList((prevList) => {
-      if (prevList.length > 2000) {
-        prevList = prevList.slice(1,1500)
+      if (prevList.length > 4000) {
+        prevList = prevList.slice(1,3500)
         setFilteredList (() => {
           return prevList.filter(validMsg);
         })

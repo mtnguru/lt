@@ -1,0 +1,6 @@
+Sampling     Green/Red         Stop sign - 
+Running      Green/Yellow/Red  CheckCircleIcon
+
+Reset        Reset             RepeatIcon
+Status       Status
+DebugLevel   Numeric select    Bug

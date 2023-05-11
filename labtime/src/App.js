@@ -1,13 +1,13 @@
 import React, {useState} from 'react'
 import { Route, Routes } from 'react-router-dom'
 
-import DemoPage from    './pages/DemoPage'
+// import DemoPage from    './pages/DemoPage'
 import ExptPage from    './pages/ExptPage'
 import MqttPage from    './pages/MqttPage'
-import DoePage from     './pages/DoePage'
+// import DoePage from     './pages/DoePage'
 import AdminPage from   './pages/AdminPage'
-import PlayPage from    './pages/PlayPage'
-import GrafanaPage from './pages/GrafanaPage'
+// import PlayPage from    './pages/PlayPage'
+// import GrafanaPage from './pages/GrafanaPage'
 
 import Welcome from './components/popup/Welcome'
 

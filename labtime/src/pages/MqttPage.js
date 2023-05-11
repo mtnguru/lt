@@ -1,4 +1,6 @@
-import MqttPanel from '../panels/MqttPanel/MqttPanel.js';
+import MqttPanel from '../panels/MqttPanel/MqttPanel.js'
+
+import "./MqttPage.scss"
 
 function MqttPage() {
   return (

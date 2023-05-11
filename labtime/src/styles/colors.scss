@@ -15,6 +15,9 @@ $input-bg-color: #001b54;
 $button-fg-color: #ffffff;
 $button-bg-color: #5500cc;
 $button-bd-color: #593cb3;
+$button-green-color: #007722;
+$button-red-color: #bb2200;
+$button-grey-color: #444444;
 
 $table-head-bg-color: #125;
 $table-bd-color: #345;
@@ -32,7 +35,7 @@ $stat-fg-color: #ccff33;
   .Code,     .cod    { background-color: #000; }
   .Human,    .hum    { background-color: #830; }
   .Command,  .cmd    { background-color: #333; }
-  .Response, .rsp    { background-color: #105; }
+  .Response, .rsp    { background-color: #215; }
   .Message,  .msg    { background-color: #033; }
 }
 

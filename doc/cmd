@@ -1,0 +1,24 @@
+
+Handling commands
+
+Problem
+  hmi sends out commands to clients
+  Other hmi clients need to acknowledge the command
+
+Solution
+  Add sampling to the administrator.yml file - this is only for the initial state.
+  Clients can reboot at anytime, need to recover to the same state
+  
+  administrator application needs to keep this state information and send it to clients
+     global.aab.clients.clientId.debugLevel
+     global.aab.clients.clientId.sampling
+  when the administrator restarts, it needs to recover this state information
+     send out requestStatus to all clients
+     always update the requestStatus results to update the administrator records
+     use that to update the administrator.
+
+  HMI application needs to set enable status button accordingly
+    on start up use the state coming from the administrator
+    when running use the rsp message to update the buttons
+    useState isn't adequate - maintain the state in the global.aaa.clients 
+    state updates the page - maybe it does need to be used - yeah it does

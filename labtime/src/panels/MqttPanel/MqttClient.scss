@@ -2,40 +2,44 @@
 @import "../../styles/colors";
 
 .clients {
-  /*
-  .control-button {
-    float: none;
-    margin: 0 1px;
-    padding: 0;
-
-    &.reset {
-      display: inline-block;
-      margin-left: 51px;
-    }
-    &.status {
-      display: inline-block;
-    }
-    button {
-      padding: 0 2px;
-      font-size: 75%;
-      background: #446;
-    }
-  }
-  */
-
-  .select {
-    display: inline-block;
-    select {
-      font-size: 76%;
-      color: $fg-color;
-      background: $button-bg-color;
-      padding: 2px;
-      border-radius: 3px;
-    }
-  }
 
   .row2 {
     @include clearfix;
-  }
+    padding-left: 18px;
 
+    .chakra-button {
+      color: $fg-color;
+      border-radius: 30%;
+      background-color: $button-grey-color;
+      border-width: 1px;
+      padding: 2px 4px;
+      margin: 0px 2px;
+      font-size: 75%;
+    }
+    .sampling {
+      &.true {
+        background-color: $button-green-color;
+      }
+      &.false {
+        background-color: $button-red-color;
+      }
+    }
+    .chakra-select__wrapper {
+      display: inline;
+      width: 50px;
+      .chakra-select__icon-wrapper {
+        display: none;
+      }
+    }
+    .chakra-select {
+      display: inline;
+      font-size: 70%;
+      color: $fg-color;
+      background: $button-grey-color;
+      padding: 2px 1px;
+      border-radius: 20%;
+      margin-left: 3px;
+    }
+
+  }
 }

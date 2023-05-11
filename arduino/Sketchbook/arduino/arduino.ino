@@ -6,14 +6,14 @@
        - subscribe to output messages and set channel output accordingly
 */
 
-const char *program = "arduino.js";
+const char *programId = "arduino.js";
 int debugLevel = 0;
 unsigned long startTime = 0;
 boolean sampling = true;
 
 ///////////// JSON
 #include "ArduinoJson.h"
-const int jsonDocSize = 5000;
+const int jsonDocSize = 4000;
 
 const int tagSize = 200;
 const int topicSize = 40;
@@ -23,10 +23,11 @@ const int clientIdSize = 16;
 const int ipSize = 20;
 const int valueSize = 20;
 const int msgSize = 300;
-const int payloadSize = 2500;
+const int payloadSize = 2000;
 
 char msg[msgSize];
 char logMsg[msgSize];
+char topic[topicSize];
 char payload[payloadSize];
 
 char projectId[projectIdSize];
@@ -43,7 +44,7 @@ const int mqttPort = 1883;
 boolean connected = false;
 boolean res = true;   // Error results
 boolean haveConfig = false;
-enum msgTypeE        { MN,   ME,   MW,   MD};
+enum msgTypeE        { MN,   ME,   MW,   MD };
 boolean msgFlags[] = {true, true, true, true, true, true, true};
 
 enum outputTypeE {OUT_LED, OUT_DIGITAL, OUT_LCD};
@@ -58,6 +59,7 @@ struct outputS {
 enum inputTypeE {IN_MAX6675, IN_BUTTON};
 struct inputS {
   char metricId[metricIdSize];
+  char name[metricIdSize];
   inputTypeE type;
   char topic[topicSize];
   char tags[tagSize];
@@ -74,8 +76,12 @@ int outputN = 0;
 ///////////// WiFi
 #include <ESP8266WiFi.h>
 WiFiClient wifiClient;
+//const char* wifiSsid = "Nacho";
+//const char* wifiPassword = "Nemoy1701";
 const char* wifiSsid = "NachoWiFi";
 const char* wifiPassword = "Nemoy1701";
+//const char* wifiSsid = "Solvay";
+//const char* wifiPassword = "taichi23";
 String wifiIP;
 
 ///////////// MQTT client
@@ -153,49 +159,47 @@ void logit(int _debugLevel,
   if (_debugLevel > debugLevel ) return;
 
   char typeName[20];
-//char *topic;
+  char *topic;
   switch (msgType) {
     case ME:
       strcpy(typeName,"Error");
-//    topic = mqttCodePub;
+      topic = mqttCodePub;
       break;
     case MD:
       strcpy(typeName,"Debug");
-//    topic = mqttCodePub;
+      topic = mqttCodePub;
       break;
     case MW:
       strcpy(typeName,"Warning");
-//    topic = mqttCodePub;
+      topic = mqttCodePub;
       break;
     case MN:
       strcpy(typeName,"Notify");
-//    topic = mqttMsgPub;
+      topic = mqttMsgPub;
       break;
     default:
       strcpy(typeName,"Unknown");
-//    topic = mqttCodePub;
+      topic = mqttCodePub;
       break;
   }
 
   if (content[0] == '{') {
     snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": %s}", typeName, func, content);
+    Serial.println((String)"JSON msg: " + logMsg);
   } else {
     if (more != NULL) {
       snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": \"%s - %s\"}", typeName, func, content, more);
     } else {
       snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": \"%s\"}", typeName, func, content);
     }
+    Serial.println((String)"Text msg: " + logMsg);
   }
-  Serial.println(logMsg);
-//delay(10);
 
-  /* -- this crashes when I publish - am I publishing too quickly?
-  Serial.println((String)"logit check connected " + connected);
-  if (mqttClient.connected()) {
-    Serial.println((String)"logit connected " + connected);
-    Serial.println((String)"call publish " + topic);
-//  mqttClient.publish(topic, msg);
-  */
+  if (haveConfig && mqttClient.connected()) {
+    delay(10);
+    Serial.println((String)"logit connected: " + logMsg);
+    mqttClient.publish(topic, logMsg);
+  }
 }
 
 /**
@@ -279,7 +283,7 @@ struct outputS *findMetric(const char *metricId) {
   lowerCase(name);
   for (int m = 0; m < outputN; m++) {
     if (strcmp(outputA[m].metricId,name) == 0){
-      logit(1,MD,f,"Metric found",metricId);
+      logit(2,MD,f,"Metric found",metricId);
       return &outputA[m];
     }
   }
@@ -297,7 +301,7 @@ void getInfluxMetric(const char *payload, char *metric) {
   int e = strcspn(&payload[b+1], " ,");
   strncpy(metric,&payload[b+1],e);
   metric[e] = '\0';
-  logit(1,MD,"getInfluxMetric","Found: ", metric);
+  logit(2,MD,"getInfluxMetric","Found: ", metric);
   return;
 }
 
@@ -309,18 +313,18 @@ void getInfluxValue(const char *payload, char *value) {
   int a = strcspn (payload, " ");
   int b = strcspn (&payload[a+1], "=");
   strcpy(value,&payload[a+b+2]);
-  logit(1,MD,"getInfluxValue","Found: ", value);
+  logit(2,MD,"getInfluxValue","Found: ", value);
   return;
 }
 
 void processOutput (char *paystr) {
   const char *f = "processOutput";
-  logit(1,MD,f,"incoming control request - output",NULL);
+  logit(2,MD,f,"incoming control request - output",NULL);
   // influx line protocol, 2nd field is required to be metric
   char metricId[metricIdSize];
   char tmp[80];
   strcpy(tmp,paystr);
-  logit(1,MD, f,"get influx metric ",tmp);
+  logit(2,MD, f,"get influx metric ",tmp);
   getInfluxMetric(tmp, metricId);
   outputS *output = findMetric(metricId);
 
@@ -342,10 +346,10 @@ void processOutput (char *paystr) {
       break;
     case OUT_DIGITAL:
       if (value[0] == '1') {
-        logit(1,MD,f,"   digital channel - set true",NULL);
+        logit(2,MD,f,"digital channel - set true",NULL);
         digitalWrite(channel,HIGH);
       } else if (value[0] == '0') {
-        logit(1,MD,f,"   digital channel - set false",NULL);
+        logit(2,MD,f,"digital channel - set false",NULL);
         digitalWrite(channel,LOW);
       } else {
         logit(0,MW,f,"Unknown digital value ",value);
@@ -375,17 +379,17 @@ void getStatus() {
     "{\"clientId\":\"%s\", \"sampling\":\"%s\", \"debugLevel\":\"%d\",\"uptime seconds\":\"%ld\",\"uptime hours\":\"%ld\"}",
     clientId, samplingStatus, debugLevel, seconds, hours );
 
-  logit(1,MD, f, mqttAdminRspPub, payload);
+  logit(2,MD, f, payload, NULL);
   mqttClient.publish(mqttAdminRspPub, payload);
 }
 
 void setConfig(char *topic,
                StaticJsonDocument<jsonDocSize> jsonDoc) {
   const char *f = "setConfig";
-  logit(1,MD, f, "enter", topic);
+  logit(2,MD, f, "enter", topic);
   freeMemory();
 
-  logit(0,MN, f, "Date ", jsonDoc["date"]);
+  logit(1,MN, f, "Date ", jsonDoc["date"]);
   strcpy(clientId, jsonDoc["clientId"]);
   sampleInterval = jsonDoc["sampleInterval"];
   lastSample = sampleInterval;
@@ -406,29 +410,31 @@ void setConfig(char *topic,
 
   // Loop through metrics, initialize inputA[]
   inputN = 0;
-  logit(1,MD,f,"Process input metrics ",NULL);
+  logit(2,MD,f,"Process input metrics ",NULL);
   JsonObject rootMetric = jsonDoc["inputs"].as<JsonObject>();
-  logit(2,MD,f,"Input for loop ",NULL);
+  logit(3,MD,f,"Input for loop ",NULL);
   for (JsonPair metric : rootMetric) {
     const char *metricId = metric.key().c_str();
-    logit(1,MD,f,"  Input ",metricId);
+    logit(2,MD,f,"Input ",metricId);
     const char *type = metric.value()["input"]["type"];
     if (strcmp(type,"Button") == 0) {
       inputA[inputN].type  = IN_BUTTON;
     } else if (strcmp(type,"MAX6675") == 0) {
-      logit(1,MD,f,"  Set type as MAX6675 ",NULL);
-      inputA[inputN].type     = IN_MAX6675;
+      logit(2,MD,f,"Set type as MAX6675 ",NULL);
+      inputA[inputN].type  = IN_MAX6675;
     } else {
-      logit(1,MD, f, "Cannot find input type: ", type);
+      logit(0,MW, f, "Cannot find input type: ", type);
     }
-    logit(2,MD,f,"   Input added ", metricId);
+    logit(2,MD,f,"Input added ", metricId);
     strcpy(inputA[inputN].tags,      metric.value()["input"]["tags"]);
     strcpy(inputA[inputN].channels,  metric.value()["input"]["channels"]);
+    strcpy(inputA[inputN].metricId,  metric.value()["metricId"]);
+    strcpy(inputA[inputN].name,      metric.value()["name"]);
     inputN++;
   }
 
 /*
-    logit(1,MD,f,"  do Output ",NULL);
+    logit(1,MD,f,"do Output ",NULL);
     JsonObject outputObject = jsonDoc["metrics"][metricId]["output"];
     if (outputObject) {
       outputA[metricsN].output.have = true;
@@ -448,38 +454,38 @@ void setConfig(char *topic,
       }
 
       strcpy(outputA[metricsN].output.channel, outputObject["channel"]);
-      logit(1,MD,f,"     channel ",  outputA[metricsN].output.channel);
+      logit(1,MD,f,"channel ",  outputA[metricsN].output.channel);
     } else {
       metricsA[metricsN].output.have = false;
     }
   }
   */
   haveConfig = true;
-  logit(2,MD, f, "exit", NULL);
+  logit(3,MD, f, "exit", NULL);
 }
 
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
   const char *f = "mqttCallback";
   StaticJsonDocument<jsonDocSize> jsonDoc;
-  logit(2,MD, f, "enter", topic);
+  logit(3,MD, f, "enter", topic);
   freeMemory();
 
   char paystr[2000];
   char len[20];
   strncpy(paystr, (char *)payload, length);
   itoa(length, len, 10);
-  logit(1,MN,f,"  payload length", len);
+  logit(0,MD,f,"payload length", len);
   paystr[length] = '\0';
 
 //snprintf (msg, msgSize, "  ---- Incoming - %s - %d - %s", topic, length, paystr);
-  logit(1,MN,f,paystr, NULL);
+  logit(2,MN,f,paystr, NULL);
 
   DeserializationError err = deserializeJson(jsonDoc, paystr);
   if (err) {
     snprintf (msg, msgSize, "ERROR: deserializationJson - %s", err.c_str());
     logit(0,ME, f, msg, NULL);
   }
-  logit(2,MD, f, "deserialized ",NULL);
+  logit(3,MD, f, "deserialized ",NULL);
 
   char cmd[20];
   strcpy(cmd,jsonDoc["cmd"]);
@@ -491,31 +497,32 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
     setConfig(topic, jsonDoc);
     freeMemory();
   } else if (!strcmp(cmd, "requestReset")) {
-    logit(1,MN,f,"   reset the arduino", NULL);
+    logit(0,MN,f,"Resetting arduino", NULL);
+    delay(500);
     resetFunc();
   } else if (!strcmp(cmd, "requestStatus")) {  // Ask arduino for its status
-    logit(1,MN,f,"   get status", NULL);
+    logit(1,MN,f,"Get status", NULL);
     getStatus();
   } else if (!strcmp(cmd, "setDebugLevel")) {          // Set debugLevel
     debugLevel = atoi(jsonDoc["debugLevel"]);
-    logit(1,MN,f,"   set debug level", jsonDoc["debugLevel"]);
+    logit(0,MN,f,"Set debug level", jsonDoc["debugLevel"]);
   } else if (!strcmp(cmd, "startSampling")) {          // Ask arduino to start sampling
     if (sampling) {
-      logit(1,MN,f,"   already sampling", NULL);
+      logit(0,MN,f,"Already sampling", NULL);
     } else {
       sampling = true;
-      logit(1,MN,f,"   start sampling", jsonDoc["debugLevel"]);
+      logit(0,MN,f,"Start sampling", jsonDoc["debugLevel"]);
     }
   } else if (!strcmp(cmd, "stopSampling")) {           // Ask arduino to stop sampling
     if (!sampling) {
-      logit(1,MN,f,"   already stopped sampling", NULL);
+      logit(0,MN,f,"Already stopped sampling", NULL);
     } else {
       sampling = false;
-      logit(1,MN,f,"   stopSampling", jsonDoc["debugLevel"]);
+      logit(0,MN,f,"Stop sampling", jsonDoc["debugLevel"]);
     }
   } else if (!strcmp(cmd, "setSampleInterval")) {      // Set sample interval
     sampleInterval = atoi(jsonDoc["sampleInterval"]);
-    logit(1,MN,f,"   setSampleInterval", jsonDoc["sampleInterval"]);
+    logit(0,MN,f,"Set sampling interval", jsonDoc["sampleInterval"]);
   }
   freeMemory();
 }
@@ -526,102 +533,55 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
  */
 void requestConfig() {
   const char *f = "requestConfig";
-  logit(2,MD, f, "enter", NULL);
+  logit(3,MD, f, "enter", NULL);
 
   snprintf(payload,payloadSize,"{\"cmd\":\"requestConfig\",\"ip\":\"%s\"}", ip );
   mqttClient.publish(mqttAdminCmdPub, payload);
   if (!res) {
     logit(0,ME,f,"Error publishing request in requestConfig", NULL);
   }
-  logit(2,MD, f, "exit", NULL);
+  logit(3,MD, f, "exit", NULL);
 }
 
 void unsubscribeCallback() {
   const char *f = "unsubscribeCallback";
-  logit(1,MD, f, "howdy", NULL);
+  logit(3,MD, f, "howdy", NULL);
 }
 
 void mqttConnect() {
   const char *f = "mqttConnect";
-  mqttClient.setKeepAlive(90);
+  logit(0,MN,f,"enter",NULL);
+  mqttClient.setKeepAlive(300);
+  delay(500);
   if (mqttClient.connect(mqttClientId.c_str(), mqttUser, mqttPassword)) {
     connected = true;
-    logit(1,MD, f, "connected", NULL);
+    logit(2,MD, f, "connected", NULL);
     mqttClient.setBufferSize(2000);
 
-    logit(1,MD,f,"Subscribe to admin messages ", NULL);
-    snprintf(mqttAdminAllSub, msgSize, "a/cmd/all");                        // all administrator commands
-      res = mqttClient.subscribe(mqttAdminAllSub);
-    snprintf(mqttAdminIpSub, msgSize, "a/cmd/%s", ip);     // CLIENTID administrator commands
-      res = mqttClient.subscribe(mqttAdminIpSub);
-    snprintf(mqttAdminResponseSub, msgSize, "a/rsp/%s", ip);     // CLIENTID administrator responses
-      res = mqttClient.subscribe(mqttAdminResponseSub);
-
-    if (!res) {
-      logit(0,ME, f,"Error subscribing", NULL);
-    }
-    requestConfig();
-    delay(500);
   } else {
-    if (WiFi.status() != WL_CONNECTED) {
-      logit(0,ME,f,"WiFi not connected - reset the arduino",NULL);
-      delay(500);
-    }
-    logit(0,ME,f,"mqttClient.connect failed - reset the arduino",NULL);
+    int st = mqttClient.state();
+    char ststr[20];
+    itoa(st,ststr,10);
+
+    logit(0,ME,f,"mqttClient.connect failed - reset the arduino - ",ststr);
     resetFunc();
   }
-  logit(2,MD,f,"exit",NULL);
+  logit(0,MN,f,"Mqtt connected",NULL);
 }
-
-/*
-void mqttReconnect() {
-  char *f = "mqttReconnect";
-//logit(2,MD, f, "enter", NULL);
-//freeMemory();
-  int attempts = 0;
-
-  Serial.println((String)"Number of attempts to connect - " + attempts);
-  if (!connected) {
-   while (!mqttClient.connected()) {
-  if (attempts == 100) {
-    while (!mqttClient.connected()) {
-      logit(1,MD, f, "Attempting MQTT connection...", NULL);
-  }
-  logit(1,MD, f, "exit", NULL);
-}
-*/
-
-/*
-float calcAvg(int m, float value) {
-  char *f = "calcAvg";
-  float sum = value;
-  int nVals = 1;
-  for (int n = avgN - 1; n > -1; n--) {
-    if (temps[m][n] != MV) {
-      sum += temps[m][n];
-      nVals++;
-      temps[m][n+1] = temps[m][n];
-    }
-  }
-  temps[m][0] = value;
-
-  return sum / nVals;
-}
-*/
 
 void sampleInputs() {
   // Loop through the inputs, read value, and post to MQTT
   const char *f = "sampleInputs";
-  logit(3,MD,f,"    sampleInputs enter ", NULL);
+  logit(3,MD,f,"sampleInputs enter ", NULL);
   for (int m = 0; m < inputN; m++) {
     inputS *input = &inputA[m];
-    logit(2,MD,f,"    sample ", input->metricId);
+    logit(2,MD,f,"sample ", input->metricId);
     float value = MV;
     switch (input->type) {
       case IN_BUTTON:
         break;
       case IN_MAX6675:
-        logit(2,MD,f,"    temp ", input->metricId);
+        logit(1,MD,f,"temp ", input->name);
 //      value = calcAvg(m, tc.readFahrenheit());
         value = tc.readFahrenheit();
         snprintf(payload, payloadSize, "%s value=%g", input->tags, value);
@@ -645,7 +605,7 @@ void setup() {
   Serial.begin(115200);
   wifiInit();
 
-  logit(1,MD,f,"Assign mqttAdmin*Pub paths",mqttAdminCmdPub);
+  logit(2,MD,f,"Assign mqttAdmin*Pub paths",mqttAdminCmdPub);
   strcpy(mqttAdminCmdPub, "a/cmd/administrator");
   strcpy(mqttAdminRspPub, "a/rsp/administrator");
 
@@ -657,29 +617,51 @@ void setup() {
   mqttClient.setServer(mqttIp, mqttPort);
   mqttClient.setCallback(mqttCallback);
 
-  /*
-  // Initialize array for calculating running average
-  for (int m = 0; m < inputMax; m++) {
-    for (int n = 0; n < avgN; n++) {
-      temps[m][n] = MV;
-    }
-  }
-  */
   mqttConnect();
+
+  logit(2,MD,f,"Subscribe to admin messages ", NULL);
+  snprintf(mqttAdminAllSub, msgSize, "a/cmd/all");             // all administrator commands
+  res = mqttClient.subscribe(mqttAdminAllSub);
+//snprintf(mqttAdminIpSub, msgSize, "a/cmd/%s", ip);           // CLIENTID administrator commands
+//res = mqttClient.subscribe(mqttAdminIpSub);
+  snprintf(mqttAdminResponseSub, msgSize, "a/rsp/%s", ip);     // CLIENTID administrator responses
+  res = mqttClient.subscribe(mqttAdminResponseSub);
+
+  requestConfig();
+  delay(500);
 }
 
 void loop() {
   const char *f = "loop";
-//logit(1,MD,f,"Start loop",NULL);
-  if (!mqttClient.connected()) {
-    connected = false;
-    logit(0,ME,f,"\nmqttClient.connected returned false - reset the arduino",NULL);
+//logit(3,MD,f,"Start loop",NULL);
+
+  int tries = 0;
+  if (WiFi.status() != WL_CONNECTED) {
+    logit(0,ME,f,"WiFi not connected - reset the arduino",NULL);
+    delay(500);
     resetFunc();
   }
+  while (!mqttClient.connected()) {
+    connected = false;
+//  delay(100);
+//  mqttClient.disconnect();
+    delay(250);
+    mqttConnect();
+//  char intstr[10];
+//  int st = mqttClient.state();
+//  logit(0,ME,f,"\nmqttClient.connected returned false ",itoa(st, intstr, 10));
+    tries++;
+    if (tries == 10) {
+      logit(0,ME,f,"\nmqttClient.connected returned false 10 times - reset the arduino",NULL);
+      delay(500);
+      connected = false;
+      resetFunc();
+    }
+  }
+
   mqttClient.loop();
   if (haveConfig && sampling) {
     unsigned long now = millis();
-
     if (now - lastSample > sampleInterval) {
       logit(3,MD,f,"do Sample start",NULL);
       lastSample = now;
