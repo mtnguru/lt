@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import "./MqttFilterType.scss";
+import "./MqttFilterFunc.scss";
 import CheckboxList from "../../components/ui/CheckboxList";
 
-const lsKey = "cnFilterType"
+const lsKey = "ltFilterFunc"
 
-function MqttFilterType(props) {
+function MqttFilterFunc(props) {
 
   const [allSelected, setAllSelected] = useState(false)
 
@@ -15,27 +15,27 @@ function MqttFilterType(props) {
     let ls;
     if (lsstr) { // if local storage already exists
       ls = JSON.parse(lsstr)
-      for (let type in global.aaa.msgTypes) {  // copy selected values into global records
+      for (let type in global.aaa.funcTypes) {  // copy selected values into global records
         const selected = (ls[type]) ? ls[type].selected : true;
-        global.aaa.msgTypes[type].selected = selected
+        global.aaa.funcTypes[type].selected = selected
       }
     } else {
       ls = {};
-      for (let type in global.aaa.msgTypes) {
+      for (let type in global.aaa.funcTypes) {
         console.log(f,'initialize localStorage ', type)
         if (!ls[type]) ls[type] = {}
         ls[type].selected = true
-        global.aaa.msgTypes[type].selected = true
+        global.aaa.funcTypes[type].selected = true
       }
       localStorage.setItem(lsKey, JSON.stringify(ls))
     }
-    setAllSelected(global.aaa.msgTypes.all.selected)
+    setAllSelected(global.aaa.funcTypes.all.selected)
     console.log(f,'exit', ls)
   }, [])
 
   const onChangeH = event => {
     console.log('MqttFilterFunc::onChangeH',event.target.checked)
-    global.aaa.msgTypes[event.target.id]['selected'] = event.target.checked
+    global.aaa.funcTypes[event.target.id]['selected'] = event.target.checked
 
     if (event.target.id === 'all') {
       setAllSelected(event.target.checked)
@@ -54,10 +54,10 @@ function MqttFilterType(props) {
     <div className="mqtt-filter-type">
       <h3>Msg Type</h3>
       <div className={`select mqtt-type-bg ${allSelected ? "all-selected" : ""}`}>
-        <CheckboxList list={global.aaa.msgTypes} onChangeH={onChangeH} />
+        <CheckboxList list={global.aaa.funcTypes} onChangeH={onChangeH} />
       </div>
     </div>
   );
 }
 
-export default MqttFilterType
+export default MqttFilterFunc

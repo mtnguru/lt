@@ -24,34 +24,34 @@ const setDebugLevel = (level) => {
   global.debugLevel = level;
 }
 
-const msg = (level, func, msgType, ...snippets) => {
+const msg = (level, func, _funcType, ...snippets) => {
   if (level > global.debugLevel) return;
 
 //let payload = {
 //  function: func,
 //  program: global.aaa.program,
-//  msgType: msgE[msgType],
+//  funcType: msgE[_funcType],
 //  content: snippets.join(' '),
 //}
 
-//const topic = mqttNode.makeTopic(msgType,"post")
+//const topic = mqttNode.makeTopic(_funcType,"post")
 //const jpayload = JSON.stringify(payload);
 //if (mqttNode.connected()) {
 //  mqttNode.publish(topic, jpayload);
 //
 
-  let type = msgE[msgType]
-  if (msgType == ERROR) {
-    type = '********** ERROR'
-  } else if (msgType == ALARM) {
-    type = '---------- ALARM'
-  } else if (msgType == WARNING) {
-    type = '!!!!!!!!!! WARNING'
+  let funcType = msgE[_funcType]
+  if (_funcType == ERROR) {
+    funcType = '********** ERROR'
+  } else if (_funcType == ALARM) {
+    funcType = '---------- ALARM'
+  } else if (_funcType == WARNING) {
+    funcType = '!!!!!!!!!! WARNING'
   }
   if (snippets.length > 0) {
-    console.log(type, func, ...snippets)
+    console.log(funcType, func, ...snippets)
   } else {
-    console.log(type, func);
+    console.log(funcType, func);
   }
 }
 

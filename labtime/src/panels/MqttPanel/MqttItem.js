@@ -68,7 +68,7 @@ const MqttItem = (props) => {
 
   return (
     <div className='mqtt-item'>
-      <Card type={props.item.func} className={props.pretty}>
+      <Card funcType={props.item.func} className={props.pretty}>
         <div className='right'>
           <span className='date'>{props.item.date}</span>
           <span className='nitems'>{props.item.nitems.toString()}</span>

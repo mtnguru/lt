@@ -97,9 +97,9 @@ const MqttPanel = (props) => {
         return false;
       }
     }
-    if (global.aaa.msgTypes.all.selected) {
+    if (global.aaa.funcTypes.all.selected) {
     } else {
-      if (global.aaa.msgTypes[func] && !global.aaa.msgTypes[func].selected) {
+      if (global.aaa.funcTypes[func] && !global.aaa.funcTypes[func].selected) {
         return false;
       }
     }
@@ -112,8 +112,8 @@ const MqttPanel = (props) => {
     })
   }
 
-  const onFilterTypeChangeH = event => {
-    console.log('======================== onFilterTypeChangedH',event.target.id)
+  const onFilterFuncChangeH = event => {
+    console.log('======================== onFilterFuncChangedH',event.target.id)
     applyFilters(list)
   }
 
@@ -129,7 +129,7 @@ const MqttPanel = (props) => {
       <div className="content">
         <div className='filters'>
           <MqttFilterClient onChangeH={onFilterClientChangeH} />
-          <MqttFilterFunc onChangeH={onFilterTypeChangeH} />
+          <MqttFilterFunc onChangeH={onFilterFuncChangeH} />
         </div>
         <div className="mqtt-display">
           <MqttDisplayActions actions={{onClearList, onPretty}} pretty={pretty}></MqttDisplayActions>

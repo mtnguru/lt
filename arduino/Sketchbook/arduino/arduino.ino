@@ -50,7 +50,7 @@ boolean msgFlags[] = {true, true, true, true, true, true, true};
 enum outputTypeE {OUT_LED, OUT_DIGITAL, OUT_LCD};
 struct outputS {
   char metricId[metricIdSize];
-  outputTypeE type;
+  outputTypeE channelType;
   char channel[12];
   char tags[tagSize];
   char value[valueSize];
@@ -60,7 +60,7 @@ enum inputTypeE {IN_MAX6675, IN_BUTTON};
 struct inputS {
   char metricId[metricIdSize];
   char name[metricIdSize];
-  inputTypeE type;
+  inputTypeE channelType;
   char topic[topicSize];
   char tags[tagSize];
   char channels[12];
@@ -338,10 +338,10 @@ void processOutput (char *paystr) {
   char value[valueSize];
   strcpy(tmp,paystr);
   getInfluxValue(tmp,value);
-  Serial.println((String)"Got Value " + value + " " + output->type);
-//snprintf(msg, msgSize, "output value %s  type %d", value, output->type);
+  Serial.println((String)"Got Value " + value + " " + output->channelType);
+//snprintf(msg, msgSize, "output value %s  channelType %d", value, output->channelType);
 //logit(1,MD,f,msg,NULL);
-  switch (output->type) {
+  switch (output->channelType) {
     case OUT_LED:
       break;
     case OUT_DIGITAL:
@@ -416,14 +416,14 @@ void setConfig(char *topic,
   for (JsonPair metric : rootMetric) {
     const char *metricId = metric.key().c_str();
     logit(2,MD,f,"Input ",metricId);
-    const char *type = metric.value()["input"]["type"];
-    if (strcmp(type,"Button") == 0) {
-      inputA[inputN].type  = IN_BUTTON;
-    } else if (strcmp(type,"MAX6675") == 0) {
-      logit(2,MD,f,"Set type as MAX6675 ",NULL);
-      inputA[inputN].type  = IN_MAX6675;
+    const char *channelType = metric.value()["input"]["channelType"];
+    if (strcmp(channelType,"Button") == 0) {
+      inputA[inputN].channelType  = IN_BUTTON;
+    } else if (strcmp(channelType,"MAX6675") == 0) {
+      logit(2,MD,f,"Set channelType as MAX6675 ",NULL);
+      inputA[inputN].channelType  = IN_MAX6675;
     } else {
-      logit(0,MW, f, "Cannot find input type: ", type);
+      logit(0,MW, f, "Cannot find input channelType: ", channelType);
     }
     logit(2,MD,f,"Input added ", metricId);
     strcpy(inputA[inputN].tags,      metric.value()["input"]["tags"]);
@@ -439,18 +439,18 @@ void setConfig(char *topic,
     if (outputObject) {
       outputA[metricsN].output.have = true;
       // Copy device properties from json to internal array
-      const char *type = outputObject["type"];
+      const char *channelType = outputObject["channelType"];
       const char *channel = outputObject["channel"];
       pinMode(atoi(channel), OUTPUT);
       pinMode(LED_BUILTIN, OUTPUT);
-      if (strcmp(type,"OUT_LED") == 0) {
-        outputA[metricsN].output.type  = OUT_LED;
-      } else if (strcmp(type,"LCD") == 0) {
-        outputA[metricsN].output.type  = OUT_LCD;
-      } else if (strcmp(type,"digital") == 0) {
-        outputA[metricsN].output.type  = OUT_DIGITAL;
+      if (strcmp(channelType,"OUT_LED") == 0) {
+        outputA[metricsN].output.channelType  = OUT_LED;
+      } else if (strcmp(channelType,"LCD") == 0) {
+        outputA[metricsN].output.channelType  = OUT_LCD;
+      } else if (strcmp(channelType,"digital") == 0) {
+        outputA[metricsN].output.channelType  = OUT_DIGITAL;
       } else {
-        logit(1,MD, f, "Cannot find outout type:", type);
+        logit(1,MD, f, "Cannot find outout channelType:", channelType);
       }
 
       strcpy(outputA[metricsN].output.channel, outputObject["channel"]);
@@ -577,7 +577,7 @@ void sampleInputs() {
     inputS *input = &inputA[m];
     logit(2,MD,f,"sample ", input->metricId);
     float value = MV;
-    switch (input->type) {
+    switch (input->channelType) {
       case IN_BUTTON:
         break;
       case IN_MAX6675:

@@ -29,7 +29,7 @@
     "server": "Server",
     "controller": "Controller"
   },
-  "filterMsgTypes": {
+  "filterFuncTypes": {
     "chat": "Chat",
     "labbook": "Lab Book",
     "alarms": "Alarms",

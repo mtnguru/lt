@@ -5,7 +5,7 @@ Epiclc_PID_RTD_C:
   decimals: 2
   input:
     clientId: epiclc
-    type: analog
+    channelType: analog
     module: "2"
     channel: "0"
 Epiclc_Backpanel_LED_Red_On:
@@ -15,7 +15,7 @@ Epiclc_Backpanel_LED_Red_On:
   decimals: 0
   output:
     clientId: epiclc
-    type: digital
+    channelType: digital
     module: "1"
     channel: "7"
 Epiclc_Backpanel_LED_Green_On:
@@ -25,7 +25,7 @@ Epiclc_Backpanel_LED_Green_On:
   decimals: 0
   output:
     clientId: epiclc
-    type: digital
+    channelType: digital
     module: "1"
     channel: "8"
 Epiclc_Backpanel_LED_Blue_On:
@@ -35,7 +35,7 @@ Epiclc_Backpanel_LED_Blue_On:
   decimals: 0
   output:
     clientId: epiclc
-    type: digital
+    channelType: digital
     module: "1"
     channel: "9"
 LivingRoom_Fireplace_K_F:
@@ -48,7 +48,7 @@ LivingRoom_Fireplace_K_F:
     clientId: riolc
     module: "0"
     channel: "0"
-    type: analog
+    channelType: analog
 MasterBedroom_Door_K_F:
   label: Cabin master bedroom
   desc: Cabin master bedroom - K thermocouple
@@ -59,7 +59,7 @@ MasterBedroom_Door_K_F:
     clientId: riolc
     module: "0"
     channel: "1"
-    type: analog
+    channelType: analog
 Outside_Front_K_F:
   label: Cabin Front Outside
   desc: Cabin Front Outside - K thermocouple
@@ -70,7 +70,7 @@ Outside_Front_K_F:
     clientId: riolc
     module: "0"
     channel: "2"
-    type: analog
+    channelType: analog
 Outside_Bunkhouse_K_F:
   label: Bunkhouse Outside
   desc: Bunkhouse outside - K thermocouple
@@ -78,7 +78,7 @@ Outside_Bunkhouse_K_F:
   decimals: 2
   input:
     clientId: arduino2
-    type: MAX6675
+    channelType: MAX6675
     channels: 2,4,5
 MiddleBedroom_Window_K_F:
   label: Grow room
@@ -87,7 +87,7 @@ MiddleBedroom_Window_K_F:
   decimals: 2
   input:
     clientId: arduino3
-    type: MAX6675
+    channelType: MAX6675
     channels: 2,4,5
 Bathroom_Door_K_F:
   label: Bathroom
@@ -96,7 +96,7 @@ Bathroom_Door_K_F:
   decimals: 2
   input:
     clientId: arduino4
-    type: MAX6675
+    channelType: MAX6675
     channels: 4,5,6
 LivingRoom_Desk_K_F:
   label: Living room desk
@@ -105,7 +105,7 @@ LivingRoom_Desk_K_F:
   decimals: 2
   input:
     clientId: arduino5
-    type: MAX6675
+    channelType: MAX6675
     channels: 2,4,5
 Ch_Anode_K_C:
   label: Anode Temperature
@@ -114,7 +114,7 @@ Ch_Anode_K_C:
   decimals: 1
   human:
     clientId: player
-    type: slider
+    channelType: slider
     default: 142
     min: 1200
     max: 1500
@@ -126,7 +126,7 @@ Ch_MFC_Gas_D2_sccm:
   decimals: 0
   human:
     clientId: player
-    type: slider
+    channelType: slider
     default: 150
     min: 100
     max: 200
@@ -139,7 +139,7 @@ Ch_MFC_Gas_N2_sccm:
   decimals: 0
   human:
     clientId: player
-    type: slider
+    channelType: slider
     default: 40
     min: 30
     max: 50
@@ -152,7 +152,7 @@ Ch_TopCenter_K_C:
   decimals: 1
   human:
     clientId: player
-    type: slider
+    channelType: slider
     default: 450
     min: 300
     max: 500
@@ -165,7 +165,7 @@ Ch_Baratron_torr:
   decimals: 0
   human:
     clientId: player
-    type: slider
+    channelType: slider
     default: 150
     min: 100
     max: 150
@@ -178,7 +178,7 @@ PS_DC_V:
   decimals: 0
   human:
     clientId: player
-    type: slider
+    channelType: slider
     default: 1200
     min: 1000
     max: 1500
@@ -191,7 +191,7 @@ arduino2_Onboard_LED_On:
   decimals: 0
   output:
     clientId: arduino2
-    type: digital
+    channelType: digital
     channel: "16"
 arduino3_Onboard_LED_On:
   label: Arduino3 Onboard LED
@@ -200,7 +200,7 @@ arduino3_Onboard_LED_On:
   decimals: 0
   output:
     clientId: arduino3
-    type: digital
+    channelType: digital
     channel: "16"
 arduino4_Onboard_LED_On:
   label: Arduino4 Onboard LED
@@ -209,7 +209,7 @@ arduino4_Onboard_LED_On:
   decimals: 0
   output:
     clientId: arduino4
-    type: digital
+    channelType: digital
     channel: "16"
 arduino5_Onboard_LED_On:
   label: Arduino5 Onboard LED
@@ -218,5 +218,5 @@ arduino5_Onboard_LED_On:
   decimals: 0
   output:
     clientId: arduino5
-    type: digital
+    channelType: digital
     channel: "16"

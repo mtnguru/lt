@@ -21,9 +21,9 @@
       "decimals": 2,
       "input": {
         "clientId": "arduino5",
-        "type": "MAX6675",
+        "channelType": "MAX6675",
         "channels": "2,4,5",
-        "tags": "F,MetricId=Cabin_K_LivingRoomDesk_F,MetricName=I_Cabin_K_LivingRoomDesk_F,Type=I,ProjectId=rf,Component=Cabin,Device=K,Position=LivingRoomDesk"
+        "tags": "F,MetricId=Cabin_K_LivingRoomDesk_F,MetricName=I_Cabin_K_LivingRoomDesk_F,Source=I,ProjectId=rf,Component=Cabin,Device=K,Position=LivingRoomDesk"
       },
       "name": "Cabin_K_LivingRoomDesk_F",
       "metricId": "cabin_k_livingroomdesk_f",
@@ -39,9 +39,9 @@
       "decimals": 0,
       "output": {
         "clientId": "arduino5",
-        "type": "digital",
+        "channelType": "digital",
         "channel": "16",
-        "tags": "On,MetricId=arduino5_LED_Onboard_On,MetricName=O_arduino5_LED_Onboard_On,Type=O,ProjectId=rf,Component=arduino5,Device=LED,Position=Onboard"
+        "tags": "On,MetricId=arduino5_LED_Onboard_On,MetricName=O_arduino5_LED_Onboard_On,Source=O,ProjectId=rf,Component=arduino5,Device=LED,Position=Onboard"
       },
       "name": "arduino5_LED_Onboard_On",
       "metricId": "arduino5_led_onboard_on",

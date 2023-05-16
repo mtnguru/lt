@@ -27,7 +27,6 @@ const agent = new https.Agent({
   rejectUnauthorized: false
 })
 
-//function writeChannel(url, module, channel, type, value) {
 const writeChannel = async (name, output, body) => {
   const f = "groov_api.js::writeChannel"
   msg(f,DEBUG,'enter')
@@ -37,7 +36,7 @@ const writeChannel = async (name, output, body) => {
     route,
     output['module'],
     output['channel'],
-    output['type'])
+    output['channelType'])
   console.log('Url: ', url)
   msg(f,DEBUG,'url: ',url)
 
@@ -49,7 +48,6 @@ const writeChannel = async (name, output, body) => {
   }
 }
 
-//function readChannel(url, module, channel, type) {
 const readChannel = async (name, sensor, cb) => {
   const f = "groov_api.js::readChannel"
   let client = global.aaa
@@ -59,7 +57,7 @@ const readChannel = async (name, sensor, cb) => {
     route,
     sensor['module'],
     sensor['channel'],
-    sensor['type'])
+    sensor['channelType'])
 
   let payload;
   let res;

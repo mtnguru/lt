@@ -2,12 +2,12 @@
 //import {mqttPublish, mqttConnected} from "./mqttReact"
 //import Topics from "./topics"
 
-const mg = (func, msgType, ...snippets) => {
+const mg = (func, _funcType, ...snippets) => {
   /*
   let payload = {
     function: func,
 //  program: global.aaa.program,
-    msgType: msgType,
+    funcType: funcType,
     content: snippets.join(' '),
   }
 
@@ -18,15 +18,15 @@ const mg = (func, msgType, ...snippets) => {
   }
   */
 
-  let type = msgType
-  if (msgType === 'error') {
-    type = '********** ERROR'
-  } else if (msgType === 'alarm') {
-    type = '---------- ALARM'
-  } else if (msgType === 'warning') {
-    type = '!!!!!!!!!! WARNING'
+  let funcType = _funcType
+  if (funcType === 'error') {
+    funcType = '********** ERROR'
+  } else if (funcType === 'alarm') {
+    funcType = '---------- ALARM'
+  } else if (funcType === 'warning') {
+    funcType = '!!!!!!!!!! WARNING'
   }
-  console.log(type, func, ...snippets);
+  console.log(funcType, func, ...snippets);
 }
 
 const mgError   = (f, ...snippets) => { mg(f,'error',snippets) }

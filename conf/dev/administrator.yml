@@ -113,7 +113,7 @@ projects:
             cod: PROJECTID/cod/CLIENTID
             hum: PROJECTID/hum/CLIENTID
         metrics: project
-        msgTypes: {}
+        funcTypes: {}
     topics:
       edge:
         subscribe:

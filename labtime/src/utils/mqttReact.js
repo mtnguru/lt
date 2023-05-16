@@ -164,15 +164,15 @@ const mqttRegisterMetricCB = (_metricId, cb) => {
 const mqttUnregisterMetricCB = (metric, cb) => {
 }
 
-const mqttRequestFile = (clientId, name, filepath, type, cb) => {
+const mqttRequestFile = (clientId, name, filepath, fileType, cb) => {
   const f = "mqttReact::mqttRequestFile"
-  const cmd = (type === 'yml') ? "requestYmlFile" : "requestJsonFile"
+  const cmd = (fileType === 'yml') ? "requestYmlFile" : "requestJsonFile"
   const onLoadCB = (inTopic, inPayload) => {
     var inFile = {}
-    if (type === 'yml') {
+    if (fileType === 'yml') {
       mgDebug(f, "Parse yml file: ", filepath)
       inFile = YAML.safeLoad(inPayload);
-    } else if (type === 'json') {
+    } else if (fileType === 'json') {
       mgDebug(f, "Parse json file: ", filepath)
       inFile = JSON.parse(inPayload)
     }
@@ -204,14 +204,14 @@ const mqttProcessCB = (topic, payload) => {
       }
       const metricId = tags["MetricId"].toLowerCase()
       const metric = findMetric(tags["MetricId"])
-      const type = tags["Type"]
+      const source = tags["Source"]
       if (metric == null) {
         mgError(f, "Could not find Metric: ", metricId)
         return
       }
       console.log(f, 'Metric found ', metricId)
 
-      switch (type) {
+      switch (source) {
         case 'I':
           if (!metric.input) {
             mgWarning(f, 'Metric does not have a input', metric.metricId)
@@ -236,7 +236,7 @@ const mqttProcessCB = (topic, payload) => {
           metric.human.value = values.value
           break;
         default:
-          mgError(f, 'Unknown type ', type)
+          mgError(f, 'Unknown source ', source)
           return;
       }
       if (!metric.cbs) {

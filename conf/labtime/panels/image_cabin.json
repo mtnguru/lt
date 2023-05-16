@@ -4,7 +4,7 @@
   "inputs": {
     "masterbedroom_window_k_f": {
       "update": "input",
-      "type": "ControlValue",
+      "componentType": "ControlValue",
       "convert": "c2f",
       "position": [
         66,
@@ -13,7 +13,7 @@
     },
     "livingroom_fireplace_k_f": {
       "update": "input",
-      "type": "ControlValue",
+      "componentType": "ControlValue",
       "convert": "c2f",
       "position": [
         62,
@@ -22,7 +22,7 @@
     },
     "Outside_front_k_f": {
       "update": "input",
-      "type": "ControlValue",
+      "componentType": "ControlValue",
       "convert": "c2f",
       "position": [
         78,
@@ -31,7 +31,7 @@
     },
     "Outside_bunkhouse_k_f": {
       "update": "input",
-      "type": "ControlValue",
+      "componentType": "ControlValue",
       "position": [
         88,
         56
@@ -39,7 +39,7 @@
     },
     "Livingroom_desk_k_f": {
       "update": "input",
-      "type": "ControlValue",
+      "componentType": "ControlValue",
       "position": [
         50,
         35
@@ -47,7 +47,7 @@
     },
     "MiddleBedroom_window_k_f": {
       "update": "input",
-      "type": "ControlValue",
+      "componentType": "ControlValue",
       "position": [
         20,
         70
@@ -55,7 +55,7 @@
     },
     "Bathroom_door_k_f": {
       "update": "input",
-      "type": "ControlValue",
+      "componentType": "ControlValue",
       "position": [
         35,
         60
