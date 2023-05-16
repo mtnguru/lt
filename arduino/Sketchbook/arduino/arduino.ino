@@ -600,7 +600,7 @@ void setup() {
 
   strcpy(projectId, "unknown");
   randomSeed(micros());
-  mqttClientId = "arduino_" + String(random(0xffff), HEX);
+  mqttClientId = "varduino_" + String(random(0xffff), HEX);
 
   Serial.begin(115200);
   wifiInit();

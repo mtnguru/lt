@@ -9,7 +9,8 @@ const {msg} = require("./utils/msg");
 const influx = require("./utils/influx");
 
 const f = "administrator:main - "
-const stageId = 'dev'
+const stageId = "dev"
+const clientId = "administrator"
 
 global.startTime = Date.now()
 
@@ -73,7 +74,7 @@ const resetServer = () => {
 const processCB = (topic, payloadRaw) => {
   const f = 'administrator::processCB'
   msg(1,f,DEBUG, 'enter');
-//readConfig();
+  readConfig();
   let out;
   let outTopic;
   try {
@@ -90,33 +91,44 @@ const processCB = (topic, payloadRaw) => {
     msg(3,f,DEBUG, 'func', func, ' clientId', clientId);
 
     // If this is an admin message
-    if (global.aaa.topics.subscribe['cmd'] === topic) {
+    if (global.aaa.topics.subscribe['adm'] === topic) {
       if (input.cmd) {
         if (clientId === global.aaa.clientId || clientId === 'all') {  // commands specifically for the server
           if (input.cmd === 'setDebugLevel') {
             global.aaa.debugLevel = input.debugLevel;
           }
           // Request to reset server client
-          if (input.cmd === 'reset') {
+          if (input.cmd === 'requestReset') {
             resetServer();
           }
           // Request for status
           if (input.cmd === 'requestStatus') {
             publishStatus();
           }
-          var dclientId = (input.ip) ? input.ip : input.clientId
           if (input.cmd === 'requestConfig') {
             var dclientId = (input.ip) ? input.ip : input.clientId
             outTopic = global.aaa.topics.publish.rsp
             outTopic = outTopic.replace(/DCLIENTID/, dclientId)
             out = findClient(dclientId)
           }
-          if (input.cmd === 'requestFile') {
-//          outTopic = mqttNode.makeTopic(ADMIN, 'file', clientId)
-            path = `${process.env.ROOT_PATH}/config/${input.path}`
-            msg(2, f, DEBUG, "Read json file: ", path)
-            json = fs.readFileSync(path)
-            out = JSON.parse(json)
+          if (input.cmd === 'requestJsonFile') {
+            msg(2, f, DEBUG, "Read json file: ", filepath)
+            var dclientId = (input.ip) ? input.ip : input.clientId
+            outTopic = global.aaa.topics.publish.rsp
+            outTopic = outTopic.replace(/DCLIENTID/, dclientId)
+
+            const filepath = `${process.env.ROOT_PATH}/${input.filepath}`
+            const data = fs.readFileSync(filepath);
+            out = JSON.parse(data)
+          }
+          if (input.cmd === 'requestYmlFile') {
+            var dclientId = (input.ip) ? input.ip : input.clientId
+            outTopic = global.aaa.topics.publish.rsp
+            outTopic = outTopic.replace(/DCLIENTID/, dclientId)
+
+            const filepath = `${process.env.ROOT_PATH}/${input.filepath}`
+            msg(2, f, DEBUG, "Read yml file: ", filepath)
+            out = YAML.safeLoad(fs.readFileSync(filepath));
           }
         }
       }
@@ -150,8 +162,8 @@ const findProject = (projectId) => {
 
 const initMetrics = (projectId, project) => {
   // Read in the metrics for this project
-  var path = `${process.env.ROOT_PATH}/${stageId}/${projectId}/metrics.yml`
-  project.metrics = YAML.safeLoad(fs.readFileSync(path));
+  var filepath = `${process.env.ROOT_PATH}/${stageId}/${projectId}/metrics.yml`
+  project.metrics = YAML.safeLoad(fs.readFileSync(filepath));
   // for each metric in project
   for (var oMetricId in project.metrics) {
     var metric = project.metrics[oMetricId]
@@ -282,5 +294,5 @@ global.aaa.topics.subscribe = Topics.completeTopics(global.aaa.topics.subscribe)
 global.aaa.topics.publish = Topics.completeTopics(global.aaa.topics.publish);
 
 console.log(f, 'Connect to mqtt server and initiate process callback')
-mqttNode.connect(processCB,'-');
+mqttNode.connect(clientId,processCB,'-');
 console.log(f, 'Exit main thread')

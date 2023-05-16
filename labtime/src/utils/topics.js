@@ -9,21 +9,21 @@ const completeTopic = (topic,args) => {
   for (let f in fields) {
     var field = fields[f];
     if (field[0] <= 'Z') {  // if name is ALL CAPS
-      if (f === 0 && field === 'PROJECTID') {
+      if (f === "0" && field === "PROJECTID") {
         if (args && args["projectId"]) {
           fields[0] = args["projectId"];
         } else {
           fields[0] = (global.aaa.projectId) ? global.aaa.projectId : "PROJECTID"
         }
       }
-      if (f === 2 && field === 'CLIENTID') {
+      if (f === "2" && field === "CLIENTID") {
         if (args && args["clientId"]) {
           fields[2] = args["clientId"];
         } else {
           fields[2] = (global.aaa.clientId) ? global.aaa.clientId : "CLIENTID"
         }
       }
-      if (f === 3 && field === 'USERID') {
+      if (f === "3" && field === "USERID") {
         if (args && args["userId"]) {
           fields[3] = args["userId"];
         } else {

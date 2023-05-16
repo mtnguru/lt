@@ -1,18 +1,22 @@
 
-import {mqttMakeTopic, mqttPublish, mqttConnected} from "./mqttReact"
+//import {mqttPublish, mqttConnected} from "./mqttReact"
+//import Topics from "./topics"
 
 const mg = (func, msgType, ...snippets) => {
+  /*
   let payload = {
     function: func,
 //  program: global.aaa.program,
     msgType: msgType,
     content: snippets.join(' '),
   }
-  const topic = mqttMakeTopic(msgType,"post")
+
+  const topic = global.aaa.topics.publish.msg
   const jpayload = JSON.stringify(payload);
   if (mqttConnected()) {
     mqttPublish(topic, jpayload);
   }
+  */
 
   let type = msgType
   if (msgType === 'error') {

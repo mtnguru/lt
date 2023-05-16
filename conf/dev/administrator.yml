@@ -14,7 +14,7 @@ mqtt:  # Each client must have it's own mqtt config
   websocket: 8081
 topics:
   subscribe:
-    cmd: a/cmd/administrator
+    adm: a/cmd/administrator
   publish:
     rsp: a/rsp/DCLIENTID
     hum: a/rsp/DCLIENTID/DUSERID
@@ -108,7 +108,6 @@ projects:
             alm: PROJECTID/alm/#
             cod: PROJECTID/cod/#
             msg: PROJECTID/msg/#
-            cmd: PROJECTID/cmd/CLIENTID/#
           publish:
             msg: PROJECTID/msg/CLIENTID
             cod: PROJECTID/cod/CLIENTID

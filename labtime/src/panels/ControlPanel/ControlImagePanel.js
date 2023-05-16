@@ -10,34 +10,28 @@ import React, {useState, useEffect} from 'react'
 
 import ControlValue from './ControlValue'
 
-import './ControlExptPanel.scss'
+import './ControlImagePanel.scss'
 import {mqttRequestFile} from "../../utils/mqttReact";
 
-const panelName = 'expt'
+const ControlImagePanel = (props) => {
+  const [hmi, setHmi] = useState({ inputs: {}})
 
-const ControlExptPanel = (props) => {
-  const [hmi, setHmi] = useState({ metrics: {}})
-
-  const onLoadCB = (topic, payload) => {
-    let hmi = global.aaa.hmi = payload;
-    setHmi(hmi)
-  }
-
+  const panelId = props.panelId
   useEffect(() => {
-    mqttRequestFile(panelName, `hmi/panel/${panelName}.yml`, 'yml', onLoadCB)
-  }, [])
-
-//const clickH = (event) => {
-//  console.log('clickH', event.target);
-//}
+    const onLoadCB = (topic, payload) => {
+      global.aaa[panelId] = payload;
+      setHmi(global.aaa[panelId])
+    }
+    mqttRequestFile(global.aaa.clientId, panelId, `labtime/panels/${panelId}.yml`, 'yml', onLoadCB)
+  }, [panelId])
 
   return (
     <div className="panel control-expt-panel mqtt-client-bg">
-        <h2>Experiment panel</h2>
+        <h2>Overlay Image Panel</h2>
         <div className="control-flex">
           <div className="stats">
-            {Object.keys(hmi.metrics).map((metricId) => {
-              return <ControlValue key={metricId} hmetric={hmi.metrics[metricId]} metricId={metricId}></ControlValue>
+            {Object.keys(hmi.inputs).map((metricId) => {
+              return <ControlValue key={metricId} metric={hmi.inputs[metricId]} metricId={metricId}></ControlValue>
             })}
           </div>
         </div>
@@ -45,4 +39,4 @@ const ControlExptPanel = (props) => {
   )
 }
 
-export default ControlExptPanel
+export default ControlImagePanel

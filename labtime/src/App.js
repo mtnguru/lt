@@ -31,7 +31,7 @@ function App() {
       <MainNavigation />
       <main>
         <Routes>
-          <Route path='/'         element={<MqttPage />}  />
+          <Route path='/'         element={<ExptPage />}  />
           <Route path='/mqtt'     element={<MqttPage />}  />
           <Route path='/expt'     element={<ExptPage />}  />
           <Route path='/admin'    element={<AdminPage />} />

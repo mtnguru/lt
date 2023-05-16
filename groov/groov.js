@@ -11,7 +11,7 @@ const sampling = false
 
 const f = "groov:main"
 
-let clientId = process.env.CLIENTID
+var clientId = process.env.CLIENTID
 if (process.argv[2]) {
   clientId = process.argv[2]
 }
@@ -97,7 +97,7 @@ const outputCB = (metric, topic, payload, tags, values) => {
   groov_api.writeChannel(metric.metricId, metric.output, `\{"value": ${value}\}`)
 }
 console.log(f,' - connect ')
-mqttNode.connect(mqttNode.processCB);
+mqttNode.connect(clientId, mqttNode.processCB);
 setTimeout(() => {
   console.log(f,' - requestConfig ')
   reqConfig();

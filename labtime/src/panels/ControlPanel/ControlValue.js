@@ -2,16 +2,16 @@
 import React, {useState, useEffect} from 'react';
 //import useMousePosition from '../../hooks/useMousePosition';
 import {mqttRegisterMetricCB} from '../../utils/mqttReact'
-import {c2f, findMetric} from '../../utils/metrics'
+import {c2f} from '../../utils/metrics'
 
 import './ControlValue.scss'
 
 const ControlValue = (props) => {
 //const [register, setRegister] = useState(true);
   const [stat, setStat] = useState(0);
-  const [metric, setMetric] = useState({});
+//const [metric, setMetric] = useState({});
 
-  const { metricId } = props
+  const {metricId, metric} = props
 
   useEffect(() => {
     const metricCB = (metric, topic, payload, tags, values) => {
@@ -19,17 +19,17 @@ const ControlValue = (props) => {
       console.log(f,"enter ", topic)
       setStat((prevStat) => {
         let val = values.value;
-        if (props.hmetric.convert === 'c2f') {
+        if (metric.convert === 'c2f') {
           val = c2f(val)
         }
         return parseFloat(val).toFixed(metric.decimals);
       })
-      if (props.metricCB) {
-        props.metricCB(metric, topic, payload, tags, values)
-      }
+//    if (props.metricCB) {
+//      props.metricCB(metric, topic, payload, tags, values)
+//    }
     }
 
-    setMetric(findMetric(metricId))
+//  setMetric(findMetric(props.metricId))
     mqttRegisterMetricCB(metricId, metricCB)
   }, [metricId])
 
@@ -106,7 +106,7 @@ const ControlValue = (props) => {
          onMouseMove={onDrag}
          onMouseDown={onDragStart}
          onMouseUp={onDragEnd}
-         style={{top: props.hmetric.position[0] + '%', left:props.hmetric.position[1] + '%'}}
+         style={{top: props.metric.position[0] + '%', left:props.metric.position[1] + '%'}}
     >
       <div className="stat">{stat}</div>
     </div>

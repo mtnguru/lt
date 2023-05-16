@@ -1,9 +1,13 @@
-Try to reconnect in arduino
+What next?  Let's do something cool
+Make the image overlay work.  Read in the file,
+cycle through it.
+
+
 Get chat working
    Use msg stuff created earlier
+Each panel needs padding
    
-
-
+Make an MqttClient - how? 
 
 
 Today - work on the experiment page

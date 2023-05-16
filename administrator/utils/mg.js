@@ -1,8 +1,9 @@
 
-import {mqttPublish, mqttConnected} from "./mqttReact"
-import Topics from "./topics"
+//import {mqttPublish, mqttConnected} from "./mqttReact"
+//import Topics from "./topics"
 
 const mg = (func, msgType, ...snippets) => {
+  /*
   let payload = {
     function: func,
 //  program: global.aaa.program,
@@ -10,11 +11,12 @@ const mg = (func, msgType, ...snippets) => {
     content: snippets.join(' '),
   }
 
-//const topic = global.aaa.topics.publish.msg
-//const jpayload = JSON.stringify(payload);
-//if (mqttConnected()) {
-//  mqttPublish(topic, jpayload);
-//}
+  const topic = global.aaa.topics.publish.msg
+  const jpayload = JSON.stringify(payload);
+  if (mqttConnected()) {
+    mqttPublish(topic, jpayload);
+  }
+  */
 
   let type = msgType
   if (msgType === 'error') {

@@ -14,7 +14,6 @@ let registered = false;
 
 const MqttPanel = (props) => {
 
-//const [list, setList] = useState(dummyList);
   const [list, setList] = useState([])
   const [filteredList, setFilteredList] = useState([])
   const [nitems, setNItems] = useState(0);
@@ -85,6 +84,11 @@ const MqttPanel = (props) => {
     }
   }
 
+  /**
+   * validMsg() - Compare to client and func filters
+   * @param item
+   * @returns {boolean}
+   */
   const validMsg = (item) => {
     const [,func,clientId] = item.topic.split('/')
     if (global.aaa.clients.all.selected) {

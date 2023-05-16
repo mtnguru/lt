@@ -1,5 +1,5 @@
 
-import ControlExptPanel from '../panels/ControlPanel/ControlExptPanel.js';
+import ControlImagePanel from '../panels/ControlPanel/ControlImagePanel.js';
 //import MqttPanel from '../panels/MqttPanel/MqttPanel.js';
 import ControlPanel from '../panels/ControlPanel/ControlPanel.js';
 
@@ -10,7 +10,8 @@ import ControlPanel from '../panels/ControlPanel/ControlPanel.js';
 function MqttPage() {
   return (
     <div className="mqtt-page">
-      <ControlExptPanel title='Experiment Panel'/>
+
+      <ControlImagePanel title='Experiment Panel'/>
       <ControlPanel title='Control Panel'/>
     </div>
   )

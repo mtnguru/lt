@@ -3,8 +3,8 @@
  */
 
 require('./msgE')
-const {msg, msgn, setDebugLevel} = require('../utils/msg.js')
-const mqtt = require('mqtt');
+const {msg, msgn, requestDebugLevel} = require('../utils/msg.js')
+const mqtt=require('mqtt');
 const {extractFromTags} = require('./influx')
 const {findMetric} = require('./metrics')
 // require('dotenv').config();
@@ -16,7 +16,7 @@ let topicCB = {}
  * connect - connect to the MQTT broker, set callback, subscribe to topics
  * @param cb
  */
-const connect = (messageCB) => {
+const connect = (clientId, messageCB) => {
   const f = 'mqttNode:connect'
 //msg(3,f,DEBUG, 'enter')
   const mc = global.aaa.mqtt;
@@ -40,7 +40,7 @@ const connect = (messageCB) => {
   }
 
   mqttClient = mqtt.connect((mc.ip) ? mc.ip: mc.url, {
-                            clientId: global.aaa.clientId ? global.aaa.clientId : 'unknown',
+                            clientId: `${clientId}_${Math.random().toString(16).slice(3)}`,
                             clean: true,
                             protocol: 'MQTT',
                             username: mc.username,

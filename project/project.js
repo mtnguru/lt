@@ -5,6 +5,7 @@ const mqttNode = require('./utils/mqttNode')
 const influx   = require('./utils/influx')
 const {msg, setDebugLevel}      = require('./utils/msg')
 const {findMetric} = require('./utils/metrics')
+const clientId = "project"
 
 const f = "project:main"
 
@@ -149,7 +150,7 @@ const startProject = () => {
   }, 10000)
 }
 
-mqttNode.connect(mqttNode.processCB);
+mqttNode.connect(clientId, mqttNode.processCB);
 msg(1,f, DEBUG, ' - requestConfig ')
 getConfig();
 msg(1,f, DEBUG, ' - exit main thread ')

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {mqttReqFile} from "../../utils/mqttReact"
+import {mqttRequestFile} from "../../utils/mqttReact"
 import Panel from "../../components/ui/Panel"
 import DoeStaticTable from "./DoeStaticTable"
 import DoeVariableTable from "./DoeVariableTable"
@@ -32,7 +32,7 @@ const DoePanel = (props) => {
   }
 
   useEffect(() => {
-    mqttReqFile('doe-1', 'doe/doe-1.json', onLoadCB)
+    mqttRequestFile('doe-1', 'doe/doe-1.json', onLoadCB)
   }, [])
   return (
     <Panel className="panel doe-panel">
