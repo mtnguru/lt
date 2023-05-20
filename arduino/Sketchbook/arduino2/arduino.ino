@@ -13,21 +13,20 @@ boolean sampling = true;
 
 ///////////// JSON
 #include "ArduinoJson.h"
-const int jsonDocSize = 3000;
+const int jsonDocSize = 4000;
 StaticJsonDocument<jsonDocSize> jsonDoc;
-const int payloadSize = 2000;
-
-const int msgSize = 300;
-char logMsg[msgSize];
 
 const int tagSize = 200;
-const int topicSize = 50;
+const int topicSize = 40;
 const int metricIdSize = 40;
-const int projectIdSize = 20;
-const int clientIdSize = 20;
+const int projectIdSize = 16;
+const int clientIdSize = 16;
 const int ipSize = 20;
 const int valueSize = 20;
+const int msgSize = 300;
+const int payloadSize = 2000;
 
+char msg[msgSize];
 char topic[topicSize];
 char payload[payloadSize];
 
@@ -51,7 +50,6 @@ boolean msgFlags[] = {true, true, true, true, true, true, true};
 enum outputTypeE {OUT_LED, OUT_DIGITAL, OUT_LCD};
 struct outputS {
   char metricId[metricIdSize];
-  char name[metricIdSize];
   outputTypeE channelType;
   char channel[12];
   char tags[tagSize];
@@ -63,9 +61,9 @@ struct inputS {
   char metricId[metricIdSize];
   char name[metricIdSize];
   inputTypeE channelType;
-  char channels[12];
   char topic[topicSize];
   char tags[tagSize];
+  char channels[12];
 };
 
 const int inputMax = 3;
@@ -78,15 +76,12 @@ int outputN = 0;
 ///////////// WiFi
 #include <ESP8266WiFi.h>
 WiFiClient wifiClient;
-
-// ASUS at cabin
+//const char* wifiSsid = "Nacho";
+//const char* wifiPassword = "Nemoy1701";
 const char* wifiSsid = "NachoWiFi";
 const char* wifiPassword = "Nemoy1701";
-
-// Century link at cabin
 //const char* wifiSsid = "Solvay";
 //const char* wifiPassword = "taichi23";
-
 String wifiIP;
 
 ///////////// MQTT client
@@ -103,8 +98,8 @@ char mqttAdminResponseSub[topicSize];  // subscribe to administrator responses f
 char mqttOutputSub[topicSize];         // subscribe to commands to output channels
 
 // Publish
-char mqttAdminCmdPub[topicSize];       // publish command to administrator
-char mqttAdminRspPub[topicSize];       // publish responses to administrator commands
+char mqttAdminCmdPub[topicSize];          // publish command to administrator
+char mqttAdminRspPub[topicSize];          // publish responses to administrator commands
 char mqttInputPub[topicSize];
 char mqttCodePub[topicSize];
 char mqttMsgPub[topicSize];
@@ -124,12 +119,13 @@ MAX6675 tc(thermoCLK, thermoCS, thermoDO);
 
 /////////////
 unsigned long lastSample = 0;
+// int sampleNum = 0;
 
 #ifdef __arm__
 // should use uinstd.h to define sbrk but Due causes a conflict
-  extern "C" char* sbrk(int incr);
+extern "C" char* sbrk(int incr);
 #else  // __ARM__
-  extern char *__brkval;
+extern char *__brkval;
 #endif  // __arm__
 
 String freeMemory() {
@@ -137,7 +133,7 @@ String freeMemory() {
   long  fh = ESP.getFreeHeap();
   char  fhc[20];
 
-  ltoa(fh, fhc, 16);
+  ltoa(fh, fhc, 10);
   String freeHeap = String(fhc);
   logit(3,MD,f,"Free memory ",freeHeap.c_str());
   return freeHeap;
@@ -161,10 +157,8 @@ void logit(int _debugLevel,
            const char *more) {
   if (_debugLevel > debugLevel ) return;
 
-  int lenMsg = strlen(func) + strlen(content);
-  if (more) {
-    lenMsg += strlen(more);
-  }
+  Serial.println((String)"  enter " + content + " " + more);
+
   char typeName[20];
   char *topic;
   switch (msgType) {
@@ -189,27 +183,72 @@ void logit(int _debugLevel,
       topic = mqttCodePub;
       break;
   }
-  if (lenMsg > 250) {
-    snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": \"Message too long\",\"lenmsg\": \"%d\"}", typeName, func, lenMsg);
+  Serial.println((String)"    stage1 " + content + " " + more);
+
+  char logMsg[msgSize];
+  if (content[0] == '{') {
+    snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": %s}", typeName, func, content);
+    Serial.println((String)"JSON msg: " + logMsg);
   } else {
-    if (content[0] == '{') {
-      snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": %s}", typeName, func, content);
-      Serial.println((String)"JSON msg: " + logMsg);
+    if (more != NULL) {
+      snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": \"%s - %s\"}", typeName, func, content, more);
     } else {
-      if (more != NULL) {
-        snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": \"%s - %s\"}", typeName, func, content, more);
-      } else {
-        snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": \"%s\"}", typeName, func, content);
-      }
-      Serial.println((String)"Text msg: " + logMsg);
+      snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": \"%s\"}", typeName, func, content);
     }
+//  Serial.println((String)"Text msg: " + logMsg);
   }
+  Serial.println((String)"    stage2 " + content + " " + more);
 
   if (haveConfig && mqttClient.connected()) {
     delay(10);
+//  Serial.println((String)"    logit connected: " + logMsg);
     mqttClient.publish(topic, logMsg, strlen(logMsg) + 1);
   }
+  Serial.println((String)"    stage3 " + content + " " + more);
 }
+
+/**
+ * gettoken - extract the nth field using '/' for delimeter
+ */
+ /*
+int gettoken(char *str, char *token, int pos) {
+  const char del = '/';
+  int lenStr = strlen(str);
+
+  token[0] = '\0';
+  int lenToken = -1;
+
+  int f = 0;
+  bool infld = (pos == 0) ? true : false;
+  if (str[0] == del && infld) {
+    token[lenToken] = '\0';
+    return lenToken + 1;
+  }
+  for (int i = 0; i < lenStr; i++) {
+    if (str[i] == del) {
+      f++;
+      if (infld) {
+        token[lenToken] == '\0';
+        return lenToken+1;
+      } else if (f == pos) {
+        infld = true;
+      }
+    } else {
+      if (infld) {
+        token[++lenToken] = str[i];
+        token[lenToken + 1] = '\0';
+      }
+    }
+  }
+
+  if (infld) {
+    token[++lenToken + 1] = '\0';
+    return lenToken;
+  } else {
+    return lenToken;
+  }
+}
+*/
 
 /**
  * wifiInit - Initialize the wifi, get IP
@@ -227,7 +266,6 @@ void wifiInit() {
     delay(500);
     Serial.print(".");
   }
-  Serial.println("");
 
   randomSeed(micros());  // Why?
   WiFi.setSleepMode(WIFI_NONE_SLEEP);
@@ -243,14 +281,14 @@ void wifiInit() {
  *
  * Given a metric name, look for it in outputA[n].metricId
  */
-struct outputS *findMetric(const char *_metricId) {
+struct outputS *findMetric(const char *metricId) {
   const char *f = "findMetric";
-  char metricId[metricIdSize];
-  strcpy(metricId,_metricId);
-  lowerCase(metricId);
+  char name[metricIdSize];
+  strcpy(name,metricId);
+  lowerCase(name);
   for (int m = 0; m < outputN; m++) {
-    if (strcmp(outputA[m].metricId,metricId) == 0){
-      logit(2,MD,f,"Metric found",_metricId);
+    if (strcmp(outputA[m].metricId,name) == 0){
+      logit(2,MD,f,"Metric found",metricId);
       return &outputA[m];
     }
   }
@@ -263,6 +301,7 @@ struct outputS *findMetric(const char *_metricId) {
  * Assumed to be the 2nd field in the line.
  */
 void getInfluxMetric(const char *payload, char *metric) {
+//const char tok[] = ",";
   int b = strcspn (payload, "=");
   int e = strcspn(&payload[b+1], " ,");
   strncpy(metric,&payload[b+1],e);
@@ -275,6 +314,7 @@ void getInfluxMetric(const char *payload, char *metric) {
  * getInfluxValue() - get the value from a line of Influx line protocol
  */
 void getInfluxValue(const char *payload, char *value) {
+//const char tok[] = ",";
   int a = strcspn (payload, " ");
   int b = strcspn (&payload[a+1], "=");
   strcpy(value,&payload[a+b+2]);
@@ -283,14 +323,15 @@ void getInfluxValue(const char *payload, char *value) {
 }
 
 void processOutput (char *paystr) {
+return;
   const char *f = "processOutput";
-  logit(2,MD,f,"Output request",NULL);
-
+  logit(0,MD,f,"incoming control request - output",NULL);
   // influx line protocol, 2nd field is required to be metric
   char metricId[metricIdSize];
-  char line[tagSize];
-  strcpy(line,paystr);
-  getInfluxMetric(line, metricId);
+  char tmp[80];
+  strcpy(tmp,paystr);
+  logit(2,MD, f,"get influx metric ",tmp);
+  getInfluxMetric(tmp, metricId);
   outputS *output = findMetric(metricId);
 
   // Exit with error if cannot find the metric
@@ -301,18 +342,21 @@ void processOutput (char *paystr) {
 
   const int channel = atoi(output->channel);
   char value[valueSize];
-  strcpy(line,paystr);
-  getInfluxValue(line,value);
+  strcpy(tmp,paystr);
+  getInfluxValue(tmp,value);
+  Serial.println((String)"Got Value " + value + " " + output->channelType);
+//snprintf(msg, msgSize, "output value %s  channelType %d", value, output->channelType);
+//logit(1,MD,f,msg,NULL);
   switch (output->channelType) {
     case OUT_LED:
       break;
     case OUT_DIGITAL:
-      if (!strcmp(value, "on") || value[0] == '1') {
-        logit(1,MD,f,"digital channel - set true",NULL);
-        digitalWrite(channel,LOW);
-      } else if (!strcmp(value, "off") || value[0] == '0') {
-        logit(1,MD,f,"digital channel - set false",NULL);
+      if (value[0] == '1') {
+        logit(2,MD,f,"digital channel - set true",NULL);
         digitalWrite(channel,HIGH);
+      } else if (value[0] == '0') {
+        logit(2,MD,f,"digital channel - set false",NULL);
+        digitalWrite(channel,LOW);
       } else {
         logit(0,MW,f,"Unknown digital value ",value);
       }
@@ -329,8 +373,8 @@ void getStatus() {
 
   unsigned long seconds = (millis() - startTime) / 1000;
   unsigned long hours = (millis() - startTime) / 1000 / 3600;
-
   char samplingStatus[10];
+
   if (sampling) {
     strcpy(samplingStatus,"true");
   } else {
@@ -359,9 +403,11 @@ void setConfig(const char *topic,
   ///////////// Subscribe MQTT topics
   strcpy(mqttOutputSub, jsonDoc["topics"]["subscribe"]["out"]);
   res = mqttClient.subscribe(mqttOutputSub);
+  if (!res) { logit(0,ME, f, "Error subscribing", NULL); }
 
-  strcpy(mqttAdminClientidSub, jsonDoc["topics"]["subscribe"]["adm"]);
-  res = mqttClient.subscribe(mqttAdminClientidSub);
+  strcpy(mqttOutputSub, jsonDoc["topics"]["subscribe"]["out"]);
+  res = mqttClient.subscribe(mqttOutputSub);
+  if (!res) { logit(0,ME, f, "Error subscribing", NULL); }
 
   ///////////// Publish MQTT topics
   strcpy(mqttInputPub,  jsonDoc["topics"]["publish"]["inp"]);
@@ -370,126 +416,139 @@ void setConfig(const char *topic,
 
   // Loop through metrics, initialize inputA[]
   inputN = 0;
-  JsonObject rootInput = jsonDoc["inputs"].as<JsonObject>();
-  if (rootInput) {
-    logit(2,MD,f,"Process input metrics ",NULL);
-    for (JsonPair metric : rootInput) {
-      const char *metricId = metric.key().c_str();
-      logit(2,MD,f,"Input ",metricId);
-      const char *channelType = metric.value()["input"]["channelType"];
-      if (strcmp(channelType,"Button") == 0) {
-        inputA[inputN].channelType  = IN_BUTTON;
-      } else if (strcmp(channelType,"MAX6675") == 0) {
-        logit(2,MD,f,"Set channelType as MAX6675 ",NULL);
-        inputA[inputN].channelType  = IN_MAX6675;
-      } else {
-        logit(0,MW, f, "Cannot find input channelType: ", channelType);
-      }
-      logit(2,MD,f,"Input added ", metricId);
-      strcpy(inputA[inputN].tags,      metric.value()["input"]["tags"]);
-      strcpy(inputA[inputN].channels,  metric.value()["input"]["channels"]);
-      strcpy(inputA[inputN].metricId,  metric.value()["metricId"]);
-      strcpy(inputA[inputN].name,      metric.value()["name"]);
-      logit(2,MD,f,"input channel ", inputA[inputN].channels);
-      inputN++;
+  logit(2,MD,f,"Process input metrics ",NULL);
+  JsonObject rootMetric = jsonDoc["inputs"].as<JsonObject>();
+  logit(3,MD,f,"Input for loop ",NULL);
+  for (JsonPair metric : rootMetric) {
+    const char *metricId = metric.key().c_str();
+    logit(2,MD,f,"Input ",metricId);
+    const char *channelType = metric.value()["input"]["channelType"];
+    if (strcmp(channelType,"Button") == 0) {
+      inputA[inputN].channelType  = IN_BUTTON;
+    } else if (strcmp(channelType,"MAX6675") == 0) {
+      logit(2,MD,f,"Set channelType as MAX6675 ",NULL);
+      inputA[inputN].channelType  = IN_MAX6675;
+    } else {
+      logit(0,MW, f, "Cannot find input channelType: ", channelType);
     }
+    logit(2,MD,f,"Input added ", metricId);
+    strcpy(inputA[inputN].tags,      metric.value()["input"]["tags"]);
+    strcpy(inputA[inputN].channels,  metric.value()["input"]["channels"]);
+    strcpy(inputA[inputN].metricId,  metric.value()["metricId"]);
+    strcpy(inputA[inputN].name,      metric.value()["name"]);
+//  tc(thermoCLK, thermoCS, thermoDO);
+    inputN++;
   }
 
-  JsonObject rootOutput = jsonDoc["outputs"].as<JsonObject>();
-  if (rootOutput) {
-    logit(0,MD,f,"Process output metrics ",NULL);
-    for (JsonPair metric : rootOutput) {
-      const char *metricId = metric.key().c_str();
-      logit(0,MD,f,"Output ",metricId);
-      const char *channelType = metric.value()["output"]["channelType"];
-
-      if (strcmp(channelType,"OUT_LED") == 0) {
-        outputA[outputN].channelType  = OUT_LED;
-      } else if (strcmp(channelType,"LCD") == 0) {
-        outputA[outputN].channelType  = OUT_LCD;
-      } else if (strcmp(channelType,"digital") == 0) {
-        outputA[outputN].channelType  = OUT_DIGITAL;
-      } else {
-        logit(1,MD, f, "Cannot find output channelType:", channelType);
-      }
-
-      logit(0,MD,f,"Output added ", metricId);
-      strcpy(outputA[outputN].tags,      metric.value()["output"]["tags"]);
-      strcpy(outputA[outputN].channel,   metric.value()["output"]["channel"]);
-      strcpy(outputA[outputN].metricId,  metric.value()["metricId"]);
-      strcpy(outputA[outputN].name,      metric.value()["name"]);
-
-      const char *channel = outputA[outputN].channel;
+/*
+    logit(1,MD,f,"do Output ",NULL);
+    JsonObject outputObject = jsonDoc["metrics"][metricId]["output"];
+    if (outputObject) {
+      outputA[metricsN].output.have = true;
+      // Copy device properties from json to internal array
+      const char *channelType = outputObject["channelType"];
+      const char *channel = outputObject["channel"];
       pinMode(atoi(channel), OUTPUT);
-      logit(0,MD,f,"Output channel ", channel);
-      outputN++;
+      pinMode(LED_BUILTIN, OUTPUT);
+      if (strcmp(channelType,"OUT_LED") == 0) {
+        outputA[metricsN].output.channelType  = OUT_LED;
+      } else if (strcmp(channelType,"LCD") == 0) {
+        outputA[metricsN].output.channelType  = OUT_LCD;
+      } else if (strcmp(channelType,"digital") == 0) {
+        outputA[metricsN].output.channelType  = OUT_DIGITAL;
+      } else {
+        logit(1,MD, f, "Cannot find outout channelType:", channelType);
+      }
+
+      strcpy(outputA[metricsN].output.channel, outputObject["channel"]);
+      logit(1,MD,f,"channel ",  outputA[metricsN].output.channel);
+    } else {
+      metricsA[metricsN].output.have = false;
     }
   }
-
+  */
   haveConfig = true;
   logit(3,MD, f, "exit", NULL);
 }
 
-void mqttCallback(char* _topic, byte* payload, unsigned int length) {
+void mqttCallback(const char* topic, byte* payload, unsigned int length) {
   const char *f = "mqttCallback";
-  // You must immediately copy topic and payload into your own variables,
-  // otherwise subsequent mqttClient calls will use the same memory space and cause you much hell.
-  char topic[topicSize];
-  char paystr[payloadSize];
-  strcpy(topic, _topic);
-  strncpy(paystr, (char *)payload, length);
-  paystr[length] = '\0';
+//StaticJsonDocument<jsonDocSize> jsonDoc;
+
+  Serial.println((String)"shit " + topic);
+  logit(0,MD,f,"enter", topic);
+  Serial.println((String)"shittty " + topic);
+  logit(0,MD,f,"topic ",topic);
   freeMemory();
 
-  logit(0,MD,f,"enter", topic);
+  logit(0,MD,f,"mqttOutputSub ", mqttOutputSub);
+  logit(0,MD,f,"topic ", topic);
+
+  char paystr[2000];
+  char len[10];
+  strncpy(paystr, (char *)payload, length);
+  itoa(length, len, 10);
+  logit(0,MD,f,"payload length", len);
+  paystr[length] = '\0';
+
+//snprintf (msg, msgSize, "  ---- Incoming - %s - %d - %s", topic, length, paystr);
+  logit(2,MN,f,paystr, NULL);
+
+/*
+  Serial.println((String)"shit " + paystr);
+  Serial.println((String)"crap " + topic);
+  Serial.println((String)"fart ");
+  delay(1000);
+  return;
+*/
 
   if (paystr[0] != '{') {  // if payload is NOT JSON
     if (!strcmp(topic, mqttOutputSub)) {  // Request Output from LabTime
+      logit(0,MD,f,"Output arrived", NULL);
       processOutput(paystr);
     }
   } else {                 // if payload is JSON
     DeserializationError err = deserializeJson(jsonDoc, paystr);
     if (err) {
-      char msg[300];
       snprintf (msg, msgSize, "ERROR: deserializationJson - %s", err.c_str());
       logit(0,ME, f, msg, NULL);
     }
     logit(3,MD, f, "deserialized ",NULL);
 
-    char cmd[20];
-    strcpy(cmd,jsonDoc["cmd"]);
+      char cmd[20];
+      strcpy(cmd,jsonDoc["cmd"]);
 
-    if (!strcmp(cmd, "requestConfig")) {
-      setConfig(topic, jsonDoc);
-      freeMemory();
-    } else if (!strcmp(cmd, "requestReset")) {
-      logit(0,MN,f,"Resetting arduino", NULL);
-      delay(500);
-      resetFunc();
-    } else if (!strcmp(cmd, "requestStatus")) {  // Ask arduino for its status
-      logit(1,MN,f,"Get status", NULL);
-      getStatus();
-    } else if (!strcmp(cmd, "setDebugLevel")) {          // Set debugLevel
-      debugLevel = atoi(jsonDoc["debugLevel"]);
-      logit(0,MN,f,"Set debug level", jsonDoc["debugLevel"]);
-    } else if (!strcmp(cmd, "startSampling")) {          // Ask arduino to start sampling
-      if (sampling) {
-        logit(0,MN,f,"Already sampling", NULL);
-      } else {
-        sampling = true;
-        logit(0,MN,f,"Start sampling", jsonDoc["debugLevel"]);
+      if (!strcmp(cmd, "requestConfig")) {
+        setConfig(topic, jsonDoc);
+        freeMemory();
+      } else if (!strcmp(cmd, "requestReset")) {
+        logit(0,MN,f,"Resetting arduino", NULL);
+        delay(500);
+        resetFunc();
+      } else if (!strcmp(cmd, "requestStatus")) {  // Ask arduino for its status
+        logit(1,MN,f,"Get status", NULL);
+        getStatus();
+      } else if (!strcmp(cmd, "setDebugLevel")) {          // Set debugLevel
+        debugLevel = atoi(jsonDoc["debugLevel"]);
+        logit(0,MN,f,"Set debug level", jsonDoc["debugLevel"]);
+      } else if (!strcmp(cmd, "startSampling")) {          // Ask arduino to start sampling
+        if (sampling) {
+          logit(0,MN,f,"Already sampling", NULL);
+        } else {
+          sampling = true;
+          logit(0,MN,f,"Start sampling", jsonDoc["debugLevel"]);
+        }
+      } else if (!strcmp(cmd, "stopSampling")) {           // Ask arduino to stop sampling
+        if (!sampling) {
+          logit(0,MN,f,"Already stopped sampling", NULL);
+        } else {
+          sampling = false;
+          logit(0,MN,f,"Stop sampling", jsonDoc["debugLevel"]);
+        }
+      } else if (!strcmp(cmd, "setSampleInterval")) {      // Set sample interval
+        sampleInterval = atoi(jsonDoc["sampleInterval"]);
+        logit(0,MN,f,"Set sampling interval", jsonDoc["sampleInterval"]);
       }
-    } else if (!strcmp(cmd, "stopSampling")) {           // Ask arduino to stop sampling
-      if (!sampling) {
-        logit(0,MN,f,"Already stopped sampling", NULL);
-      } else {
-        sampling = false;
-        logit(0,MN,f,"Stop sampling", jsonDoc["debugLevel"]);
-      }
-    } else if (!strcmp(cmd, "setSampleInterval")) {      // Set sample interval
-      sampleInterval = atoi(jsonDoc["sampleInterval"]);
-      logit(0,MN,f,"Set sampling interval", jsonDoc["sampleInterval"]);
-    }
   }
   freeMemory();
 }
@@ -523,7 +582,7 @@ void mqttConnect() {
   if (mqttClient.connect(mqttClientId.c_str(), mqttUser, mqttPassword)) {
     connected = true;
     logit(2,MD, f, "connected", NULL);
-    mqttClient.setBufferSize(payloadSize);
+    boolean big = mqttClient.setBufferSize(3000);
   } else {
     int st = mqttClient.state();
     char ststr[20];
@@ -547,49 +606,50 @@ void sampleInputs() {
       case IN_BUTTON:
         break;
       case IN_MAX6675:
+        logit(1,MD,f,"temp ", input->name);
+//      value = calcAvg(m, tc.readFahrenheit());
         value = tc.readFahrenheit();
-        if (value > 500) {
-          snprintf(payload, payloadSize, "temperature out of range: $f", value);
-          logit(0,ME,f,payload, NULL);
-        } else {
-          snprintf(payload, payloadSize, "%s value=%g", input->tags, value);
-          logit(1,MD,f,"temperature acquired", payload);
-          mqttClient.publish(mqttInputPub, payload);
-        }
+        snprintf(payload, payloadSize, "%s value=%g", input->tags, value);
+        logit(1,MD,f,"payload:", payload);
+        mqttClient.publish(mqttInputPub, payload);
+        freeMemory();
         break;
     }
   }
-  freeMemory();
 }
 
 void setup() {
   const char *f = "setup";
-  Serial.begin(115200);
+
   startTime = millis();
 
   strcpy(projectId, "unknown");
   randomSeed(micros());
-  mqttClientId = "arduino_" + String(random(0xffff), HEX);
+  mqttClientId = "varduino_" + String(random(0xffff), HEX);
 
+  Serial.begin(115200);
   wifiInit();
 
   logit(2,MD,f,"Assign mqttAdmin*Pub paths",mqttAdminCmdPub);
   strcpy(mqttAdminCmdPub, "a/cmd/administrator");
   strcpy(mqttAdminRspPub, "a/rsp/administrator");
 
-  snprintf(mqttAdminAllSub,      topicSize, "a/cmd/all");      // admin commands to all
-  snprintf(mqttAdminIpSub,       topicSize, "a/rsp/%s",  ip);  // admin commands to ip
-  snprintf(mqttAdminResponseSub, topicSize, "a/rsp/%s", ip);   // admin responses
+  snprintf(mqttAdminAllSub, msgSize, "a/cmd/all");        // admin commands to all
+  snprintf(mqttAdminIpSub, msgSize, "a/rsp/%s",  ip);     // admin commands to ip
+  snprintf(mqttAdminResponseSub, msgSize, "a/rsp/%s", ip);   // admin responses
 
-  logit(1,MD,f,"Init MQTT server",mqttIp);
+  logit(1,MD,f,"Set MQTT server",mqttIp);
   mqttClient.setServer(mqttIp, mqttPort);
   mqttClient.setCallback(mqttCallback);
+
   mqttConnect();
 
   logit(2,MD,f,"Subscribe to admin messages ", NULL);
-  snprintf(mqttAdminAllSub, topicSize, "a/cmd/all");             // all administrator commands
+  snprintf(mqttAdminAllSub, msgSize, "a/cmd/all");             // all administrator commands
   res = mqttClient.subscribe(mqttAdminAllSub);
-  snprintf(mqttAdminResponseSub, topicSize, "a/rsp/%s", ip);     // CLIENTID administrator responses
+//snprintf(mqttAdminIpSub, msgSize, "a/cmd/%s", ip);           // CLIENTID administrator commands
+//res = mqttClient.subscribe(mqttAdminIpSub);
+  snprintf(mqttAdminResponseSub, msgSize, "a/rsp/%s", ip);     // CLIENTID administrator responses
   res = mqttClient.subscribe(mqttAdminResponseSub);
 
   requestConfig();
@@ -608,12 +668,13 @@ void loop() {
   }
   while (!mqttClient.connected()) {
     connected = false;
+//  delay(100);
+//  mqttClient.disconnect();
     delay(250);
     mqttConnect();
-    char intstr[10];
-    int st = mqttClient.state();
-    itoa(st,intstr, 10);
-    logit(0,ME,f,"\nmqttClient.connected returned false ",itoa(st, intstr, 10));
+//  char intstr[10];
+//  int st = mqttClient.state();
+//  logit(0,ME,f,"\nmqttClient.connected returned false ",itoa(st, intstr, 10));
     tries++;
     if (tries == 10) {
       logit(0,ME,f,"\nmqttClient.connected returned false 10 times - reset the arduino",NULL);

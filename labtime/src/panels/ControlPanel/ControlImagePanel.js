@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import { Heading } from '@chakra-ui/react'
 // File: ControlText.js
 // import React, {useState} from 'react';
 
@@ -26,8 +27,8 @@ const ControlImagePanel = (props) => {
   }, [panelId])
 
   return (
-    <div className="panel control-expt-panel mqtt-client-bg">
-        <h2>Overlay Image Panel</h2>
+    <div className="panel control-image-panel">
+        <Heading as="h3">Overlay Image Panel</Heading>
         <div className="control-flex">
           <div className="stats">
             {Object.keys(hmi.inputs).map((metricId) => {

@@ -1,17 +1,14 @@
 import React, {useState} from 'react'
 import { Route, Routes } from 'react-router-dom'
 
-// import DemoPage from    './pages/DemoPage'
+import { Container } from '@chakra-ui/react'
 import ExptPage from    './pages/ExptPage'
 import MqttPage from    './pages/MqttPage'
-// import DoePage from     './pages/DoePage'
 import AdminPage from   './pages/AdminPage'
-// import PlayPage from    './pages/PlayPage'
-// import GrafanaPage from './pages/GrafanaPage'
 
 import Welcome from './components/popup/Welcome'
 
-import classes from './App.scss'
+import './App.scss'
 import MainNavigation from './components/layout/MainNavigation'
 import Footer from './panels/Footer/Footer'
 
@@ -26,19 +23,19 @@ function App() {
   }
 
   return (
-    <div id="app" className={classes.app}>
+    <Container id="app">
       {welcomeOpen && <Welcome onClose={onClose}/>}
       <MainNavigation />
-      <main>
+      <Container as="main">
         <Routes>
           <Route path='/'         element={<ExptPage />}  />
           <Route path='/mqtt'     element={<MqttPage />}  />
           <Route path='/expt'     element={<ExptPage />}  />
           <Route path='/admin'    element={<AdminPage />} />
         </Routes>
-      </main>
+      </Container>
       <Footer />
-    </div>
+    </Container>
   );
 }
 

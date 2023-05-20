@@ -15,6 +15,7 @@ mqtt:  # Each client must have it's own mqtt config
 topics:
   subscribe:
     adm: a/cmd/administrator
+    cmd: PROJECTID/cmd/CLIENTID
   publish:
     rsp: a/rsp/DCLIENTID
     hum: a/rsp/DCLIENTID/DUSERID
@@ -108,6 +109,7 @@ projects:
             alm: PROJECTID/alm/#
             cod: PROJECTID/cod/#
             msg: PROJECTID/msg/#
+            cmd: PROJECTID/cmd/#
           publish:
             msg: PROJECTID/msg/CLIENTID
             cod: PROJECTID/cod/CLIENTID
@@ -118,7 +120,7 @@ projects:
       edge:
         subscribe:
           adm: a/cmd/CLIENTID
-          out: PROJECTID/out/CLIENTID/#
+          out: PROJECTID/out/CLIENTID
         publish:
           inp: PROJECTID/inp/CLIENTID/USERID/cabin_lt
           cod: PROJECTID/cod/CLIENTID

@@ -1,31 +1,21 @@
 @import "../../styles/base";
 @import "../../styles/colors";
 
-.control-expt-panel {
+.control-image-panel {
   position: relative;
   background-image: url("../../../assets/cabin.png");
   background-repeat: no-repeat;
   background-size: cover;
   aspect-ratio: 1.2167;
 
-  header {
+  h3 {
+    color: $title2-fg-color;
     width: 100%;
+    font-weight: 500;
+    padding: 10px;
   }
 
-  .control-flex {
-    display: flex;
-  }
-
-  h2 {
-    width: 100%;
-  }
-  .stats {
-  }
-  .controls {
-    width: 400px;
-    margin-right: 2rem;
-  }
-
+  /*
   .control-bar {
     height: 30px;
     margin: 5px 0;
@@ -40,4 +30,5 @@
   .card {
     margin-bottom: 10px;
   }
+   */
 }

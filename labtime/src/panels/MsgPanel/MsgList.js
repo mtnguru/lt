@@ -8,10 +8,9 @@ function MsgList(props) {
 
   return (
     <Container className="msg-list-container">
-      <div className="nitems">{list.length}</div>
-       <div className="msg-list">
-          {list.map(item => <MsgItem key={item.key} item={item} pretty={props.pretty}/>) }
-       </div>
+      <div className="msg-list">
+        {list.map(item => <MsgItem key={item.key} item={item} pretty={props.pretty}/>) }
+      </div>
     </Container>
   );
 }

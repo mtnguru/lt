@@ -21,16 +21,30 @@
   http://www.arduino.cc/en/Tutorial/Blink
 */
 
+float fac = 5.0/1023.0;
+int rin = 0;
+float vin = 0;
+float out = 0;
+
 // the setup function runs once when you press reset or power the board
 void setup() {
   // initialize digital pin LED_BUILTIN as an output.
+  Serial.begin(115200);
   pinMode(LED_BUILTIN, OUTPUT);
+  delay(150);
+  Serial.println((String)"");
+  Serial.println((String)"howdy doody " + LED_BUILTIN);
+  Serial.println((String)"howdy doody " + LED_BUILTIN);
 }
 
 // the loop function runs over and over again forever
 void loop() {
   digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(2000 );                       // wait for a second
+  delay(500 );                       // wait for a second
   digitalWrite(LED_BUILTIN, 0);    // turn the LED off by making the voltage LOW
-  delay(20);                       // wait for a second
+  delay(1000);                       // wait for a second
+
+  vin = analogRead(A0) * fac;
+  Serial.println((String)"vin " + vin + "   out " + out);
+  out = out + .1;
 }

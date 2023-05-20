@@ -1,5 +1,14 @@
 @import "./colors.scss";
 
+.page {
+  > header {
+    padding: 5px 15px;
+  }
+  > section {
+    padding: 0px 10px;
+  }
+}
+
 @mixin clearfix {
   &::after {
     clear: both;
@@ -8,16 +17,15 @@
   }
 }
 
-
-table { 
+table {
   border: 2px solid $table-bd-color;
 }
 thead {
   th {
     padding: 10px;
     background-color: $table-head-bg-color;
-  } 
-} 
+  }
+}
 tbody {
   tr:nth-child(odd) {
     background-color: $table-odd-bg-color;
@@ -26,4 +34,3 @@ tbody {
     background-color: $table-even-bg-color;
   }
 }
-

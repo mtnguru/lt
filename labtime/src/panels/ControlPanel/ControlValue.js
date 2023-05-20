@@ -15,8 +15,8 @@ const ControlValue = (props) => {
 
   useEffect(() => {
     const metricCB = (metric, topic, payload, tags, values) => {
-      const f = "ControlValue::metricCB"
-      console.log(f,"enter ", topic)
+//    const f = "ControlValue::metricCB"
+//    console.log(f,"enter ", topic)
       setStat((prevStat) => {
         let val = values.value;
         if (metric.convert === 'c2f') {

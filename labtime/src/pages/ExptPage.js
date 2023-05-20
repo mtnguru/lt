@@ -3,17 +3,18 @@ import ControlPanel from '../panels/ControlPanel/ControlPanel'
 import ControlImagePanel from '../panels/ControlPanel/ControlImagePanel'
 import { Container,
          Flex,
-         Box,
+//       Box,
 //       Spacer,
-         Heading } from '@chakra-ui/react'
+         Heading
+       } from '@chakra-ui/react'
 
 function ExptPage() {
   return (
-    <Container className="expt-page">
-      <Box>
+    <Container as="main" className="page expt-page">
+      <header>
         <Heading>Experiment Page</Heading>
-      </Box>
-      <Flex>
+      </header>
+      <Flex className="expt-flex">
         <Container>
           <ControlImagePanel panelId="image_cabin" />
           <ControlPanel      panelId="cont_clients" />

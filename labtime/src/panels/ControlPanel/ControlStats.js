@@ -12,22 +12,22 @@ const ControlStats = (props) => {
 
   const { metricId } = props
 
-  useEffect(() => {
-    const metricCB = (metric, topic, payload, tags, values) => {
-      const f = "ControlStats::metricCB"
-      console.log(f,"enter ", topic)
-      setStat((prevStat) => {
-        let val = values.value
-        if (metric.convert === 'c2f') {
-          val = c2f(val)
-        }
-        return parseFloat(val).toFixed(metric.decimals);
-      })
-      if (props.metricCB) {
-        props.metricCB(metric, topic, payload, tags, values)
+  const metricCB = (metric, topic, payload, tags, values) => {
+//    const f = "ControlStats::metricCB"
+//    console.log(f,"enter ", topic)
+    setStat((prevStat) => {
+      let val = values.value
+      if (metric.convert === 'c2f') {
+        val = c2f(val)
       }
+      return parseFloat(val).toFixed(metric.decimals);
+    })
+    if (props.metricCB) {
+      props.metricCB(metric, topic, payload, tags, values)
     }
+  }
 
+  useEffect(() => {
     setMetric(findMetric(metricId))
     mqttRegisterMetricCB(metricId, metricCB)
   }, [metricId])

@@ -209,42 +209,40 @@ const mqttProcessCB = (topic, payload) => {
         mgError(f, "Could not find Metric: ", metricId)
         return
       }
-      console.log(f, 'Metric found ', metricId)
 
-      switch (source) {
-        case 'I':
-          if (!metric.input) {
-            mgWarning(f, 'Metric does not have a input', metric.metricId)
-            return
-          }
-          metric.input.value = values.value
+      if (metric.cbs) {
+        switch (source) {
+          case 'I':
+            if (!metric.input) {
+              mgWarning(f, 'Metric does not have a input', metric.metricId)
+              return
+            }
+            metric.input.value = values.value
 //        metric.value = values.value
-          break;
+            break;
 
-        case 'O':
-          if (!metric.output) {
-            mgWarning(f, 'Metric does not have a output', metric.metricId)
-            return
-          }
-          metric.output.value = values.value
-          break;
-        case 'H':
-          if (!metric.user) {
-            mgWarning(f, 'Metric does not have a user', metric.metricId)
-            return
-          }
-          metric.human.value = values.value
-          break;
-        default:
-          mgError(f, 'Unknown source ', source)
-          return;
-      }
-      if (!metric.cbs) {
-        mgDebug(f, "Metric does not have any registered Callbacks: ", metricId);
-        return
-      }
-      for (let cb of metric.cbs) {
-        cb(metric, topic, payloadStr, tags, values)
+          case 'O':
+            if (!metric.output) {
+              mgWarning(f, 'Metric does not have a output', metric.metricId)
+              return
+            }
+            metric.output.value = values.value
+            break;
+          case 'H':
+            if (!metric.user) {
+              mgWarning(f, 'Metric does not have a user', metric.metricId)
+              return
+            }
+            metric.human.value = values.value
+            break;
+          default:
+            mgError(f, 'Unknown source ', source)
+            return;
+        }
+
+        for (let cb of metric.cbs) {
+          cb(metric, topic, payloadStr, tags, values)
+        }
       }
     }
 
