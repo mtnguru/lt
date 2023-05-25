@@ -11,18 +11,21 @@
     margin-top: 10px;
   }
 
-  .submit-button {
+  .msg-submit {
     background: #888;
     color: #fff;
     float: right;
   }
-  .msg-submit-container {
-    margin-bottom: 5px;
-    textarea {
-      width: calc(100% - 6px);
-      background: #555;
-    }
+
+  .msg {
+    padding: 3px 6px;
+    font-size: 80%;
+    width: calc(100% - 14px);
+    background: #555;
+    color: $fg-color;
+    height: 1rem;
   }
+
   .msg-list-container {
     .msg-list {
       width: 100%;

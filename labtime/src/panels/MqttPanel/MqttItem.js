@@ -35,17 +35,15 @@ const MqttItem = (props) => {
           if (props.pretty === "pretty") {
             if (payload.content) {
               payloadStr = `${payload.function} - ${payload.content}`
-            } else if (props.item.func === 'output') {
+            } else if (props.item.func === 'out') {
               payloadStr = `${payload.metric} - ${payload.value}`
-            } else if (props.item.func === 'input') {
+            } else if (props.item.func === 'inp') {
               payloadStr = `shit ${payload.metric} - ${payload.value}`
             } else {
               payloadStr = payloadStr
                 .replace(/"|/g, '')         // remove all double quotes
-
                 .replace(/^{\n/, '')        // remove opening {
                 .replace(/}$/, '')          // remove closing }
-
                 .replace(/,\n/g, '\n')      // remove all trailing commas
                 .replace(/\n\s*[\]}]\n/g, '\n') // remove all } on a line by themselves
                 .replace(/\n\s*[\]}]\n/g, '\n') // do it a second time
@@ -56,10 +54,6 @@ const MqttItem = (props) => {
                (props.item.func === 'inp' || props.item.func === 'hum' || props.item.func === 'out')) {
           let {tags, values} = extractFromTags(props.item.payload)
           payloadStr = `${tags["MetricId"]} -- ${values["value"]}`
-        } else if (props.item.func === 'shit') {
-          if (props.item.action === 'configReq') {
-            payloadStr = 'Request configuration - who am I and why am I here?'
-          }
         }
       }
     }

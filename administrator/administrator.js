@@ -7,6 +7,7 @@ const mqttNode  = require('./utils/mqttNode');
 const Topics  = require('./utils/topics');
 const {msg} = require("./utils/msg");
 const influx = require("./utils/influx");
+const {currentDate} = require("./utils/tools");
 
 const f = "administrator:main - "
 const stageId = "dev"
@@ -134,13 +135,7 @@ const processCB = (topic, payloadRaw) => {
       }
     }
 
-    var d = new Date(Date.now())
-    out.date = d.getFullYear() + "-" +
-               (d.getMonth()+1) + "-" +
-               d.getDate() + " " +
-               d.getHours() + ":" +
-               d.getMinutes() + ":" +
-               d.getSeconds()
+    var d = currentDate();
     out.cmd = input.cmd
     var outStr = JSON.stringify(out)
     msg(1,f, DEBUG,"call mqttNode.publish ",outTopic, out)

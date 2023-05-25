@@ -33,18 +33,18 @@ const extractFromTags = (payload) => {
  * Given a metric name, create the Influx line protocol tags.
  * @param metric
  */
-const makeTagsFromMetricId = (_metricId, _source, _projectId) => {
+const makeTagsFromMetricId = (_metricId, _sourceId, _projectId) => {
   const flds = _metricId.split('_')
   const nf = flds.length
   const units = flds[nf-1]
   const metricId =               ',Metric=' + _metricId
   const projectId =              ',ProjectId=' + _projectId
-  const source =                   ',Source=' + _source
+  const sourceId =               ',SourceId=' + _sourceId
   const component =              ',Component=' + flds[0]
   const device =      (nf > 2) ? ',Device=' + flds[1] : ''
   const position =    (nf > 3) ? ',Position=' + flds[2] : ''
   const composition = (nf > 4) ? ',Composition=' + flds[3] : ''
-  return `${units}${metricId}${source}${projectId}${component}${device}${position}${composition}`
+  return `${units}${metricId}${sourceId}${projectId}${component}${device}${position}${composition}`
 
 }
 
@@ -59,13 +59,12 @@ const makeTagsFromMetricName = (_metricId, _projectId) => {
   const nf = flds.length
   const units = flds[nf-1]
   const metricId =               ',Metric=' + metricId.replace(regexp,'')
-  const metricName =             ',MetricName=' + metricId
-  const source =                 ',Source=' + flds[0]
+  const sourceId =               ',SourceId=' + flds[0]
   const component =              ',Component=' + flds[1]
   const device =      (nf > 3) ? ',Device=' + flds[2] : ''
   const position =    (nf > 4) ? ',Position=' + flds[3] : ''
   const composition = (nf > 5) ? ',Composition=' + flds[4] : ''
-  return `${units}${metricId}${metricName}${source}${projectId}${component}${device}${position}${composition}`
+  return `${units}${metricId}${metricName}${sourceId}${projectId}${component}${device}${position}${composition}`
 }
 */
 

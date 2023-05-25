@@ -5,11 +5,13 @@
   display: inline-block;
   select {
     text-align: center;
-    background-color: #5500cc;
-    color: $fg-color;
-    border-radius: 5px;
+    background-color: $button-bg-color;
+    color: $button-fg-color;
+    border: $button-bd-color solid $button-bd-width;
+    border-right: $button-bd2-color solid $button-bd-width;
+    border-bottom: $button-bd2-color solid $button-bd-width;
+    border-radius: $button-bd-radius;
     font-size: 110%;
     padding: 2px;
   }
 }
-

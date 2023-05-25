@@ -28,7 +28,7 @@ function App() {
       <MainNavigation />
       <Container as="main">
         <Routes>
-          <Route path='/'         element={<ExptPage />}  />
+          <Route path='/'         element={<MqttPage />}  />
           <Route path='/mqtt'     element={<MqttPage />}  />
           <Route path='/expt'     element={<ExptPage />}  />
           <Route path='/admin'    element={<AdminPage />} />

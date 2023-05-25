@@ -5,8 +5,10 @@
   display: inline-block;
   background: $button-bg-color;
   color: $button-fg-color;
-  border-color: $button-bd-color;
-  padding: 2px 8px;
+  border: $button-bd-color solid $button-bd-width;
+  border-right: $button-bd2-color solid $button-bd-width;
+  border-bottom: $button-bd2-color solid $button-bd-width;
+  border-radius: $button-bd-radius;
+  padding: 4px 6px;
   font-size: 110%;
-  border-radius: 6px;
 }

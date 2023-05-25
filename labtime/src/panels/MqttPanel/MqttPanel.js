@@ -9,6 +9,7 @@ import MqttDisplayActions from './MqttDisplayActions';
 import MqttList from './MqttList';
 import "./MqttPanel.scss";
 import {mqttRegisterTopicCB} from "../../utils/mqttReact";
+import {currentDate} from "../../utils/tools";
 
 let registered = false;
 
@@ -36,20 +37,12 @@ const MqttPanel = (props) => {
 
   const mqttCB = (topic, payload) => {
 //  const f = "MqttPanel::mqttCB - "
-    const time = Date.now();
-    const date = new Date(time);
-    const dateStr =
-//    date.getFullYear() + '-' +
-//    ('0' + (date.getMonth()+1)).slice(-2) + '-' +
-//    ('0' + date.getDate()).slice(-2) + ' ' +
-      date.getHours()+ ':'+
-      ('0' + date.getMinutes()).slice(-2)+ ':' +
-      ('0' + date.getSeconds()).slice(-2)+ ' - ' +
-      ('00' + date.getMilliseconds()).slice(-3)
+    const dateStr = currentDate()
 
     const [project, func, clientId] = topic.split('/')
     let rnd = Math.random().toString(16).slice(3)
-    let key = `${clientId}-${time.toString()}-${rnd})}`
+
+    let key = `${clientId}-${dateStr}-${rnd}`
     if (nitems) {
     }
 //  console.log("nitems ", nitems, ni);
