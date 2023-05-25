@@ -204,14 +204,15 @@ const mqttProcessCB = (topic, payload) => {
       }
       const metricId = tags["MetricId"].toLowerCase()
       const metric = findMetric(tags["MetricId"])
-      const source = tags["Source"]
+      const sourceId = tags["Source"]
+      const projectId = tags["ProjectId"]
       if (metric == null) {
         mgError(f, "Could not find Metric: ", metricId)
         return
       }
 
       if (metric.cbs) {
-        switch (source) {
+        switch (sourceId) {
           case 'I':
             if (!metric.input) {
               mgWarning(f, 'Metric does not have a input', metric.metricId)
@@ -236,7 +237,7 @@ const mqttProcessCB = (topic, payload) => {
             metric.human.value = values.value
             break;
           default:
-            mgError(f, 'Unknown source ', source)
+            mgError(f, 'Unknown sourceId ', sourceId)
             return;
         }
 

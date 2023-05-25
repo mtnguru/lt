@@ -549,7 +549,7 @@ void sampleInputs() {
       case IN_MAX6675:
         value = tc.readFahrenheit();
         if (value > 500) {
-          snprintf(payload, payloadSize, "temperature out of range: $f", value);
+          snprintf(payload, payloadSize, "temperature out of range: %f", value);
           logit(0,ME,f,payload, NULL);
         } else {
           snprintf(payload, payloadSize, "%s value=%g", input->tags, value);

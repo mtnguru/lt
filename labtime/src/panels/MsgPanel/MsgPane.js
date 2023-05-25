@@ -11,15 +11,15 @@ const MsgPane = (props) => {
 
   // Whem the click button is pressed - submit a new item
   const clickH = (event) => {
-    const topic = "rf/msg/labtime"
+    const topic = "rf/msg/all"
     const payload = `{"type":"notes", "author":"James", "time":"today", "msg":"${msg}"}`
     mqttPublish(topic, payload)
     console.log(payload)
   }
 
-  function jsonEscape(str)  {
-    return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t");
-  }
+//function jsonEscape(str)  {
+//  return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t");
+//}
   const onChangeH = (event) => {
 
     setMsg(event.target.value)

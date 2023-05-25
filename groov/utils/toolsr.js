@@ -25,5 +25,5 @@ function currentDate(format) {
   return datestr
 }
 
-module.exports = { sleep,
-                   currentDate }
+export { sleep,
+         currentDate }

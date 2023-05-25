@@ -3,12 +3,8 @@ import './MqttClient.scss'
 
 import { Container, Select, Button, Tooltip } from '@chakra-ui/react'
 
-//import ControlButton from '../../panels/ControlPanel/ControlButton.js';
-//import SelectDebugLevel from './SelectDebugLevel.js';
-
 import {mgDebug} from "../../utils/mg"
 import {mqttPublish} from "../../utils/mqttReact"
-// import {Topics} from "../../utils/topics"
 
 function MqttClient (props) {
 

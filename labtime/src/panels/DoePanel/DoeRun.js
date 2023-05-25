@@ -4,6 +4,7 @@ import Modal from '../../components/ui/Modal'
 import DoeElement from './DoeElement'
 import DoeForm from './DoeForm'
 import {findMetric, getValue} from '../../utils/metrics'
+import {currentDate} = '../../utils/tools'
 import ('./DoeRun.scss')
 
 const DoeRun = (props) => {
@@ -30,14 +31,7 @@ const DoeRun = (props) => {
     console.log(f,'enter')
     const time = Date.now();
     const date = new Date(time);
-    const datestr =
-      date.getFullYear() + '-' +
-      ('0' + (date.getMonth()+1)).slice(-2) + '-' +
-      ('0' + date.getDate()).slice(-2) + ' ' +
-      date.getHours()+ ':'+
-      ('0' + date.getMinutes()).slice(-2)+ ':' +
-      ('0' + date.getSeconds()).slice(-2)+ ' - ' +
-      ('00' + date.getMilliseconds()).slice(-3)
+    const datestr = currentDate();
 
     // Create a list of static metricId: value
     // must use staticm - static is a reserved word
