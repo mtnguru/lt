@@ -12,6 +12,7 @@ const MsgPane = (props) => {
   // Whem the click button is pressed - submit a new item
   const clickH = (event) => {
     const topic = "rf/msg/all"
+    event.preventDefault();
     const payload = `{"type":"notes", "author":"James", "time":"today", "msg":"${msg}"}`
     mqttPublish(topic, payload)
     console.log(payload)
@@ -21,7 +22,6 @@ const MsgPane = (props) => {
 //  return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t");
 //}
   const onChangeH = (event) => {
-
     setMsg(event.target.value)
   }
 

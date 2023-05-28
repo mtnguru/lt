@@ -67,7 +67,7 @@ function MqttFilterClient(props) {
         <IconButton className="settings" onClick={onClickH} aria-label='Display MqttClient Actions' icon={<SettingsIcon />}></IconButton>
         <Heading as="h3">MqttClient</Heading>
       </Container>
-      <Container className={`clients mqtt-client-bg ${allSelected ? "all-selected" : ""}`}>
+      <Container className={`clients mqtt-clientId-bg ${allSelected ? "all-selected" : ""}`}>
         <MqttClientList list={global.aaa.clients} onChangeH={onChangeH} />
       </Container>
     </Container>

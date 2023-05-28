@@ -1,3 +1,22 @@
+arduino - create a subscribe function that resubscribes any time the client connects and reconnects
+
+riolc - connect an out put to an input - first read the voltage, then output a voltage and see the changes 
+- need to have a project running -
+
+all  mqttAdminAllSub        a/cmd/all
+cmd  mqttAdminCmdSub        a/cmd/IP    ->    a/cmd/CLIENTID
+rsp  mqttAdminRspSub        a/rsp/IP    ->    a/rsp/CLIENTID
+out  mqttOutputSub          rf/out/CLIENTID
+
+cmd  mqttAdminCmdPub[topicSize]; a/cmd/administrator  // publish command to administrator
+rsp  mqttAdminRspPub[topicSize]; a/rsp/CLIENTID       // publish responses to administrator commands
+inp  mqttInputPub[topicSize];    a/cmd/administrator
+cod  mqttCodPub[topicSize];      rf/inp/CLIENTID
+msg  mqttMsgPub[topicSize]       rf/msg/CLIENTID
+
+==========================
+
+
 RegisterMetric CB - The type is embedded in the Influx string
 Use the metric and the type - every time
 Also use the projectId

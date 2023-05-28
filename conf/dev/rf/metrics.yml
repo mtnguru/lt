@@ -95,7 +95,7 @@ Bathroom_Door_K_F:
   value: 0
   decimals: 2
   input:
-    clientId: arduino5
+    clientId: arduino4
     channelType: MAX6675
     channels: 4,5,6
 LivingRoom_Desk_K_F:
@@ -104,7 +104,7 @@ LivingRoom_Desk_K_F:
   value: 0
   decimals: 2
   input:
-    clientId: arduino4
+    clientId: arduino5
     channelType: MAX6675
     channels: 2,4,5
 Ch_Anode_K_C:

@@ -176,7 +176,7 @@ const mqttRequestFile = (clientId, name, filepath, fileType, cb) => {
       mgDebug(f, "Parse json file: ", filepath)
       inFile = JSON.parse(inPayload)
     }
-    if (inFile.cmd === cmd) {
+    if (inFile.rsp === cmd) {
       mqttUnregisterTopicCB(global.aaa.topics.subscribe.rsp, onLoadCB)
       cb(inTopic, inFile)
     }
@@ -204,7 +204,7 @@ const mqttProcessCB = (topic, payload) => {
       }
       const metricId = tags["MetricId"].toLowerCase()
       const metric = findMetric(tags["MetricId"])
-      const sourceId = tags["Source"]
+      const sourceId = tags["SourceId"]
 //    const projectId = tags["ProjectId"]
       if (metric == null) {
         mgError(f, "Could not find Metric: ", metricId)

@@ -1,5 +1,5 @@
  all: 
-    name: Select All
+    name: All
     num: 0
     enabled: true
   alarm: 

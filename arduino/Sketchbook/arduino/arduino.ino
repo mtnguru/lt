@@ -6,10 +6,13 @@
        - subscribe to output messages and set channel output accordingly
 */
 
+#include <math.h>
+
 const char *programId = "arduino.js";
 int debugLevel = 0;
 unsigned long startTime = 0;
-boolean sampling = true;
+boolean enabled = true;
+int mqttConnected = 0;
 
 ///////////// JSON
 #include "ArduinoJson.h"
@@ -97,17 +100,16 @@ String mqttClientId;
 //////////// Subscribe and publish topics
 // Subscribe
 char mqttAdminAllSub[topicSize];       // subscribe to administrator commands to all
-char mqttAdminIpSub[topicSize];        // subscribe to admin commands to IP
-char mqttAdminClientidSub[topicSize];  // subscribe to admin commands to clientId
-char mqttAdminResponseSub[topicSize];  // subscribe to administrator responses for this IP
+char mqttAdminCmdSub[topicSize];        // subscribe to admin commands to IP
+char mqttAdminRspSub[topicSize];  // subscribe to administrator responses for this IP
 char mqttOutputSub[topicSize];         // subscribe to commands to output channels
 
 // Publish
 char mqttAdminCmdPub[topicSize];       // publish command to administrator
 char mqttAdminRspPub[topicSize];       // publish responses to administrator commands
-char mqttInputPub[topicSize];
-char mqttCodePub[topicSize];
-char mqttMsgPub[topicSize];
+char mqttInputPub[topicSize];          // publish channel readings
+char mqttCodPub[topicSize];            // publish code debug messages
+char mqttMsgPub[topicSize];            // publish messages - notifications, etc.
 
 ///////////// Array for calculating running average
 const float MV = -999.999;
@@ -170,15 +172,15 @@ void logit(int _debugLevel,
   switch (msgType) {
     case ME:
       strcpy(typeName,"Error");
-      topic = mqttCodePub;
+      topic = mqttCodPub;
       break;
     case MD:
       strcpy(typeName,"Debug");
-      topic = mqttCodePub;
+      topic = mqttCodPub;
       break;
     case MW:
       strcpy(typeName,"Warning");
-      topic = mqttCodePub;
+      topic = mqttCodPub;
       break;
     case MN:
       strcpy(typeName,"Notify");
@@ -186,7 +188,7 @@ void logit(int _debugLevel,
       break;
     default:
       strcpy(typeName,"Unknown");
-      topic = mqttCodePub;
+      topic = mqttCodPub;
       break;
   }
   if (lenMsg > 250) {
@@ -205,7 +207,7 @@ void logit(int _debugLevel,
     }
   }
 
-  if (haveConfig && mqttClient.connected()) {
+  if (haveConfig && connected) {
     delay(10);
     mqttClient.publish(topic, logMsg, strlen(logMsg) + 1);
   }
@@ -327,22 +329,45 @@ void(* resetFunc) (void) = 0; //declare reset function @ address 0
 void getStatus() {
   const char *f = "getStatus";
 
-  unsigned long seconds = (millis() - startTime) / 1000;
-  unsigned long hours = (millis() - startTime) / 1000 / 3600;
+  unsigned long timeDiff = (millis() - startTime) / 1000;
+  unsigned int seconds = round(timeDiff % 60);
+  timeDiff = floor(timeDiff / 60);
+  unsigned int minutes = round(timeDiff % 60);
+  timeDiff = floor(timeDiff / 60);
+  unsigned int hours = round(timeDiff % 24);
+  timeDiff = floor(timeDiff / 24);
+  unsigned int days = timeDiff;
 
-  char samplingStatus[10];
-  if (sampling) {
-    strcpy(samplingStatus,"true");
+  char uptime[30];
+  snprintf(uptime,30,"%d %d:%d:%d", days, hours, minutes, seconds);
+
+  char enabledStatus[10];
+  if (enabled) {
+    strcpy(enabledStatus,"true");
   } else {
-    strcpy(samplingStatus,"false");
+    strcpy(enabledStatus,"false");
   }
 
   snprintf(payload,payloadSize,
-    "{\"clientId\":\"%s\", \"sampling\":\"%s\", \"debugLevel\":\"%d\",\"uptime seconds\":\"%ld\",\"uptime hours\":\"%ld\"}",
-    clientId, samplingStatus, debugLevel, seconds, hours );
+    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": \"%d\", \"enabled\":\"%s\", \"debugLevel\":\"%d\",\"uptime\":\"%s\"}",
+    clientId, mqttClientId.c_str(), mqttConnected, enabledStatus, debugLevel, uptime);
 
   logit(2,MD, f, payload, NULL);
   mqttClient.publish(mqttAdminRspPub, payload);
+}
+
+void subscribeTopics() {
+  // First unsubscribe in case we're already subscribed
+  res = mqttClient.unsubscribe(mqttAdminAllSub);
+  res = mqttClient.unsubscribe(mqttAdminCmdSub);
+  res = mqttClient.unsubscribe(mqttAdminRspSub);
+  res = mqttClient.unsubscribe(mqttOutputSub);
+
+  // Then subscribe
+  res = mqttClient.subscribe(mqttAdminAllSub);
+  res = mqttClient.subscribe(mqttAdminCmdSub);
+  res = mqttClient.subscribe(mqttAdminRspSub);
+  res = mqttClient.subscribe(mqttOutputSub);
 }
 
 void setConfig(const char *topic,
@@ -356,17 +381,24 @@ void setConfig(const char *topic,
   sampleInterval = jsonDoc["sampleInterval"];
   lastSample = sampleInterval;
 
-  ///////////// Subscribe MQTT topics
-  strcpy(mqttOutputSub, jsonDoc["topics"]["subscribe"]["out"]);
-  res = mqttClient.subscribe(mqttOutputSub);
+  ///////////// Unsubscribe to response messages
+  res = mqttClient.unsubscribe(mqttAdminRspSub);
 
-  strcpy(mqttAdminClientidSub, jsonDoc["topics"]["subscribe"]["adm"]);
-  res = mqttClient.subscribe(mqttAdminClientidSub);
+  ///////////// Subscribe MQTT topics
+  strcpy(mqttAdminAllSub, jsonDoc["topics"]["subscribe"]["all"]);
+  strcpy(mqttAdminCmdSub, jsonDoc["topics"]["subscribe"]["cmd"]);
+  strcpy(mqttAdminRspSub, jsonDoc["topics"]["subscribe"]["rsp"]);
+  strcpy(mqttOutputSub,   jsonDoc["topics"]["subscribe"]["out"]);
+
+  logit(0,MD, f, "subscribeTopics ", NULL);
+  subscribeTopics();
+  logit(0,MD, f, "done subscribeTopics ", NULL);
 
   ///////////// Publish MQTT topics
-  strcpy(mqttInputPub,  jsonDoc["topics"]["publish"]["inp"]);
-  strcpy(mqttCodePub,   jsonDoc["topics"]["publish"]["cod"]);
-  strcpy(mqttMsgPub,    jsonDoc["topics"]["publish"]["msg"]);
+  strcpy(mqttAdminRspPub,  jsonDoc["topics"]["publish"]["rsp"]);
+  strcpy(mqttInputPub,     jsonDoc["topics"]["publish"]["inp"]);
+  strcpy(mqttCodPub,       jsonDoc["topics"]["publish"]["cod"]);
+  strcpy(mqttMsgPub,       jsonDoc["topics"]["publish"]["msg"]);
 
   // Loop through metrics, initialize inputA[]
   inputN = 0;
@@ -441,7 +473,7 @@ void mqttCallback(char* _topic, byte* payload, unsigned int length) {
   paystr[length] = '\0';
   freeMemory();
 
-  logit(0,MD,f,"enter", topic);
+  logit(2,MD,f,"enter", topic);
 
   if (paystr[0] != '{') {  // if payload is NOT JSON
     if (!strcmp(topic, mqttOutputSub)) {  // Request Output from LabTime
@@ -456,39 +488,48 @@ void mqttCallback(char* _topic, byte* payload, unsigned int length) {
     }
     logit(3,MD, f, "deserialized ",NULL);
 
-    char cmd[20];
-    strcpy(cmd,jsonDoc["cmd"]);
-
-    if (!strcmp(cmd, "requestConfig")) {
-      setConfig(topic, jsonDoc);
-      freeMemory();
-    } else if (!strcmp(cmd, "requestReset")) {
-      logit(0,MN,f,"Resetting arduino", NULL);
-      delay(500);
-      resetFunc();
-    } else if (!strcmp(cmd, "requestStatus")) {  // Ask arduino for its status
-      logit(1,MN,f,"Get status", NULL);
-      getStatus();
-    } else if (!strcmp(cmd, "setDebugLevel")) {          // Set debugLevel
-      debugLevel = atoi(jsonDoc["debugLevel"]);
-      logit(0,MN,f,"Set debug level", jsonDoc["debugLevel"]);
-    } else if (!strcmp(cmd, "startSampling")) {          // Ask arduino to start sampling
-      if (sampling) {
-        logit(0,MN,f,"Already sampling", NULL);
-      } else {
-        sampling = true;
-        logit(0,MN,f,"Start sampling", jsonDoc["debugLevel"]);
+    if (!strcmp(topic, mqttAdminRspSub)) {
+      char rsp[20];
+      strcpy(rsp,jsonDoc["rsp"]);
+      if (!strcmp(rsp, "requestConfig")) {
+        setConfig(topic, jsonDoc);
+        freeMemory();
       }
-    } else if (!strcmp(cmd, "stopSampling")) {           // Ask arduino to stop sampling
-      if (!sampling) {
-        logit(0,MN,f,"Already stopped sampling", NULL);
-      } else {
-        sampling = false;
-        logit(0,MN,f,"Stop sampling", jsonDoc["debugLevel"]);
+    } else if (!strcmp(topic, mqttAdminCmdSub) || !strcmp(topic, mqttAdminAllSub)) {
+      char cmd[20];
+      strcpy(cmd,jsonDoc["cmd"]);
+      if (!strcmp(cmd, "requestReset")) {
+        logit(0,MN,f,"Resetting arduino", NULL);
+        delay(500);
+        resetFunc();
+      } else if (!strcmp(cmd, "requestStatus")) {  // Ask arduino for its status
+        logit(1,MN,f,"Get status", NULL);
+        getStatus();
+      } else if (!strcmp(cmd, "setDebugLevel")) {          // Set debugLevel
+        debugLevel = atoi(jsonDoc["debugLevel"]);
+        logit(0,MN,f,"Set debug level", jsonDoc["debugLevel"]);
+      } else if (!strcmp(cmd, "setEnabled")) {                 // Enabled arduino
+        char enabledStatus[10];
+        strcpy(enabledStatus, jsonDoc["enabled"]);
+        if (!strcmp(enabledStatus,"true")) {
+          if (enabled) {
+            logit(0,MN,f,"Already enabled", NULL);
+          } else {
+            enabled = true;
+            logit(0,MN,f,"Enable arduino", jsonDoc["debugLevel"]);
+          }
+        } else {
+          if (!enabled) {
+            logit(0,MN,f,"Already disabled", NULL);
+          } else {
+            enabled = false;
+            logit(0,MN,f,"Disable arduino", jsonDoc["debugLevel"]);
+          }
+        }
+      } else if (!strcmp(cmd, "setSampleInterval")) {      // Set sample interval
+        sampleInterval = atoi(jsonDoc["sampleInterval"]);
+        logit(0,MN,f,"Set sampling interval", jsonDoc["sampleInterval"]);
       }
-    } else if (!strcmp(cmd, "setSampleInterval")) {      // Set sample interval
-      sampleInterval = atoi(jsonDoc["sampleInterval"]);
-      logit(0,MN,f,"Set sampling interval", jsonDoc["sampleInterval"]);
     }
   }
   freeMemory();
@@ -517,22 +558,34 @@ void unsubscribeCallback() {
 
 void mqttConnect() {
   const char *f = "mqttConnect";
-  logit(0,MN,f,"enter",NULL);
+  logit(1,MN,f,"enter",NULL);
   mqttClient.setKeepAlive(300);
-  delay(500);
-  if (mqttClient.connect(mqttClientId.c_str(), mqttUser, mqttPassword)) {
-    connected = true;
-    logit(2,MD, f, "connected", NULL);
-    mqttClient.setBufferSize(payloadSize);
-  } else {
-    int st = mqttClient.state();
-    char ststr[20];
-    itoa(st,ststr,10);
+  mqttClient.setBufferSize(payloadSize);
+  int attempts = 0;
 
-    logit(0,ME,f,"mqttClient.connect failed - reset the arduino - ",ststr);
-    resetFunc();
+  delay(100);
+
+  connected = false;
+  while (!mqttClient.connected()) {
+    if (mqttClient.connect(mqttClientId.c_str(), mqttUser, mqttPassword)) {
+      connected = true;
+      mqttConnected++;
+      logit(0,MN, f, "Mqtt connected", NULL);
+    } else {
+      int st = mqttClient.state();
+      char ststr[20];
+      itoa(st,ststr,10);
+      logit(0,ME,f,"mqttClient.connected returned false   state: ",ststr);
+      delay(100);
+
+      attempts++;
+      if (attempts == 10) {
+        logit(0,ME,f,"mqttClient.connected returned false 10 times - reset the arduino",NULL);
+        delay(500);
+        resetFunc();
+      }
+    }
   }
-  logit(0,MN,f,"Mqtt connected",NULL);
 }
 
 void sampleInputs() {
@@ -574,23 +627,18 @@ void setup() {
   wifiInit();
 
   logit(2,MD,f,"Assign mqttAdmin*Pub paths",mqttAdminCmdPub);
-  strcpy(mqttAdminCmdPub, "a/cmd/administrator");
-  strcpy(mqttAdminRspPub, "a/rsp/administrator");
 
-  snprintf(mqttAdminAllSub,      topicSize, "a/cmd/all");      // admin commands to all
-  snprintf(mqttAdminIpSub,       topicSize, "a/rsp/%s",  ip);  // admin commands to ip
-  snprintf(mqttAdminResponseSub, topicSize, "a/rsp/%s", ip);   // admin responses
 
   logit(1,MD,f,"Init MQTT server",mqttIp);
   mqttClient.setServer(mqttIp, mqttPort);
   mqttClient.setCallback(mqttCallback);
   mqttConnect();
 
-  logit(2,MD,f,"Subscribe to admin messages ", NULL);
-  snprintf(mqttAdminAllSub, topicSize, "a/cmd/all");             // all administrator commands
-  res = mqttClient.subscribe(mqttAdminAllSub);
-  snprintf(mqttAdminResponseSub, topicSize, "a/rsp/%s", ip);     // CLIENTID administrator responses
-  res = mqttClient.subscribe(mqttAdminResponseSub);
+  strcpy(mqttAdminCmdPub, "a/cmd/administrator");
+
+  logit(2,MD,f,"Subscribe to admin response messages ", NULL);
+  snprintf(mqttAdminRspSub, topicSize, "a/rsp/%s", ip);   // admin responses
+  res = mqttClient.subscribe(mqttAdminRspSub);
 
   requestConfig();
   delay(500);
@@ -600,31 +648,19 @@ void loop() {
   const char *f = "loop";
   logit(3,MD,f,"Start loop",NULL);
 
-  int tries = 0;
   if (WiFi.status() != WL_CONNECTED) {
     logit(0,ME,f,"WiFi not connected - reset the arduino",NULL);
     delay(500);
     resetFunc();
   }
-  while (!mqttClient.connected()) {
-    connected = false;
-    delay(250);
+
+  if (mqttClient.state() != 0) {
     mqttConnect();
-    char intstr[10];
-    int st = mqttClient.state();
-    itoa(st,intstr, 10);
-    logit(0,ME,f,"\nmqttClient.connected returned false ",itoa(st, intstr, 10));
-    tries++;
-    if (tries == 10) {
-      logit(0,ME,f,"\nmqttClient.connected returned false 10 times - reset the arduino",NULL);
-      delay(500);
-      connected = false;
-      resetFunc();
-    }
+    subscribeTopics();
   }
 
   mqttClient.loop();
-  if (haveConfig && sampling) {
+  if (haveConfig && enabled) {
     unsigned long now = millis();
     if (now - lastSample > sampleInterval) {
       logit(3,MD,f,"do Sample start",NULL);

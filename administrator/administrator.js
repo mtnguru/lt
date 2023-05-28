@@ -12,6 +12,7 @@ const {currentDate} = require("./utils/tools");
 const f = "administrator:main - "
 const stageId = "dev"
 const clientId = "administrator"
+var mqttClientId = `${clientId}_${Math.random().toString(16).slice(3)}`
 
 global.startTime = Date.now()
 
@@ -52,18 +53,31 @@ const findClient = (id) => {
 }
 
 const publishStatus = () => {
-  let outTopic = global.aaa.topics.publish.adm;
-  let elapsedSeconds = parseInt((Date.now() - global.startTime) / 1000)
-  let elapsedHours = elapsedSeconds / (60 * 60)
-  let out = {
-    status: 'nominal',
-    uptimeHours: elapsedHours,
-    uptimeSeconds: elapsedSeconds,
-    debugLevel: global.aaa.debugLevel
-  }
+  let timeDiff = parseInt((Date.now() - global.startTime) / 1000)
+  var seconds = Math.round(timeDiff % 60)
+  timeDiff = Math.floor(timeDiff / 60)
+  var minutes = Math.round(timeDiff % 60)
+  timeDiff = Math.floor(timeDiff / 60)
+  var hours = Math.round(timeDiff % 24)
+  timeDiff = Math.floor(timeDiff / 24)
+  var days = timeDiff
 
-  let outStr = JSON.stringify(out);
-  mqttNode.publish(outTopic, outStr);
+  var uptime = ''
+  if (days > 0) {
+    uptime = `${days} `
+  }
+  uptime += `${hours}:${minutes}:${seconds}`
+
+  let out = {
+    rsp: "requestStatus",
+    clientId: clientId,
+    mqttClientId: mqttClientId,
+    status: 'nominal',
+    debugLevel: global.aaa.debugLevel,
+    uptime: uptime,
+  }
+  return out;
+//return JSON.stringify(out);
 }
 
 const resetServer = () => {
@@ -92,19 +106,22 @@ const processCB = (topic, payloadRaw) => {
     msg(3,f,DEBUG, 'func', func, ' clientId', clientId);
 
     // If this is an admin message
-    if (global.aaa.topics.subscribe['adm'] === topic) {
+    if (global.aaa.topics.subscribe['adm'] === topic ||
+        global.aaa.topics.subscribe['all'] === topic) {
       if (input.cmd) {
         if (clientId === global.aaa.clientId || clientId === 'all') {  // commands specifically for the server
           if (input.cmd === 'setDebugLevel') {
             global.aaa.debugLevel = input.debugLevel;
           }
-          // Request to reset server client
+          // Request to reset administrator client
           if (input.cmd === 'requestReset') {
             resetServer();
           }
           // Request for status
           if (input.cmd === 'requestStatus') {
-            publishStatus();
+            outTopic = global.aaa.topics.publish.rsp
+            outTopic = outTopic.replace(/DCLIENTID/, global.aaa.clientId)
+            out = publishStatus();
           }
           if (input.cmd === 'requestConfig') {
             var dclientId = (input.ip) ? input.ip : input.clientId
@@ -135,11 +152,14 @@ const processCB = (topic, payloadRaw) => {
       }
     }
 
-    var d = currentDate();
-    out.cmd = input.cmd
-    var outStr = JSON.stringify(out)
-    msg(1,f, DEBUG,"call mqttNode.publish ",outTopic, out)
-    mqttNode.publish(outTopic, outStr);
+    if (out) {
+      out.rsp = input.cmd;
+      var d = currentDate();
+      out.rsp = input.cmd
+      var outStr = JSON.stringify(out)
+      msg(1,f, DEBUG,"call mqttNode.publish ",outTopic, out)
+      mqttNode.publish(outTopic, outStr);
+    }
   } catch (err) {
     msg(0,f, ERROR, err)
   }
@@ -281,7 +301,6 @@ const readConfig = () => {
     initClients(projectId, project, funcTypes)
   } // for each project
 }
-
 readConfig();
 
 // Complete the administrator subscribe and publish topics
@@ -289,5 +308,5 @@ global.aaa.topics.subscribe = Topics.completeTopics(global.aaa.topics.subscribe)
 global.aaa.topics.publish = Topics.completeTopics(global.aaa.topics.publish);
 
 console.log(f, 'Connect to mqtt server and initiate process callback')
-mqttNode.connect(clientId,processCB,'-');
+mqttNode.connect(mqttClientId,processCB,'-');
 console.log(f, 'Exit main thread')

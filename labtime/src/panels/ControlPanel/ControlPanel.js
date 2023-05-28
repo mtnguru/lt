@@ -21,37 +21,37 @@ const ControlPanel = (props) => {
   }
 
   return (
-    <Container className="panel control-panel mqtt-client-bg">
+    <Container className="panel control-panel mqtt-clientId-bg">
       <h2>Control panel</h2>
       <Container className="control-flex">
         <div className="controls">
           <div className="control-bar arduino2">
             <label className="label">Arduino2</label>
-            <ControlButton client="arduino2" metricId="arduino2_Reset" type="push" label="Reset" cname="reset" clickH={clickH}></ControlButton>
-            <ControlButton client="arduino2" metricId="arduino2_LED_Onboard_On" type="toggle" label="Onboard LED" className="onboard" clickH={clickH}></ControlButton>
+            <ControlButton clientId="arduino2" metricId="arduino2_Reset" type="push" label="Reset" cname="reset" clickH={clickH}></ControlButton>
+            <ControlButton clientId="arduino2" metricId="arduino2_LED_Onboard_On" type="toggle" label="Onboard LED" className="onboard" clickH={clickH}></ControlButton>
           </div>
           <div className="control-bar arduino3">
             <label className="label">Arduino3</label>
-            <ControlButton client="arduino3" metricId="arduino3_Reset" type="push" label="Reset" cname="reset" clickH={clickH}></ControlButton>
-            <ControlButton client="arduino3" metricId="arduino3_LED_Onboard_On" type="toggle" label="Onboard LED" className="onboard" clickH={clickH}></ControlButton>
+            <ControlButton clientId="arduino3" metricId="arduino3_Reset" type="push" label="Reset" cname="reset" clickH={clickH}></ControlButton>
+            <ControlButton clientId="arduino3" metricId="arduino3_LED_Onboard_On" type="toggle" label="Onboard LED" className="onboard" clickH={clickH}></ControlButton>
           </div>
           <div className="control-bar arduino4">
             <label className="label">Arduino4</label>
-            <ControlButton client="arduino4" metricId="arduino4_Reset" type="push" label="Reset" cname="reset" clickH={clickH}></ControlButton>
-            <ControlButton client="arduino4" metricId="arduino4_LED_Onboard_On" type="toggle" label="Onboard LED" className="onboard" clickH={clickH}></ControlButton>
+            <ControlButton clientId="arduino4" metricId="arduino4_Reset" type="push" label="Reset" cname="reset" clickH={clickH}></ControlButton>
+            <ControlButton clientId="arduino4" metricId="arduino4_LED_Onboard_On" type="toggle" label="Onboard LED" className="onboard" clickH={clickH}></ControlButton>
           </div>
           <div className="control-bar arduino5">
             <label className="label">Arduino5</label>
-            <ControlButton client="arduino5" metricId="arduino5_Reset" type="push" label="Reset" cname="reset" clickH={clickH}></ControlButton>
-            <ControlButton client="arduino5" metricId="arduino5_LED_Onboard_On" type="toggle" label="Onboard LED" clickH={clickH}></ControlButton>
+            <ControlButton clientId="arduino5" metricId="arduino5_Reset" type="push" label="Reset" cname="reset" clickH={clickH}></ControlButton>
+            <ControlButton clientId="arduino5" metricId="arduino5_LED_Onboard_On" type="toggle" label="Onboard LED" clickH={clickH}></ControlButton>
           </div>
           <div className="control-bar epiclc">
             <label className="label">EpicLC</label>
-            <ControlButton client="epiclc" metricId="reset" type="push" label="Reset" cname="reset" clickH={clickH}></ControlButton>
+            <ControlButton clientId="epiclc" metricId="reset" type="push" label="Reset" cname="reset" clickH={clickH}></ControlButton>
 
-            <ControlButton client="epiclc" metricId="Backpanel_LED_Blue_On" type="toggle" cname="blue" label="Blue" clickH={clickH}></ControlButton>
-            <ControlButton client="epiclc" metricId="Backpanel_LED_Green_On" type="toggle" cname="green" label="Green" clickH={clickH}></ControlButton>
-            <ControlButton client="epiclc" metricId="Backpanel_LED_Red_On" type="toggle" cname="red" label="Red" clickH={clickH}></ControlButton>
+            <ControlButton clientId="epiclc" metricId="Backpanel_LED_Blue_On" type="toggle" cname="blue" label="Blue" clickH={clickH}></ControlButton>
+            <ControlButton clientId="epiclc" metricId="Backpanel_LED_Green_On" type="toggle" cname="green" label="Green" clickH={clickH}></ControlButton>
+            <ControlButton clientId="epiclc" metricId="Backpanel_LED_Red_On" type="toggle" cname="red" label="Red" clickH={clickH}></ControlButton>
           </div>
         </div>
       </Container>

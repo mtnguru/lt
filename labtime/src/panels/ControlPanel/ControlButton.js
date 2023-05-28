@@ -1,6 +1,7 @@
 // File: ControlButton.js
 
 import React, {useState} from 'react';
+import { mqttPublish } from '../../utils/mqttReact'
 
 //import {makeTagsFromMetric} from "../../utils/influxr"
 //import {findMetric} from "../../utils/metrics"
@@ -11,7 +12,14 @@ const ControlButton = (props) => {
   const [btnState, setBtnState] = useState(false)
 
   const clickH = (event) => {
-    setBtnState(true);
+    setBtnState(!btnState);
+    var topic = global.aaa.topics.publish.out.replace(/DCLIENTID/,props.clientId)
+    var payload = {
+      clientId: props.clientId,
+
+    }
+    var payloadStr = JSON.stringify(payload)
+    mqttPublish(topic,payloadStr)
     props.clickH(event)
   }
 

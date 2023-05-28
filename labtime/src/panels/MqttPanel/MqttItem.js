@@ -67,7 +67,7 @@ const MqttItem = (props) => {
           <span className='date'>{props.item.date}</span>
           <span className='nitems'>{props.item.nitems.toString()}</span>
         </div>
-        <div className={`left mqtt-client-bg`}>
+        <div className={`left mqtt-clientId-bg`}>
           <span className={`clientId ${props.item.clientId}`}>{props.item.clientId}</span>
           <span className='topic'>{props.item.topic}</span>
         </div>

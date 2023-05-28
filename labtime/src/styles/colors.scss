@@ -15,10 +15,10 @@ $input-bg-color: #001b54;
 
 $button-fg-color: $fg-color;
 $button-bg-color: #445588;
-$button-bd-color: #6677aa;
+$button-bd-color: #556699;
 $button-bd2-color: #334477;
-$button-green-color: #007722;
-$button-red-color: #bb2200;
+$button-green-color: #00aa00;
+$button-red-color: #dd2200;
 $button-grey-color: #444444;
 $button-bd-width: 2px;
 $button-bd-radius: 5px;
@@ -34,16 +34,16 @@ $stat-fg-color: #ccff33;
   // MQTT Message function
   .Activity, .act    { background-color: #420; }
   .Alarm,    .alm    { background-color: #600; }
-  .Input,    .inp    { background-color: #118; }
+  .Input,    .inp    { background-color: #227; }
   .Output,   .out    { background-color: #040; }
   .Code,     .cod    { background-color: #000; }
   .Human,    .hum    { background-color: #830; }
-  .Command,  .cmd    { background-color: #333; }
-  .Response, .rsp    { background-color: #215; }
+  .Command,  .cmd    { background-color: #444; }
+  .Response, .rsp    { background-color: #306; }
   .Message,  .msg    { background-color: #033; }
 }
 
-.mqtt-client-bg {
+.mqtt-clientId-bg {
   // MQTT message client
   .riolc         { background-color: #700 }
   .epiclc        { background-color: #40e; }

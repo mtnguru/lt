@@ -12,9 +12,16 @@
   }
 
   .msg-submit {
-    background: #888;
-    color: #fff;
+    background: $button-bg-color;
+    color: $button-fg-color;
+    border-radius: 3px;
+    border: $button-bd-color solid 1px;
+    border-right: $button-bd2-color;
+    border-bottom: $button-bd2-color;
     float: right;
+    margin-top: 5px;
+    font-size: 70%;
+    padding: 2px 8px;
   }
 
   .msg {

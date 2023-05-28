@@ -3,7 +3,7 @@
  */
 
 require('./msgE')
-const {msg, msgn, requestDebugLevel} = require('../utils/msg.js')
+const {msg, msgn, setDebugLevel} = require('../utils/msg.js')
 const mqtt=require('mqtt');
 const {extractFromTags} = require('./influx')
 const {findMetric} = require('./metrics')

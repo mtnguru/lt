@@ -8,11 +8,11 @@ import {mqttPublish} from "../../utils/mqttReact"
 
 function MqttClient (props) {
 
-  const [sampling, setSampling] = useState(true)
+  const [enabled, setEnabled] = useState(true)
 
   const onSelectH = (event) => {
     let topic = `a/cmd/${props.client.clientId}`
-    let payload = `{"cmd": "requestDebugLevel", "debugLevel": "${event.target.value}"}`;
+    let payload = `{"cmd": "setDebugLevel", "debugLevel": "${event.target.value}"}`;
     console.log('   send ', topic, payload)
     mqttPublish(topic, payload)
   }
@@ -31,12 +31,12 @@ function MqttClient (props) {
       payload = `{"cmd": "requestStatus", "clientId": "${props.client.clientId}"}`;
     } else if (name === "E") {
       topic = `a/cmd/${props.client.clientId}`
-      if (sampling) {
-        payload = `{"cmd": "stopSampling", "clientId": "${props.client.clientId}"}`;
-        setSampling(false)
+      if (enabled) {
+        payload = `{"cmd": "setEnabled", "enabled": "false", "clientId": "${props.client.clientId}"}`;
+        setEnabled(false)
       } else {
-        payload = `{"cmd": "startSampling", "clientId": "${props.client.clientId}"}`;
-        setSampling(true)
+        payload = `{"cmd": "setEnabled", "enabled": "true", "clientId": "${props.client.clientId}"}`;
+        setEnabled(true)
       }
     } else {
       console.log('   unknown button pressed ', name, '');
@@ -52,27 +52,31 @@ function MqttClient (props) {
         <input id={props.id} type='checkbox' name={props.client.id} onChange={props.onChangeH} checked={props.client.selected ? "checked" : ""} />
         <label htmlFor={props.client.clientId}>{props.client.name}</label>
       </div>
-      {props.id !== 'all' &&
-        <div className="row2">
-          <Tooltip label="Enable sampling" bg="white" p="10px" placement="bottom">
-            <Button className={`sampling ${sampling ? "true" : "false"}`} onClick={onClickH}>E</Button>
+      <div className="row2">
+        {props.id !== 'administrator' && props.id !== 'labtime' && props.id !== 'project' &&
+          <Tooltip label="Enable" bg="white" p="10px" placement="bottom">
+            <Button className={`enabled ${enabled ? "true" : "false"}`} onClick={onClickH}>E</Button>
           </Tooltip>
+        }
+        <Tooltip label="Request status" bg="white" p="10px" placement="bottom">
+          <Button className="status"   onClick={onClickH}>S</Button>
+        </Tooltip>
+        {props.id !== 'all' &&
           <Tooltip label="Reset client" bg="white" p="10px" placement="bottom">
             <Button className="reset"    onClick={onClickH}>R</Button>
           </Tooltip>
-          <Tooltip label="Request status" bg="white" p="10px" placement="bottom">
-            <Button className="status"   onClick={onClickH}>S</Button>
-          </Tooltip>
+        }
+        {props.id !== 'all' &&
           <Tooltip label="Set Debug Level" bg="white" p="10px" placement="bottom">
-            <Select className="debug-level" onChange={onSelectH} >
+            <Select className="debug-level" onChange={onSelectH}>
               <option value="0">0</option>
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
             </Select>
           </Tooltip>
-        </div>
-      }
+        }
+      </div>
     </Container> )
 }
 export default MqttClient;

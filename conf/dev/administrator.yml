@@ -15,11 +15,11 @@ mqtt:  # Each client must have it's own mqtt config
 topics:
   subscribe:
     adm: a/cmd/administrator
+    all: a/cmd/all
     cmd: PROJECTID/cmd/CLIENTID
   publish:
     rsp: a/rsp/DCLIENTID
     hum: a/rsp/DCLIENTID/DUSERID
-    adm: a/rsp/CLIENTID
 projects:
   rf:
     name: Cabin in Red Feather
@@ -31,7 +31,7 @@ projects:
         model: epic
         clientType: edge
         sampleInterval: 10000
-        sampling: true
+        enabled: true
         topics: edge
         headers:
           apiKey: mnMmq5awnB3DwMsmwFFVToYTqeHtJ8Xf
@@ -44,7 +44,7 @@ projects:
         model: riolc
         clientType: edge
         sampleInterval: 10000
-        sampling: true
+        enabled: true
         topics: edge
         headers:
           apiKey: yedg7SAJWgtf3jZNjPYfR5XTjWRrX59X
@@ -56,7 +56,7 @@ projects:
         model: arduino
         clientType: edge
         sampleInterval: 10000
-        sampling: true
+        enabled: true
         topics: edge
       arduino3:
         name: Arduino3
@@ -64,7 +64,7 @@ projects:
         model: arduino
         clientType: edge
         sampleInterval: 10000
-        sampling: true
+        enabled: true
         topics: edge
       arduino4:
         name: Arduino4
@@ -72,7 +72,7 @@ projects:
         model: arduino
         clientType: edge
         sampleInterval: 10000
-        sampling: true
+        enabled: true
         topics: edge
       arduino5:
         name: Arduino5
@@ -81,7 +81,7 @@ projects:
         model: arduino
         clientType: edge
         sampleInterval: 10000
-        sampling: true
+        enabled: true
         topics: edge
       labtime:
         name: LabTime
@@ -114,18 +114,21 @@ projects:
             msg: PROJECTID/msg/CLIENTID
             cod: PROJECTID/cod/CLIENTID
             hum: PROJECTID/hum/CLIENTID
+            out: PROJECTID/out/DCLIENTID
         metrics: project
         funcTypes: {}
     topics:
       edge:
         subscribe:
-          adm: a/cmd/CLIENTID
+          all: a/cmd/all
+          cmd: a/cmd/CLIENTID
+          rsp: a/rsp/CLIENTID
           out: PROJECTID/out/CLIENTID
         publish:
+          rsp: a/rsp/CLIENTID
           inp: PROJECTID/inp/CLIENTID/USERID/cabin_lt
           cod: PROJECTID/cod/CLIENTID
           msg: PROJECTID/msg/CLIENTID
-          adm: PROJECTID/rsp/CLIENTID
   up:
     name: Uphold Productions
     clients:

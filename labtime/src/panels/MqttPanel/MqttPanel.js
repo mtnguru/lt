@@ -126,7 +126,7 @@ const MqttPanel = (props) => {
         </div>
         <div className="mqtt-display">
           <MqttDisplayActions actions={{onClearList, onPretty}} pretty={pretty}></MqttDisplayActions>
-          <MqttList className="mqtt-client-bg" pretty={pretty} list={filteredList}></MqttList>
+          <MqttList className="mqtt-clientId-bg" pretty={pretty} list={filteredList}></MqttList>
         </div>
       </div>
     </div>
