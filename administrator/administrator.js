@@ -15,6 +15,7 @@ const clientId = "administrator"
 var mqttClientId = `${clientId}_${Math.random().toString(16).slice(3)}`
 
 global.startTime = Date.now()
+global.aab = { clients: {}}
 
 /*
  * Processes a request for a devices configuration - device, inputs, outputs.
@@ -83,6 +84,10 @@ const publishStatus = () => {
 const resetServer = () => {
 }
 
+const connectCB = () => {
+  mqttNode.publish(global.aaa.topics.publish.all,`{"cmd": "requestStatus", "clientId":"all"}`)
+}
+
 /**
  * processCB
  */
@@ -92,8 +97,9 @@ const processCB = (topic, payloadRaw) => {
   readConfig();
   let out;
   let outTopic;
+  var dclientId;
   try {
-    const [projectId, func, clientId, userId, telegrafId] = topic.split('/')
+    var [projectId, func, clientId, userId, telegrafId] = topic.split('/')
 
     const inputStr = payloadRaw.toString();
     let input = {}
@@ -124,14 +130,17 @@ const processCB = (topic, payloadRaw) => {
             out = publishStatus();
           }
           if (input.cmd === 'requestConfig') {
-            var dclientId = (input.ip) ? input.ip : input.clientId
+            var id = (input.ip) ? input.ip : input.clientId
             outTopic = global.aaa.topics.publish.rsp
-            outTopic = outTopic.replace(/DCLIENTID/, dclientId)
-            out = findClient(dclientId)
+            outTopic = outTopic.replace(/DCLIENTID/, id)
+            out = findClient(id)
+            if (global.aab.clients[out.clientId]) {
+              out.status = global.aab.clients[out.clientId]
+            }
           }
           if (input.cmd === 'requestJsonFile') {
             msg(2, f, DEBUG, "Read json file: ", filepath)
-            var dclientId = (input.ip) ? input.ip : input.clientId
+            dclientId = (input.ip) ? input.ip : input.clientId
             outTopic = global.aaa.topics.publish.rsp
             outTopic = outTopic.replace(/DCLIENTID/, dclientId)
 
@@ -140,7 +149,7 @@ const processCB = (topic, payloadRaw) => {
             out = JSON.parse(data)
           }
           if (input.cmd === 'requestYmlFile') {
-            var dclientId = (input.ip) ? input.ip : input.clientId
+            dclientId = (input.ip) ? input.ip : input.clientId
             outTopic = global.aaa.topics.publish.rsp
             outTopic = outTopic.replace(/DCLIENTID/, dclientId)
 
@@ -150,14 +159,18 @@ const processCB = (topic, payloadRaw) => {
           }
         }
       }
+    } else if (topic.indexOf(global.aaa.topics.publish.rsp.replace(/\/#/,''))) {
+      if (input.rsp === 'requestStatus')  {
+        global.aab.clients[clientId] = input
+        console.log("clientId " + clientId)
+      }
     }
 
     if (out) {
       out.rsp = input.cmd;
-      var d = currentDate();
-      out.rsp = input.cmd
+      out.date = currentDate()
       var outStr = JSON.stringify(out)
-      msg(1,f, DEBUG,"call mqttNode.publish ",outTopic, out)
+      msg(0,f, DEBUG,`call mqttNode.publish - topic: ${outTopic} length:${outStr.length}`)
       mqttNode.publish(outTopic, outStr);
     }
   } catch (err) {
@@ -301,12 +314,12 @@ const readConfig = () => {
     initClients(projectId, project, funcTypes)
   } // for each project
 }
-readConfig();
 
+readConfig();
 // Complete the administrator subscribe and publish topics
 global.aaa.topics.subscribe = Topics.completeTopics(global.aaa.topics.subscribe);
 global.aaa.topics.publish = Topics.completeTopics(global.aaa.topics.publish);
 
 console.log(f, 'Connect to mqtt server and initiate process callback')
-mqttNode.connect(mqttClientId,processCB,'-');
+mqttNode.connect(mqttClientId,connectCB, processCB,'-');
 console.log(f, 'Exit main thread')

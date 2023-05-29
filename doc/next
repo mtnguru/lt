@@ -1,3 +1,11 @@
+What now?
+On boot, have the administrator request the status for each client
+Have the administrator store the status for each client
+Save the status separater from the config - that or copy the config
+
+
+
+
 arduino - create a subscribe function that resubscribes any time the client connects and reconnects
 
 riolc - connect an out put to an input - first read the voltage, then output a voltage and see the changes 

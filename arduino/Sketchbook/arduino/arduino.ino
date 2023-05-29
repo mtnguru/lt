@@ -16,20 +16,19 @@ int mqttConnected = 0;
 
 ///////////// JSON
 #include "ArduinoJson.h"
-const int jsonDocSize = 3000;
+const int jsonDocSize = 1000;       // May 29, 2023 - crashes at 924
 StaticJsonDocument<jsonDocSize> jsonDoc;
-const int payloadSize = 2000;
-
+const int payloadSize = 1750;       // Configuration uses 1404
 const int msgSize = 300;
 char logMsg[msgSize];
 
 const int tagSize = 200;
-const int topicSize = 50;
-const int metricIdSize = 40;
-const int projectIdSize = 20;
-const int clientIdSize = 20;
+const int topicSize = 30;
+const int metricIdSize = 20;
+const int projectIdSize = 10;
+const int clientIdSize = 10;
 const int ipSize = 20;
-const int valueSize = 20;
+const int valueSize = 10;
 
 char topic[topicSize];
 char payload[payloadSize];
@@ -99,14 +98,14 @@ String mqttClientId;
 
 //////////// Subscribe and publish topics
 // Subscribe
-char mqttAdminAllSub[topicSize];       // subscribe to administrator commands to all
-char mqttAdminCmdSub[topicSize];        // subscribe to admin commands to IP
-char mqttAdminRspSub[topicSize];  // subscribe to administrator responses for this IP
+char mqttAllSub[topicSize];       // subscribe to administrator commands to all
+char mqttCmdSub[topicSize];        // subscribe to admin commands to IP
+char mqttRspSub[topicSize];  // subscribe to administrator responses for this IP
 char mqttOutputSub[topicSize];         // subscribe to commands to output channels
 
 // Publish
-char mqttAdminCmdPub[topicSize];       // publish command to administrator
-char mqttAdminRspPub[topicSize];       // publish responses to administrator commands
+char mqttCmdPub[topicSize];       // publish command to administrator
+char mqttRspPub[topicSize];       // publish responses to administrator commands
 char mqttInputPub[topicSize];          // publish channel readings
 char mqttCodPub[topicSize];            // publish code debug messages
 char mqttMsgPub[topicSize];            // publish messages - notifications, etc.
@@ -121,7 +120,7 @@ float temps[inputMax][avgN];
 const int thermoDO  = 2;
 const int thermoCS  = 4;
 const int thermoCLK = 5;
-unsigned int sampleInterval = 5000;
+unsigned int sampleInterval = 10000;
 MAX6675 tc(thermoCLK, thermoCS, thermoDO);
 
 /////////////
@@ -284,14 +283,14 @@ void getInfluxValue(const char *payload, char *value) {
   return;
 }
 
-void processOutput (char *paystr) {
+void processOutput (char *_payload) {
   const char *f = "processOutput";
   logit(2,MD,f,"Output request",NULL);
 
   // influx line protocol, 2nd field is required to be metric
   char metricId[metricIdSize];
   char line[tagSize];
-  strcpy(line,paystr);
+  strcpy(line,_payload);
   getInfluxMetric(line, metricId);
   outputS *output = findMetric(metricId);
 
@@ -303,7 +302,6 @@ void processOutput (char *paystr) {
 
   const int channel = atoi(output->channel);
   char value[valueSize];
-  strcpy(line,paystr);
   getInfluxValue(line,value);
   switch (output->channelType) {
     case OUT_LED:
@@ -341,32 +339,32 @@ void getStatus() {
   char uptime[30];
   snprintf(uptime,30,"%d %d:%d:%d", days, hours, minutes, seconds);
 
-  char enabledStatus[10];
+  char enabledStr[10];
   if (enabled) {
-    strcpy(enabledStatus,"true");
+    strcpy(enabledStr,"true");
   } else {
-    strcpy(enabledStatus,"false");
+    strcpy(enabledStr,"false");
   }
 
   snprintf(payload,payloadSize,
     "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": \"%d\", \"enabled\":\"%s\", \"debugLevel\":\"%d\",\"uptime\":\"%s\"}",
-    clientId, mqttClientId.c_str(), mqttConnected, enabledStatus, debugLevel, uptime);
+    clientId, mqttClientId.c_str(), mqttConnected, enabledStr, debugLevel, uptime);
 
   logit(2,MD, f, payload, NULL);
-  mqttClient.publish(mqttAdminRspPub, payload);
+  mqttClient.publish(mqttRspPub, payload);
 }
 
 void subscribeTopics() {
   // First unsubscribe in case we're already subscribed
-  res = mqttClient.unsubscribe(mqttAdminAllSub);
-  res = mqttClient.unsubscribe(mqttAdminCmdSub);
-  res = mqttClient.unsubscribe(mqttAdminRspSub);
+  res = mqttClient.unsubscribe(mqttAllSub);
+  res = mqttClient.unsubscribe(mqttCmdSub);
+  res = mqttClient.unsubscribe(mqttRspSub);
   res = mqttClient.unsubscribe(mqttOutputSub);
 
   // Then subscribe
-  res = mqttClient.subscribe(mqttAdminAllSub);
-  res = mqttClient.subscribe(mqttAdminCmdSub);
-  res = mqttClient.subscribe(mqttAdminRspSub);
+  res = mqttClient.subscribe(mqttAllSub);
+  res = mqttClient.subscribe(mqttCmdSub);
+  res = mqttClient.subscribe(mqttRspSub);
   res = mqttClient.subscribe(mqttOutputSub);
 }
 
@@ -382,12 +380,12 @@ void setConfig(const char *topic,
   lastSample = sampleInterval;
 
   ///////////// Unsubscribe to response messages
-  res = mqttClient.unsubscribe(mqttAdminRspSub);
+  res = mqttClient.unsubscribe(mqttRspSub);
 
   ///////////// Subscribe MQTT topics
-  strcpy(mqttAdminAllSub, jsonDoc["topics"]["subscribe"]["all"]);
-  strcpy(mqttAdminCmdSub, jsonDoc["topics"]["subscribe"]["cmd"]);
-  strcpy(mqttAdminRspSub, jsonDoc["topics"]["subscribe"]["rsp"]);
+  strcpy(mqttAllSub, jsonDoc["topics"]["subscribe"]["all"]);
+  strcpy(mqttCmdSub, jsonDoc["topics"]["subscribe"]["cmd"]);
+  strcpy(mqttRspSub, jsonDoc["topics"]["subscribe"]["rsp"]);
   strcpy(mqttOutputSub,   jsonDoc["topics"]["subscribe"]["out"]);
 
   logit(0,MD, f, "subscribeTopics ", NULL);
@@ -395,7 +393,7 @@ void setConfig(const char *topic,
   logit(0,MD, f, "done subscribeTopics ", NULL);
 
   ///////////// Publish MQTT topics
-  strcpy(mqttAdminRspPub,  jsonDoc["topics"]["publish"]["rsp"]);
+  strcpy(mqttRspPub,  jsonDoc["topics"]["publish"]["rsp"]);
   strcpy(mqttInputPub,     jsonDoc["topics"]["publish"]["inp"]);
   strcpy(mqttCodPub,       jsonDoc["topics"]["publish"]["cod"]);
   strcpy(mqttMsgPub,       jsonDoc["topics"]["publish"]["msg"]);
@@ -462,25 +460,28 @@ void setConfig(const char *topic,
   logit(3,MD, f, "exit", NULL);
 }
 
-void mqttCallback(char* _topic, byte* payload, unsigned int length) {
-  const char *f = "mqttCallback";
+void mqttCB(char* _topic, byte* _payload, unsigned int length) {
+  const char *f = "mqttCB";
   // You must immediately copy topic and payload into your own variables,
   // otherwise subsequent mqttClient calls will use the same memory space and cause you much hell.
   char topic[topicSize];
-  char paystr[payloadSize];
   strcpy(topic, _topic);
-  strncpy(paystr, (char *)payload, length);
-  paystr[length] = '\0';
+  strncpy(payload, (char *)_payload, length);
+  payload[length] = '\0';
   freeMemory();
+  char out[msgSize];
+  out[0] = '\0';
+  char outTopic[topicSize];
+  strcpy(outTopic, mqttRspPub);
 
   logit(2,MD,f,"enter", topic);
 
-  if (paystr[0] != '{') {  // if payload is NOT JSON
+  if (payload[0] != '{') {  // if payload is NOT JSON
     if (!strcmp(topic, mqttOutputSub)) {  // Request Output from LabTime
-      processOutput(paystr);
+      processOutput(payload);
     }
   } else {                 // if payload is JSON
-    DeserializationError err = deserializeJson(jsonDoc, paystr);
+    DeserializationError err = deserializeJson(jsonDoc, payload);
     if (err) {
       char msg[300];
       snprintf (msg, msgSize, "ERROR: deserializationJson - %s", err.c_str());
@@ -488,17 +489,18 @@ void mqttCallback(char* _topic, byte* payload, unsigned int length) {
     }
     logit(3,MD, f, "deserialized ",NULL);
 
-    if (!strcmp(topic, mqttAdminRspSub)) {
+    if (!strcmp(topic, mqttRspSub)) {
       char rsp[20];
       strcpy(rsp,jsonDoc["rsp"]);
       if (!strcmp(rsp, "requestConfig")) {
         setConfig(topic, jsonDoc);
         freeMemory();
       }
-    } else if (!strcmp(topic, mqttAdminCmdSub) || !strcmp(topic, mqttAdminAllSub)) {
+    } else if (!strcmp(topic, mqttCmdSub) || !strcmp(topic, mqttAllSub)) {
       char cmd[20];
       strcpy(cmd,jsonDoc["cmd"]);
       if (!strcmp(cmd, "requestReset")) {
+        snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"msg\":\"reset requested\"}", cmd, clientId);
         logit(0,MN,f,"Resetting arduino", NULL);
         delay(500);
         resetFunc();
@@ -507,30 +509,24 @@ void mqttCallback(char* _topic, byte* payload, unsigned int length) {
         getStatus();
       } else if (!strcmp(cmd, "setDebugLevel")) {          // Set debugLevel
         debugLevel = atoi(jsonDoc["debugLevel"]);
-        logit(0,MN,f,"Set debug level", jsonDoc["debugLevel"]);
+        snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"debugLevel\":\"%d\"}", cmd, clientId, debugLevel);
       } else if (!strcmp(cmd, "setEnabled")) {                 // Enabled arduino
-        char enabledStatus[10];
-        strcpy(enabledStatus, jsonDoc["enabled"]);
-        if (!strcmp(enabledStatus,"true")) {
-          if (enabled) {
-            logit(0,MN,f,"Already enabled", NULL);
-          } else {
-            enabled = true;
-            logit(0,MN,f,"Enable arduino", jsonDoc["debugLevel"]);
-          }
+        char enabledStr[10];
+        strcpy(enabledStr, jsonDoc["enabled"]);
+        if (!strcmp(enabledStr,"true")) {
+          enabled = true;
         } else {
-          if (!enabled) {
-            logit(0,MN,f,"Already disabled", NULL);
-          } else {
-            enabled = false;
-            logit(0,MN,f,"Disable arduino", jsonDoc["debugLevel"]);
-          }
+          enabled = false;
         }
+        snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"enabled\":\"%s\"}", cmd, clientId, (enabled) ? "true": "false");
       } else if (!strcmp(cmd, "setSampleInterval")) {      // Set sample interval
         sampleInterval = atoi(jsonDoc["sampleInterval"]);
-        logit(0,MN,f,"Set sampling interval", jsonDoc["sampleInterval"]);
+        snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"sampleInterval\":\"%dms\"}", cmd, clientId, sampleInterval);
       }
     }
+  }
+  if (strlen(out)) {
+    mqttClient.publish(outTopic, out);
   }
   freeMemory();
 }
@@ -544,15 +540,15 @@ void requestConfig() {
   logit(3,MD, f, "enter", NULL);
 
   snprintf(payload,payloadSize,"{\"cmd\":\"requestConfig\",\"ip\":\"%s\"}", ip );
-  mqttClient.publish(mqttAdminCmdPub, payload);
+  mqttClient.publish(mqttCmdPub, payload);
   if (!res) {
     logit(0,ME,f,"Error publishing request in requestConfig", NULL);
   }
   logit(3,MD, f, "exit", NULL);
 }
 
-void unsubscribeCallback() {
-  const char *f = "unsubscribeCallback";
+void unsubscribeCB() {
+  const char *f = "unsubscribeCB";
   logit(3,MD, f, "howdy", NULL);
 }
 
@@ -591,6 +587,7 @@ void mqttConnect() {
 void sampleInputs() {
   // Loop through the inputs, read value, and post to MQTT
   const char *f = "sampleInputs";
+  char payload[payloadSize];
   logit(3,MD,f,"sampleInputs enter ", NULL);
   for (int m = 0; m < inputN; m++) {
     inputS *input = &inputA[m];
@@ -626,19 +623,19 @@ void setup() {
 
   wifiInit();
 
-  logit(2,MD,f,"Assign mqttAdmin*Pub paths",mqttAdminCmdPub);
+  logit(2,MD,f,"Assign mqtt*Pub paths",mqttCmdPub);
 
 
   logit(1,MD,f,"Init MQTT server",mqttIp);
   mqttClient.setServer(mqttIp, mqttPort);
-  mqttClient.setCallback(mqttCallback);
+  mqttClient.setCallback(mqttCB);
   mqttConnect();
 
-  strcpy(mqttAdminCmdPub, "a/cmd/administrator");
+  strcpy(mqttCmdPub, "a/cmd/administrator");
 
   logit(2,MD,f,"Subscribe to admin response messages ", NULL);
-  snprintf(mqttAdminRspSub, topicSize, "a/rsp/%s", ip);   // admin responses
-  res = mqttClient.subscribe(mqttAdminRspSub);
+  snprintf(mqttRspSub, topicSize, "a/rsp/%s", ip);   // admin responses
+  res = mqttClient.subscribe(mqttRspSub);
 
   requestConfig();
   delay(500);

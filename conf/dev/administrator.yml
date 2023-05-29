@@ -1,7 +1,6 @@
 clientId: administrator
 name: Administrator
 clientType: administrator
-debugLevel: 2
 userId: Gandalf
 mqtt:  # Each client must have it's own mqtt config
 # ip:   http://172.16.45.7   # merlin
@@ -16,10 +15,14 @@ topics:
   subscribe:
     adm: a/cmd/administrator
     all: a/cmd/all
+    rsp: a/rsp/#
     cmd: PROJECTID/cmd/CLIENTID
   publish:
     rsp: a/rsp/DCLIENTID
     hum: a/rsp/DCLIENTID/DUSERID
+    all: a/cmd/all
+status:
+  debugLevel: 0
 projects:
   rf:
     name: Cabin in Red Feather
@@ -30,13 +33,15 @@ projects:
         url: https://epiclc
         model: epic
         clientType: edge
-        sampleInterval: 10000
-        enabled: true
         topics: edge
         headers:
           apiKey: mnMmq5awnB3DwMsmwFFVToYTqeHtJ8Xf
           Content-Type: application/json; charset utf-8;
           _rejectUnauthorized: false
+        status:
+          sampleInterval: 10000
+          enabled: true
+          debugLevel: 0
       riolc:
         name: RioLC
         ip: 172.16.45.4
@@ -50,6 +55,10 @@ projects:
           apiKey: yedg7SAJWgtf3jZNjPYfR5XTjWRrX59X
           Content-Type: application/json; charset utf-8;
           _rejectUnauthorized: false
+        status:
+          sampleInterval: 10000
+          enabled: true
+          debugLevel: 0
       arduino2:
         name: Arduino2
         ip: 172.16.45.32
@@ -58,6 +67,10 @@ projects:
         sampleInterval: 10000
         enabled: true
         topics: edge
+        status:
+          sampleInterval: 10000
+          enabled: true
+          debugLevel: 0
       arduino3:
         name: Arduino3
         ip: 172.16.45.33
@@ -66,6 +79,10 @@ projects:
         sampleInterval: 10000
         enabled: true
         topics: edge
+        status:
+          sampleInterval: 10000
+          enabled: true
+          debugLevel: 0
       arduino4:
         name: Arduino4
         ip: 172.16.45.121
@@ -74,6 +91,10 @@ projects:
         sampleInterval: 10000
         enabled: true
         topics: edge
+        status:
+          sampleInterval: 10000
+          enabled: true
+          debugLevel: 0
       arduino5:
         name: Arduino5
         ip: 172.16.45.56
@@ -83,6 +104,10 @@ projects:
         sampleInterval: 10000
         enabled: true
         topics: edge
+        status:
+          sampleInterval: 10000
+          enabled: true
+          debugLevel: 0
       labtime:
         name: LabTime
         clientType: hmi
@@ -117,6 +142,8 @@ projects:
             out: PROJECTID/out/DCLIENTID
         metrics: project
         funcTypes: {}
+        status:
+          debugLevel: 0
     topics:
       edge:
         subscribe:

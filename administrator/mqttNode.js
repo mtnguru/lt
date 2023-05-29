@@ -16,19 +16,21 @@ let topicCB = {}
  * connect - connect to the MQTT broker, set callback, subscribe to topics
  * @param cb
  */
-const connect = (clientId, messageCB) => {
+const connect = (clientId, connectCB, messageCB) => {
   const f = 'mqttNode:connect'
 //msg(3,f,DEBUG, 'enter')
   const mc = global.aaa.mqtt;
   topicCB ={};
 
-  const onConnectPromise = (messageCB) => {
+  const onConnectPromise = () => {
     const f = "mqttNode::onConnectPromise"
     return new Promise((resolve, reject) => {
       mqttClient.on('connect', (event) => {
         msg(1,f,NOTIFY,'Connected to MQTT broker ' + mc.url)
-        mqttClient.unsubscribe((Object.values(global.aaa.topics.subscribe)), () => {})
+//      mqttClient.unsubscribe((Object.values(global.aaa.topics.subscribe)), () => {})
+        mqttClient.unsubscribe([])
         mqttClient.subscribe(Object.values(global.aaa.topics.subscribe), () => {
+          connectCB();
           mqttClient.on('message', (inTopic, payloadRaw) => {
             msg(3,f,NOTIFY,'MQTT message received ', inTopic)
             messageCB(inTopic, payloadRaw)

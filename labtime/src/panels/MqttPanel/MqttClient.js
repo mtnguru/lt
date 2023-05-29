@@ -42,8 +42,10 @@ function MqttClient (props) {
       console.log('   unknown button pressed ', name, '');
       return;
     }
-    console.log('   send ', topic, payload)
-    mqttPublish(topic, payload)
+    if (payload) {
+      console.log('   send ', topic, payload)
+      mqttPublish(topic, payload)
+    }
   }
 
   return (
