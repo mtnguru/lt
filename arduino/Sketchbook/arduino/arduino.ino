@@ -16,15 +16,16 @@ int mqttConnected = 0;
 
 ///////////// JSON
 #include "ArduinoJson.h"
-const int jsonDocSize = 1000;       // May 29, 2023 - crashes at 924
+const int jsonDocSize = 2000;       // May 29, 2023 - crashes at 924
 StaticJsonDocument<jsonDocSize> jsonDoc;
-const int payloadSize = 1750;       // Configuration uses 1404
+const int payloadSize = 2000;       // Configuration uses 1404
 const int msgSize = 300;
+const int outSize = 300;
 char logMsg[msgSize];
 
 const int tagSize = 200;
-const int topicSize = 30;
-const int metricIdSize = 20;
+const int topicSize = 60;
+const int metricIdSize = 40;
 const int projectIdSize = 10;
 const int clientIdSize = 10;
 const int ipSize = 20;
@@ -99,16 +100,16 @@ String mqttClientId;
 //////////// Subscribe and publish topics
 // Subscribe
 char mqttAllSub[topicSize];       // subscribe to administrator commands to all
-char mqttCmdSub[topicSize];        // subscribe to admin commands to IP
-char mqttRspSub[topicSize];  // subscribe to administrator responses for this IP
-char mqttOutputSub[topicSize];         // subscribe to commands to output channels
+char mqttCmdSub[topicSize];       // subscribe to admin commands to IP
+char mqttRspSub[topicSize];       // subscribe to administrator responses for this IP
+char mqttOutputSub[topicSize];    // subscribe to commands to output channels
 
 // Publish
 char mqttCmdPub[topicSize];       // publish command to administrator
 char mqttRspPub[topicSize];       // publish responses to administrator commands
-char mqttInputPub[topicSize];          // publish channel readings
-char mqttCodPub[topicSize];            // publish code debug messages
-char mqttMsgPub[topicSize];            // publish messages - notifications, etc.
+char mqttInputPub[topicSize];     // publish channel readings
+char mqttCodPub[topicSize];       // publish code debug messages
+char mqttMsgPub[topicSize];       // publish messages - notifications, etc.
 
 ///////////// Array for calculating running average
 const float MV = -999.999;
@@ -388,15 +389,14 @@ void setConfig(const char *topic,
   strcpy(mqttRspSub, jsonDoc["topics"]["subscribe"]["rsp"]);
   strcpy(mqttOutputSub,   jsonDoc["topics"]["subscribe"]["out"]);
 
-  logit(0,MD, f, "subscribeTopics ", NULL);
+  logit(2,MD, f, "subscribeTopics ", NULL);
   subscribeTopics();
-  logit(0,MD, f, "done subscribeTopics ", NULL);
 
   ///////////// Publish MQTT topics
-  strcpy(mqttRspPub,  jsonDoc["topics"]["publish"]["rsp"]);
-  strcpy(mqttInputPub,     jsonDoc["topics"]["publish"]["inp"]);
-  strcpy(mqttCodPub,       jsonDoc["topics"]["publish"]["cod"]);
-  strcpy(mqttMsgPub,       jsonDoc["topics"]["publish"]["msg"]);
+  strcpy(mqttRspPub,   jsonDoc["topics"]["publish"]["rsp"]);
+  strcpy(mqttInputPub, jsonDoc["topics"]["publish"]["inp"]);
+  strcpy(mqttCodPub,   jsonDoc["topics"]["publish"]["cod"]);
+  strcpy(mqttMsgPub,   jsonDoc["topics"]["publish"]["msg"]);
 
   // Loop through metrics, initialize inputA[]
   inputN = 0;
@@ -419,8 +419,10 @@ void setConfig(const char *topic,
       strcpy(inputA[inputN].tags,      metric.value()["input"]["tags"]);
       strcpy(inputA[inputN].channels,  metric.value()["input"]["channels"]);
       strcpy(inputA[inputN].metricId,  metric.value()["metricId"]);
+      logit(2,MD,f,"Input ",inputA[inputN].metricId);
       strcpy(inputA[inputN].name,      metric.value()["name"]);
       logit(2,MD,f,"input channel ", inputA[inputN].channels);
+      logit(2,MD,f,"Input ",inputA[inputN].metricId);
       inputN++;
     }
   }
@@ -462,19 +464,22 @@ void setConfig(const char *topic,
 
 void mqttCB(char* _topic, byte* _payload, unsigned int length) {
   const char *f = "mqttCB";
+  char cmd[20];
+  char out[msgSize];
+  char topic[topicSize];
+  char outTopic[topicSize];
+  char msg[300];
+
   // You must immediately copy topic and payload into your own variables,
   // otherwise subsequent mqttClient calls will use the same memory space and cause you much hell.
-  char topic[topicSize];
   strcpy(topic, _topic);
   strncpy(payload, (char *)_payload, length);
   payload[length] = '\0';
   freeMemory();
-  char out[msgSize];
   out[0] = '\0';
-  char outTopic[topicSize];
   strcpy(outTopic, mqttRspPub);
 
-  logit(2,MD,f,"enter", topic);
+  logit(1,MD,f,"enter", topic);
 
   if (payload[0] != '{') {  // if payload is NOT JSON
     if (!strcmp(topic, mqttOutputSub)) {  // Request Output from LabTime
@@ -483,11 +488,10 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
   } else {                 // if payload is JSON
     DeserializationError err = deserializeJson(jsonDoc, payload);
     if (err) {
-      char msg[300];
       snprintf (msg, msgSize, "ERROR: deserializationJson - %s", err.c_str());
       logit(0,ME, f, msg, NULL);
     }
-    logit(3,MD, f, "deserialized ",NULL);
+    logit(1,MD,f,"deserialized ", outTopic);
 
     if (!strcmp(topic, mqttRspSub)) {
       char rsp[20];
@@ -497,7 +501,6 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
         freeMemory();
       }
     } else if (!strcmp(topic, mqttCmdSub) || !strcmp(topic, mqttAllSub)) {
-      char cmd[20];
       strcpy(cmd,jsonDoc["cmd"]);
       if (!strcmp(cmd, "requestReset")) {
         snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"msg\":\"reset requested\"}", cmd, clientId);
@@ -505,11 +508,12 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
         delay(500);
         resetFunc();
       } else if (!strcmp(cmd, "requestStatus")) {  // Ask arduino for its status
-        logit(1,MN,f,"Get status", NULL);
+        logit(0,MN,f,"Get status", outTopic);
         getStatus();
       } else if (!strcmp(cmd, "setDebugLevel")) {          // Set debugLevel
         debugLevel = atoi(jsonDoc["debugLevel"]);
         snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"debugLevel\":\"%d\"}", cmd, clientId, debugLevel);
+        logit(0,MN,f,"set Debug Level", outTopic);
       } else if (!strcmp(cmd, "setEnabled")) {                 // Enabled arduino
         char enabledStr[10];
         strcpy(enabledStr, jsonDoc["enabled"]);
@@ -525,6 +529,7 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
       }
     }
   }
+  logit(1,MD,f,"outTopic = ", outTopic);
   if (strlen(out)) {
     mqttClient.publish(outTopic, out);
   }
@@ -587,7 +592,7 @@ void mqttConnect() {
 void sampleInputs() {
   // Loop through the inputs, read value, and post to MQTT
   const char *f = "sampleInputs";
-  char payload[payloadSize];
+  char out[outSize];
   logit(3,MD,f,"sampleInputs enter ", NULL);
   for (int m = 0; m < inputN; m++) {
     inputS *input = &inputA[m];
@@ -597,14 +602,15 @@ void sampleInputs() {
       case IN_BUTTON:
         break;
       case IN_MAX6675:
+        logit(1,MD,f,"check temperature", NULL);
         value = tc.readFahrenheit();
         if (value > 500) {
-          snprintf(payload, payloadSize, "temperature out of range: %f", value);
-          logit(0,ME,f,payload, NULL);
+          snprintf(out, outSize, "temperature out of range: %f", value);
+          logit(0,ME,f,out, NULL);
         } else {
-          snprintf(payload, payloadSize, "%s value=%g", input->tags, value);
-          logit(1,MD,f,"temperature acquired", payload);
-          mqttClient.publish(mqttInputPub, payload);
+          snprintf(out, outSize, "%s value=%g", input->tags, value);
+          logit(1,MD,f,"temperature acquired", out);
+          mqttClient.publish(mqttInputPub, out);
         }
         break;
     }
