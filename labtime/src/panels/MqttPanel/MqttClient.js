@@ -1,5 +1,6 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import './MqttClient.scss'
+import { mqttRegisterTopicCB } from '../../utils/mqttReact'
 
 import { Container, Select, Button, Tooltip } from '@chakra-ui/react'
 
@@ -9,6 +10,14 @@ import {mqttPublish} from "../../utils/mqttReact"
 function MqttClient (props) {
 
   const [enabled, setEnabled] = useState(true)
+
+  const mqttCB = (_topic, _payload) => {
+    console.log("====================== fuck me")
+  }
+
+  useEffect(() => {
+    mqttRegisterTopicCB(`a/rsp/${props.client.clientId}`, {rsp: "shit"}, mqttCB);
+  }, [])
 
   const onSelectH = (event) => {
     let topic = `a/cmd/${props.client.clientId}`

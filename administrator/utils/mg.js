@@ -2,31 +2,35 @@
 //import {mqttPublish, mqttConnected} from "./mqttReact"
 //import Topics from "./topics"
 
-const mg = (func, _funcType, ...snippets) => {
-  /*
-  let payload = {
-    function: func,
-//  program: global.aaa.program,
-    funcType: funcType,
-    content: snippets.join(' '),
-  }
+const mg = (func, _funcId, ...snippets) => {
+  try {
+    /*
+    let payload = {
+      function: func,
+//    program: global.aaa.program,
+      funcId: funcId,
+      content: snippets.join(' '),
+    }
 
-  const topic = global.aaa.topics.publish.msg
-  const jpayload = JSON.stringify(payload);
-  if (mqttConnected()) {
-    mqttPublish(topic, jpayload);
-  }
-  */
+    const topic = global.aaa.topics.publish.msg
+    const jpayload = JSON.stringify(payload);
+    if (mqttConnected()) {
+      mqttPublish(topic, jpayload);
+    }
+    */
 
-  let funcType = _funcType
-  if (funcType === 'error') {
-    funcType = '********** ERROR'
-  } else if (funcType === 'alarm') {
-    funcType = '---------- ALARM'
-  } else if (funcType === 'warning') {
-    funcType = '!!!!!!!!!! WARNING'
+    let funcId = _funcId
+    if (funcId === 'error') {
+      funcId = '********** ERROR'
+    } else if (funcId === 'alarm') {
+      funcId = '---------- ALARM'
+    } else if (funcId === 'warning') {
+      funcId = '!!!!!!!!!! WARNING'
+    }
+    console.log(funcId, func, ...snippets);
+  } catch(err) {
+    console.log("ERROR")
   }
-  console.log(funcType, func, ...snippets);
 }
 
 const mgError   = (f, ...snippets) => { mg(f,'error',snippets) }

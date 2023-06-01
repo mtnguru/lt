@@ -1,6 +1,6 @@
 // @import "styles/colors.scss";
 
-$fg-color: #f0fcf0;
+$fg-color: #f0f0ff;
 $topic-fg-color: #fc2;
 $date-fg-color: #ff4;
 $title-fg-color: #ddff88;
@@ -32,29 +32,28 @@ $stat-fg-color: #ccff33;
 
 .mqtt-func-bg {
   // MQTT Message function
-  .Activity, .act    { background-color: #420; }
-  .Alarm,    .alm    { background-color: #600; }
-  .Input,    .inp    { background-color: #227; }
-  .Output,   .out    { background-color: #040; }
-  .Code,     .cod    { background-color: #000; }
-  .Human,    .hum    { background-color: #830; }
-  .Command,  .cmd    { background-color: #333; }
-  .Response, .rsp    { background-color: #315; }
-  .Message,  .msg    { background-color: #033; }
+  .Activity, .act    { background-color: #421; }
+  .Alarm,    .alm    { background-color: #721; }
+  .Input,    .inp    { background-color: #337; }
+  .Output,   .out    { background-color: #262; }
+  .Code,     .cod    { background-color: #222; }
+  .Human,    .hum    { background-color: #953; }
+  .Command,  .cmd    { background-color: #444; }
+  .Response, .rsp    { background-color: #426; }
+  .Message,  .msg    { background-color: #267; }
 }
 
 .mqtt-clientId-bg {
   // MQTT message client
-  .riolc         { background-color: #700 }
-  .epiclc        { background-color: #40e; }
+  .riolc         { background-color: #700; }
+  .epiclc        { background-color: #50d; }
   .arduino2      { background-color: #073; }
-  .arduino3      { background-color: #040 }
-  .arduino4      { background-color: #04f }
-  .arduino5      { background-color: #00b }
+  .arduino3      { background-color: #040; }
+  .arduino4      { background-color: #04f; }
+  .arduino5      { background-color: #00b; }
   .player        { background-color: #a51; }
   .labtime       { background-color: #930; }
   .administrator { background-color: #530; }
-  .mqtt_sim      { background-color: #666; }
 }
 
 .difference-grey-bg   { background-color: #666; }

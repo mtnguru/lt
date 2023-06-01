@@ -1,3 +1,31 @@
+Show the status gets sent to the children
+Manage the status array, on request just ship it
+Initially initialize it in administrator
+Arduino
+   Make arduino code use status for some fields
+      enabled
+      debugLevel
+      clientId
+      mqttClientId
+      mqttConnected
+   Send rsp to all requests
+Labtime
+ * get enabled button working
+   set buttons according to the current status
+ - update buttons according to changes in status
+   mqttRegisterTopicCB - (topic, {rsp: ??, cmd: ??)
+Administrator
+ * After connecting unsubscribe from everything
+   Add mqtt connected
+   Initialize status for clients
+      enabled
+      debug level
+      sample rate
+                                 
+
+
+
+
 What now?
 On boot, have the administrator request the status for each client
 Have the administrator store the status for each client

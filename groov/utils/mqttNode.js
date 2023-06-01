@@ -143,7 +143,7 @@ const registerMetricCB = (metricId, cb) => {
  */
 const processInflux = (topic, payloadStr) => {
   const f = "mqttNode::processInflux"
-  const funcType = topic.split("/")[1]
+  const funcId = topic.split("/")[1]
   const {tags, values} = extractFromTags(payloadStr)
   if (tags["Metric"]) {
     const metricId = tags["Metric"]
@@ -153,7 +153,7 @@ const processInflux = (topic, payloadStr) => {
     }
     console.log(f, 'Metric found ', metricId)
 
-    switch (funcType) {
+    switch (funcId) {
       case 'input':
         if (!metric.input) {
           msg(0,f,WARNING, 'Metric does not have a input',metric.metricId)
@@ -178,7 +178,7 @@ const processInflux = (topic, payloadStr) => {
         }
         break;
       default:
-        msg(0,f,ERROR, 'Unknown tags.funcType ', tags)
+        msg(0,f,ERROR, 'Unknown tags.funcId ', tags)
         return;
     }
     if (!metric.cbs) {

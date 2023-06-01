@@ -20,10 +20,10 @@ const ControlSlider = (props) => {
 
   const metricCB = (metric, topic, payload, tags, values) => {
     const f = "ControlStats::metricCB"
-    const funcType = topic.split('/')[1]
-    if (funcType === 'user') {
+    const funcId = topic.split('/')[1]
+    if (funcId === 'user') {
 //    setValue(values.value)
-    } else if (funcType === 'output') {
+    } else if (funcId === 'output') {
       setOutValue(parseFloat(values.value).toFixed(metric.decimals))
     }
     console.log(f,"enter ", topic)

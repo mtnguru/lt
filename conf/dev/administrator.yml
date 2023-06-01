@@ -141,7 +141,7 @@ projects:
             hum: PROJECTID/hum/CLIENTID
             out: PROJECTID/out/DCLIENTID
         metrics: project
-        funcTypes: {}
+        funcIds: {}
         status:
           debugLevel: 0
     topics:

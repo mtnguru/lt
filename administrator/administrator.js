@@ -232,7 +232,7 @@ const initMetrics = (projectId, project) => {
   } // for each metric in project
 }
 
-const initClients = (projectId, project, funcTypes) => {
+const initClients = (projectId, project, funcIds) => {
   // For each client create lookup lists by clientId and IP
   for (var clientId in project.clients) {
     var client = project.clients[clientId]
@@ -263,8 +263,8 @@ const initClients = (projectId, project, funcTypes) => {
         }
       }
 
-      if (client.funcTypes) {
-        client.funcTypes = funcTypes;
+      if (client.funcIds) {
+        client.funcIds = funcIds;
       }
     } // if project.clients[clientId]
   } // for each client
@@ -303,15 +303,15 @@ const readConfig = () => {
 
 // For each project in administrator config
   for (var projectId in global.aaa.projects) {
-    let ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${stageId}/${projectId}/funcTypes.yml`)
-    const funcTypes = YAML.safeLoad(ymlStr)
-    for (var id in funcTypes) {
-      funcTypes[id].typeId = id
+    let ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${stageId}/${projectId}/funcIds.yml`)
+    const funcIds = YAML.safeLoad(ymlStr)
+    for (var id in funcIds) {
+      funcIds[id].typeId = id
     }
     var project = global.aaa.projects[projectId]
 
     initMetrics(projectId, project)
-    initClients(projectId, project, funcTypes)
+    initClients(projectId, project, funcIds)
   } // for each project
 }
 

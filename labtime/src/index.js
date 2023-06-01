@@ -43,9 +43,9 @@ global.aaa = {
   },
 }
 
-const loadConfigCB = (topic, payload) => {
+const loadConfigCB = (_topic, _payload) => {
   const f = "index::loadConfigCB - "
-  console.log(f,'enter', topic)
+  console.log(f,'enter', _topic)
 
   mqttUnregisterTopicCB(global.aaa.topics.subscribe.rsp,loadConfigCB)
 
@@ -57,7 +57,7 @@ const loadConfigCB = (topic, payload) => {
 //  mqttUnsubscribe(global.aaa.topics.subscribe);
 
     // Replace global.aaa object with new configuration
-    const conf = JSON.parse(payload.toString(0));
+    const conf = JSON.parse(_payload.toString(0));
     conf.topics.subscribe.rsp = global.aaa.topics.subscribe.rsp
     conf.topics.publish.adm = global.aaa.topics.publish.adm
     global.aaa = conf

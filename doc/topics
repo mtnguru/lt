@@ -10,9 +10,56 @@ The following publications are needed
     inp  mqttInputPub      a/inp/administrator
     cod  mqttCodPub        rf/inp/CLIENTID
     msg  mqttMsgPub        rf/msg/CLIENTID
+
 ===============================================================
 
-   Topic Format:   PROJECT/FUNCTION/CLIENTID/USERID/+TELEGRAF
+msg type
+  Notifications
+  Notes
+  Chat
+  Questions
+  Poll
+
+cod type
+  Debug
+  Error
+  Warning
+
+alm type
+  on
+  off
+
+rsp rsp 
+cmd cmd
+  requestReset
+  requestStatus
+  requestConfig
+  setDebugLevel
+  setEnabled
+  setSampleInterval
+
+act type
+  play
+  pause
+  enter
+  leave
+  elapsed
+  volume_up
+  volume_down
+  full_screen
+  normal_screen
+  cc_on
+  cc_off
+  
+
+hum
+inp
+out
+
+
+======================================================================
+
+   Topic Format:   PROJECTID/FUNCTION/CLIENTID/USERID/+TELEGRAFID
          Examples: p1/act/player/james@ecosleuth.com 
                    p2/usr/player/james@ecosleuth.com 
                    p3/inp/arduino2/na/telegraf.influx

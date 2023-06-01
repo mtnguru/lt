@@ -93,9 +93,9 @@ const MqttPanel = (props) => {
         return false;
       }
     }
-    if (global.aaa.funcTypes.all.selected) {
+    if (global.aaa.funcIds.all.selected) {
     } else {
-      if (global.aaa.funcTypes[type] && !global.aaa.funcTypes[type].selected) {
+      if (global.aaa.funcIds[type] && !global.aaa.funcIds[type].selected) {
         return false;
       }
     }

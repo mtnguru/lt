@@ -192,16 +192,16 @@ void logit(int _debugLevel,
       break;
   }
   if (lenMsg > 250) {
-    snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": \"Message too long\",\"lenmsg\": \"%d\"}", typeName, func, lenMsg);
+    snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Function\": \"%s\", \"Msg\": \"Message too long\",\"lenmsg\": \"%d\"}", typeName, func, lenMsg);
   } else {
     if (content[0] == '{') {
-      snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": %s}", typeName, func, content);
+      snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Function\": \"%s\", \"Msg\": %s}", typeName, func, content);
       Serial.println((String)"JSON msg: " + logMsg);
     } else {
       if (more != NULL) {
-        snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": \"%s - %s\"}", typeName, func, content, more);
+        snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Function\": \"%s\", \"Msg\": \"%s - %s\"}", typeName, func, content, more);
       } else {
-        snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": \"%s\"}", typeName, func, content);
+        snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Function\": \"%s\", \"Msg\": \"%s\"}", typeName, func, content);
       }
       Serial.println((String)"Text msg: " + logMsg);
     }
@@ -323,7 +323,7 @@ void processOutput (char *_payload) {
   }
 }
 
-void(* resetFunc) (void) = 0; //declare reset function @ address 0
+void(* resetFunction) (void) = 0; //declare reset function @ address 0
 
 void getStatus() {
   const char *f = "getStatus";
@@ -341,11 +341,7 @@ void getStatus() {
   snprintf(uptime,30,"%d %d:%d:%d", days, hours, minutes, seconds);
 
   char enabledStr[10];
-  if (enabled) {
-    strcpy(enabledStr,"true");
-  } else {
-    strcpy(enabledStr,"false");
-  }
+  strcpy(enabledStr,(enabled) ? "true" : "false");
 
   snprintf(payload,payloadSize,
     "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": \"%d\", \"enabled\":\"%s\", \"debugLevel\":\"%d\",\"uptime\":\"%s\"}",
@@ -475,9 +471,10 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
   strcpy(topic, _topic);
   strncpy(payload, (char *)_payload, length);
   payload[length] = '\0';
-  freeMemory();
   out[0] = '\0';
   strcpy(outTopic, mqttRspPub);
+
+  freeMemory();
 
   logit(1,MD,f,"enter", topic);
 
@@ -506,7 +503,7 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
         snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"msg\":\"reset requested\"}", cmd, clientId);
         logit(0,MN,f,"Resetting arduino", NULL);
         delay(500);
-        resetFunc();
+        resetFunction();
       } else if (!strcmp(cmd, "requestStatus")) {  // Ask arduino for its status
         logit(0,MN,f,"Get status", outTopic);
         getStatus();
@@ -515,13 +512,7 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
         snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"debugLevel\":\"%d\"}", cmd, clientId, debugLevel);
         logit(0,MN,f,"set Debug Level", outTopic);
       } else if (!strcmp(cmd, "setEnabled")) {                 // Enabled arduino
-        char enabledStr[10];
-        strcpy(enabledStr, jsonDoc["enabled"]);
-        if (!strcmp(enabledStr,"true")) {
-          enabled = true;
-        } else {
-          enabled = false;
-        }
+        enabled = (!strcmp(jsonDoc["enabled"],"true")) ? true : false;
         snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"enabled\":\"%s\"}", cmd, clientId, (enabled) ? "true": "false");
       } else if (!strcmp(cmd, "setSampleInterval")) {      // Set sample interval
         sampleInterval = atoi(jsonDoc["sampleInterval"]);
@@ -583,7 +574,7 @@ void mqttConnect() {
       if (attempts == 10) {
         logit(0,ME,f,"mqttClient.connected returned false 10 times - reset the arduino",NULL);
         delay(500);
-        resetFunc();
+        resetFunction();
       }
     }
   }
@@ -654,7 +645,7 @@ void loop() {
   if (WiFi.status() != WL_CONNECTED) {
     logit(0,ME,f,"WiFi not connected - reset the arduino",NULL);
     delay(500);
-    resetFunc();
+    resetFunction();
   }
 
   if (mqttClient.state() != 0) {

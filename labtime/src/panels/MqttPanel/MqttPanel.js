@@ -35,18 +35,18 @@ const MqttPanel = (props) => {
     setPretty(event.target.value);
   }
 
-  const mqttCB = (topic, payload) => {
-//  const f = "MqttPanel::mqttCB - "
+  const topicCB = (_topic, _payload) => {
+//  const f = "MqttPanel::topicCB - "
     const dateStr = currentDate()
 
-    const [project, func, clientId] = topic.split('/')
+    const [project, func, clientId] = _topic.split('/')
     let rnd = Math.random().toString(16).slice(3)
 
     let key = `${clientId}-${dateStr}-${rnd}`
     if (nitems) {
     }
 //  console.log("nitems ", nitems, ni);
-    let item = { key, date: dateStr, project, func, clientId, topic, payload, nitems: ni }
+    let item = { key, date: dateStr, project, func, clientId, topic:_topic, payload:_payload, nitems: ni }
 
     setNItems((prevNItems) => {
       return ni = prevNItems + 1
@@ -73,7 +73,7 @@ const MqttPanel = (props) => {
   if (!registered) {
     registered = true;
     for (let n in global.aaa.topics.subscribe) {
-      mqttRegisterTopicCB(global.aaa.topics.subscribe[n], mqttCB)
+      mqttRegisterTopicCB(global.aaa.topics.subscribe[n], topicCB, {})
     }
   }
 
@@ -90,9 +90,9 @@ const MqttPanel = (props) => {
         return false;
       }
     }
-    if (global.aaa.funcTypes.all.selected) {
+    if (global.aaa.funcIds.all.selected) {
     } else {
-      if (global.aaa.funcTypes[func] && !global.aaa.funcTypes[func].selected) {
+      if (global.aaa.funcIds[func] && !global.aaa.funcIds[func].selected) {
         return false;
       }
     }

@@ -6,7 +6,7 @@ import {findMetric} from './metrics'
 import YAML from "yaml-parser";
 
 let mqttClient;
-let topicCB = {}
+let topicsCB = {}
 
 /**
  * sleep() - synchronous sleep function
@@ -27,7 +27,7 @@ const onConnectPromise = (cb) => {
   return new Promise((resolve, reject) => {
     mqttClient.on('connect', (event) => {
       console.log(f,"connected ", mqttClient.connected)
-//    mqttClient.unsubscribe(Object.values(global.aaa.topics.subscribe, () => { 500}))
+      mqttUnsubscribe(global.aaa.topics.subscribe)
       mqttSubscribe(global.aaa.topics.subscribe, () => {
         console.log(f, 'subscribed', global.aaa.topics.subscribe)
         mqttClient.on('message', cb);
@@ -38,7 +38,7 @@ const onConnectPromise = (cb) => {
 }
 
 const mqttConnect = (cb) => {
-  topicCB = {};
+  topicsCB = {};
   const f = 'mqttReact::mqttConnect'
   console.log(f, 'connect it up', global.aaa.mqtt.connectUrl)
   mqttClient = mqtt.connect(global.aaa.mqtt.connectUrl, {
@@ -105,32 +105,32 @@ const mqttRegisterTopicCB = (_topic, cb) => {
   // If necessary intialize new topic
   const topic = _topic.replace(/#/,'')
   mgDebug(f, "Register topic", topic)
-  if (!topicCB[topic]) {
+  if (!topicsCB[topic]) {
     console.log(f, "Initialize topic", topic)
-    topicCB[topic] = [];
+    topicsCB[topic] = [];
   }
-  for (let rcb in topicCB[topic]) {
+  for (let rcb in topicsCB[topic]) {
     if (rcb === cb) {
       console.log(f, "Already added", topic)
       return;
     }
   }
   console.log(f, "add topic", topic)
-  topicCB[topic].push(cb);
+  topicsCB[topic].push(cb);
 
 }
 
 const mqttUnregisterTopicCB = (_topic, cb) => {
   const f = "mqttReact::mqttUnregisterTopicCB"
   const topic = _topic.replace(/#/,'')
-  for (let t in topicCB) {
+  for (let t in topicsCB) {
     console.log(f, "   Check topic", t)
     if (t === topic) {
-      console.log(f, "   Topic found", topicCB[t].length)
+      console.log(f, "   Topic found", topicsCB[t].length)
       // Execute the callbacks for this topic
-      for (let rcb of topicCB[t]) {
+      for (let rcb of topicsCB[t]) {
         if (cb === rcb ) {
-          topicCB[t] = topicCB[t].filter((item) => {
+          topicsCB[t] = topicsCB[t].filter((item) => {
             return item.name !== cb.name
           })
           break
@@ -248,11 +248,11 @@ const mqttProcessCB = (topic, payload) => {
     }
 
 //  console.log(f, "Look for topic", topic)
-    for (let itopic in topicCB) {
+    for (let itopic in topicsCB) {
       if (topic.indexOf(itopic) > -1) {
-//      console.log(f, "   Topic found", topicCB[itopic].length)
+//      console.log(f, "   Topic found", topicsCB[itopic].length)
         // Execute the callbacks for this topic
-        for (let cb of topicCB[itopic]) {
+        for (let cb of topicsCB[itopic]) {
           cb(topic,payloadStr)
         }
       }

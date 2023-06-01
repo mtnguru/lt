@@ -187,13 +187,13 @@ void logit(int _debugLevel,
 
   char logMsg[msgSize];
   if (content[0] == '{') {
-    snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": %s}", typeName, func, content);
+    snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Function\": \"%s\", \"Msg\": %s}", typeName, func, content);
     Serial.println((String)"JSON msg: " + logMsg);
   } else {
     if (more != NULL) {
-      snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": \"%s - %s\"}", typeName, func, content, more);
+      snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Function\": \"%s\", \"Msg\": \"%s - %s\"}", typeName, func, content, more);
     } else {
-      snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Func\": \"%s\", \"Msg\": \"%s\"}", typeName, func, content);
+      snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Function\": \"%s\", \"Msg\": \"%s\"}", typeName, func, content);
     }
 //  Serial.println((String)"Text msg: " + logMsg);
   }
@@ -366,7 +366,7 @@ return;
   }
 }
 
-void(* resetFunc) (void) = 0; //declare reset function @ address 0
+void(* resetFunction) (void) = 0; //declare reset function @ address 0
 
 void getStatus() {
   const char *f = "getStatus";
@@ -524,7 +524,7 @@ void mqttCallback(const char* topic, byte* payload, unsigned int length) {
       } else if (!strcmp(cmd, "requestReset")) {
         logit(0,MN,f,"Resetting arduino", NULL);
         delay(500);
-        resetFunc();
+        resetFunction();
       } else if (!strcmp(cmd, "requestStatus")) {  // Ask arduino for its status
         logit(1,MN,f,"Get status", NULL);
         getStatus();
@@ -589,7 +589,7 @@ void mqttConnect() {
     itoa(st,ststr,10);
 
     logit(0,ME,f,"mqttClient.connect failed - reset the arduino - ",ststr);
-    resetFunc();
+    resetFunction();
   }
   logit(0,MN,f,"Mqtt connected",NULL);
 }
@@ -664,7 +664,7 @@ void loop() {
   if (WiFi.status() != WL_CONNECTED) {
     logit(0,ME,f,"WiFi not connected - reset the arduino",NULL);
     delay(500);
-    resetFunc();
+    resetFunction();
   }
   while (!mqttClient.connected()) {
     connected = false;
@@ -680,7 +680,7 @@ void loop() {
       logit(0,ME,f,"\nmqttClient.connected returned false 10 times - reset the arduino",NULL);
       delay(500);
       connected = false;
-      resetFunc();
+      resetFunction();
     }
   }
 
