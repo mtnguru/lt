@@ -13,7 +13,7 @@ function MqttList(props) {
   }
 
   useEffect(() => {
-    mqttRegisterTopicCB("rf/msg/all", topicCB, {})
+    mqttRegisterTopicCB("rf/msg/all", topicCB)
     //Runs only on the first render
   }, []);
 

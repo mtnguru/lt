@@ -183,7 +183,7 @@ void logit(int _debugLevel,
       topic = mqttCodPub;
       break;
     case MN:
-      strcpy(typeName,"Notify");
+      strcpy(typeName,"Notifications");
       topic = mqttMsgPub;
       break;
     default:
@@ -192,16 +192,16 @@ void logit(int _debugLevel,
       break;
   }
   if (lenMsg > 250) {
-    snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Function\": \"%s\", \"Msg\": \"Message too long\",\"lenmsg\": \"%d\"}", typeName, func, lenMsg);
+    snprintf(logMsg, msgSize, "{\"type\": \"%s\",\"function\": \"%s\", \"msg\": \"Message too long\",\"lenmsg\": \"%d\"}", typeName, func, lenMsg);
   } else {
     if (content[0] == '{') {
-      snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Function\": \"%s\", \"Msg\": %s}", typeName, func, content);
+      snprintf(logMsg, msgSize, "{\"type\": \"%s\",\"function\": \"%s\", \"msg\": %s}", typeName, func, content);
       Serial.println((String)"JSON msg: " + logMsg);
     } else {
       if (more != NULL) {
-        snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Function\": \"%s\", \"Msg\": \"%s - %s\"}", typeName, func, content, more);
+        snprintf(logMsg, msgSize, "{\"type\": \"%s\",\"function\": \"%s\", \"msg\": \"%s - %s\"}", typeName, func, content, more);
       } else {
-        snprintf(logMsg, msgSize, "{\"Type\": \"%s\",\"Function\": \"%s\", \"Msg\": \"%s\"}", typeName, func, content);
+        snprintf(logMsg, msgSize, "{\"type\": \"%s\",\"function\": \"%s\", \"msg\": \"%s\"}", typeName, func, content);
       }
       Serial.println((String)"Text msg: " + logMsg);
     }
@@ -209,7 +209,7 @@ void logit(int _debugLevel,
 
   if (haveConfig && connected) {
     delay(10);
-    mqttClient.publish(topic, logMsg, strlen(logMsg) + 1);
+    mqttClient.publish(topic, logMsg);
   }
 }
 
@@ -344,8 +344,8 @@ void getStatus() {
   strcpy(enabledStr,(enabled) ? "true" : "false");
 
   snprintf(payload,payloadSize,
-    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": \"%d\", \"enabled\":\"%s\", \"debugLevel\":\"%d\",\"uptime\":\"%s\"}",
-    clientId, mqttClientId.c_str(), mqttConnected, enabledStr, debugLevel, uptime);
+    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": \"%d\", \"enabled\":\"%s\", \"debugLevel\":\"%d\", \"uptime\":\"%s\", \"sampleInterval\":\"%d\"}",
+    clientId, mqttClientId.c_str(), mqttConnected, enabledStr, debugLevel, uptime, sampleInterval);
 
   logit(2,MD, f, payload, NULL);
   mqttClient.publish(mqttRspPub, payload);
@@ -373,26 +373,31 @@ void setConfig(const char *topic,
 
   logit(1,MN, f, "Date ", jsonDoc["date"]);
   strcpy(clientId, jsonDoc["clientId"]);
-  sampleInterval = jsonDoc["sampleInterval"];
-  lastSample = sampleInterval;
+  sampleInterval = atoi(jsonDoc["status"]["sampleInterval"]);
+  if (sampleInterval == 0) {
+    sampleInterval = 10000;
+  }
+  lastSample = sampleInterval;  // Force immediate read after changing
+  enabled = (!strcmp(jsonDoc["status"]["enabled"], "true")) ? true : false;
+  debugLevel = jsonDoc["status"]["debugLevel"];
 
   ///////////// Unsubscribe to response messages
   res = mqttClient.unsubscribe(mqttRspSub);
 
   ///////////// Subscribe MQTT topics
-  strcpy(mqttAllSub, jsonDoc["topics"]["subscribe"]["all"]);
-  strcpy(mqttCmdSub, jsonDoc["topics"]["subscribe"]["cmd"]);
-  strcpy(mqttRspSub, jsonDoc["topics"]["subscribe"]["rsp"]);
-  strcpy(mqttOutputSub,   jsonDoc["topics"]["subscribe"]["out"]);
+  strcpy(mqttAllSub,    jsonDoc["topics"]["subscribe"]["all"]);
+  strcpy(mqttCmdSub,    jsonDoc["topics"]["subscribe"]["cmd"]);
+  strcpy(mqttRspSub,    jsonDoc["topics"]["subscribe"]["rsp"]);
+  strcpy(mqttOutputSub, jsonDoc["topics"]["subscribe"]["out"]);
 
   logit(2,MD, f, "subscribeTopics ", NULL);
   subscribeTopics();
 
   ///////////// Publish MQTT topics
-  strcpy(mqttRspPub,   jsonDoc["topics"]["publish"]["rsp"]);
-  strcpy(mqttInputPub, jsonDoc["topics"]["publish"]["inp"]);
-  strcpy(mqttCodPub,   jsonDoc["topics"]["publish"]["cod"]);
-  strcpy(mqttMsgPub,   jsonDoc["topics"]["publish"]["msg"]);
+  strcpy(mqttRspPub,    jsonDoc["topics"]["publish"]["rsp"]);
+  strcpy(mqttInputPub,  jsonDoc["topics"]["publish"]["inp"]);
+  strcpy(mqttCodPub,    jsonDoc["topics"]["publish"]["cod"]);
+  strcpy(mqttMsgPub,    jsonDoc["topics"]["publish"]["msg"]);
 
   // Loop through metrics, initialize inputA[]
   inputN = 0;
@@ -505,7 +510,7 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
         delay(500);
         resetFunction();
       } else if (!strcmp(cmd, "requestStatus")) {  // Ask arduino for its status
-        logit(0,MN,f,"Get status", outTopic);
+        logit(0,MN,f,"status requested", outTopic);
         getStatus();
       } else if (!strcmp(cmd, "setDebugLevel")) {          // Set debugLevel
         debugLevel = atoi(jsonDoc["debugLevel"]);
@@ -599,8 +604,10 @@ void sampleInputs() {
           snprintf(out, outSize, "temperature out of range: %f", value);
           logit(0,ME,f,out, NULL);
         } else {
-          snprintf(out, outSize, "%s value=%g", input->tags, value);
+          snprintf(out, outSize, "value=%g", value);
           logit(1,MD,f,"temperature acquired", out);
+
+          snprintf(out, outSize, "%s value=%g", input->tags, value);
           mqttClient.publish(mqttInputPub, out);
         }
         break;

@@ -7,9 +7,10 @@ import MqttFilterFunc from './MqttFilterFunc';
 import MqttFilterClient from './MqttFilterClient';
 import MqttDisplayActions from './MqttDisplayActions';
 import MqttList from './MqttList';
-import "./MqttPanel.scss";
 import {mqttRegisterTopicCB} from "../../utils/mqttReact";
 import {currentDate} from "../../utils/tools";
+
+import "./MqttPanel.scss";
 
 let registered = false;
 
@@ -38,10 +39,8 @@ const MqttPanel = (props) => {
   const topicCB = (_topic, _payload) => {
 //  const f = "MqttPanel::topicCB - "
     const dateStr = currentDate()
-
     const [project, func, clientId] = _topic.split('/')
     let rnd = Math.random().toString(16).slice(3)
-
     let key = `${clientId}-${dateStr}-${rnd}`
     if (nitems) {
     }
@@ -73,7 +72,7 @@ const MqttPanel = (props) => {
   if (!registered) {
     registered = true;
     for (let n in global.aaa.topics.subscribe) {
-      mqttRegisterTopicCB(global.aaa.topics.subscribe[n], topicCB, {})
+      mqttRegisterTopicCB(global.aaa.topics.subscribe[n], topicCB)
     }
   }
 

@@ -74,7 +74,7 @@ const publishStatus = () => {
     clientId: clientId,
     mqttClientId: mqttClientId,
     status: 'nominal',
-    debugLevel: global.aaa.debugLevel,
+    debugLevel: global.aaa.status.debugLevel,
     uptime: uptime,
   }
   return out;
@@ -117,7 +117,7 @@ const processCB = (topic, payloadRaw) => {
       if (input.cmd) {
         if (clientId === global.aaa.clientId || clientId === 'all') {  // commands specifically for the server
           if (input.cmd === 'setDebugLevel') {
-            global.aaa.debugLevel = input.debugLevel;
+            global.aaa.status.debugLevel = input.debugLevel;
           }
           // Request to reset administrator client
           if (input.cmd === 'requestReset') {
@@ -136,6 +136,14 @@ const processCB = (topic, payloadRaw) => {
             out = findClient(id)
             if (global.aab.clients[out.clientId]) {
               out.status = global.aab.clients[out.clientId]
+              if (!out.status.debugLevel &&     out.statusDefault.debugLevel > -1) out.status.debugLevel     = out.statusDefault.debugLevel;
+              if (!out.status.enabled &&        out.statusDefault.enabled)         out.status.enabled        = out.statusDefault.enabled;
+              if (!out.status.sampleInterval && out.statusDefault.sampleInterval)  out.status.sampleInterval = out.statusDefault.sampleInterval;
+            } else {
+              out.status = {}
+              if (out.statusDefault.debugLevel > -1) out.status.debugLevel = out.statusDefault.debugLevel
+              if (out.statusDefault.enabled)         out.status.enabled = out.statusDefault.enabled
+              if (out.statusDefault.sampleInterval)  out.status.sampleInterval = out.statusDefault.sampleInterval
             }
           }
           if (input.cmd === 'requestJsonFile') {
@@ -159,12 +167,15 @@ const processCB = (topic, payloadRaw) => {
           }
         }
       }
-    } else if (topic.indexOf(global.aaa.topics.publish.rsp.replace(/\/#/,''))) {
+    } else if (topic.indexOf(global.aaa.topics.subscribe.rsp.replace(/\/#/,'')) > -1) {
       if (input.rsp === 'requestStatus')  {
         global.aab.clients[clientId] = input
-        console.log("clientId " + clientId)
+      } else if (input.rsp === 'setEnabled') {
+        global.aab.clients[clientId].enabled = input.enabled
       }
     }
+    var short = global.aaa.topics.subscribe.rsp.replace(/\/#/,'')
+    var ind = topic.indexOf(short)
 
     if (out) {
       out.rsp = input.cmd;

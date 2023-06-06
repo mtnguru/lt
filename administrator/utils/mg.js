@@ -1,50 +1,48 @@
 
-//import {mqttPublish, mqttConnected} from "./mqttReact"
+import {mqttPublish, mqttConnected} from "./mqttReact"
 //import Topics from "./topics"
 
-const mg = (func, _funcId, ...snippets) => {
-  try {
-    /*
-    let payload = {
-      function: func,
-//    program: global.aaa.program,
-      funcId: funcId,
-      content: snippets.join(' '),
-    }
+const mg = (level, f, _funcId, _type, ...snippets) => {
+  var funcId = _funcId
+  var type = _type.toLowerCase()
 
-    const topic = global.aaa.topics.publish.msg
-    const jpayload = JSON.stringify(payload);
-    if (mqttConnected()) {
-      mqttPublish(topic, jpayload);
-    }
-    */
+  if (level > global.aaa.status.debugLevel) return;
 
-    let funcId = _funcId
-    if (funcId === 'error') {
-      funcId = '********** ERROR'
-    } else if (funcId === 'alarm') {
-      funcId = '---------- ALARM'
-    } else if (funcId === 'warning') {
-      funcId = '!!!!!!!!!! WARNING'
-    }
-    console.log(funcId, func, ...snippets);
-  } catch(err) {
-    console.log("ERROR")
+  var payload = {
+    "function": f,
+    funcId: funcId,
+    type: type,
+    program: global.aaa.program,
+    Msg: snippets.join(' '),
   }
+
+  const topic = global.aaa.topics.publish.msg
+  const jpayload = JSON.stringify(payload);
+  if (mqttConnected()) {
+    mqttPublish(topic, jpayload);
+  }
+
+  if (type === 'error') {
+    type = '********** ERROR'
+  } else if (type === 'alarm') {
+    type = '---------- ALARM'
+  } else if (type === 'warning') {
+    type = '!!!!!!!!!! WARNING'
+  }
+  console.log(funcId, type, ...snippets)
 }
 
-const mgError   = (f, ...snippets) => { mg(f,'error',snippets) }
-const mgWarning = (f, ...snippets) => { mg(f,'warning',snippets) }
-const mgDebug   = (f, ...snippets) => { mg(f,'debug',snippets) }
-const mgNotify  = (f, ...snippets) => { mg(f,'notify',snippets) }
-const mgAdmin   = (f, ...snippets) => { mg(f,'admin',snippets) }
-const mgAlarm   = (f, ...snippets) => { mg(f,'alarm',snippets) }
-const mgChat    = (f, ...snippets) => { mg(f,'chat',snippets) }
-const mgNotes   = (f, ...snippets) => { mg(f,'notes',snippets) }
-const mgUser    = (f, ...snippets) => { mg(f,'user',snippets) }
-const mgInput   = (f, ...snippets) => { mg(f,'input',snippets) }
-const mgOutput  = (f, ...snippets) => { mg(f,'output',snippets) }
-const mgDoe     = (f, ...snippets) => { mg(f,'doe',snippets) }
+const mgError   = (level, f, ...snippets) => { mg(level, f,'cod','error',snippets) }
+const mgWarning = (level, f, ...snippets) => { mg(level, f,'cod','warning',snippets) }
+const mgDebug   = (level, f, ...snippets) => { mg(level, f,'cod','debug',snippets) }
+const mgNotify  = (level, f, ...snippets) => { mg(level, f,'msg','notify',snippets) }
+const mgAdmin   = (level, f, ...snippets) => { mg(level, f,'adn','admin',snippets) }
+const mgAlarm   = (level, f, ...snippets) => { mg(level, f,'alm','alarm',snippets) }
+const mgChat    = (level, f, ...snippets) => { mg(level, f,'msg','chat',snippets) }
+const mgNotes   = (level, f, ...snippets) => { mg(level, f,'msg','notes',snippets) }
+const mgUser    = (level, f, ...snippets) => { mg(level, f,'hum','human',snippets) }
+const mgInput   = (level, f, ...snippets) => { mg(level, f,'inp','input',snippets) }
+const mgOutput  = (level, f, ...snippets) => { mg(level, f,'out','output',snippets) }
 
 export {
   mgError,
@@ -58,5 +56,4 @@ export {
   mgUser,
   mgInput,
   mgOutput,
-  mgDoe
 }

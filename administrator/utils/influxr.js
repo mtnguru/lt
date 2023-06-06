@@ -59,7 +59,6 @@ const makeTagsFromMetricName = (_metricId, _projectId) => {
   const nf = flds.length
   const units = flds[nf-1]
   const metricId =               ',Metric=' + metricId.replace(regexp,'')
-  const metricName =             ',MetricName=' + metricId
   const sourceId =               ',SourceId=' + flds[0]
   const component =              ',Component=' + flds[1]
   const device =      (nf > 3) ? ',Device=' + flds[2] : ''

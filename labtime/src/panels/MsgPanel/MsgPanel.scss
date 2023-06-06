@@ -4,8 +4,7 @@
 #msg-panel {
   background: $bg1-color;
   padding: 0 10px 10px;
-  margin: 0 10px;
-  width: 30%;
+  margin-left: 10px;
 
   .msg-pane {
     margin-top: 10px;
@@ -19,25 +18,45 @@
     border-right: $button-bd2-color;
     border-bottom: $button-bd2-color;
     float: right;
-    margin-top: 5px;
-    font-size: 70%;
+    margin-top: 2px;
+    font-size: 84%;
     padding: 2px 8px;
   }
 
   .msg {
     padding: 3px 6px;
-    font-size: 80%;
+    font-size: 85%;
     width: calc(100% - 14px);
     background: #555;
     color: $fg-color;
     height: 1rem;
+    border-radius: 3px;
   }
 
   .msg-list-container {
     .msg-list {
+      padding: 2px 3px;
+      border-radius: 3px;
       width: 100%;
       height: 160px;
       background: #555;
+      overflow-y: auto;
+    }
+  }
+  .msg-item {
+    width: 100%;
+    margin-bottom: 5px;
+    .header {
+      color: $msg-header-fg-color;
+      font-size: 80%;
+      margin-bottom: 2px;
+    }
+    .msg-text {
+      overflow-wrap: break-word;
+      font-size: 85%;
+      div {
+        min-width: 1px;
+      }
     }
   }
 

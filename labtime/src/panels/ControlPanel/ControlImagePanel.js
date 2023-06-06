@@ -26,16 +26,20 @@ const ControlImagePanel = (props) => {
     mqttRequestFile(global.aaa.clientId, panelId, `labtime/panels/${panelId}.yml`, 'yml', onLoadCB)
   }, [panelId])
 
+  var backgroundImage = "../../../assets/cabin.png";
+
   return (
-    <div className="panel control-image-panel">
-        <Heading as="h3">Overlay Image Panel</Heading>
-        <div className="control-flex">
-          <div className="stats">
-            {Object.keys(hmi.inputs).map((metricId) => {
-              return <ControlValue key={metricId} metric={hmi.inputs[metricId]} metricId={metricId}></ControlValue>
-            })}
-          </div>
+    <div className="panel control-image-panel"
+         style={{ backgroundImage: `url(${process.env.PUBLIC_URL + "/cabin.png"})`,
+         aspectRatio: 1.1275 }} >
+      <Heading as="h3">Overlay Image Panel</Heading>
+      <div className="controls">
+        <div className="stats">
+          {Object.keys(hmi.inputs).map((metricId) => {
+            return <ControlValue key={metricId} metric={hmi.inputs[metricId]} metricId={metricId}></ControlValue>
+          })}
         </div>
+      </div>
     </div>
   )
 }

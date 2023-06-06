@@ -1,0 +1,12 @@
+.expt-page {
+  padding: 0 12px;
+  .left-col {
+    flex-grow: 2;
+    margin-top: -6px;
+    overflow: auto;
+  }
+  .right-col {
+    flex-grow: 1;
+    overflow: auto;
+  }
+}

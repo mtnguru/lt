@@ -6,6 +6,8 @@ $date-fg-color: #ff4;
 $title-fg-color: #ddff88;
 $title2-fg-color: #aaffdd;
 
+$msg-header-fg-color: #99ffff;
+
 $bg-color: #101010;
 $bg1-color: #202020;
 
@@ -41,6 +43,15 @@ $stat-fg-color: #ccff33;
   .Command,  .cmd    { background-color: #444; }
   .Response, .rsp    { background-color: #426; }
   .Message,  .msg    { background-color: #267; }
+
+  .Debug             { background-color: #72c; }
+  .Warning           { background-color: #d70; }
+  .Error             { background-color: #b00; }
+
+  .Notes             { background-color: #0bb; }
+  .Notifications     { background-color: #33f; }
+  .Chat              { background-color: #1a1; }
+  .Questions         { background-color: #72c; }
 }
 
 .mqtt-clientId-bg {

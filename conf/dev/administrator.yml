@@ -38,7 +38,7 @@ projects:
           apiKey: mnMmq5awnB3DwMsmwFFVToYTqeHtJ8Xf
           Content-Type: application/json; charset utf-8;
           _rejectUnauthorized: false
-        status:
+        statusDefault:
           sampleInterval: 10000
           enabled: true
           debugLevel: 0
@@ -48,14 +48,12 @@ projects:
         url: https://riolc
         model: riolc
         clientType: edge
-        sampleInterval: 10000
-        enabled: true
         topics: edge
         headers:
           apiKey: yedg7SAJWgtf3jZNjPYfR5XTjWRrX59X
           Content-Type: application/json; charset utf-8;
           _rejectUnauthorized: false
-        status:
+        statusDefault:
           sampleInterval: 10000
           enabled: true
           debugLevel: 0
@@ -64,10 +62,8 @@ projects:
         ip: 172.16.45.32
         model: arduino
         clientType: edge
-        sampleInterval: 10000
-        enabled: true
         topics: edge
-        status:
+        statusDefault:
           sampleInterval: 10000
           enabled: true
           debugLevel: 0
@@ -76,10 +72,8 @@ projects:
         ip: 172.16.45.33
         model: arduino
         clientType: edge
-        sampleInterval: 10000
-        enabled: true
         topics: edge
-        status:
+        statusDefault:
           sampleInterval: 10000
           enabled: true
           debugLevel: 0
@@ -88,10 +82,8 @@ projects:
         ip: 172.16.45.121
         model: arduino
         clientType: edge
-        sampleInterval: 10000
-        enabled: true
         topics: edge
-        status:
+        statusDefault:
           sampleInterval: 10000
           enabled: true
           debugLevel: 0
@@ -101,10 +93,8 @@ projects:
 #       ip: 192.168.0.102
         model: arduino
         clientType: edge
-        sampleInterval: 10000
-        enabled: true
         topics: edge
-        status:
+        statusDefault:
           sampleInterval: 10000
           enabled: true
           debugLevel: 0
@@ -142,7 +132,7 @@ projects:
             out: PROJECTID/out/DCLIENTID
         metrics: project
         funcIds: {}
-        status:
+        statusDefault:
           debugLevel: 0
     topics:
       edge:

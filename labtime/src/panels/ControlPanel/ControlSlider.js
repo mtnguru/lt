@@ -35,7 +35,7 @@ const ControlSlider = (props) => {
     console.log('onChange', event.target.value, event.target.id);
 //  const metric = global.aaa.metrics[event.target.id.toLowerCase()]
     if (!metric) {
-      mgError(f,"Metric not found: ",event.target.id)
+      mgError(0, f,"Metric not found: ",event.target.id)
     }
     const topic = global.aaa.publishTopics['user'];
     let value = event.target.value;

@@ -6,7 +6,7 @@ import {findMetric} from './metrics'
 import YAML from "yaml-parser";
 
 let mqttClient;
-let topicCB = {}
+let topicsCB = {}
 
 /**
  * sleep() - synchronous sleep function
@@ -27,7 +27,7 @@ const onConnectPromise = (cb) => {
   return new Promise((resolve, reject) => {
     mqttClient.on('connect', (event) => {
       console.log(f,"connected ", mqttClient.connected)
-//    mqttClient.unsubscribe(Object.values(global.aaa.topics.subscribe, () => { 500}))
+      mqttUnsubscribe(global.aaa.topics.subscribe)
       mqttSubscribe(global.aaa.topics.subscribe, () => {
         console.log(f, 'subscribed', global.aaa.topics.subscribe)
         mqttClient.on('message', cb);
@@ -38,7 +38,7 @@ const onConnectPromise = (cb) => {
 }
 
 const mqttConnect = (cb) => {
-  topicCB = {};
+  topicsCB = {};
   const f = 'mqttReact::mqttConnect'
   console.log(f, 'connect it up', global.aaa.mqtt.connectUrl)
   mqttClient = mqtt.connect(global.aaa.mqtt.connectUrl, {
@@ -96,41 +96,40 @@ const mqttPublish = (topic, payload) => {
   if (!mqttClient.connected) {
     console.log(f, "ERROR: mqtt not connected")
   }
-  const res = mqttClient.publish(topic, payload, {qos: 0, retain: false})
+  const res = mqttClient.publish(topic, payload)
   return res
 }
 
-const mqttRegisterTopicCB = (_topic, cb) => {
+const mqttRegisterTopicCB = (_topic, cb, args) => {
   const f = "mqttReact::mqttRegisterTopicCB"
   // If necessary intialize new topic
   const topic = _topic.replace(/#/,'')
-  mgDebug(f, "Register topic", topic)
-  if (!topicCB[topic]) {
+  mgDebug(2, f, "Register topic", topic)
+  if (!topicsCB[topic]) {
     console.log(f, "Initialize topic", topic)
-    topicCB[topic] = [];
+    topicsCB[topic] = [];
   }
-  for (let rcb in topicCB[topic]) {
+  for (let rcb in topicsCB[topic]) {
     if (rcb === cb) {
       console.log(f, "Already added", topic)
       return;
     }
   }
   console.log(f, "add topic", topic)
-  topicCB[topic].push(cb);
-
+  topicsCB[topic].push({args, cb});
 }
 
-const mqttUnregisterTopicCB = (_topic, cb) => {
+const mqttUnregisterTopicCB = (_topic, cb, args) => {
   const f = "mqttReact::mqttUnregisterTopicCB"
   const topic = _topic.replace(/#/,'')
-  for (let t in topicCB) {
+  for (let t in topicsCB) {
     console.log(f, "   Check topic", t)
     if (t === topic) {
-      console.log(f, "   Topic found", topicCB[t].length)
+      console.log(f, "   Topic found", topicsCB[t].length)
       // Execute the callbacks for this topic
-      for (let rcb of topicCB[t]) {
+      for (let rcb of topicsCB[t]) {
         if (cb === rcb ) {
-          topicCB[t] = topicCB[t].filter((item) => {
+          topicsCB[t] = topicsCB[t].filter((item) => {
             return item.name !== cb.name
           })
           break
@@ -147,12 +146,12 @@ const mqttRegisterMetricCB = (_metricId, cb) => {
   const metricId = _metricId.toLowerCase()
   const metric = global.aaa.metrics[metricId]
   if (!metric) {
-    mgError(f,'Cannot find metric ', metricId);
+    mgError(0, f,'Cannot find metric ', metricId);
     return
   }
   if (metric.cbs) {
     if (metric.cbs.includes(cb)) {
-      mgWarning.log(f, "already registered ", metricId)
+      mgWarning.log(1, f, "already registered ", metricId)
     } else {
       metric.cbs.push(cb)
     }
@@ -170,13 +169,13 @@ const mqttRequestFile = (clientId, name, filepath, fileType, cb) => {
   const onLoadCB = (inTopic, inPayload) => {
     var inFile = {}
     if (fileType === 'yml') {
-      mgDebug(f, "Parse yml file: ", filepath)
+      mgDebug(2, f, "Parse yml file: ", filepath)
       inFile = YAML.safeLoad(inPayload);
     } else if (fileType === 'json') {
-      mgDebug(f, "Parse json file: ", filepath)
+      mgDebug(2, f, "Parse json file: ", filepath)
       inFile = JSON.parse(inPayload)
     }
-    if (inFile.cmd === cmd) {
+    if (inFile.rsp === cmd) {
       mqttUnregisterTopicCB(global.aaa.topics.subscribe.rsp, onLoadCB)
       cb(inTopic, inFile)
     }
@@ -187,27 +186,27 @@ const mqttRequestFile = (clientId, name, filepath, fileType, cb) => {
 }
 
 
-const mqttProcessCB = (topic, payload) => {
+const mqttProcessCB = (_topic, payload) => {
   const f = 'mqttReact::mqttProcessCB'
   let payloadStr = payload.toString();
-  console.log(f, 'enter ', topic, payloadStr)
+  console.log(f, 'enter ', _topic, payloadStr)
 
   try {
     // If this is a metricCB - influx line buf - call metric callbacks
-    const fields = topic.split("/")
+    const fields = _topic.split("/")
     const func = fields[1]
     if (func === 'inp' || func === 'out' || func === 'hum') {
       const {tags, values} = extractFromTags(payloadStr)
       if (!tags["MetricId"]) {
-        mgError(f, "Could not find Metric field in influx string");
+        mgError(0, f, "Could not find Metric field in influx string");
         return;
       }
       const metricId = tags["MetricId"].toLowerCase()
       const metric = findMetric(tags["MetricId"])
       const sourceId = tags["SourceId"]
-      const projectId = tags["ProjectId"]
+//    const projectId = tags["ProjectId"]
       if (metric == null) {
-        mgError(f, "Could not find Metric: ", metricId)
+        mgError(0, f, "Could not find Metric: ", metricId)
         return
       }
 
@@ -215,7 +214,7 @@ const mqttProcessCB = (topic, payload) => {
         switch (sourceId) {
           case 'I':
             if (!metric.input) {
-              mgWarning(f, 'Metric does not have a input', metric.metricId)
+              mgWarning(0, f, 'Metric does not have a input', metric.metricId)
               return
             }
             metric.input.value = values.value
@@ -224,36 +223,52 @@ const mqttProcessCB = (topic, payload) => {
 
           case 'O':
             if (!metric.output) {
-              mgWarning(f, 'Metric does not have a output', metric.metricId)
+              mgWarning(0, f, 'Metric does not have a output', metric.metricId)
               return
             }
             metric.output.value = values.value
             break;
           case 'H':
             if (!metric.user) {
-              mgWarning(f, 'Metric does not have a user', metric.metricId)
+              mgWarning(0, f, 'Metric does not have a user', metric.metricId)
               return
             }
             metric.human.value = values.value
             break;
           default:
-            mgError(f, 'Unknown sourceId ', sourceId)
+            mgError(0, f, 'Unknown sourceId ', sourceId)
             return;
         }
 
         for (let cb of metric.cbs) {
-          cb(metric, topic, payloadStr, tags, values)
+          cb(metric, _topic, payloadStr, tags, values)
         }
       }
     }
 
-//  console.log(f, "Look for topic", topic)
-    for (let itopic in topicCB) {
-      if (topic.indexOf(itopic) > -1) {
-//      console.log(f, "   Topic found", topicCB[itopic].length)
+    var payload;
+    if (payloadStr[0] === '{') {
+      payload = JSON.parse(payloadStr);
+    }
+    console.log(f, "Look for topic", _topic)
+    for (let topic in topicsCB) {
+      if (_topic.indexOf(topic) > -1) {
+//      console.log(f, "   Topic found", topicsCB[topic].length)
         // Execute the callbacks for this topic
-        for (let cb of topicCB[itopic]) {
-          cb(topic,payloadStr)
+        for (let rec of topicsCB[topic]) {
+          if (payload && rec.args) {
+            var valid = true
+            for (var field in rec.args) {
+              if (rec.args[field] && rec.args[field] !== payload[field]) {
+                valid = false
+              }
+            }
+            if (valid) {
+              rec.cb(_topic,payload)
+            }
+          } else {
+            rec.cb(_topic,payloadStr)
+          }
         }
       }
     }

@@ -80,8 +80,9 @@ const unsubscribe = (topics) => {
   }
   msg(3,f,DEBUG, 'mqtt unsubscribe exit')
 }
+
 const publish = (topic, payload) => {
-  const res = mqttClient.publish(topic, payload, {qos: 0, retain: false})
+  const res = mqttClient.publish(topic, payload)
 };
 
 /**
@@ -92,18 +93,18 @@ const publish = (topic, payload) => {
 const registerTopicCB = (topic, cb) => {
   const f = "mqttNode::registerTopicCB"
   // If necessary intialize new topic
-  console.log(f, "Register topic", topic)
+//console.log(f, "Register topic", topic)
   if (!topicCB[topic]) {
-    console.log(f, "Initialize topic", topic)
+//  console.log(f, "Initialize topic", topic)
     topicCB[topic] = [];
   }
   for (let rcb in topicCB[topic]) {
     if (rcb === cb) {
-      console.log(f, "Already added", topic)
+//    console.log(f, "Already added", topic)
       return;
     }
   }
-  console.log(f, "add topic", topic)
+//console.log(f, "add topic", topic)
   topicCB[topic].push(cb);
 }
 
@@ -117,12 +118,12 @@ const registerMetricCB = (metricId, cb) => {
   // If necessary intialize new metric
   const metric = global.aaa.metrics[metricId.toLowerCase()]
   if (!metric) {
-    mgError(f,'Cannot find metric ', metricId);
+    mgError(1, f,'Cannot find metric ', metricId);
     return
   }
   if (metric.cbs) {
     if (metric.cbs.includes(cb)) {
-      mgWarning.log(f, "already registered ", metricId)
+      mgWarning.log(1, f, "already registered ", metricId)
     } else {
       metric.cbs.push(cb)
     }
@@ -153,7 +154,7 @@ const processInflux = (topic, payloadStr) => {
     if (metric == null) {
       msg(1,f,ERROR, "Metric not found ",metricId);
     }
-    console.log(f, 'Metric found ', metricId)
+//  console.log(f, 'Metric found ', metricId)
 
     switch (funcId) {
       case 'input':
@@ -199,7 +200,7 @@ const processInflux = (topic, payloadStr) => {
 const processCB = (topic, payload) => {
   const f = 'mqttNode::processCB - '
   let payloadStr = payload.toString();
-  console.log(f, 'enter ', topic)
+//console.log(f, 'enter ', topic)
 
   try {
     if (topic.indexOf("/influx/") > -1) {

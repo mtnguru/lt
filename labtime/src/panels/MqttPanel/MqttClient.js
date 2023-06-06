@@ -16,7 +16,7 @@ function MqttClient (props) {
   }
 
   useEffect(() => {
-    mqttRegisterTopicCB(`a/rsp/${props.client.clientId}`, {rsp: "shit"}, mqttCB);
+    mqttRegisterTopicCB(`a/rsp/${props.client.clientId}`, mqttCB);
   }, [])
 
   const onSelectH = (event) => {
@@ -29,7 +29,7 @@ function MqttClient (props) {
   const onClickH = (event) => {
     const f = "Button::clickH"
     const name = event.target.innerText;
-    mgDebug(f,'Button pressed',name)
+    mgDebug(1, f,'Button pressed',name)
     let topic;
     let payload;
     if (name === "R") {

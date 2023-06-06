@@ -13,7 +13,7 @@ const ControlButton = (props) => {
   const [btnState, setBtnState] = useState(false)
   const clickH = (event) => {
     const f = "ControllButton::clickH"
-    mgDebug(f,'Button pressed',event.target.id)
+    mgDebug(1, f,'Button pressed',event.target.id)
     let topic;
     let payload;
     if (props.type === "push") {

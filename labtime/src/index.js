@@ -18,6 +18,9 @@ const clientId = "labtime"
 
 global.aaa = {
   clientId: clientId,
+  status: {
+    debugLevel: 0,
+  },
   mqtt: {
     clientId: `labtime_${Math.random().toString(16).slice(3)}`, // create a random id
     protocolId: 'MQTT',

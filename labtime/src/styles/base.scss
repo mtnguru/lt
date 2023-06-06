@@ -2,7 +2,7 @@
 
 .page {
   > header {
-    padding: 5px 15px;
+    padding: 5px 10px;
   }
   > section {
     padding: 0px 10px;
@@ -33,4 +33,8 @@ tbody {
   tr:nth-child(even) {
     background-color: $table-even-bg-color;
   }
+}
+
+textarea {
+  font-family: inherit;
 }

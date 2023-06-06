@@ -8,18 +8,20 @@ import { Container,
          Heading
        } from '@chakra-ui/react'
 
+import './ExptPage.scss'
+
 function ExptPage() {
   return (
-    <Container as="main" className="page expt-page">
+    <Container className="page expt-page">
       <header>
-        <Heading>Experiment Page</Heading>
+        <Heading>Experiment - Red Feather Cabin</Heading>
       </header>
       <Flex className="expt-flex">
-        <Container>
+        <Container className="left-col">
           <ControlImagePanel panelId="image_cabin" />
           <ControlPanel      panelId="cont_clients" />
         </Container>
-        <MsgPanel            panelId="msg_chat" />
+        <MsgPanel  classC="right-col" panelId="msg_chat" />
       </Flex>
     </Container>
   )

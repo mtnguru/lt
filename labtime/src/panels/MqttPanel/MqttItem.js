@@ -1,15 +1,17 @@
 import React, {useState, useEffect} from 'react';
 import Card from '../../components/ui/Card'
 import {extractFromTags} from '../../utils/influxr'
+import {mgError} from '../../utils/mg'
 import ('./MqttItem.scss')
 
 const MqttItem = (props) => {
   const f = 'MqttItem';
   const [payloadOut, setPayloadOut] = useState('')
+  const [type, setType] = useState('')
 
   // Format the payload - Raw, JSON, Pretty
   useEffect(() => {
-    let payloadStr = props.item.payload         // Display the Raw payload
+    var payloadStr = props.item.payload         // Display the Raw payload
 
     if (props.pretty === 'raw') {
        // Already set
@@ -25,20 +27,34 @@ const MqttItem = (props) => {
       } else {
         if (props.item.payload[0] === '{') {    // if this payload is JSON
           var payload = {};
-          console.log("dude: " + props.item.payload)
           try {
             payload = JSON.parse(props.item.payload);
             payloadStr = JSON.stringify(payload, null, 3)
           } catch(err) {
-            console.log(f, 'ERROR parsing JSON payload: ' + err)
+            mgError(0,f, 'ERROR parsing JSON payload: ' + err)
           }
           if (props.pretty === "pretty") {
             if (payload.content) {
-              payloadStr = `${payload.function} - ${payload.content}`
+              payloadStr = `${payload["function"]} - ${payload.content}`
             } else if (props.item.func === 'out') {
               payloadStr = `${payload.metric} - ${payload.value}`
             } else if (props.item.func === 'inp') {
-              payloadStr = `shit ${payload.metric} - ${payload.value}`
+              payloadStr = `${payload.metric} - ${payload.value}`
+            } else if (props.item.func === 'cmd') {
+              payloadStr = `${payload.clientId} - ${payload.cmd}`;
+            } else if (props.item.func === 'cod') {
+              payloadStr = `${payload["function"]}\n${payload.msg}` ;
+              setType(payload.type)
+            } else if (props.item.func === 'msg') {
+              payloadStr = (payload.author)
+                ? `${payload.author}\n${payload.msg}`
+                : `${payload["function"]}\n${payload.msg}` ;
+              if (payload.author) {
+
+              } else {
+
+              }
+              setType(payload.type)
             } else {
               payloadStr = payloadStr
                 .replace(/"|/g, '')         // remove all double quotes
@@ -50,10 +66,11 @@ const MqttItem = (props) => {
                 .replace(/: [[{]\n/g, ':\n');  // remove all trailing
             }
           }
-        } else if (props.pretty === "pretty" &&
-               (props.item.func === 'inp' || props.item.func === 'hum' || props.item.func === 'out')) {
-          let {tags, values} = extractFromTags(props.item.payload)
-          payloadStr = `${tags["MetricId"]} -- ${values["value"]}`
+        } else if (props.pretty === "pretty") {
+          if (props.item.func === 'inp' || props.item.func === 'hum' || props.item.func === 'out') {
+            var {tags, values} = extractFromTags(props.item.payload)
+            payloadStr = `${tags["MetricId"]} - ${values["value"]}`
+          }
         }
       }
     }
@@ -71,7 +88,10 @@ const MqttItem = (props) => {
           <span className={`clientId ${props.item.clientId}`}>{props.item.clientId}</span>
           <span className='topic'>{props.item.topic}</span>
         </div>
-        <pre><code className='payload'>{payloadOut}</code></pre>
+        <pre className='payload'>
+          {type &&  <span className={type}>{type}</span>}
+          {payloadOut}
+        </pre>
       </Card>
     </div>
   )

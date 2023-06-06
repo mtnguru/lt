@@ -3,32 +3,35 @@
 
 .control-image-panel {
   position: relative;
-  background-image: url("../../../assets/cabin.png");
   background-repeat: no-repeat;
   background-size: cover;
-  aspect-ratio: 1.2167;
+  margin-bottom: 10px;
 
   h3 {
     color: $title2-fg-color;
     width: 100%;
-    font-weight: 500;
+    font-weight: 400;
     padding: 10px;
+    z-index: 2;
   }
 
-  /*
-  .control-bar {
-    height: 30px;
-    margin: 5px 0;
-    padding: 5px 15px;
-    border-radius: 6px;
-    .label {
-      display: inline-block;
-      padding: 6px 0;
-    }
-  }
 
-  .card {
-    margin-bottom: 10px;
+  .controls {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
   }
-   */
+  img.bg-image {
+    display: block;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+//  z-index: 0;
+  }
 }
