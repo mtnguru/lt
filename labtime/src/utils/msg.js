@@ -2,8 +2,6 @@
 require('./msgE');
 // const mqttNode = require('./mqttNode');
 
-//global.debugLevel = 0;
-
 let msgFlagsA = {
   ERROR: true,
   WARNING: true,
@@ -21,11 +19,11 @@ let msgFlagsA = {
 }
 
 const setDebugLevel = (level) => {
-  global.debugLevel = level;
+  global.aaa.status.debugLevel = level;
 }
 
 const msg = (level, func, _funcId, ...snippets) => {
-  if (level > global.debugLevel) return;
+  if (level > global.aaa.status.debugLevel) return;
 
 //let payload = {
 //  function: func,
