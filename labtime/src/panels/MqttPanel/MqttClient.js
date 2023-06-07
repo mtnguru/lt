@@ -10,14 +10,23 @@ import {mqttPublish} from "../../utils/mqttReact"
 function MqttClient (props) {
 
   const [enabled, setEnabled] = useState(true)
+  const [debugLevel, setDebugLevel] = useState("0")
+
+  const clientId = props.client.clientId;
 
   const mqttCB = (_topic, _payload) => {
-    console.log("====================== fuck me")
+//  var rsp = _payload.rsp;
+    if (_payload.rsp === "setEnabled") {
+      setEnabled(_payload.enabled)
+    } else if (_payload.rsp === 'setDebugLevel') {
+      setDebugLevel(_payload.debugLevel)
+    }
   }
 
   useEffect(() => {
-    mqttRegisterTopicCB(`a/rsp/${props.client.clientId}`, mqttCB);
-  }, [])
+    mqttRegisterTopicCB(`a/rsp/${clientId}`, mqttCB, {});
+//  mqttRegisterTopicCB(`a/rsp/all`, mqttCB);
+  }, [clientId])
 
   const onSelectH = (event) => {
     let topic = `a/cmd/${props.client.clientId}`

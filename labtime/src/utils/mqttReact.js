@@ -186,9 +186,9 @@ const mqttRequestFile = (clientId, name, filepath, fileType, cb) => {
 }
 
 
-const mqttProcessCB = (_topic, payload) => {
+const mqttProcessCB = (_topic, _payload) => {
   const f = 'mqttReact::mqttProcessCB'
-  let payloadStr = payload.toString();
+  let payloadStr = _payload.toString();
   console.log(f, 'enter ', _topic, payloadStr)
 
   try {
@@ -267,7 +267,11 @@ const mqttProcessCB = (_topic, payload) => {
               rec.cb(_topic,payload)
             }
           } else {
-            rec.cb(_topic,payloadStr)
+//          if (payload) {
+//            rec.cb(_topic,payload)
+//          } else {
+              rec.cb(_topic,payloadStr)
+//          }
           }
         }
       }

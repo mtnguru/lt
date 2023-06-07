@@ -141,7 +141,9 @@ const processCB = (topic, payloadRaw) => {
               if (!out.status.sampleInterval && out.statusDefault.sampleInterval)  out.status.sampleInterval = out.statusDefault.sampleInterval;
             } else {
               out.status = {}
-              if (out.statusDefault.debugLevel > -1) out.status.debugLevel = out.statusDefault.debugLevel
+              if (out.statusDefault.debugLevel > -1 && out.statusDefault.debugLevel > -1) {
+                out.status.debugLevel = out.statusDefault.debugLevel
+              }
               if (out.statusDefault.enabled)         out.status.enabled = out.statusDefault.enabled
               if (out.statusDefault.sampleInterval)  out.status.sampleInterval = out.statusDefault.sampleInterval
             }

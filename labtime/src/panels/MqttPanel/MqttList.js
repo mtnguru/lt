@@ -8,12 +8,12 @@ function MqttList(props) {
   // if list does not exist - set list to an empty array
   let list = (props.list) ? props.list : []
 
-  const topicCB = (topic, payload) => {
-    return payload
+  const topicCB = (_topic, _payload) => {
+    return _payload
   }
 
   useEffect(() => {
-    mqttRegisterTopicCB("rf/msg/all", topicCB)
+    mqttRegisterTopicCB("rf/msg/all", topicCB, {})
     //Runs only on the first render
   }, []);
 

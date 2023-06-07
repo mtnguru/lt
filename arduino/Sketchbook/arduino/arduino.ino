@@ -9,7 +9,7 @@
 #include <math.h>
 
 const char *programId = "arduino.js";
-int debugLevel = 0;
+int debugLevel = 2;
 unsigned long startTime = 0;
 boolean enabled = true;
 int mqttConnected = 0;
@@ -340,12 +340,9 @@ void getStatus() {
   char uptime[30];
   snprintf(uptime,30,"%d %d:%d:%d", days, hours, minutes, seconds);
 
-  char enabledStr[10];
-  strcpy(enabledStr,(enabled) ? "true" : "false");
-
   snprintf(payload,payloadSize,
-    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": \"%d\", \"enabled\":\"%s\", \"debugLevel\":\"%d\", \"uptime\":\"%s\", \"sampleInterval\":\"%d\"}",
-    clientId, mqttClientId.c_str(), mqttConnected, enabledStr, debugLevel, uptime, sampleInterval);
+    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": %d, \"enabled\":%d, \"debugLevel\":%d, \"uptime\":\"%s\", \"sampleInterval\":\"%d\"}",
+    clientId, mqttClientId.c_str(), mqttConnected, enabled, debugLevel, uptime, sampleInterval);
 
   logit(2,MD, f, payload, NULL);
   mqttClient.publish(mqttRspPub, payload);
@@ -373,13 +370,18 @@ void setConfig(const char *topic,
 
   logit(1,MN, f, "Date ", jsonDoc["date"]);
   strcpy(clientId, jsonDoc["clientId"]);
-  sampleInterval = atoi(jsonDoc["status"]["sampleInterval"]);
+  logit(1,MN, f, "What ",NULL);
+  sampleInterval = jsonDoc["status"]["sampleInterval"];
+  logit(1,MN, f, "sample ", NULL);
   if (sampleInterval == 0) {
     sampleInterval = 10000;
   }
+  logit(1,MN, f, "next ", NULL);
   lastSample = sampleInterval;  // Force immediate read after changing
-  enabled = (!strcmp(jsonDoc["status"]["enabled"], "true")) ? true : false;
+  enabled = jsonDoc["status"]["enabled"];
+  logit(1,MN, f, "next thing ", NULL);
   debugLevel = jsonDoc["status"]["debugLevel"];
+  logit(1,MN, f, "next debug ", NULL);
 
   ///////////// Unsubscribe to response messages
   res = mqttClient.unsubscribe(mqttRspSub);
@@ -514,14 +516,14 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
         getStatus();
       } else if (!strcmp(cmd, "setDebugLevel")) {          // Set debugLevel
         debugLevel = atoi(jsonDoc["debugLevel"]);
-        snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"debugLevel\":\"%d\"}", cmd, clientId, debugLevel);
+        snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"debugLevel\":%d}", cmd, clientId, debugLevel);
         logit(0,MN,f,"set Debug Level", outTopic);
       } else if (!strcmp(cmd, "setEnabled")) {                 // Enabled arduino
-        enabled = (!strcmp(jsonDoc["enabled"],"true")) ? true : false;
-        snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"enabled\":\"%s\"}", cmd, clientId, (enabled) ? "true": "false");
+        enabled = jsonDoc["enabled"];
+        snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"enabled\":%d}", cmd, clientId, enabled);
       } else if (!strcmp(cmd, "setSampleInterval")) {      // Set sample interval
         sampleInterval = atoi(jsonDoc["sampleInterval"]);
-        snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"sampleInterval\":\"%dms\"}", cmd, clientId, sampleInterval);
+        snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"sampleInterval\":%d}", cmd, clientId, sampleInterval);
       }
     }
   }
