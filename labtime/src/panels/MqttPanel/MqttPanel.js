@@ -38,12 +38,11 @@ const MqttPanel = (props) => {
 
   const topicCB = (_topic, _payload) => {
 //  const f = "MqttPanel::topicCB - "
+    if (_topic.indexOf('a/cmd') > -1) return;
     const dateStr = currentDate()
     const [project, func, clientId] = _topic.split('/')
     let rnd = Math.random().toString(16).slice(3)
     let key = `${clientId}-${dateStr}-${rnd}`
-    if (nitems) {
-    }
 //  console.log("nitems ", nitems, ni);
     let item = { key, date: dateStr, project, func, clientId, topic:_topic, payload:_payload, nitems: ni }
 

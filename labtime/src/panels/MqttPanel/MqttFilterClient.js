@@ -12,8 +12,8 @@ const lsKey = "cnFilterClient"
 
 function MqttFilterClient(props) {
 
-  const [allSelected, setAllSelected] = useState(false)
-  const [settingsBtn, setSettingsBtn] = useState(false)
+  const [allSelected, setAllSelected] = useState(true)
+  const [settingsBtn, setSettingsBtn] = useState(true)
 
   useEffect(() => {
     const f = "MqttFilterClient::useEffect"
@@ -60,7 +60,6 @@ function MqttFilterClient(props) {
     setSettingsBtn(!settingsBtn)
   }
 
-
   return (
     <Container className={`mqtt-filter-client ${(settingsBtn) ? "showSettings" : '' }`}>
       <Container>
@@ -68,7 +67,7 @@ function MqttFilterClient(props) {
         <Heading as="h3">MqttClient</Heading>
       </Container>
       <Container className={`clients mqtt-clientId-bg ${allSelected ? "all-selected" : ""}`}>
-        <MqttClientList list={global.aaa.clients} onChangeH={onChangeH} />
+        <MqttClientList list={(global.aaa.clients) ? global.aaa.clients : {}} onChangeH={onChangeH} />
       </Container>
     </Container>
   );

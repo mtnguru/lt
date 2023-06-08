@@ -8,11 +8,12 @@ import {mgDebug} from "../../utils/mg"
 import {mqttPublish} from "../../utils/mqttReact"
 
 function MqttClient (props) {
-
-  const [enabled, setEnabled] = useState(true)
-  const [debugLevel, setDebugLevel] = useState("0")
-
   const clientId = props.client.clientId;
+  const [enabled, setEnabled] = useState(
+    (global.aaa.clients[clientId].status) ? global.aaa.clients[clientId].status.enabled : 1)
+  const [debugLevel, setDebugLevel] = useState(
+    (global.aaa.clients[clientId].status) ? global.aaa.clients[clientId].status.debugLevel : 0)
+
 
   const mqttCB = (_topic, _payload) => {
 //  var rsp = _payload.rsp;
@@ -48,13 +49,24 @@ function MqttClient (props) {
       topic = `a/cmd/${props.client.clientId}`
       payload = `{"cmd": "requestStatus", "clientId": "${props.client.clientId}"}`;
     } else if (name === "E") {
+      // Set the "all" button on other labtime instances
+      if (props.client.clientId === 'all') {
+        topic = `a/rsp/${props.client.clientId}`
+        if (enabled) {
+          payload = `{"rsp": "setEnabled", "enabled": 0, "clientId": "${props.client.clientId}"}`;
+        } else {
+          payload = `{"rsp": "setEnabled", "enabled": 1, "clientId": "${props.client.clientId}"}`;
+        }
+        mqttPublish(topic, payload)
+      }
+      // Set the enabled button
       topic = `a/cmd/${props.client.clientId}`
       if (enabled) {
-        payload = `{"cmd": "setEnabled", "enabled": "false", "clientId": "${props.client.clientId}"}`;
-        setEnabled(false)
+        payload = `{"cmd": "setEnabled", "enabled": 0, "clientId": "${props.client.clientId}"}`;
+        setEnabled(0)
       } else {
-        payload = `{"cmd": "setEnabled", "enabled": "true", "clientId": "${props.client.clientId}"}`;
-        setEnabled(true)
+        payload = `{"cmd": "setEnabled", "enabled": 1, "clientId": "${props.client.clientId}"}`;
+        setEnabled(1)
       }
     } else {
       console.log('   unknown button pressed ', name, '');
@@ -88,7 +100,7 @@ function MqttClient (props) {
         }
         {props.id !== 'all' &&
           <Tooltip label="Set Debug Level" bg="white" p="10px" placement="bottom">
-            <Select className="debug-level" onChange={onSelectH}>
+            <Select className="debug-level" value={debugLevel} onChange={onSelectH}>
               <option value="0">0</option>
               <option value="1">1</option>
               <option value="2">2</option>

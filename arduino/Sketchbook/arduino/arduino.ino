@@ -11,7 +11,7 @@
 const char *programId = "arduino.js";
 int debugLevel = 2;
 unsigned long startTime = 0;
-boolean enabled = true;
+boolean enabled = 1;
 int mqttConnected = 0;
 
 ///////////// JSON

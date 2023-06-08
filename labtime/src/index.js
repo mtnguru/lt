@@ -1,8 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.scss';
-import App from './App';
-import { BrowserRouter } from 'react-router-dom';
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import './index.scss'
+import App from './App'
+import { BrowserRouter } from 'react-router-dom'
+import {mgNotify, mgDebug} from './utils/mg'
 
 import {mqttConnect,
         mqttPublish,
@@ -11,6 +12,11 @@ import {mqttConnect,
         mqttProcessCB,
         mqttRegisterTopicCB,
         mqttUnregisterTopicCB} from './utils/mqttReact.js';
+
+import seedrandom from 'seedrandom'
+
+const generator = seedrandom(Date.now())
+const randomNumber = generator();
 
 const f = "index::main - "
 global.aaastarted = false;
@@ -22,7 +28,7 @@ global.aaa = {
     debugLevel: 0,
   },
   mqtt: {
-    clientId: `labtime_${Math.random().toString(16).slice(3)}`, // create a random id
+    clientId: `labtime_${randomNumber.toString(16).slice(3)}`, // create a random id
     protocolId: 'MQTT',
     protocolVersion: 4,
     connectUrl: 'mqtt://labtime.org:8081',
@@ -46,11 +52,18 @@ global.aaa = {
   },
 }
 
+const cmdCB = (_topic, _payload) => {
+  const f = "index:cmdCB"
+//mgDebug(2,f,'Enter');
+
+//mgDebug(2,f,'Exit');
+}
+
 const loadConfigCB = (_topic, _payload) => {
   const f = "index::loadConfigCB - "
   console.log(f,'enter', _topic)
 
-  mqttUnregisterTopicCB(global.aaa.topics.subscribe.rsp,loadConfigCB)
+  mqttUnregisterTopicCB(global.aaa.topics.subscribe.rsp,loadConfigCB,{})
 
   if (global.aaastarted) return;
   global.aaastarted = true
@@ -60,15 +73,9 @@ const loadConfigCB = (_topic, _payload) => {
 //  mqttUnsubscribe(global.aaa.topics.subscribe);
 
     // Replace global.aaa object with new configuration
-    const conf = JSON.parse(_payload.toString(0));
-    conf.topics.subscribe.rsp = global.aaa.topics.subscribe.rsp
-    conf.topics.publish.adm = global.aaa.topics.publish.adm
-    global.aaa = conf
-
-    // Subscribe to topics
-    console.log(f, 'do subscribe', Object.values(global.aaa.topics.subscribe))
-    mqttSubscribe(global.aaa.topics.subscribe)
-//  mqttRegisterTopicCB
+    _payload.topics.subscribe.rsp = global.aaa.topics.subscribe.rsp
+    _payload.topics.publish.adm = global.aaa.topics.publish.adm
+    global.aaa = _payload
 
     // Create full list of inputs and outputs by combining them from all clients
     global.aaa.inputs = {}
@@ -102,22 +109,30 @@ const getConfig = () => {
   const f = "index::getConfig - "
   console.log(f,'enter')
   const payloadStr = `{"cmd": "requestConfig", "clientId": "${clientId}"}`
-  mqttRegisterTopicCB(global.aaa.topics.subscribe.rsp, loadConfigCB)
+  mqttRegisterTopicCB(global.aaa.topics.subscribe.rsp, loadConfigCB,{})
   mqttPublish(global.aaa.topics.publish.adm, payloadStr)
   console.log(f,'exit')
 }
 
 mqttConnect(mqttProcessCB);
-console.log(f,'requestConfig - ')
+console.log(f,'requestConfig')
 getConfig();
 
 const startReact = () => {
   const f = "index::startReact"
-  console.log(f, 'enter')
-  const root = ReactDOM.createRoot(document.getElementById('root'));
-  root.render(
-    <BrowserRouter>
-      <App/>
-    </BrowserRouter>
-  );
+  // Subscribe to topics
+  try {
+    console.log(f, 'do subscribe', Object.values(global.aaa.topics.subscribe))
+    mqttSubscribe(global.aaa.topics.subscribe)
+    mqttRegisterTopicCB(global.aaa.topics.subscribe.cmd,cmdCB,{})
+    console.log(f, 'enter')
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(
+      <BrowserRouter>
+        <App/>
+      </BrowserRouter>
+    );
+  } catch(err) {
+    console.log('ERROR in', f, '  Error:', err)
+  }
 }
