@@ -40,7 +40,7 @@ const MsgPane = (props) => {
   }
 
   useEffect(() => {
-    mqttRegisterTopicCB("rf/msg/all", topicCB, { type: paneId })
+    mqttRegisterTopicCB(global.aaa.topics.register.msg, topicCB, { type: paneId })
     //Runs only on the first render
   }, [paneId]);
 

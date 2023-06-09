@@ -14,6 +14,7 @@
     "get-current-line": "^6.6.0",
     "mqtt": "^4.3.7",
     "nodemon": "^2.0.16",
+    "seedrandom": "^3.0.5",
     "yaml": "^2.2.1",
     "yaml-parser": "^3.5.3"
   },

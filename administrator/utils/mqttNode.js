@@ -16,10 +16,10 @@ let topicCB = {}
  * connect - connect to the MQTT broker, set callback, subscribe to topics
  * @param cb
  */
-const connect = (clientId, connectCB, messageCB) => {
+const connect = (connectCB, messageCB) => {
   const f = 'mqttNode:connect'
 //msg(3,f,DEBUG, 'enter')
-  const mc = global.aaa.mqtt;
+  const mc = global.aam;
   topicCB ={};
 
   const onConnectPromise = () => {
@@ -27,7 +27,6 @@ const connect = (clientId, connectCB, messageCB) => {
     return new Promise((resolve, reject) => {
       mqttClient.on('connect', (event) => {
         msg(1,f,NOTIFY,'Connected to MQTT broker ' + mc.url)
-//      mqttClient.unsubscribe((Object.values(global.aaa.topics.subscribe)), () => {})
         mqttClient.unsubscribe([])
         mqttClient.subscribe(Object.values(global.aaa.topics.subscribe), () => {
           connectCB();
@@ -42,9 +41,10 @@ const connect = (clientId, connectCB, messageCB) => {
   }
 
   mqttClient = mqtt.connect((mc.ip) ? mc.ip: mc.url, {
-                            clientId: `${clientId}_${Math.random().toString(16).slice(3)}`,
+                            clientId: mc.mqttClientId,
                             clean: true,
-                            protocol: 'MQTT',
+                            protocol: mc.protocol,
+                            protocolVersion: mc.protocolVersion,
                             username: mc.username,
                             password: mc.password,
                             reconnectPeriod: mc.reconnectPeriod,
@@ -135,11 +135,8 @@ const registerMetricCB = (metricId, cb) => {
 /**
  * processInflux
  *
- * Input, output, and user messaage all use Influx Line format.
+ * inp, out, hum - messaages all use Influx Line format.
  * This function breaks those down, finds the metric and value,
- * and acts accordingly.
- *
- * Outputs result in controlling a channel on the Edge device.
  *
  * @param topic
  * @param payloadStr

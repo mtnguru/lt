@@ -9,25 +9,52 @@ const {msg} = require("./utils/msg");
 const influx = require("./utils/influx");
 const {currentDate} = require("./utils/tools");
 
+const seedrandom  = require('seedrandom')
+const clientId = "administrator"
+const generator = seedrandom(Date.now())
+const mqttClientId = `${clientId}_${generator().toString(16).slice(3)}`
+
 const f = "administrator:main - "
 const stageId = "dev"
-const clientId = "administrator"
-var mqttClientId = `${clientId}_${Math.random().toString(16).slice(3)}`
 
-global.startTime = Date.now()
-global.aab = { clients: {}}
-
-/*
- * Processes a request for a devices configuration - device, inputs, outputs.
- */
-const getHmiConfig = (ip) => {
-  const f = 'administrator::getHmiConfig'
-  msg(2,f,DEBUG, 'enter ',ip);
-  return global.config.hmi;
+// global.aaa is overwritten when the configuration is read in from a file
+global.aaa = {
 }
 
-const getJsonFile = (filepath) => {
+// global.aab - base configuration which is needed at startup
+global.aab = {
+//topics: {
+//  subscribe : {  // The administrator gets its initial config from a file
+//  },
+//  publish: {
+//  }
+//}
+}
 
+/* Use the administrator.yml file instead
+// MQTT configuration - this will be the same for all clients except the port
+global.aam = {
+  mqttClientId: mqttClientId,
+  url: "http://labtime.org:1883",    // labtime linode computer
+//url: "http://172.16.45.7:1883",    // merlin
+//url: "http://192.168.122.90:1883",
+  username: "data",
+  password: "datawp",
+  protocolId: 'MQTT',
+  protocolVersion: 4,
+  connectTimeout: 60000,
+  reconnectPeriod: 120000,
+  keepAlive: 5000,
+}
+*/
+
+// Keeps status of all the clients for their initialization
+// populated when 'administrator' is started and queries clients for their status
+global.aas = {
+  clients: {},
+  startTime: Date.now(),
+  debugLevel: 0,
+  mqttConnected: 0,
 }
 
 /*
@@ -53,8 +80,8 @@ const findClient = (id) => {
   return client;
 }
 
-const publishStatus = () => {
-  let timeDiff = parseInt((Date.now() - global.startTime) / 1000)
+const getStatus = () => {
+  var timeDiff = parseInt((Date.now() - global.aas.startTime) / 1000)
   var seconds = Math.round(timeDiff % 60)
   timeDiff = Math.floor(timeDiff / 60)
   var minutes = Math.round(timeDiff % 60)
@@ -69,29 +96,55 @@ const publishStatus = () => {
   }
   uptime += `${hours}:${minutes}:${seconds}`
 
-  let out = {
+  return {
     rsp: "requestStatus",
     clientId: clientId,
     mqttClientId: mqttClientId,
+    mqttConnected: global.aas.connected,
     status: 'nominal',
-    debugLevel: global.aaa.status.debugLevel,
+    debugLevel: global.aas.debugLevel,
     uptime: uptime,
   }
-  return out;
-//return JSON.stringify(out);
 }
 
 const resetServer = () => {
 }
 
 const connectCB = () => {
-  mqttNode.publish(global.aaa.topics.publish.all,`{"cmd": "requestStatus", "clientId":"all"}`)
+  // Request status from all clients
+  mqttNode.publish(global.aaa.topics.publish.all,`{"cmd": "requestStatus", "clientId": "all"}`)
+}
+
+const addStatus = (out) => {
+  if (global.aas.clients[out.clientId]) {
+    out.status = global.aas.clients[out.clientId]
+    if (!'debugLevel' in out.status && 'debugLevel' in out.statusDefault) {
+      out.status.debugLevel     = out.statusDefault.debugLevel;
+    }
+    if (!'enabled' in out.status    && 'enabled' in out.statusDefault) {
+      out.status.enabled = out.statusDefault.enabled;
+    }
+    if (!'sampleInterval' in out.status && 'sampleInterval' in out.statusDefault) {
+      out.status.sampleInterval = out.statusDefault.sampleInterval;
+    }
+  } else {
+    out.status = {}
+    if ('debugLevel' in out.statusDefault) {
+      out.status.debugLevel = out.statusDefault.debugLevel
+    }
+    if ('enabled' in out.statusDefault) {
+      out.status.enabled = out.statusDefault.enabled
+    }
+    if ('sampleInterval' in out.statusDefault) {
+      out.status.sampleInterval = out.statusDefault.sampleInterval
+    }
+  }
 }
 
 /**
  * processCB
  */
-const processCB = (topic, payloadRaw) => {
+const processCB = (_topic, _payload) => {
   const f = 'administrator::processCB'
   msg(1,f,DEBUG, 'enter');
   readConfig();
@@ -99,9 +152,9 @@ const processCB = (topic, payloadRaw) => {
   let outTopic;
   var dclientId;
   try {
-    var [projectId, func, clientId, userId, telegrafId] = topic.split('/')
+    var [projectId, func, clientId, userId, telegrafId] = _topic.split('/')
 
-    const inputStr = payloadRaw.toString();
+    const inputStr = _payload.toString();
     let input = {}
 
     // If the payload is JSON, parse it
@@ -111,9 +164,9 @@ const processCB = (topic, payloadRaw) => {
     }
     msg(3,f,DEBUG, 'func', func, ' clientId', clientId);
 
-    // If this is an admin message
-    if (global.aaa.topics.subscribe['adm'] === topic ||
-        global.aaa.topics.subscribe['all'] === topic) {
+    // If this is a cmd to the administrator
+    if (global.aaa.topics.subscribe['cmd'] === _topic ||
+        global.aaa.topics.subscribe['all'] === _topic) {
       if (input.cmd) {
         if (clientId === global.aaa.clientId || clientId === 'all') {  // commands specifically for the server
           if (input.cmd === 'setDebugLevel') {
@@ -127,26 +180,14 @@ const processCB = (topic, payloadRaw) => {
           if (input.cmd === 'requestStatus') {
             outTopic = global.aaa.topics.publish.rsp
             outTopic = outTopic.replace(/DCLIENTID/, global.aaa.clientId)
-            out = publishStatus();
+            out = getStatus();
           }
           if (input.cmd === 'requestConfig') {
             var id = (input.ip) ? input.ip : input.clientId
             outTopic = global.aaa.topics.publish.rsp
             outTopic = outTopic.replace(/DCLIENTID/, id)
             out = findClient(id)
-            if (global.aab.clients[out.clientId]) {
-              out.status = global.aab.clients[out.clientId]
-              if (!out.status.debugLevel &&     out.statusDefault.debugLevel > -1) out.status.debugLevel     = out.statusDefault.debugLevel;
-              if (!out.status.enabled &&        out.statusDefault.enabled)         out.status.enabled        = out.statusDefault.enabled;
-              if (!out.status.sampleInterval && out.statusDefault.sampleInterval)  out.status.sampleInterval = out.statusDefault.sampleInterval;
-            } else {
-              out.status = {}
-              if (out.statusDefault.debugLevel > -1 && out.statusDefault.debugLevel > -1) {
-                out.status.debugLevel = out.statusDefault.debugLevel
-              }
-              if (out.statusDefault.enabled)         out.status.enabled = out.statusDefault.enabled
-              if (out.statusDefault.sampleInterval)  out.status.sampleInterval = out.statusDefault.sampleInterval
-            }
+            addStatus(out)
           }
           if (input.cmd === 'requestJsonFile') {
             msg(2, f, DEBUG, "Read json file: ", filepath)
@@ -169,15 +210,17 @@ const processCB = (topic, payloadRaw) => {
           }
         }
       }
-    } else if (topic.indexOf(global.aaa.topics.subscribe.rsp.replace(/\/#/,'')) > -1) {
+    } else if (_topic.indexOf(global.aaa.topics.subscribe.rsp.replace(/\/#/,'')) > -1) {
       if (input.rsp === 'requestStatus')  {
-        global.aab.clients[clientId] = input
+        global.aas.clients[clientId] = input
+      } else if (input.rsp === 'setDebugLevel') {
+        global.aas.clients[clientId].debugLevel = input.debugLevel
       } else if (input.rsp === 'setEnabled') {
-        global.aab.clients[clientId].enabled = input.enabled
+        global.aas.clients[clientId].enabled = input.enabled
       }
     }
     var short = global.aaa.topics.subscribe.rsp.replace(/\/#/,'')
-    var ind = topic.indexOf(short)
+    var ind = _topic.indexOf(short)
 
     if (out) {
       out.rsp = input.cmd;
@@ -297,6 +340,7 @@ const initClients = (projectId, project, funcIds) => {
         } else {
           if (project.clients[clientId2]) {
             client.clients[clientId2] = JSON.parse(JSON.stringify(project.clients[clientId2]))
+            addStatus(client.clients[clientId2])
           } else {
             msg(2, f, ERROR, `${clientId} - Client not found ${clientId2} in administrator config`);
           }
@@ -314,6 +358,20 @@ const readConfig = () => {
   global.aaa.stageId = stageId
   global.aaa.clients = {}
 
+  global.aam = global.aaa.mqtt
+  global.aam.mqttClientId = mqttClientId
+
+// Complete the administrator subscribe and publish topics
+  if (global.aaa.topics.subscribe) {
+    global.aaa.topics.subscribe = Topics.completeTopics(global.aaa.topics.subscribe);
+  }
+  if (global.aaa.topics.register) {
+    global.aaa.topics.register = Topics.completeTopics(global.aaa.topics.register);
+  }
+  if (global.aaa.topics.publish) {
+    global.aaa.topics.publish = Topics.completeTopics(global.aaa.topics.publish);
+  }
+
 // For each project in administrator config
   for (var projectId in global.aaa.projects) {
     let ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${stageId}/${projectId}/funcIds.yml`)
@@ -329,10 +387,7 @@ const readConfig = () => {
 }
 
 readConfig();
-// Complete the administrator subscribe and publish topics
-global.aaa.topics.subscribe = Topics.completeTopics(global.aaa.topics.subscribe);
-global.aaa.topics.publish = Topics.completeTopics(global.aaa.topics.publish);
 
 console.log(f, 'Connect to mqtt server and initiate process callback')
-mqttNode.connect(mqttClientId,connectCB, processCB,'-');
+mqttNode.connect(connectCB, processCB,'-');
 console.log(f, 'Exit main thread')

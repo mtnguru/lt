@@ -4,6 +4,18 @@ import {extractFromTags} from '../../utils/influxr'
 import {mgError} from '../../utils/mg'
 import ('./MqttItem.scss')
 
+const makeJsonPretty = (payloadStr) => {
+  payloadStr = payloadStr
+    .replace(/"|/g, '')         // remove all double quotes
+    .replace(/^{\n/, '')        // remove opening {
+    .replace(/}$/, '')          // remove closing }
+    .replace(/,\n/g, '\n')      // remove all trailing commas
+    .replace(/\n\s*[\]}]\n/g, '\n') // remove all } on a line by themselves
+    .replace(/\n\s*[\]}]\n/g, '\n') // do it a second time
+    .replace(/: [[{]\n/g, ':\n');  // remove all trailing
+  return payloadStr
+}
+
 const MqttItem = (props) => {
   const f = 'MqttItem';
   const [payloadOut, setPayloadOut] = useState('')
@@ -41,7 +53,35 @@ const MqttItem = (props) => {
             } else if (props.item.func === 'inp') {
               payloadStr = `${payload.metric} - ${payload.value}`
             } else if (props.item.func === 'cmd') {
-              payloadStr = `${payload.clientId} - ${payload.cmd}`;
+              switch (payload.cmd) {
+                case 'setEnabled':
+                  payloadStr = `cmd: ${payload.cmd} - ${payload.enabled}`
+                  break
+                case 'setDebugLevel':
+                  payloadStr = `cmd: ${payload.cmd} - ${payload.debugLevel}`
+                  break
+                case 'setSampleInterval':
+                  payloadStr = `cmd: ${payload.cmd} - ${payload.sampleInterval}`
+                  break
+                default:
+                  payloadStr = `cmd: ${payload.cmd}`
+                  break
+              }
+            } else if (props.item.func === 'rsp') {
+              switch (payload.rsp) {
+                case 'setEnabled':
+                  payloadStr = `rsp: ${payload.rsp} - ${payload.enabled}`
+                  break
+                case 'setDebugLevel':
+                  payloadStr = `rsp: ${payload.rsp} - ${payload.debugLevel}`
+                  break
+                case 'setSampleInterval':
+                  payloadStr = `rsp: ${payload.rsp} - ${payload.sampleInterval}`
+                  break
+                default:
+                  payloadStr = makeJsonPretty(payloadStr)
+                  break
+              }
             } else if (props.item.func === 'cod') {
               payloadStr = `${payload["function"]}\n${payload.msg}` ;
               setType(payload.type)
@@ -56,14 +96,7 @@ const MqttItem = (props) => {
               }
               setType(payload.type)
             } else {
-              payloadStr = payloadStr
-                .replace(/"|/g, '')         // remove all double quotes
-                .replace(/^{\n/, '')        // remove opening {
-                .replace(/}$/, '')          // remove closing }
-                .replace(/,\n/g, '\n')      // remove all trailing commas
-                .replace(/\n\s*[\]}]\n/g, '\n') // remove all } on a line by themselves
-                .replace(/\n\s*[\]}]\n/g, '\n') // do it a second time
-                .replace(/: [[{]\n/g, ':\n');  // remove all trailing
+              payloadStr = makeJsonPretty(payloadStr)
             }
           }
         } else if (props.pretty === "pretty") {

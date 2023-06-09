@@ -25,13 +25,13 @@ function MqttClient (props) {
   }
 
   useEffect(() => {
-    mqttRegisterTopicCB(`a/rsp/${clientId}`, mqttCB, {});
-//  mqttRegisterTopicCB(`a/rsp/all`, mqttCB);
+    var topic = global.aaa.topics.register.rsp + '/' + clientId
+    mqttRegisterTopicCB(global.aaa.topics.register.rsp, mqttCB, {});
   }, [clientId])
 
   const onSelectH = (event) => {
     let topic = `a/cmd/${props.client.clientId}`
-    let payload = `{"cmd": "setDebugLevel", "debugLevel": "${event.target.value}"}`;
+    let payload = `{"cmd": "setDebugLevel", "clientId": "${clientId}", "debugLevel": "${event.target.value}"}`;
     console.log('   send ', topic, payload)
     mqttPublish(topic, payload)
   }
@@ -50,15 +50,6 @@ function MqttClient (props) {
       payload = `{"cmd": "requestStatus", "clientId": "${props.client.clientId}"}`;
     } else if (name === "E") {
       // Set the "all" button on other labtime instances
-      if (props.client.clientId === 'all') {
-        topic = `a/rsp/${props.client.clientId}`
-        if (enabled) {
-          payload = `{"rsp": "setEnabled", "enabled": 0, "clientId": "${props.client.clientId}"}`;
-        } else {
-          payload = `{"rsp": "setEnabled", "enabled": 1, "clientId": "${props.client.clientId}"}`;
-        }
-        mqttPublish(topic, payload)
-      }
       // Set the enabled button
       topic = `a/cmd/${props.client.clientId}`
       if (enabled) {
@@ -67,6 +58,15 @@ function MqttClient (props) {
       } else {
         payload = `{"cmd": "setEnabled", "enabled": 1, "clientId": "${props.client.clientId}"}`;
         setEnabled(1)
+      }
+      if (props.client.clientId === 'all') {
+        mqttPublish(topic, payload)  // looks weird, Doing it this way publishes the cmd before the rsp
+        topic = `a/rsp/${props.client.clientId}`
+        if (enabled) {
+          payload = `{"rsp": "setEnabled", "enabled": 0, "clientId": "${props.client.clientId}"}`;
+        } else {
+          payload = `{"rsp": "setEnabled", "enabled": 1, "clientId": "${props.client.clientId}"}`;
+        }
       }
     } else {
       console.log('   unknown button pressed ', name, '');

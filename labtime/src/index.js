@@ -8,43 +8,33 @@ import {mgNotify, mgDebug} from './utils/mg'
 import {mqttConnect,
         mqttPublish,
         mqttSubscribe,
-//      mqttUnsubscribe,
+        mqttUnsubscribe,
         mqttProcessCB,
         mqttRegisterTopicCB,
         mqttUnregisterTopicCB} from './utils/mqttReact.js';
 
 import seedrandom from 'seedrandom'
-
+const clientId = "labtime"
 const generator = seedrandom(Date.now())
-const randomNumber = generator();
+const mqttClientId = `${clientId}_${generator().toString(16).slice(3)}`
 
 const f = "index::main - "
-global.aaastarted = false;
-const clientId = "labtime"
 
-global.aaa = {
+global.aaa = {}
+
+global.aas = {
+  connected: 0,
+  debugLevel: 0,
+  startTime: Date.now(),
+}
+
+// Initial configuration to get the client started
+global.aab = {
   clientId: clientId,
-  status: {
-    debugLevel: 0,
-  },
-  mqtt: {
-    clientId: `labtime_${randomNumber.toString(16).slice(3)}`, // create a random id
-    protocolId: 'MQTT',
-    protocolVersion: 4,
-    connectUrl: 'mqtt://labtime.org:8081',
-//  connectUrl: 'mqtt://194.195.214.212:8081',
-//  connectUrl: 'mqtt://labtime.webhop.net:8081',
-//  connectUrl: 'mqtt://192.168.122.90:8081',
-//  connectUrl: 'mqtt://172.16.45.7:8081',
-    username: 'data',
-    password: 'datawp',
-    connectTimeout: 10000,
-    reconnectPeriod: 120000,
-    keepAlive: 5000,
-  },
+  started: false,
   topics: {
     subscribe: {
-      rsp: 'a/rsp/labtime',
+      rsp: `a/rsp/${clientId}`,
     },
     publish: {
       adm: 'a/cmd/administrator'
@@ -52,10 +42,69 @@ global.aaa = {
   },
 }
 
+global.aam = {
+  mqttClientId: mqttClientId,
+  url: 'mqtt://labtime.org:8081',
+//url: 'mqtt://194.195.214.212:8081',
+//url: 'mqtt://192.168.122.90:8081',
+//url: 'mqtt://172.16.45.7:8081',     // merlin
+  username: 'data',
+  password: 'datawp',
+  protocolId: 'MQTT',
+  protocolVersion: 4,
+  connectTimeout: 60000,
+  reconnectPeriod: 120000,
+  keepAlive: 5000,
+}
+
+const getStatus = () => {
+  var timeDiff = parseInt((Date.now() - global.aas.startTime) / 1000)
+  var seconds = Math.round(timeDiff % 60)
+  timeDiff = Math.floor(timeDiff / 60)
+  var minutes = Math.round(timeDiff % 60)
+  timeDiff = Math.floor(timeDiff / 60)
+  var hours = Math.round(timeDiff % 24)
+  timeDiff = Math.floor(timeDiff / 24)
+  var days = timeDiff
+
+  var uptime = ''
+  if (days > 0) {
+    uptime = `${days} `
+  }
+  uptime += `${hours}:${minutes}:${seconds}`
+
+  return {
+    rsp: "requestStatus",
+    clientId: clientId,
+    mqttClientId: mqttClientId,
+    mqttConnected: global.aas.connected,
+    status: 'nominal',
+    debugLevel: global.aas.debugLevel,
+    uptime: uptime,
+  }
+}
+
 const cmdCB = (_topic, _payload) => {
   const f = "index:cmdCB"
-//mgDebug(2,f,'Enter');
-
+  mgDebug(2,f,'Enter')
+  var out
+  var topic = global.aaa.topics.publish.rsp
+  if (_payload.clientId === clientId || _payload.clientId === 'all') {
+    if (_payload.cmd === 'requestStatus') {
+      out = JSON.stringify(getStatus())
+    }
+    if (_payload.cmd === 'setDebugLevel') {
+      global.aas.debugLevel = _payload.debugLevel
+      out = JSON.stringify({
+        rsp: 'setDebugLevel',
+        clientId: clientId,
+        debugLevel: global.aas.debugLevel,
+      })
+    }
+  }
+  if (out) {
+    mqttPublish(topic, out)
+  }
 //mgDebug(2,f,'Exit');
 }
 
@@ -63,18 +112,16 @@ const loadConfigCB = (_topic, _payload) => {
   const f = "index::loadConfigCB - "
   console.log(f,'enter', _topic)
 
-  mqttUnregisterTopicCB(global.aaa.topics.subscribe.rsp,loadConfigCB,{})
+  if (global.aab.started) return;
+  global.aab.started = true
 
-  if (global.aaastarted) return;
-  global.aaastarted = true
+  mqttUnsubscribe(global.aab.topics.subscribe);
+  mqttUnregisterTopicCB(global.aab.topics.subscribe.rsp, loadConfigCB,{})
 
   try {
-    // Unsubscribe from all any current topics
-//  mqttUnsubscribe(global.aaa.topics.subscribe);
-
     // Replace global.aaa object with new configuration
-    _payload.topics.subscribe.rsp = global.aaa.topics.subscribe.rsp
-    _payload.topics.publish.adm = global.aaa.topics.publish.adm
+//  _payload.topics.subscribe.rsp = global.aab.topics.subscribe.rsp
+    _payload.topics.publish.adm = global.aab.topics.publish.adm
     global.aaa = _payload
 
     // Create full list of inputs and outputs by combining them from all clients
@@ -109,8 +156,8 @@ const getConfig = () => {
   const f = "index::getConfig - "
   console.log(f,'enter')
   const payloadStr = `{"cmd": "requestConfig", "clientId": "${clientId}"}`
-  mqttRegisterTopicCB(global.aaa.topics.subscribe.rsp, loadConfigCB,{})
-  mqttPublish(global.aaa.topics.publish.adm, payloadStr)
+  mqttRegisterTopicCB(global.aab.topics.subscribe.rsp, loadConfigCB,{})
+  mqttPublish(global.aab.topics.publish.adm, payloadStr)
   console.log(f,'exit')
 }
 
@@ -124,7 +171,7 @@ const startReact = () => {
   try {
     console.log(f, 'do subscribe', Object.values(global.aaa.topics.subscribe))
     mqttSubscribe(global.aaa.topics.subscribe)
-    mqttRegisterTopicCB(global.aaa.topics.subscribe.cmd,cmdCB,{})
+    mqttRegisterTopicCB(global.aaa.topics.register.cmd,cmdCB,{})
     console.log(f, 'enter')
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(

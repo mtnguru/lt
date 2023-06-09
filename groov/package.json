@@ -8,6 +8,7 @@
     "dotenv": "^16.0.0",
     "mqtt": "^4.3.7",
     "nodemon": "^2.0.15",
+    "seedrandom": "^3.0.5",
     "sprintf-js": "^1.1.2",
     "timestamp-nano": "^1.0.0"
   },

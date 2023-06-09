@@ -38,7 +38,7 @@ const MqttPanel = (props) => {
 
   const topicCB = (_topic, _payload) => {
 //  const f = "MqttPanel::topicCB - "
-    if (_topic.indexOf('a/cmd') > -1) return;
+//  if (_topic.indexOf('a/cmd') > -1) return;
     const dateStr = currentDate()
     const [project, func, clientId] = _topic.split('/')
     let rnd = Math.random().toString(16).slice(3)
@@ -70,9 +70,8 @@ const MqttPanel = (props) => {
 
   if (!registered) {
     registered = true;
-    for (let n in global.aaa.topics.subscribe) {
-      mqttRegisterTopicCB(global.aaa.topics.subscribe[n], topicCB)
-    }
+    mqttRegisterTopicCB(global.aaa.topics.subscribe.prj, topicCB)
+    mqttRegisterTopicCB(global.aaa.topics.subscribe.adm, topicCB)
   }
 
   /**

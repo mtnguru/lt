@@ -1,15 +1,24 @@
-All clients start with:
-  * rsp  mqttAdminRspSub   a/rsp/IP    ->    a/rsp/CLIENTID   - unsubscribe and resubscribe on config load
-    cmd  mqttAdminCmdSub   a/cmd/CLIENTID
-    all  mqttAdminAllSub   a/cmd/all
-    out  mqttOutputSub     rf/out/CLIENTID
+global.aab.topics   -- all clients initially start with these topics
+  subscribe
+    rsp    a/rsp/IP   
+        or a/rsp/CLIENTID 
+  publish
+    adm    a/cmd/administrator
 
-The following publications are needed
-  * cmd  mqttAdminCmdPub   a/cmd/administrator                
-    rsp  mqttAdminRspPub   a/rsp/CLIENTID     
-    inp  mqttInputPub      a/inp/administrator
-    cod  mqttCodPub        rf/inp/CLIENTID
-    msg  mqttMsgPub        rf/msg/CLIENTID
+global.aaa.topics
+  subscribe
+    all    a/cmd/all
+    cmd    a/cmd/CLIENTID
+    inp    PROJECTID/inp/DCLIENTID
+    out    PROJECTID/out/CLIENTID
+    hum    PROJECTID/hum/CLIENTID
+  publish
+    rsp    a/rsp/CLIENTID     
+    inp    PROJECTID/inp/CLIENTID
+    out    PROJECTID/out/DCLIENTID
+    out    PROJECTID/hum/DCLIENTID
+    cod    PROJECTID/cod/CLIENTID
+    msg    PROJECTID/msg/CLIENTID
 
 ===============================================================
 

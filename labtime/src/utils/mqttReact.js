@@ -26,9 +26,10 @@ const onConnectPromise = (cb) => {
   const f = "mqttReact::onConnectPromise"
   return new Promise((resolve, reject) => {
     mqttClient.on('connect', (event) => {
+      global.aas.connected++
       console.log(f,"connected ", mqttClient.connected)
-      mqttUnsubscribe(global.aaa.topics.subscribe)
-      mqttSubscribe(global.aaa.topics.subscribe, () => {
+      mqttUnsubscribe(global.aab.topics.subscribe)
+      mqttSubscribe(global.aab.topics.subscribe, () => {
         console.log(f, 'subscribed', global.aaa.topics.subscribe)
         mqttClient.on('message', cb);
       })
@@ -40,15 +41,15 @@ const onConnectPromise = (cb) => {
 const mqttConnect = (cb) => {
   topicsCB = {};
   const f = 'mqttReact::mqttConnect'
-  console.log(f, 'connect to mqtt url/ip', global.aaa.mqtt.connectUrl)
-  mqttClient = mqtt.connect(global.aaa.mqtt.connectUrl, {
-    clientId: global.aaa.mqtt.clientId,
+  console.log(f, 'connect to mqtt url/ip', global.aam.url)
+  mqttClient = mqtt.connect(global.aam.url, {
+    clientId: global.aam.mqttClientId,
     clean: true,
-    protocolId: 'MQTT',
-    username: global.aaa.mqtt.username,
-    password: global.aaa.mqtt.password,
-    reconnectPeriod: global.aaa.mqtt.reconnectPeriod,
-    connectTimeout: global.aaa.mqtt.connectTimeout,
+    protocolId: global.aam.protocol,
+    username: global.aam.username,
+    password: global.aam.password,
+    reconnectPeriod: global.aam.reconnectPeriod,
+    connectTimeout: global.aam.connectTimeout,
   });
   console.log(f, 'connected it up', mqttClient.connected)
 
@@ -60,8 +61,8 @@ const mqttConnect = (cb) => {
   onConnectPromise(cb)
   console.log(f,'we\'re on')
 
-  mqttSubscribe(global.aaa.topics.subscribe, () => {
-    console.log(f, 'subscribed', global.aaa.topics.subscribe)
+  mqttSubscribe(global.aab.topics.subscribe, () => {
+    console.log(f, 'subscribed', global.aab.topics.subscribe)
   })
 
   mqttClient.on('message', cb);
@@ -115,7 +116,7 @@ const mqttRegisterTopicCB = (_topic, cb, args) => {
     }
   }
   console.log(f, "add topic", topic)
-  topicsCB[topic].push({args, cb});
+  topicsCB[topic].push({args: args, cb:cb});
 }
 
 const mqttUnregisterTopicCB = (_topic, cb, args) => {

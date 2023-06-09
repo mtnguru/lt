@@ -9,6 +9,10 @@ const groov_api = require('./groov_api')
 let started = false
 const sampling = false
 
+const seedrandom  = require('seedrandom')
+const generator = seedrandom(Date.now())
+const randomNumber = generator();
+
 const f = "groov:main"
 
 var clientId = process.env.CLIENTID
@@ -21,11 +25,15 @@ console.log ("Start ", clientId)
 global.aaa = {
   clientId: clientId,
   mqtt: {
+    clientId: `groov_${randomNumber.toString(16).slice(3)}`, // create a random id
+    protocolId: 'MQTT',
+    protocolVersion: 4,
     url: process.env.MQTT_URL,
     username: process.env.MQTT_USER,
     password: process.env.MQTT_PASSWORD,
-    connectTimeout: 4000,
-    reconnectPeriod: 10000
+    connectTimeout: 60000,
+    reconnectPeriod: 120000,
+    keepAlive: 5000
   },
   topics: {
     publish: {
@@ -52,11 +60,11 @@ const reqConfig = () => {
   msg(f,DEBUG,'exit')
 }
 
-const loadClientConfigCB = (topic, payload) => {
+const loadClientConfigCB = (_topic, _payload) => {
   const f = "index::loadClientConfigCB"
-  msg(f, DEBUG, 'enter ', topic)
+  msg(f, DEBUG, 'enter ', _topic)
 
-  global.aaa = JSON.parse(payload.toString())
+  global.aaa = JSON.parse(_payload.toString())
   mqttNode.subscribe(global.aaa.topics.subscribe)
 
   for (let metricId in global.aaa.outputs) {
@@ -79,9 +87,9 @@ const startGroov = () => {
   }
 }
 
-const outputCB = (metric, topic, payload, tags, values) => {
+const outputCB = (metric, _topic, _payload, tags, values) => {
   const f = "groov::outputCB"
-  msg(f,DEBUG, "enter ", topic)
+  msg(f,DEBUG, "enter ", _topic)
 
   let value;
   if (values.value === 'On') {
@@ -96,8 +104,13 @@ const outputCB = (metric, topic, payload, tags, values) => {
 
   groov_api.writeChannel(metric.metricId, metric.output, `\{"value": ${value}\}`)
 }
+
+const connectCB = () => {
+//mqttNode.publish(global.aaa.topics.publish.all,`{"cmd": "requestStatus", "clientId":"all"}`)
+}
+
 console.log(f,' - connect ')
-mqttNode.connect(clientId, mqttNode.processCB);
+mqttNode.connect(clientId, connectCB, mqttNode.processCB);
 setTimeout(() => {
   console.log(f,' - requestConfig ')
   reqConfig();

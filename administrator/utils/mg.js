@@ -6,7 +6,7 @@ const mg = (level, f, _funcId, _type, ...snippets) => {
   var funcId = _funcId
   var type = _type.toLowerCase()
 
-  if (level > global.aaa.status.debugLevel) return;
+  if (level > global.aas.debugLevel) return;
 
   var payload = {
     "function": f,

@@ -40,8 +40,8 @@ const onConnectPromise = (cb) => {
 const mqttConnect = (cb) => {
   topicsCB = {};
   const f = 'mqttReact::mqttConnect'
-  console.log(f, 'connect it up', global.aaa.mqtt.connectUrl)
-  mqttClient = mqtt.connect(global.aaa.mqtt.connectUrl, {
+  console.log(f, 'connect it up', global.aaa.mqtt.url)
+  mqttClient = mqtt.connect(global.aaa.mqtt.url, {
 //  clientId: global.aaa.mqtt.clientId,
     clientId: `mqtt_${Math.random().toString(16).slice(3)}`, // create a random id
     clean: true,

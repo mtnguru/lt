@@ -323,10 +323,12 @@ void processOutput (char *_payload) {
   }
 }
 
-void(* resetFunction) (void) = 0; //declare reset function @ address 0
+void(* resetFunction) (void) = 0;    // declare reset function @ address 0
 
 void getStatus() {
   const char *f = "getStatus";
+  int statusSize = 300;
+  char status[statusSize];
 
   unsigned long timeDiff = (millis() - startTime) / 1000;
   unsigned int seconds = round(timeDiff % 60);
@@ -340,12 +342,12 @@ void getStatus() {
   char uptime[30];
   snprintf(uptime,30,"%d %d:%d:%d", days, hours, minutes, seconds);
 
-  snprintf(payload,payloadSize,
+  snprintf(status,statusSize,
     "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": %d, \"enabled\":%d, \"debugLevel\":%d, \"uptime\":\"%s\", \"sampleInterval\":\"%d\"}",
     clientId, mqttClientId.c_str(), mqttConnected, enabled, debugLevel, uptime, sampleInterval);
 
-  logit(2,MD, f, payload, NULL);
-  mqttClient.publish(mqttRspPub, payload);
+  logit(2,MD, f, status, NULL);
+  mqttClient.publish(mqttRspPub, status);
 }
 
 void subscribeTopics() {
@@ -468,10 +470,10 @@ void setConfig(const char *topic,
 void mqttCB(char* _topic, byte* _payload, unsigned int length) {
   const char *f = "mqttCB";
   char cmd[20];
-  char out[msgSize];
+  char out[outSize];
+  char msg[msgSize];
   char topic[topicSize];
   char outTopic[topicSize];
-  char msg[300];
 
   // You must immediately copy topic and payload into your own variables,
   // otherwise subsequent mqttClient calls will use the same memory space and cause you much hell.
@@ -527,8 +529,8 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
       }
     }
   }
-  logit(1,MD,f,"outTopic = ", outTopic);
   if (strlen(out)) {
+    logit(1,MD,f,"publish message: outTopic", outTopic);
     mqttClient.publish(outTopic, out);
   }
   freeMemory();

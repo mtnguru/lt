@@ -1,0 +1,44 @@
+
+Today I am writing up a list of feature of my LabTime software and decided to give ChatGPT a shot at it.  Over the last hour I've gradually entered the following statements and it came up with a pretty good start for a final document.
+
+Write a one page promotion for a MQTT IIOT software product
+Add using InfluxDB and Grafana for analysis
+Add that all packages are open source
+Make this into a bulleted list
+Add real time video streaming
+Change real time to live
+Add that all configuration is done with JSON files
+Add that users can do real time chat and can save notes in place of using a notebook
+Add that the UI is web based and can be viewed anywhere in the world
+Call the product LabTime
+Add that there is a demo and more information at https://labtime.org
+
+Here is the final, unedited document
+
+Explore the Power of LabTime: Open Source MQTT IIoT Software with Live Video Streaming, Real-Time Chat, Note-taking, Web-based UI, InfluxDB, Grafana, and JSON Configuration! 🚀
+
+Discover LabTime, our cutting-edge open source MQTT IIoT software that revolutionizes your industrial operations. With LabTime, you can seamlessly integrate live video streaming, real-time chat, note-taking capabilities, a web-based UI, InfluxDB, Grafana, and JSON configuration. Experience the ultimate control, collaboration, and accessibility for your IIoT ecosystem.
+
+ - Live Video Streaming: Integrate live video streams from cameras and IoT devices into LabTime, enabling real-time monitoring and analysis. Gain visual insights into your operations and make informed decisions with live video feeds.
+
+ - Real-Time Chat: Engage in seamless real-time communication within LabTime's web-based UI. Collaborate with team members, share insights, and discuss important findings, regardless of your location.
+
+ - Note-taking: Replace traditional notebooks with LabTime's built-in note-taking capabilities. Capture observations, ideas, and annotations directly within the platform, ensuring easy access to contextual information and fostering collaboration.
+
+ - Web-Based UI: Access and manage your IIoT ecosystem with LabTime's intuitive web-based interface. Enjoy the freedom of viewing and controlling your operations from anywhere in the world, using any device with an internet connection.
+
+ - Powerful Data Storage and Retrieval: Leverage the power of InfluxDB's high-performance time series database in LabTime. Store and retrieve time-stamped sensor data, live video metadata, chat logs, and other crucial information with speed and efficiency.
+
+ - Dynamic Visualization with Grafana: Utilize Grafana's open source visualization and analytics platform seamlessly within LabTime's web-based UI. Create dynamic dashboards that combine live video feeds, sensor data, chat metrics, and more, for real-time monitoring and analysis.
+
+ - Advanced Data Exploration and Analysis: Unlock advanced data exploration and analysis capabilities with LabTime. Utilize InfluxDB and Grafana to uncover patterns, anomalies, and correlations within your IIoT data, driving smarter decision-making and optimization.
+
+ - Real-Time Alerts and Notifications: Set up intelligent alerts and notifications in LabTime's web-based UI. Receive instant updates on critical events based on video analytics, sensor data thresholds, and chat interactions, enabling timely responses and proactive actions.
+
+ - JSON Configuration: Seamlessly configure and customize LabTime using JSON files. Define settings, data mappings, visualizations, and integrations with ease, tailoring the platform to your specific requirements.
+
+Join the IIoT Revolution with LabTime: Embrace the power of LabTime and elevate your industrial operations to new heights. Experience the convenience of a comprehensive IIoT solution with live video streaming, real-time chat, note-taking, a web-based UI, InfluxDB, Grafana, and JSON configuration.
+
+Explore our LabTime demo and find more information at labtime.org. Discover how LabTime can transform your IIoT operations and revolutionize your business!
+
+Contact us today to learn more about LabTime, the open source MQTT IIoT software that empowers your business. Unlock the full potential of your IIoT ecosystem with LabTime's powerful features, seamless integration, and unmatched flexibility!

@@ -3,26 +3,29 @@ name: Administrator
 clientType: administrator
 userId: Gandalf
 mqtt:  # Each client must have it's own mqtt config
+  mqttClientId: "loadatruntime"
 # ip:   http://172.16.45.7   # merlin
 # url:  http://172.16.45.7
 # url:  http://192.168.122.90
-  url:  http://labtime.org
+  url:  http://labtime.org:1883
   username: data
   password: datawp
+  protocol: 'MQTT'
+  protocolVersion: 4
+  connectTimeout: 60000
+  reconnectPeriod: 120000
+  keepAlive: 5000,
   port: 1883
   websocket: 8081
 topics:
   subscribe:
-    adm: a/cmd/administrator
+    cmd: a/cmd/CLIENTID
     all: a/cmd/all
     rsp: a/rsp/#
-    cmd: PROJECTID/cmd/CLIENTID
   publish:
     rsp: a/rsp/DCLIENTID
     hum: a/rsp/DCLIENTID/DUSERID
     all: a/cmd/all
-status:
-  debugLevel: 0
 projects:
   rf:
     name: Cabin in Red Feather
@@ -40,7 +43,7 @@ projects:
           _rejectUnauthorized: false
         statusDefault:
           sampleInterval: 10000
-          enabled: true
+          enabled: 1
           debugLevel: 0
       riolc:
         name: RioLC
@@ -55,7 +58,7 @@ projects:
           _rejectUnauthorized: false
         statusDefault:
           sampleInterval: 10000
-          enabled: true
+          enabled: 1
           debugLevel: 0
       arduino2:
         name: Arduino2
@@ -65,7 +68,7 @@ projects:
         topics: edge
         statusDefault:
           sampleInterval: 10000
-          enabled: true
+          enabled: 1
           debugLevel: 0
       arduino3:
         name: Arduino3
@@ -75,7 +78,7 @@ projects:
         topics: edge
         statusDefault:
           sampleInterval: 10000
-          enabled: true
+          enabled: 1
           debugLevel: 0
       arduino4:
         name: Arduino4
@@ -85,7 +88,7 @@ projects:
         topics: edge
         statusDefault:
           sampleInterval: 10000
-          enabled: true
+          enabled: 1
           debugLevel: 0
       arduino5:
         name: Arduino5
@@ -96,7 +99,7 @@ projects:
         topics: edge
         statusDefault:
           sampleInterval: 10000
-          enabled: true
+          enabled: 1
           debugLevel: 0
       labtime:
         name: LabTime
@@ -118,18 +121,22 @@ projects:
         topics:
           subscribe:
             adm: a/#
-            inp: PROJECTID/inp/#
-            out: PROJECTID/out/#
-            hum: PROJECTID/hum/#
-            alm: PROJECTID/alm/#
-            cod: PROJECTID/cod/#
-            msg: PROJECTID/msg/#
-            cmd: PROJECTID/cmd/#
+            prj: PROJECTID/#
+          register:
+            cmd: a/cmd
+            rsp: a/rsp
+            inp: PROJECTID/inp
+            out: PROJECTID/out
+            hum: PROJECTID/hum
+            alm: PROJECTID/alm
+            cod: PROJECTID/cod
+            msg: PROJECTID/msg
+            act: PROJECTID/act
           publish:
+            rsp: a/rsp/CLIENTID
             msg: PROJECTID/msg/CLIENTID
             cod: PROJECTID/cod/CLIENTID
             hum: PROJECTID/hum/CLIENTID
-            out: PROJECTID/out/DCLIENTID
         metrics: project
         funcIds: {}
         statusDefault:
