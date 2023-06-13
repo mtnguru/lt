@@ -3,11 +3,11 @@ require('./msgE');
 // const mqttNode = require('./mqttNode');
 
 const setDebugLevel = (level) => {
-  global.aas.debugLevel = level;
+  global.aaa.status.debugLevel = level;
 }
 
 const msg = (level, func, _funcId, ...snippets) => {
-  if (level > global.aas.debugLevel) return;
+  if (level > global.aaa.status.debugLevel) return;
 
 //let payload = {
 //  function: func,
@@ -22,7 +22,7 @@ const msg = (level, func, _funcId, ...snippets) => {
 //  mqttNode.publish(topic, jpayload);
 //
 
-  let funcId = msgE[_funcId]
+  var funcId = msgE[_funcId]
   if (_funcId == ERROR) {
     funcId = '********** ERROR'
   } else if (_funcId == ALARM) {

@@ -49,7 +49,7 @@ projects:
         name: RioLC
         ip: 172.16.45.4
         url: https://riolc
-        model: riolc
+        model: rio
         clientType: edge
         topics: edge
         headers:

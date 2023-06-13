@@ -20,18 +20,20 @@ const mqttClientId = `${clientId}_${generator().toString(16).slice(3)}`
 
 const f = "index::main - "
 
-global.aaa = {}
-
-global.aas = {
-  connected: 0,
-  debugLevel: 0,
-  startTime: Date.now(),
+global.aaa = {
+  status: {
+    debugLevel: 0,
+    enabled: 1,
+    mqttConnected: 0,
+  }  
 }
+ 
 
 // Initial configuration to get the client started
 global.aab = {
   clientId: clientId,
   started: false,
+  startTime: Date.now(),
   topics: {
     subscribe: {
       rsp: `a/rsp/${clientId}`,
@@ -50,7 +52,7 @@ global.aam = {
 //url: 'mqtt://172.16.45.7:8081',     // merlin
   username: 'data',
   password: 'datawp',
-  protocolId: 'MQTT',
+  protocol: 'MQTT',
   protocolVersion: 4,
   connectTimeout: 60000,
   reconnectPeriod: 120000,
@@ -58,7 +60,7 @@ global.aam = {
 }
 
 const getStatus = () => {
-  var timeDiff = parseInt((Date.now() - global.aas.startTime) / 1000)
+  var timeDiff = parseInt((Date.now() - global.aab.startTime) / 1000)
   var seconds = Math.round(timeDiff % 60)
   timeDiff = Math.floor(timeDiff / 60)
   var minutes = Math.round(timeDiff % 60)
@@ -77,9 +79,8 @@ const getStatus = () => {
     rsp: "requestStatus",
     clientId: clientId,
     mqttClientId: mqttClientId,
-    mqttConnected: global.aas.connected,
-    status: 'nominal',
-    debugLevel: global.aas.debugLevel,
+    mqttConnected: global.aaa.status.connected,
+    debugLevel: global.aaa.status.debugLevel,
     uptime: uptime,
   }
 }
@@ -94,11 +95,11 @@ const cmdCB = (_topic, _payload) => {
       out = JSON.stringify(getStatus())
     }
     if (_payload.cmd === 'setDebugLevel') {
-      global.aas.debugLevel = _payload.debugLevel
+      global.aaa.status.debugLevel = _payload.debugLevel
       out = JSON.stringify({
         rsp: 'setDebugLevel',
         clientId: clientId,
-        debugLevel: global.aas.debugLevel,
+        debugLevel: global.aaa.status.debugLevel,
       })
     }
   }

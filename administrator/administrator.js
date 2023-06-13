@@ -19,16 +19,15 @@ const stageId = "dev"
 
 // global.aaa is overwritten when the configuration is read in from a file
 global.aaa = {
+  status: {
+    debugLevel: 0,
+    mqttConnected: 0,
+  }
 }
 
 // global.aab - base configuration which is needed at startup
 global.aab = {
-//topics: {
-//  subscribe : {  // The administrator gets its initial config from a file
-//  },
-//  publish: {
-//  }
-//}
+  startTime: Date.now(),
 }
 
 /* Use the administrator.yml file instead
@@ -40,7 +39,7 @@ global.aam = {
 //url: "http://192.168.122.90:1883",
   username: "data",
   password: "datawp",
-  protocolId: 'MQTT',
+  protocol: 'MQTT',
   protocolVersion: 4,
   connectTimeout: 60000,
   reconnectPeriod: 120000,
@@ -52,9 +51,6 @@ global.aam = {
 // populated when 'administrator' is started and queries clients for their status
 global.aas = {
   clients: {},
-  startTime: Date.now(),
-  debugLevel: 0,
-  mqttConnected: 0,
 }
 
 /*
@@ -81,7 +77,7 @@ const findClient = (id) => {
 }
 
 const getStatus = () => {
-  var timeDiff = parseInt((Date.now() - global.aas.startTime) / 1000)
+  var timeDiff = parseInt((Date.now() - global.aab.startTime) / 1000)
   var seconds = Math.round(timeDiff % 60)
   timeDiff = Math.floor(timeDiff / 60)
   var minutes = Math.round(timeDiff % 60)
@@ -100,9 +96,8 @@ const getStatus = () => {
     rsp: "requestStatus",
     clientId: clientId,
     mqttClientId: mqttClientId,
-    mqttConnected: global.aas.connected,
-    status: 'nominal',
-    debugLevel: global.aas.debugLevel,
+    mqttConnected: global.aaa.status.mqttConnected,
+    debugLevel: global.aaa.status.debugLevel,
     uptime: uptime,
   }
 }
@@ -353,7 +348,10 @@ const initClients = (projectId, project, funcIds) => {
 const readConfig = () => {
   console.log('Read in administrator configuration')
   let ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${stageId}/administrator.yml`)
-  global.aaa = YAML.safeLoad(ymlStr)
+
+  var conf = YAML.safeLoad(ymlStr)
+  conf.status = global.aaa.status
+  global.aaa = conf
   global.aaa.ips = {}
   global.aaa.stageId = stageId
   global.aaa.clients = {}
@@ -389,5 +387,5 @@ const readConfig = () => {
 readConfig();
 
 console.log(f, 'Connect to mqtt server and initiate process callback')
-mqttNode.connect(connectCB, processCB,'-');
+mqttNode.connect(connectCB, processCB);
 console.log(f, 'Exit main thread')

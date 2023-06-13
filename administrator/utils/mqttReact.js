@@ -45,7 +45,7 @@ const mqttConnect = (cb) => {
 //  clientId: global.aaa.mqtt.clientId,
     clientId: `mqtt_${Math.random().toString(16).slice(3)}`, // create a random id
     clean: true,
-    protocolId: 'MQTT',
+    protocol: 'MQTT',
     username: global.aaa.mqtt.username,
     password: global.aaa.mqtt.password,
     reconnectPeriod: global.aaa.mqtt.reconnectPeriod,

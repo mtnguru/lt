@@ -26,7 +26,7 @@ const onConnectPromise = (cb) => {
   const f = "mqttReact::onConnectPromise"
   return new Promise((resolve, reject) => {
     mqttClient.on('connect', (event) => {
-      global.aas.connected++
+      global.aaa.status.mqttConnected++
       console.log(f,"connected ", mqttClient.connected)
       mqttUnsubscribe(global.aab.topics.subscribe)
       mqttSubscribe(global.aab.topics.subscribe, () => {
@@ -45,7 +45,7 @@ const mqttConnect = (cb) => {
   mqttClient = mqtt.connect(global.aam.url, {
     clientId: global.aam.mqttClientId,
     clean: true,
-    protocolId: global.aam.protocol,
+    protocol: global.aam.protocol,
     username: global.aam.username,
     password: global.aam.password,
     reconnectPeriod: global.aam.reconnectPeriod,

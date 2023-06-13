@@ -12,7 +12,7 @@ global.aaa = {
   name: clientid,
   mqtt: {
     clientId: `mqtt_${Math.random().toString(16).slice(3)}`, // create a random id
-    protocolId: 'MQTT',
+    protocol: 'MQTT',
     protocolVersion: 4,
     //  url: 'mqtt://194.195.214.212:8081',
     //  url: 'mqtt://labtime.webhop.net:8081',

@@ -9,63 +9,130 @@ const groov_api = require('./groov_api')
 let started = false
 const sampling = false
 
+var clientId = process.env.CLIENTID
 const seedrandom  = require('seedrandom')
 const generator = seedrandom(Date.now())
-const randomNumber = generator();
+const mqttClientId = `${clientId}_${generator().toString(16).slice(3)}`
 
 const f = "groov:main"
 
-var clientId = process.env.CLIENTID
 if (process.argv[2]) {
   clientId = process.argv[2]
 }
 
-console.log ("Start ", clientId)
-
 global.aaa = {
+  status: {
+    mqttConnected: 0,
+    debugLevel: 0,
+    enabled: 1,
+    sampleInterval: 10000,
+  }
+}
+
+global.aab = {
   clientId: clientId,
-  mqtt: {
-    clientId: `groov_${randomNumber.toString(16).slice(3)}`, // create a random id
-    protocolId: 'MQTT',
-    protocolVersion: 4,
-    url: process.env.MQTT_URL,
-    username: process.env.MQTT_USER,
-    password: process.env.MQTT_PASSWORD,
-    connectTimeout: 60000,
-    reconnectPeriod: 120000,
-    keepAlive: 5000
-  },
+  startTime: Date.now(),
+  started: false,
   topics: {
-    publish: {
-      adm: "a/cmd/administrator"
-    },
     subscribe: {
-      adm: `a/rsp/${clientId}`,
-      cli: `a/cmd/${clientId}`,
-      all: "a/cmd/all"
+      rsp: `a/rsp/${clientId}`,
+    },
+    publish: {
+      adm: 'a/cmd/administrator'
     }
   }
 }
 
-/**
- * reqConfig() - Read in the configuration file for the groov
- */
-const reqConfig = () => {
-  const f = 'groov::reqConfig'
-
-  msg(f, DEBUG, 'enter ')
-  const payloadStr = `{\"clientId\": \"${clientId}\", \"cmd\": \"requestConfig\"}`
-  mqttNode.publish(global.aaa.topics.publish.adm, payloadStr)
-  mqttNode.registerTopicCB(`a/rsp/${global.aaa.clientId}`, loadClientConfigCB)
-  msg(f,DEBUG,'exit')
+global.aam = {
+  mqttClientId: mqttClientId,
+  url: process.env.MQTT_URL,
+  username: process.env.MQTT_USER,
+  password: process.env.MQTT_PASSWORD,
+  protocol: 'MQTT',
+  protocolVersion: 4,
+  connectTimeout: 60000,
+  reconnectPeriod: 120000,
+  keepAlive: 5000
 }
 
-const loadClientConfigCB = (_topic, _payload) => {
-  const f = "index::loadClientConfigCB"
-  msg(f, DEBUG, 'enter ', _topic)
+/**
+ * getConfig() - Read in the configuration file for the groov
+ */
+const getConfig = () => {
+  const f = 'groov::getConfig'
+
+  msg(2, f, DEBUG, 'enter ')
+  const payloadStr = `{\"clientId\": \"${clientId}\", \"cmd\": \"requestConfig\"}`
+  mqttNode.publish(global.aab.topics.publish.adm, payloadStr)
+  mqttNode.registerTopicCB(global.aab.topics.subscribe.rsp, loadConfigCB)
+  msg(2, f,DEBUG,'exit')
+}
+
+const getStatus = () => {
+  var timeDiff = parseInt((Date.now() - global.aab.startTime) / 1000)
+  var seconds = Math.round(timeDiff % 60)
+  timeDiff = Math.floor(timeDiff / 60)
+  var minutes = Math.round(timeDiff % 60)
+  timeDiff = Math.floor(timeDiff / 60)
+  var hours = Math.round(timeDiff % 24)
+  timeDiff = Math.floor(timeDiff / 24)
+  var days = timeDiff
+
+  var uptime = ''
+  if (days > 0) {
+    uptime = `${days} `
+  }
+  uptime += `${hours}:${minutes}:${seconds}`
+
+  return {
+    rsp: "requestStatus",
+    clientId: clientId,
+    mqttClientId: mqttClientId,
+    mqttConnected: global.aaa.status.mqttConnected,
+    enabled: global.aaa.status.enabled,
+    debugLevel: global.aaa.status.debugLevel,
+    sampleInterval: global.aaa.status.sampleInterval,
+    uptime: uptime,
+  }
+}
+
+const cmdCB = (_topic, _payload) => {
+  var out;
+  payload = JSON.parse(_payload)
+  if (payload.cmd === "setEnabled") {
+    out = {
+      rsp: "setEnabled",
+      clientId: global.aaa.clientId,
+      enabled: payload.enabled,
+    }
+  } else if (payload.cmd === "setDebugLevel") {
+    out = {
+      rsp: "setDebugLevel",
+      clientId: global.aaa.clientId,
+      debugLevel: payload.debugLevel,
+    }
+  } else if (payload.cmd === "setSampleInterval") {
+    out = {
+      rsp: "setSampleInterval",
+      clientId: global.aaa.clientId,
+      sampleInterval: payload.sampleInterval,
+    }
+  } else if (payload.cmd === "requestStatus") {
+    out = getStatus()
+  }
+  if (out) {
+    mqttNode.publish(global.aaa.topics.publish.rsp, JSON.stringify(out))
+  }
+}
+
+const loadConfigCB = (_topic, _payload) => {
+  const f = "index::loadConfigCB"
+  msg(2, f, DEBUG, 'enter ', _topic)
 
   global.aaa = JSON.parse(_payload.toString())
   mqttNode.subscribe(global.aaa.topics.subscribe)
+  mqttNode.registerTopicCB(global.aaa.topics.subscribe.cmd, cmdCB)
+  mqttNode.registerTopicCB(global.aaa.topics.subscribe.all, cmdCB)
 
   for (let metricId in global.aaa.outputs) {
     // Register the metrics that have an output
@@ -80,7 +147,8 @@ const loadClientConfigCB = (_topic, _payload) => {
  * startGroov - all is loaded, let's get started
  */
 const startGroov = () => {
-  msg('groov::startGroov',DEBUG,'enter')
+  const f = 'groov::startGroov'
+  msg(2, f, DEBUG,'enter')
   if (!started) {  // Prevents multiple samplers from being started
     started = true
     readInputs();
@@ -89,7 +157,7 @@ const startGroov = () => {
 
 const outputCB = (metric, _topic, _payload, tags, values) => {
   const f = "groov::outputCB"
-  msg(f,DEBUG, "enter ", _topic)
+  msg(2,f,DEBUG, "enter ", _topic)
 
   let value;
   if (values.value === 'On') {
@@ -106,13 +174,9 @@ const outputCB = (metric, _topic, _payload, tags, values) => {
 }
 
 const connectCB = () => {
-//mqttNode.publish(global.aaa.topics.publish.all,`{"cmd": "requestStatus", "clientId":"all"}`)
+  getConfig();
 }
 
 console.log(f,' - connect ')
-mqttNode.connect(clientId, connectCB, mqttNode.processCB);
-setTimeout(() => {
-  console.log(f,' - requestConfig ')
-  reqConfig();
-},1000)
+mqttNode.connect(connectCB, mqttNode.processCB);
 console.log(f,' - exit main thread ')

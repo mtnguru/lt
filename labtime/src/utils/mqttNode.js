@@ -10,7 +10,7 @@ const {findMetric} = require('./metrics')
 // require('dotenv').config();
 
 let mqttClient;
-let topicCB = {}
+let topicsCB = {}
 
 /**
  * connect - connect to the MQTT broker, set callback, subscribe to topics
@@ -20,7 +20,7 @@ const connect = (connectCB, messageCB) => {
   const f = 'mqttNode:connect'
 //msg(3,f,DEBUG, 'enter')
   const mc = global.aam;
-  topicCB ={};
+  topicsCB ={};
 
   const onConnectPromise = () => {
     const f = "mqttNode::onConnectPromise"
@@ -28,7 +28,8 @@ const connect = (connectCB, messageCB) => {
       mqttClient.on('connect', (event) => {
         msg(1,f,NOTIFY,'Connected to MQTT broker ' + mc.url)
         mqttClient.unsubscribe([])
-        mqttClient.subscribe(Object.values(global.aaa.topics.subscribe), () => {
+        var topics = (global.aab && global.aab.topics) ? global.aab.topics.subscribe : global.aaa.topics.subscribe
+        mqttClient.subscribe(Object.values(topics), () => {
           connectCB();
           mqttClient.on('message', (inTopic, payloadRaw) => {
             msg(3,f,NOTIFY,'MQTT message received ', inTopic)
@@ -94,18 +95,18 @@ const registerTopicCB = (topic, cb) => {
   const f = "mqttNode::registerTopicCB"
   // If necessary intialize new topic
 //console.log(f, "Register topic", topic)
-  if (!topicCB[topic]) {
+  if (!topicsCB[topic]) {
 //  console.log(f, "Initialize topic", topic)
-    topicCB[topic] = [];
+    topicsCB[topic] = [];
   }
-  for (let rcb in topicCB[topic]) {
+  for (let rcb in topicsCB[topic]) {
     if (rcb === cb) {
 //    console.log(f, "Already added", topic)
       return;
     }
   }
 //console.log(f, "add topic", topic)
-  topicCB[topic].push(cb);
+  topicsCB[topic].push(cb);
 }
 
 /**
@@ -194,20 +195,21 @@ const processInflux = (topic, payloadStr) => {
   }
 }
 
-const processCB = (topic, payload) => {
+const processCB = (_topic, _payload) => {
   const f = 'mqttNode::processCB - '
-  let payloadStr = payload.toString();
-//console.log(f, 'enter ', topic)
+  let payloadStr = _payload.toString();
+  let func = _topic.split('/')[1]
+//console.log(f, 'enter ', _topic)
 
   try {
-    if (topic.indexOf("/influx/") > -1) {
-      processInflux(topic, payloadStr)
+    if (func === 'inp' || func === 'out' || func === 'hum') {
+      processInflux(_topic, payloadStr)
     }
-    for (let itopic in topicCB) {
-      if (topic.indexOf(itopic) > -1) {
+    for (let itopic in topicsCB) {
+      if (_topic.indexOf(itopic) > -1) {
         // Execute the callbacks for this topic
-        for (let cb of topicCB[itopic]) {
-          cb(topic,payloadStr)
+        for (let cb of topicsCB[itopic]) {
+          cb(_topic,payloadStr)
         }
       }
     }
