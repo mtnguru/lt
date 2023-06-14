@@ -137,7 +137,7 @@ const loadConfigCB = (_topic, _payload) => {
   for (let metricId in global.aaa.outputs) {
     // Register the metrics that have an output
     const output = global.aaa.outputs[metricId]
-    mqttNode.registerMetricCB(metricId, outputCB)
+    mqttNode.registerMetricCB(metricId, outputCB, "out")
   }
 
   startGroov()

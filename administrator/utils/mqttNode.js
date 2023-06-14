@@ -114,22 +114,32 @@ const registerTopicCB = (topic, cb) => {
  * @param metric
  * @param cb
  */
-const registerMetricCB = (metricId, cb) => {
+const registerMetricCB = (metricId, cb, func) => {
   const f = "mqttNode::registerMetricCB"
   // If necessary intialize new metric
-  const metric = global.aaa.metrics[metricId.toLowerCase()]
-  if (!metric) {
-    mgError(1, f,'Cannot find metric ', metricId);
-    return
-  }
-  if (metric.cbs) {
-    if (metric.cbs.includes(cb)) {
-      mgWarning.log(1, f, "already registered ", metricId)
-    } else {
-      metric.cbs.push(cb)
+  try {
+    const id = metricId.toLowerCase()
+    var metric;
+    switch (func) {
+      case 'inp': metric = global.aaa.inputs[id]; break;
+      case 'out': metric = global.aaa.outputs[id]; break;
+      case 'hum': metric = global.aaa.human[id]; break;
     }
-  } else {
-    metric.cbs = [cb]
+    if (!metric) {
+      mgError(1, f,'Cannot find metric ', id);
+      return
+    }
+    if (metric.cbs) {
+      if (metric.cbs.includes(cb)) {
+        mgWarning.log(1, f, "already registered ", id)
+      } else {
+        metric.cbs.push(cb)
+      }
+    } else {
+      metric.cbs = [cb]
+    }
+  } catch(err){
+    mgError(1, f,'Cannot register metric ', id, func);
   }
 }
 
