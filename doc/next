@@ -1,3 +1,23 @@
+Get Drupal working
+projects
+new entities - 
+  activities, 
+    start time
+    end time - optional
+    type - TID - activity types?
+    msg
+  messages
+    time
+    type - chat, question, poll, notes
+    msg
+
+
+MQTT Drupal client
+  Retrieve a node by NID
+  List current or active projects - where does it get this?
+  Find the 2-3 character id for a project
+  Save activities and messages
+
 Show the status gets sent to the children
 Manage the status array, on request just ship it
 Initially initialize it in administrator

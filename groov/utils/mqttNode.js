@@ -224,6 +224,7 @@ const processCB = (_topic, _payload) => {
       }
     }
   } catch (err) {
+    msg(0,f, ERROR, "Error processing:", _topic, "Error", err);
     console.log(f, 'ERROR: ' + err)
   }
 }

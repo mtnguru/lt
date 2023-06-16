@@ -4,6 +4,7 @@
   font-size: 80%;
   .right {
     float: right;
+    margin-top: 1px;
   }
   .topic {
     color: $topic-fg-color;
@@ -47,7 +48,7 @@
         margin-right: 0;
       }
       pre {
-        margin-top: 0;
+        margin-top: 1px;
         float: left;
         width: calc(100% - 240px);
         span {

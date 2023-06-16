@@ -58,7 +58,7 @@ const readInput = async (name,input,ctime) => {
 const readInputs = async () => {
   const f = "readInputs:readInputs - "
   readInterval = setInterval(async () => {
-//  if (!global.aaa.status.enabled) return
+    if (!global.aaa.status.enabled) return
     console.log (f, 'enter')
 //  const start = performance.now();
     const ntime = new Date().getTime() * 1000000;

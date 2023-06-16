@@ -514,7 +514,7 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
         delay(500);
         resetFunction();
       } else if (!strcmp(cmd, "requestStatus")) {  // Ask arduino for its status
-        logit(0,MN,f,"status requested", outTopic);
+        logit(1,MD,f,"status requested", outTopic);
         getStatus();
       } else if (!strcmp(cmd, "setDebugLevel")) {          // Set debugLevel
         debugLevel = atoi(jsonDoc["debugLevel"]);

@@ -18,11 +18,22 @@
       margin: 0px 2px;
       font-size: 75%;
     }
+
     .enabled {
       &.true {
         background-color: $button-green-color;
       }
+
       &.false {
+        background-color: $button-red-color;
+      }
+    }
+
+    .status {
+      &.running {
+        background-color: $button-green-color;
+      }
+      &.stopped {
         background-color: $button-red-color;
       }
     }
@@ -48,9 +59,10 @@
   }
 
   .administrator,
+  .controller,
   .labtime {
     .row2 {
-      margin-left: 22px;
+      margin-left: 20px;
     }
   }
 

@@ -112,6 +112,7 @@ projects:
             name: All
           labtime: {}
           administrator: {}
+          controller: {}
           epiclc: {}
           riolc: {}
           arduino2: {}
@@ -141,6 +142,32 @@ projects:
         funcIds: {}
         statusDefault:
           debugLevel: 0
+      controller: 
+        name: Controller
+        clientType: controller
+        userId: Sauron
+        format: yml
+        statusDefault:
+          debugLevel: 0
+        topics:
+          subscribe:
+            adm: a/#
+            prj: PROJECTID/#
+          register:
+            cmd: a/cmd
+            rsp: a/rsp
+            inp: PROJECTID/inp
+            out: PROJECTID/out
+            hum: PROJECTID/hum
+            alm: PROJECTID/alm
+            cod: PROJECTID/cod
+            msg: PROJECTID/msg
+            act: PROJECTID/act
+          publish:
+            rsp: a/rsp/CLIENTID
+            msg: PROJECTID/msg/CLIENTID
+            cod: PROJECTID/cod/CLIENTID
+            hum: PROJECTID/hum/CLIENTID
     topics:
       edge:
         subscribe:

@@ -9,24 +9,36 @@ import {mqttPublish} from "../../utils/mqttReact"
 
 function MqttClient (props) {
   const clientId = props.client.clientId;
+  const [running, setRunning] = useState('unknown')
   const [enabled, setEnabled] = useState(
     (global.aaa.clients[clientId].status) ? global.aaa.clients[clientId].status.enabled : 1)
   const [debugLevel, setDebugLevel] = useState(
     (global.aaa.clients[clientId].status) ? global.aaa.clients[clientId].status.debugLevel : 0)
 
 
-  const mqttCB = (_topic, _payload) => {
-//  var rsp = _payload.rsp;
+  const rspCB = (_topic, _payload) => {
+    if (_payload.clientId !== clientId) return;
     if (_payload.rsp === "setEnabled") {
       setEnabled(_payload.enabled)
     } else if (_payload.rsp === 'setDebugLevel') {
       setDebugLevel(_payload.debugLevel)
+    } else if (_payload.rsp === 'requestStatus') {
+      setDebugLevel(_payload.debugLevel)
+      if (clientId != 'all')
+        setRunning('running')
     }
   }
 
+  const cmdCB = (_topic, _payload) => {
+    if (clientId === 'all') return;
+    if (_payload.cmd === 'requestStatus' &&
+        (_payload.clientId === 'all' || _payload.clientId === clientId)) {
+      setRunning('stopped')   // Set status on all clients to 'stopped'
+    }
+  }
   useEffect(() => {
-    var topic = global.aaa.topics.register.rsp + '/' + clientId
-    mqttRegisterTopicCB(global.aaa.topics.register.rsp, mqttCB, {});
+    mqttRegisterTopicCB(global.aaa.topics.register.rsp, rspCB, {});
+    mqttRegisterTopicCB(global.aaa.topics.register.cmd, cmdCB, {});
   }, [clientId])
 
   const onSelectH = (event) => {
@@ -48,6 +60,7 @@ function MqttClient (props) {
     } else if (name === "S") {
       topic = `a/cmd/${props.client.clientId}`
       payload = `{"cmd": "requestStatus", "clientId": "${props.client.clientId}"}`;
+      if (clientId === 'all') {}
     } else if (name === "E") {
       // Set the "all" button on other labtime instances
       // Set the enabled button
@@ -85,13 +98,13 @@ function MqttClient (props) {
         <label htmlFor={props.client.clientId}>{props.client.name}</label>
       </div>
       <div className="row2">
-        {props.id !== 'administrator' && props.id !== 'labtime' && props.id !== 'project' &&
+        {props.id !== 'administrator' && props.id !== 'labtime' && props.id !== 'project' && props.id !== "controller" &&
           <Tooltip label="Enable" bg="white" p="10px" placement="bottom">
             <Button className={`enabled ${enabled ? "true" : "false"}`} onClick={onClickH}>E</Button>
           </Tooltip>
         }
         <Tooltip label="Request status" bg="white" p="10px" placement="bottom">
-          <Button className="status"   onClick={onClickH}>S</Button>
+          <Button className={`status ${running}`}   onClick={onClickH}>S</Button>
         </Tooltip>
         {props.id !== 'all' &&
           <Tooltip label="Reset client" bg="white" p="10px" placement="bottom">

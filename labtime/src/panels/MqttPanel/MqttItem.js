@@ -6,8 +6,9 @@ import ('./MqttItem.scss')
 
 const makeJsonPretty = (payloadStr) => {
   payloadStr = payloadStr
-    .replace(/"|/g, '')         // remove all double quotes
+    .replace(/"|/g,  '')         // remove all double quotes
     .replace(/^{\n/, '')        // remove opening {
+//  .replace(/^   /g, '3')
     .replace(/}$/, '')          // remove closing }
     .replace(/,\n/g, '\n')      // remove all trailing commas
     .replace(/\n\s*[\]}]\n/g, '\n') // remove all } on a line by themselves
@@ -47,11 +48,11 @@ const MqttItem = (props) => {
           }
           if (props.pretty === "pretty") {
             if (payload.content) {
-              payloadStr = `${payload["function"]} - ${payload.content}`
+              payloadStr = `???: ${payload["function"]} - ${payload.content}`
             } else if (props.item.func === 'out') {
-              payloadStr = `${payload.metric} - ${payload.value}`
+              payloadStr = `out: ${payload.metric} - ${payload.value}`
             } else if (props.item.func === 'inp') {
-              payloadStr = `${payload.metric} - ${payload.value}`
+              payloadStr = `inp: ${payload.metric} - ${payload.value}`
             } else if (props.item.func === 'cmd') {
               switch (payload.cmd) {
                 case 'setEnabled':
@@ -62,6 +63,9 @@ const MqttItem = (props) => {
                   break
                 case 'setSampleInterval':
                   payloadStr = `cmd: ${payload.cmd} - ${payload.sampleInterval}`
+                  break
+                case 'requestConfig':
+                  payloadStr = `cmd: ${payload.cmd} - ${payload.clientId}`
                   break
                 default:
                   payloadStr = `cmd: ${payload.cmd}`
@@ -83,12 +87,12 @@ const MqttItem = (props) => {
                   break
               }
             } else if (props.item.func === 'cod') {
-              payloadStr = `${payload["function"]}\n${payload.msg}` ;
+              payloadStr = `cod: ${payload["function"]}\n${payload.msg}` ;
               setType(payload.type)
             } else if (props.item.func === 'msg') {
               payloadStr = (payload.author)
-                ? `${payload.author}\n${payload.msg}`
-                : `${payload["function"]}\n${payload.msg}` ;
+                ? `msg: ${payload.author}\n${payload.msg}`
+                : `msg: ${payload["function"]}\n${payload.msg}` ;
               if (payload.author) {
 
               } else {
@@ -102,7 +106,7 @@ const MqttItem = (props) => {
         } else if (props.pretty === "pretty") {
           if (props.item.func === 'inp' || props.item.func === 'hum' || props.item.func === 'out') {
             var {tags, values} = extractFromTags(props.item.payload)
-            payloadStr = `${tags["MetricId"]} - ${values["value"]}`
+            payloadStr = `${props.item.func}: ${tags["MetricId"]} - ${values["value"]}`
           }
         }
       }

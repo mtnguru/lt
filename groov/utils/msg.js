@@ -7,7 +7,15 @@ const setDebugLevel = (level) => {
 }
 
 const msg = (level, func, _funcId, ...snippets) => {
-  if (level > global.aaa.status.debugLevel) return;
+  const f = "utils/msg.js"
+  if ("status" in global.aaa && "debugLevel" in global.aaa.status) {
+    console.log(f, "Debug level set", global.aaa.status.debugLevel)
+    if (level > global.aaa.status.debugLevel)
+      return;
+  } else {
+    console.log (f, "ERROR: debugLevel not set");
+    return;
+  }
 
 //let payload = {
 //  function: func,
