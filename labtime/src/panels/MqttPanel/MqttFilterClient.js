@@ -13,7 +13,7 @@ const lsKey = "cnFilterClient"
 function MqttFilterClient(props) {
 
   const [allSelected, setAllSelected] = useState(true)
-  const [settingsBtn, setSettingsBtn] = useState(true)
+  const [settingsBtn, setSettingsBtn] = useState(false)
 
   useEffect(() => {
     const f = "MqttFilterClient::useEffect"

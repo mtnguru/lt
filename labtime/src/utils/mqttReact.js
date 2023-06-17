@@ -176,11 +176,11 @@ const mqttRequestFile = (clientId, name, filepath, fileType, cb) => {
       inFile = JSON.parse(inPayload)
     }
     if (inFile.rsp === cmd) {
-      mqttUnregisterTopicCB(global.aaa.topics.subscribe.rsp, onLoadCB)
+      mqttUnregisterTopicCB(global.aaa.topics.register.rsp, onLoadCB)
       cb(inTopic, inFile)
     }
   }
-  mqttRegisterTopicCB(global.aaa.topics.subscribe.rsp, onLoadCB)
+  mqttRegisterTopicCB((global.aaa.topics.register.rsp) , onLoadCB)
   let payload = `{"cmd": "${cmd}", "clientId": "${clientId}", "filepath": "${filepath}"}`
   mqttPublish(global.aaa.topics.publish.adm, payload)
 }

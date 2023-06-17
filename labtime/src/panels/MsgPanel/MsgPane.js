@@ -1,5 +1,5 @@
 //import React, {useState, useEffect} from 'react';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {AccordionItem,
         Button} from '@chakra-ui/react'
 import MsgHeader from './MsgHeader'
@@ -8,8 +8,9 @@ import {mqttPublish, mqttRegisterTopicCB} from '../../utils/mqttReact'
 import {currentDate} from "../../utils/tools";
 
 const MsgPane = (props) => {
-  const [msg, setMsg] = React.useState('')
+  const [msg, setMsg] =   useState('')
   const [list, setList] = useState([])
+  const ref = useRef(null)
 //var paneId = props.paneId.toLowerCase()
   var paneId = props.paneId
 
@@ -29,12 +30,6 @@ const MsgPane = (props) => {
     var item = {key, msg: lines, author: _payload.author, date: date}
 
     setList((prevList) => {
-//    if (prevList.length > 4000) {
-//      prevList = prevList.slice(1,3500)
-//      setFilteredList (() => {
-//        return prevList.filter(validMsg);
-//      })
-//    }
       return (prevList) ? [item, ...prevList] : [item]
     })
   }
@@ -55,6 +50,8 @@ const MsgPane = (props) => {
     const payload = `{"type":"${paneId}", "author":"James", "date":"${cdate}", "msg":"${m}"}`
 
     mqttPublish(topic, payload)
+//  setMsg('')
+    ref.current.value = '';
     console.log(payload)
   }
 
@@ -73,7 +70,7 @@ const MsgPane = (props) => {
       {paneId !== "Notifications" &&
         <Button onClick={clickH} className="msg-submit">Submit</Button>}
       <MsgHeader name={props.paneId} type={props.type}></MsgHeader>
-      <textarea onChange={onChangeH} className="msg"/>
+      <textarea onChange={onChangeH} className="msg" ref={ref}/>
       <MsgList className="msg-list" pretty={pretty} list={list}></MsgList>
     </AccordionItem>
   )

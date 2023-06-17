@@ -50,9 +50,9 @@ const MqttItem = (props) => {
             if (payload.content) {
               payloadStr = `???: ${payload["function"]} - ${payload.content}`
             } else if (props.item.func === 'out') {
-              payloadStr = `out: ${payload.metric} - ${payload.value}`
+              payloadStr = `out: ${payload.value} - ${payload.metric}`
             } else if (props.item.func === 'inp') {
-              payloadStr = `inp: ${payload.metric} - ${payload.value}`
+              payloadStr = `inp: ${payload.value} - ${payload.metric}`
             } else if (props.item.func === 'cmd') {
               switch (payload.cmd) {
                 case 'setEnabled':
@@ -106,7 +106,7 @@ const MqttItem = (props) => {
         } else if (props.pretty === "pretty") {
           if (props.item.func === 'inp' || props.item.func === 'hum' || props.item.func === 'out') {
             var {tags, values} = extractFromTags(props.item.payload)
-            payloadStr = `${props.item.func}: ${tags["MetricId"]} - ${values["value"]}`
+            payloadStr = `${props.item.func}: ${values["value"]} - ${tags["MetricId"]}`
           }
         }
       }

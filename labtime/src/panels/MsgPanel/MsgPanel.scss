@@ -25,22 +25,23 @@
 
   .msg {
     padding: 3px 6px;
-    font-size: 85%;
-    width: calc(100% - 14px);
+    width: calc(100% - 4px);
     background: #555;
     color: $fg-color;
     height: 1rem;
     border-radius: 3px;
+    resize: vertical;
   }
 
   .msg-list-container {
     .msg-list {
-      padding: 2px 3px;
+      padding: 2px 5px;
       border-radius: 3px;
       width: 100%;
       height: 160px;
       background: #555;
       overflow-y: auto;
+      resize: vertical;
     }
   }
   .msg-item {
@@ -48,12 +49,12 @@
     margin-bottom: 5px;
     .header {
       color: $msg-header-fg-color;
-      font-size: 80%;
+      font-size: 75%;
       margin-bottom: 2px;
     }
     .msg-text {
       overflow-wrap: break-word;
-      font-size: 85%;
+      font-size: 90%;
       div {
         min-width: 1px;
       }

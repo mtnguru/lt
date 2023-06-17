@@ -11,12 +11,12 @@ function MsgList(props) {
       <div className="msg-list">
         {list.map(item =>
           <div className="msg-item">
-            <div key={item.key} className="header" item={item} pretty={props.pretty}>
+            <span key={item.key} className="header" item={item} pretty={props.pretty}>
               {`${item.date} - ${item.author}`}
-            </div>
-            <div className="msg-text">
+            </span>
+            <span className="msg-text">
               {item.msg.map(line => <div>{line}</div>)}
-            </div>
+            </span>
           </div>
         )}
       </div>

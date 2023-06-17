@@ -113,6 +113,7 @@ projects:
           labtime: {}
           administrator: {}
           controller: {}
+          drupal: {}
           epiclc: {}
           riolc: {}
           arduino2: {}
@@ -142,7 +143,7 @@ projects:
         funcIds: {}
         statusDefault:
           debugLevel: 0
-      controller: 
+      controller:
         name: Controller
         clientType: controller
         userId: Sauron
@@ -168,6 +169,25 @@ projects:
             msg: PROJECTID/msg/CLIENTID
             cod: PROJECTID/cod/CLIENTID
             hum: PROJECTID/hum/CLIENTID
+      drupal:
+        name: Drupal
+        clientType: cms
+        userId: Galadriel
+        format: yml
+        statusDefault:
+          debugLevel: 0
+        topics:
+          subscribe:
+            adm: a/#
+            prj: PROJECTID/#
+          register:
+            cmd: a/cmd
+            rsp: a/rsp
+            inp: PROJECTID/inp
+            act: PROJECTID/act
+          publish:
+            rsp: a/rsp/CLIENTID
+            msg: PROJECTID/msg/CLIENTID
     topics:
       edge:
         subscribe:
