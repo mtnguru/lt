@@ -142,7 +142,7 @@ const addStatus = (out) => {
 const processCB = (_topic, _payload) => {
   const f = 'administrator::processCB'
   msg(1,f,DEBUG, 'enter');
-  readConfig();
+  console.log(f, 'enter', _topic);
   let out;
   let outTopic;
   var dclientId;
@@ -178,6 +178,7 @@ const processCB = (_topic, _payload) => {
             out = getStatus();
           }
           if (input.cmd === 'requestConfig') {
+            readConfig();
             var id = (input.ip) ? input.ip : input.clientId
             outTopic = global.aaa.topics.publish.rsp
             outTopic = outTopic.replace(/DCLIENTID/, id)
@@ -306,11 +307,25 @@ const initClients = (projectId, project, funcIds) => {
         if (project.topics && project.topics[client.topics]) {
           var topics = project.topics[client.topics]
           client.topics = {}
-          client.topics.subscribe = Topics.completeTopics(JSON.parse(JSON.stringify(topics.subscribe)), client);
-          client.topics.publish = Topics.completeTopics(JSON.parse(JSON.stringify(topics.publish)), client);
+          if (topics.subscribe) {
+            client.topics.subscribe = Topics.completeTopics(JSON.parse(JSON.stringify(topics.subscribe)), client);
+          }
+          if (topics.publish) {
+            client.topics.publish   = Topics.completeTopics(JSON.parse(JSON.stringify(topics.publish)), client);
+          }
+          if (topics.register) {
+            client.topics.register  = Topics.completeTopics(JSON.parse(JSON.stringify(topics.register)), client);
+          }
         } else {
-          client.topics.subscribe = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.subscribe)), client);
-          client.topics.publish = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.publish)), client);
+          if (client.topics.subscribe) {
+            client.topics.subscribe = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.subscribe)), client);
+          }
+          if (client.topics.publish) {
+            client.topics.publish   = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.publish)), client);
+          }
+          if (client.topics.register) {
+            client.topics.register  = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.register)), client);
+          }
         }
       }
 

@@ -9,7 +9,6 @@ const setDebugLevel = (level) => {
 const msg = (level, func, _funcId, ...snippets) => {
   const f = "utils/msg.js"
   if ("status" in global.aaa && "debugLevel" in global.aaa.status) {
-    console.log(f, "Debug level set", global.aaa.status.debugLevel)
     if (level > global.aaa.status.debugLevel)
       return;
   } else {
