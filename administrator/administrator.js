@@ -147,7 +147,7 @@ const processCB = (_topic, _payload) => {
   let outTopic;
   var dclientId;
   try {
-    var [projectId, func, clientId, userId, telegrafId] = _topic.split('/')
+    var [projectId, instance, func, clientId, userId, telegrafId] = _topic.split('/')
 
     const inputStr = _payload.toString();
     let input = {}
@@ -240,7 +240,7 @@ const findProject = (projectId) => {
   }
 }
 
-const initMetrics = (projectId, project) => {
+const initMetrics = (projectId, instance, project) => {
   // Read in the metrics for this project
   var filepath = `${process.env.ROOT_PATH}/${stageId}/${projectId}/metrics.yml`
   project.metrics = YAML.safeLoad(fs.readFileSync(filepath));
@@ -264,27 +264,27 @@ const initMetrics = (projectId, project) => {
       if (client = project.clients[metric.input.clientId]) {
         if (!client.inputs) client.inputs = {}
         client.inputs[metricId] = metric
-        metric.input.tags = influx.makeTagsFromMetricId(metric.name, "I", projectId)
+        metric.input.tags = influx.makeTagsFromMetricId(metric.name, "I", projectId, instance)
       }
     }
     if (metric.output) {
       if (client = project.clients[metric.output.clientId]) {
         if (!client.outputs) client.outputs = {}
         client.outputs[metricId] = metric
-        metric.output.tags = influx.makeTagsFromMetricId(metric.name, "O", projectId)
+        metric.output.tags = influx.makeTagsFromMetricId(metric.name, "O", projectId, instance)
       }
     }
     if (metric.human) {
       if (client = project.clients[metric.human.clientId]) {
         if (!client.humans) client.humans = {}
         client.humans[metricId] = metric
-        metric.human.tags = influx.makeTagsFromMetricId(metric.name, "H", projectId)
+        metric.human.tags = influx.makeTagsFromMetricId(metric.name, "H", projectId, instance)
       }
     }
   } // for each metric in project
 }
 
-const initClients = (projectId, project, funcIds) => {
+const initClients = (projectId, instance, project, funcIds) => {
   // For each client create lookup lists by clientId and IP
   for (var clientId in project.clients) {
     var client = project.clients[clientId]
@@ -385,6 +385,7 @@ const readConfig = () => {
     global.aaa.topics.publish = Topics.completeTopics(global.aaa.topics.publish);
   }
 
+  var instance = "42";
 // For each project in administrator config
   for (var projectId in global.aaa.projects) {
     let ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${stageId}/${projectId}/funcIds.yml`)
@@ -394,8 +395,8 @@ const readConfig = () => {
     }
     var project = global.aaa.projects[projectId]
 
-    initMetrics(projectId, project)
-    initClients(projectId, project, funcIds)
+    initMetrics(projectId, instance, project)
+    initClients(projectId, instance, project, funcIds)
   } // for each project
 }
 

@@ -10,6 +10,7 @@ import {mqttPublish} from "../../utils/mqttReact"
 function MqttClient (props) {
   const clientId = props.client.clientId;
   const [running, setRunning] = useState('unknown')
+  const [numRunning, setNumRunning] = useState(clientId === 'all' ? 'S' : 0)
   const [enabled, setEnabled] = useState(
     (global.aaa.clients[clientId].status) ? global.aaa.clients[clientId].status.enabled : 1)
   const [debugLevel, setDebugLevel] = useState(
@@ -24,8 +25,11 @@ function MqttClient (props) {
       setDebugLevel(_payload.debugLevel)
     } else if (_payload.rsp === 'requestStatus') {
       setDebugLevel(_payload.debugLevel)
-      if (clientId != 'all')
+      if (clientId !== 'all')
         setRunning('running')
+      setNumRunning(prevNumRunning => {
+        return prevNumRunning + 1
+      })
     }
   }
 
@@ -34,6 +38,7 @@ function MqttClient (props) {
     if (_payload.cmd === 'requestStatus' &&
         (_payload.clientId === 'all' || _payload.clientId === clientId)) {
       setRunning('stopped')   // Set status on all clients to 'stopped'
+      setNumRunning(0)
     }
   }
   useEffect(() => {
@@ -42,7 +47,7 @@ function MqttClient (props) {
   }, [clientId])
 
   const onSelectH = (event) => {
-    let topic = `a/cmd/${props.client.clientId}`
+    let topic = `a/admin/cmd/${props.client.clientId}`
     let payload = `{"cmd": "setDebugLevel", "clientId": "${clientId}", "debugLevel": "${event.target.value}"}`;
     console.log('   send ', topic, payload)
     mqttPublish(topic, payload)
@@ -50,21 +55,22 @@ function MqttClient (props) {
 
   const onClickH = (event) => {
     const f = "Button::clickH"
-    const name = event.target.innerText;
+    const classList = event.target.classList;
+    const name = event.target.name;
     mgDebug(1, f,'Button pressed',name)
     let topic;
     let payload;
-    if (name === "R") {
-      topic = `a/cmd/${props.client.clientId}`
+    if (classList[1] === "reset") {
+      topic = `a/admin/cmd/${props.client.clientId}`
       payload = `{"cmd": "requestReset", "clientId": "${props.client.clientId}"}`;
-    } else if (name === "S") {
-      topic = `a/cmd/${props.client.clientId}`
+    } else if (classList[1] === "status") {
+      topic = `a/admin/cmd/${props.client.clientId}`
       payload = `{"cmd": "requestStatus", "clientId": "${props.client.clientId}"}`;
       if (clientId === 'all') {}
-    } else if (name === "E") {
+    } else if (classList[1] === "enabled") {
       // Set the "all" button on other labtime instances
       // Set the enabled button
-      topic = `a/cmd/${props.client.clientId}`
+      topic = `a/admin/cmd/${props.client.clientId}`
       if (enabled) {
         payload = `{"cmd": "setEnabled", "enabled": 0, "clientId": "${props.client.clientId}"}`;
         setEnabled(0)
@@ -74,7 +80,7 @@ function MqttClient (props) {
       }
       if (props.client.clientId === 'all') {
         mqttPublish(topic, payload)  // looks weird, Doing it this way publishes the cmd before the rsp
-        topic = `a/rsp/${props.client.clientId}`
+        topic = `a/admin/rsp/${props.client.clientId}`
         if (enabled) {
           payload = `{"rsp": "setEnabled", "enabled": 0, "clientId": "${props.client.clientId}"}`;
         } else {
@@ -98,13 +104,13 @@ function MqttClient (props) {
         <label htmlFor={props.client.clientId}>{props.client.name}</label>
       </div>
       <div className="row2">
-        {props.id !== 'administrator' && props.id !== 'labtime' && props.id !== 'project' && props.id !== "controller" &&
+        {props.id !== 'administrator' && props.id !== 'drupal' && props.id !== 'labtime' && props.id !== 'project' && props.id !== "controller" &&
           <Tooltip label="Enable" bg="white" p="10px" placement="bottom">
             <Button className={`enabled ${enabled ? "true" : "false"}`} onClick={onClickH}>E</Button>
           </Tooltip>
         }
         <Tooltip label="Request status" bg="white" p="10px" placement="bottom">
-          <Button className={`status ${running}`}   onClick={onClickH}>S</Button>
+          <Button className={`status ${running}`}   onClick={onClickH}>{numRunning}</Button>
         </Tooltip>
         {props.id !== 'all' &&
           <Tooltip label="Reset client" bg="white" p="10px" placement="bottom">

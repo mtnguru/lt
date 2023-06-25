@@ -104,7 +104,9 @@ const MqttItem = (props) => {
             }
           }
         } else if (props.pretty === "pretty") {
-          if (props.item.func === 'inp' || props.item.func === 'hum' || props.item.func === 'out') {
+          if (props.item.func === 'inp' ||
+              props.item.func === 'hum' ||
+              props.item.func === 'out') {
             var {tags, values} = extractFromTags(props.item.payload)
             payloadStr = `${props.item.func}: ${values["value"]} - ${tags["MetricId"]}`
           }

@@ -27,8 +27,9 @@ const connect = (connectCB, messageCB) => {
     return new Promise((resolve, reject) => {
       mqttClient.on('connect', (event) => {
         msg(1,f,NOTIFY,'Connected to MQTT broker ' + mc.url)
-        mqttClient.unsubscribe([])
+//      mqttClient.unsubscribe([])
         var topics = (global.aab && global.aab.topics) ? global.aab.topics.subscribe : global.aaa.topics.subscribe
+        mqttClient.unsubscribe(Object.values(topics));
         mqttClient.subscribe(Object.values(topics), () => {
           connectCB();
           mqttClient.on('message', (inTopic, payloadRaw) => {
@@ -154,7 +155,7 @@ const registerMetricCB = (metricId, cb, func) => {
  */
 const processInflux = (topic, payloadStr) => {
   const f = "mqttNode::processInflux"
-  const funcId = topic.split("/")[1]
+  const funcId = topic.split("/")[2]
   const {tags, values} = extractFromTags(payloadStr)
   if (tags["Metric"]) {
     const metricId = tags["Metric"]
@@ -208,7 +209,7 @@ const processInflux = (topic, payloadStr) => {
 const processCB = (_topic, _payload) => {
   const f = 'mqttNode::processCB - '
   let payloadStr = _payload.toString();
-  let func = _topic.split('/')[1]
+  let func = _topic.split('/')[2]
 //console.log(f, 'enter ', _topic)
 
   try {

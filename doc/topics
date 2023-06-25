@@ -9,16 +9,16 @@ global.aaa.topics
   subscribe
     all    a/cmd/all
     cmd    a/cmd/CLIENTID
-    inp    PROJECTID/inp/DCLIENTID
-    out    PROJECTID/out/CLIENTID
-    hum    PROJECTID/hum/CLIENTID
+    inp    PROJECTID/INSTANCE/inp/DCLIENTID
+    out    PROJECTID/INSTANCE/out/CLIENTID
+    hum    PROJECTID/INSTANCE/hum/CLIENTID
   publish
     rsp    a/rsp/CLIENTID     
-    inp    PROJECTID/inp/CLIENTID
-    out    PROJECTID/out/DCLIENTID
-    out    PROJECTID/hum/DCLIENTID
-    cod    PROJECTID/cod/CLIENTID
-    msg    PROJECTID/msg/CLIENTID
+    inp    PROJECTID/INSTANCE/inp/CLIENTID
+    out    PROJECTID/INSTANCE/out/DCLIENTID
+    out    PROJECTID/INSTANCE/hum/DCLIENTID
+    cod    PROJECTID/INSTANCE/cod/CLIENTID
+    msg    PROJECTID/INSTANCE/msg/CLIENTID
 
 ===============================================================
 
@@ -68,7 +68,7 @@ out
 
 ======================================================================
 
-   Topic Format:   PROJECTID/FUNCTION/CLIENTID/USERID/+TELEGRAFID
+   Topic Format:   PROJECTID/INSTANCE/FUNCTION/CLIENTID/USERID/+TELEGRAFID
          Examples: p1/act/player/james@ecosleuth.com 
                    p2/usr/player/james@ecosleuth.com 
                    p3/inp/arduino2/na/telegraf.influx

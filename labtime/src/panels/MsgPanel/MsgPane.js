@@ -41,7 +41,7 @@ const MsgPane = (props) => {
 
   // Whem the click button is pressed - submit a new item
   const clickH = (event) => {
-    const topic = "rf/msg/all"
+    const topic = "rf/42/msg/all"
     if (msg.length === 0) return;
     event.preventDefault();
     var cdate = currentDate("full")
