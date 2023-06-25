@@ -6,10 +6,18 @@ $date-fg-color: #ff4;
 $title-fg-color: #ddff88;
 $title2-fg-color: #aaffdd;
 
+$header-nav-bg-color: #113344;
+$header-nav-fg-color: #88ffaa;
+
 $msg-header-fg-color: #99ffff;
+
+$strong-fg-color: #77ffaa;
 
 $bg-color: #101010;
 $bg1-color: #202020;
+$bg2-color: #505050;
+
+$link-color: #77bbff;
 
 $input-fg-color: #ff8;
 $input-bd-color: #593cb3;
@@ -64,10 +72,10 @@ $stat-fg-color: #ccff33;
   .arduino3      { background-color: #052; }
   .arduino4      { background-color: #04f; }
   .arduino5      { background-color: #22b; }
-  .player        { background-color: #b62; }
-  .labtime       { background-color: #a40; }
+  .labtime       { background-color: #930; }
   .administrator { background-color: #640; }
   .controller    { background-color: #922; }
+  .drupal        { background-color: #a71; }
 }
 
 .difference-grey-bg   { background-color: #666; }

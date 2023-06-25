@@ -19,16 +19,28 @@ mqtt:  # Each client must have it's own mqtt config
   websocket: 8081
 topics:
   subscribe:
-    cmd: a/cmd/CLIENTID
-    all: a/cmd/all
-    rsp: a/rsp/#
+    cmd: a/admin/cmd/CLIENTID
+    all: a/admin/cmd/all
+    rsp: a/admin/rsp/#
   publish:
-    rsp: a/rsp/DCLIENTID
-    hum: a/rsp/DCLIENTID/DUSERID
-    all: a/cmd/all
+    rsp: a/admin/rsp/DCLIENTID
+    hum: a/admin/rsp/DCLIENTID/DUSERID
+    all: a/admin/cmd/all
 projects:
   rf:
     name: Cabin in Red Feather
+    topics:
+      edge:
+        subscribe:
+          all: a/admin/cmd/all
+          cmd: a/admin/cmd/CLIENTID
+          rsp: a/admin/rsp/CLIENTID
+          out: PROJECTID/INSTANCE/out/CLIENTID
+        publish:
+          rsp: a/admin/rsp/CLIENTID
+          inp: PROJECTID/INSTANCE/inp/CLIENTID/USERID/cabin_lt
+          cod: PROJECTID/INSTANCE/cod/CLIENTID
+          msg: PROJECTID/INSTANCE/msg/CLIENTID
     clients:
       epiclc:
         name: EpicLC
@@ -123,22 +135,22 @@ projects:
         topics:
           subscribe:
             adm: a/#
-            prj: PROJECTID/#
+            prj: PROJECTID/INSTANCE/#
           register:
-            cmd: a/cmd
-            rsp: a/rsp
-            inp: PROJECTID/inp
-            out: PROJECTID/out
-            hum: PROJECTID/hum
-            alm: PROJECTID/alm
-            cod: PROJECTID/cod
-            msg: PROJECTID/msg
-            act: PROJECTID/act
+            cmd: a/admin/cmd
+            rsp: a/admin/rsp
+            inp: PROJECTID/INSTANCE/inp
+            out: PROJECTID/INSTANCE/out
+            hum: PROJECTID/INSTANCE/hum
+            alm: PROJECTID/INSTANCE/alm
+            cod: PROJECTID/INSTANCE/cod
+            msg: PROJECTID/INSTANCE/msg
+            act: PROJECTID/INSTANCE/act
           publish:
-            rsp: a/rsp/CLIENTID
-            msg: PROJECTID/msg/CLIENTID
-            cod: PROJECTID/cod/CLIENTID
-            hum: PROJECTID/hum/CLIENTID
+            rsp: a/admin/rsp/CLIENTID
+            msg: PROJECTID/INSTANCE/msg/CLIENTID
+            cod: PROJECTID/INSTANCE/cod/CLIENTID
+            hum: PROJECTID/INSTANCE/hum/CLIENTID
         metrics: project
         funcIds: {}
         statusDefault:
@@ -153,22 +165,22 @@ projects:
         topics:
           subscribe:
             adm: a/#
-            prj: PROJECTID/#
+            prj: PROJECTID/INSTANCE/#
           register:
-            cmd: a/cmd
-            rsp: a/rsp
-            inp: PROJECTID/inp
-            out: PROJECTID/out
-            hum: PROJECTID/hum
-            alm: PROJECTID/alm
-            cod: PROJECTID/cod
-            msg: PROJECTID/msg
-            act: PROJECTID/act
+            cmd: a/admin/cmd
+            rsp: a/admin/rsp
+            inp: PROJECTID/INSTANCE/inp
+            out: PROJECTID/INSTANCE/out
+            hum: PROJECTID/INSTANCE/hum
+            alm: PROJECTID/INSTANCE/alm
+            cod: PROJECTID/INSTANCE/cod
+            msg: PROJECTID/INSTANCE/msg
+            act: PROJECTID/INSTANCE/act
           publish:
-            rsp: a/rsp/CLIENTID
-            msg: PROJECTID/msg/CLIENTID
-            cod: PROJECTID/cod/CLIENTID
-            hum: PROJECTID/hum/CLIENTID
+            rsp: a/admin/rsp/CLIENTID
+            msg: PROJECTID/INSTANCE/msg/CLIENTID
+            cod: PROJECTID/INSTANCE/cod/CLIENTID
+            hum: PROJECTID/INSTANCE/hum/CLIENTID
       drupal:
         name: Drupal
         clientType: cms
@@ -181,42 +193,10 @@ projects:
             adm: a/#
             prj: PROJECTID/#
           register:
-            cmd: a/cmd
-            rsp: a/rsp
+            cmd: a/admin/cmd
+            rsp: a/admin/rsp
             inp: PROJECTID/inp
             act: PROJECTID/act
           publish:
-            rsp: a/rsp/CLIENTID
+            rsp: a/admin/rsp/CLIENTID
             msg: PROJECTID/msg/CLIENTID
-    topics:
-      edge:
-        subscribe:
-          all: a/cmd/all
-          cmd: a/cmd/CLIENTID
-          rsp: a/rsp/CLIENTID
-          out: PROJECTID/out/CLIENTID
-        publish:
-          rsp: a/rsp/CLIENTID
-          inp: PROJECTID/inp/CLIENTID/USERID/cabin_lt
-          cod: PROJECTID/cod/CLIENTID
-          msg: PROJECTID/msg/CLIENTID
-  up:
-    name: Uphold Productions
-    clients:
-      player:
-        userId: email
-        format: yml
-        topics:
-          subscribe:
-            msg:  PROJECTID/msg/+/all/#
-            hum:  PROJECTID/msg/+/SUSERID/#
-          publish:
-            act:  PROJECTID/act/CLIENTID/all
-      drupal:
-        topics:
-          subscribe:
-            cms:  PROJECTID/cms/#
-          publish:
-            act:  PROJECTID/act/all
-            msg:  PROJECTID/msg/all
-            cod:  PROJECTID/cod/all

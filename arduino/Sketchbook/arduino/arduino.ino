@@ -9,7 +9,7 @@
 #include <math.h>
 
 const char *programId = "arduino.js";
-int debugLevel = 2;
+int debugLevel = 0;
 unsigned long startTime = 0;
 boolean enabled = 1;
 int mqttConnected = 0;
@@ -20,14 +20,18 @@ const int jsonDocSize = 2000;       // May 29, 2023 - crashes at 924
 StaticJsonDocument<jsonDocSize> jsonDoc;
 const int payloadSize = 2000;       // Configuration uses 1404
 const int msgSize = 300;
+
 const int outSize = 300;
 char logMsg[msgSize];
 
+const int statusSize = 300;
+char status[statusSize];
+
 const int tagSize = 200;
-const int topicSize = 60;
+const int topicSize = 80;
 const int metricIdSize = 40;
-const int projectIdSize = 10;
-const int clientIdSize = 10;
+const int projectIdSize = 20;
+const int clientIdSize = 20;
 const int ipSize = 20;
 const int valueSize = 10;
 
@@ -134,16 +138,39 @@ unsigned long lastSample = 0;
   extern char *__brkval;
 #endif  // __arm__
 
-String freeMemory() {
-  const char *f = "freeMemory";
+String freeMem() {
+  const char *f = "freeMem";
   long  fh = ESP.getFreeHeap();
   char  fhc[20];
 
   ltoa(fh, fhc, 16);
   String freeHeap = String(fhc);
-  logit(3,MD,f,"Free memory ",freeHeap.c_str());
+  logit(1,MD,f,"Free memory ",freeHeap.c_str());
   return freeHeap;
 }
+
+/*
+String freeDude() {
+  const char *f = "freeDude";
+  char top;
+  int free;
+#ifdef __arm__
+  free = &top - reinterpret_cast<char*>(sbrk(0));
+#elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
+  free = &top - __brkval;
+#else  // __arm__
+  free = __brkval ? &top - __brkval : &top - __malloc_heap_start;
+#endif  // __arm__
+
+  char  fhc[20];
+  itoa(free, fhc, 16);
+//String freeHeap = String(fhc);
+//logit(0,MD,f,"Free dude ",freeHeap.c_str());
+  return "shit";
+//return freeHeap;
+}
+*/
+
 
 char* lowerCase (char* str) {
   char* s = str;
@@ -327,8 +354,6 @@ void(* resetFunction) (void) = 0;    // declare reset function @ address 0
 
 void getStatus() {
   const char *f = "getStatus";
-  int statusSize = 300;
-  char status[statusSize];
 
   unsigned long timeDiff = (millis() - startTime) / 1000;
   unsigned int seconds = round(timeDiff % 60);
@@ -347,6 +372,8 @@ void getStatus() {
     clientId, mqttClientId.c_str(), mqttConnected, enabled, debugLevel, uptime, sampleInterval);
 
   logit(2,MD, f, status, NULL);
+  char statusLen[10];
+  itoa(strlen(status), statusLen, 10);
   mqttClient.publish(mqttRspPub, status);
 }
 
@@ -368,7 +395,7 @@ void setConfig(const char *topic,
                StaticJsonDocument<jsonDocSize> jsonDoc) {
   const char *f = "setConfig";
   logit(2,MD, f, "enter", topic);
-  freeMemory();
+  freeMem();
 
   logit(1,MN, f, "Date ", jsonDoc["date"]);
   strcpy(clientId, jsonDoc["clientId"]);
@@ -483,7 +510,7 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
   out[0] = '\0';
   strcpy(outTopic, mqttRspPub);
 
-  freeMemory();
+  freeMem();
 
   logit(1,MD,f,"enter", topic);
 
@@ -504,7 +531,7 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
       strcpy(rsp,jsonDoc["rsp"]);
       if (!strcmp(rsp, "requestConfig")) {
         setConfig(topic, jsonDoc);
-        freeMemory();
+        freeMem();
       }
     } else if (!strcmp(topic, mqttCmdSub) || !strcmp(topic, mqttAllSub)) {
       strcpy(cmd,jsonDoc["cmd"]);
@@ -533,7 +560,7 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
     logit(1,MD,f,"publish message: outTopic", outTopic);
     mqttClient.publish(outTopic, out);
   }
-  freeMemory();
+  freeMem();
 }
 
 /**
@@ -617,7 +644,7 @@ void sampleInputs() {
         break;
     }
   }
-  freeMemory();
+  freeMem();
 }
 
 void setup() {
@@ -639,10 +666,10 @@ void setup() {
   mqttClient.setCallback(mqttCB);
   mqttConnect();
 
-  strcpy(mqttCmdPub, "a/cmd/administrator");
+  strcpy(mqttCmdPub, "a/admin/cmd/administrator");
 
   logit(2,MD,f,"Subscribe to admin response messages ", NULL);
-  snprintf(mqttRspSub, topicSize, "a/rsp/%s", ip);   // admin responses
+  snprintf(mqttRspSub, topicSize, "a/admin/rsp/%s", ip);   // admin responses
   res = mqttClient.subscribe(mqttRspSub);
 
   requestConfig();

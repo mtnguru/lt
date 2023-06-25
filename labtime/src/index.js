@@ -36,10 +36,10 @@ global.aab = {
   startTime: Date.now(),
   topics: {
     subscribe: {
-      rsp: `a/rsp/${clientId}`,
+      rsp: `a/admin/rsp/${clientId}`,
     },
     publish: {
-      adm: 'a/cmd/administrator'
+      adm: 'a/admin/cmd/administrator'
     }
   },
 }

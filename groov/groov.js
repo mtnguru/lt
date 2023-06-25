@@ -35,10 +35,10 @@ global.aab = {
   started: false,
   topics: {
     subscribe: {
-      rsp: `a/rsp/${clientId}`,
+      rsp: `a/admin/rsp/${clientId}`,
     },
     publish: {
-      adm: 'a/cmd/administrator'
+      adm: 'a/admin/cmd/administrator'
     }
   }
 }
@@ -62,7 +62,7 @@ const getConfig = () => {
   const f = 'groov::getConfig'
 
   msg(2, f, DEBUG, 'enter ')
-  const payloadStr = `{\"fuck\":\"damn\", \"clientId\": \"${clientId}\", \"cmd\": \"requestConfig\"}`
+  const payloadStr = `{\"clientId\": \"${clientId}\", \"cmd\": \"requestConfig\"}`
   mqttNode.publish(global.aab.topics.publish.adm, payloadStr)
   mqttNode.registerTopicCB(global.aab.topics.subscribe.rsp, loadConfigCB)
   msg(2, f,DEBUG,'exit')

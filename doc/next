@@ -1,3 +1,48 @@
+Change topic to include INSTANCE
+Where does instance come from?
+
+Drupal - instigator knows the instance
+
+User logs in with LabTime
+Find out what instances are running
+Needs to come from the Drupal program
+
+For now just do instance 42
+
+There will be one controller per instance
+
+An instance is one
+   LabTime - Reactor, Apparatus, Chamber
+   Upstream - Department, Group
+   Finance - Team, Individual
+
+How does an Arduino know it processId and Instance
+In Drupal users selects projectId and instance for that project
+
+A location can run one instance at a time
+Multiple instance 
+
+             Project             Instance     Domain/Arena/Realm
+LabTime      Experiment          Run          Reactor
+Upstream     Meeting/Production  Event        Department/Unit
+Finance      Company/Unit        Game         Team
+
+Potential names for Instigator
+   Domain
+   Arena
+   Realm 
+
+Reactor 1 is running a project and an instance
+Reactor 2 is running a project and a different instance
+Reactor 3 is running a project and a different instance
+
+When I start a controller it needs to know the project id and instance
+   query drupal with the instigator - Reactor 1
+
+
+  
+
+
 Get Drupal working
 projects
 new entities - 

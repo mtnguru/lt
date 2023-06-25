@@ -17,6 +17,10 @@
   }
 }
 
+strong {
+  color: $strong-fg-color;
+}
+
 table {
   border: 2px solid $table-bd-color;
 }

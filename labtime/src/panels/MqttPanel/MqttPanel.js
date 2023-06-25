@@ -40,11 +40,11 @@ const MqttPanel = (props) => {
 //  const f = "MqttPanel::topicCB - "
 //  if (_topic.indexOf('a/cmd') > -1) return;
     const dateStr = currentDate()
-    const [project, func, clientId] = _topic.split('/')
+    const [project, instance, func, clientId] = _topic.split('/')
     let rnd = Math.random().toString(16).slice(3)
     let key = `${clientId}-${dateStr}-${rnd}`
 //  console.log("nitems ", nitems, ni);
-    let item = { key, date: dateStr, project, func, clientId, topic:_topic, payload:_payload, nitems: ni }
+    let item = { key, date: dateStr, project, instance, func, clientId, topic:_topic, payload:_payload, nitems: ni }
 
     setNItems((prevNItems) => {
       return ni = prevNItems + 1
@@ -80,7 +80,7 @@ const MqttPanel = (props) => {
    * @returns {boolean}
    */
   const validMsg = (item) => {
-    const [,func,clientId] = item.topic.split('/')
+    const [,instance,func,clientId] = item.topic.split('/')
     if (global.aaa.clients.all.selected) {
     } else {
       if (global.aaa.clients[clientId] && !global.aaa.clients[clientId].selected) {

@@ -20,7 +20,7 @@ const ControlSlider = (props) => {
 
   const metricCB = (metric, topic, payload, tags, values) => {
     const f = "ControlStats::metricCB"
-    const funcId = topic.split('/')[1]
+    const funcId = topic.split('/')[2]
     if (funcId === 'user') {
 //    setValue(values.value)
     } else if (funcId === 'output') {

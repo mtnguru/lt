@@ -631,12 +631,12 @@ void setup() {
   wifiInit();
 
   logit(2,MD,f,"Assign mqttAdmin*Pub paths",mqttAdminCmdPub);
-  strcpy(mqttAdminCmdPub, "a/cmd/administrator");
-  strcpy(mqttAdminRspPub, "a/rsp/administrator");
+  strcpy(mqttAdminCmdPub, "a/admin/cmd/administrator");
+  strcpy(mqttAdminRspPub, "a/admin/rsp/administrator");
 
-  snprintf(mqttAdminAllSub, msgSize, "a/cmd/all");        // admin commands to all
-  snprintf(mqttAdminIpSub, msgSize, "a/rsp/%s",  ip);     // admin commands to ip
-  snprintf(mqttAdminResponseSub, msgSize, "a/rsp/%s", ip);   // admin responses
+  snprintf(mqttAdminAllSub, msgSize, "a/admin/cmd/all");        // admin commands to all
+  snprintf(mqttAdminIpSub, msgSize, "a/admin/rsp/%s",  ip);     // admin commands to ip
+  snprintf(mqttAdminResponseSub, msgSize, "a/admin/rsp/%s", ip);   // admin responses
 
   logit(1,MD,f,"Set MQTT server",mqttIp);
   mqttClient.setServer(mqttIp, mqttPort);
@@ -645,11 +645,11 @@ void setup() {
   mqttConnect();
 
   logit(2,MD,f,"Subscribe to admin messages ", NULL);
-  snprintf(mqttAdminAllSub, msgSize, "a/cmd/all");             // all administrator commands
+  snprintf(mqttAdminAllSub, msgSize, "a/admin/cmd/all");             // all administrator commands
   res = mqttClient.subscribe(mqttAdminAllSub);
-//snprintf(mqttAdminIpSub, msgSize, "a/cmd/%s", ip);           // CLIENTID administrator commands
+//snprintf(mqttAdminIpSub, msgSize, "a/admin/cmd/%s", ip);           // CLIENTID administrator commands
 //res = mqttClient.subscribe(mqttAdminIpSub);
-  snprintf(mqttAdminResponseSub, msgSize, "a/rsp/%s", ip);     // CLIENTID administrator responses
+  snprintf(mqttAdminResponseSub, msgSize, "a/admin/rsp/%s", ip);     // CLIENTID administrator responses
   res = mqttClient.subscribe(mqttAdminResponseSub);
 
   requestConfig();

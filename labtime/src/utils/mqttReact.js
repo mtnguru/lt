@@ -194,7 +194,7 @@ const mqttProcessCB = (_topic, _payload) => {
   try {
     // If this is a metricCB - influx line buf - call metric callbacks
     const fields = _topic.split("/")
-    const func = fields[1]
+    const func = fields[2]
     if (func === 'inp' || func === 'out' || func === 'hum') {
       const {tags, values} = extractFromTags(payloadStr)
       if (!tags["MetricId"]) {
