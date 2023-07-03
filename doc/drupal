@@ -1,0 +1,37 @@
+Subscribe
+   a/admin/cmd/all
+   a/admin/cmd/drupal
+   rf/42/msg
+   rf/42/act
+   rf/42/alm
+Save
+   activities
+   messages
+   outputs
+   alarms
+   
+Serve
+   Nodes
+      Project
+      Instance
+   List of past
+      Messages
+   Given a realm, 
+      return the current project and instance
+      The client knows the realm because?
+         LabTime
+         Controller is started when an event is started
+         Administrator has a list of realms with the current project and instance
+   
+Projects, instances and realms - how to do it
+   Realm/Reactor
+      Knows current experiment
+      Knows current instance
+   User creates a new project
+      Button on page to create an instance
+   
+   
+   
+
+
+

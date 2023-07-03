@@ -103,12 +103,15 @@ const MqttItem = (props) => {
               payloadStr = makeJsonPretty(payloadStr)
             }
           }
-        } else if (props.pretty === "pretty") {
+        } else if (props.pretty === "pretty") { // Non JSON pretty
           if (props.item.func === 'inp' ||
               props.item.func === 'hum' ||
               props.item.func === 'out') {
             var {tags, values} = extractFromTags(props.item.payload)
-            payloadStr = `${props.item.func}: ${values["value"]} - ${tags["MetricId"]}`
+            var val = `${values["value"]}`
+            var len = val.length;
+            for (var i = 0; i < 7-len; i++) val += ' '
+            payloadStr = `${props.item.func}: ${val} ${tags["MetricId"]}`
           }
         }
       }

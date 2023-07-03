@@ -7,6 +7,7 @@
 */
 
 #include <math.h>
+//#include <MemoryFree.h>
 
 const char *programId = "arduino.js";
 int debugLevel = 0;
@@ -20,9 +21,11 @@ const int jsonDocSize = 2000;       // May 29, 2023 - crashes at 924
 StaticJsonDocument<jsonDocSize> jsonDoc;
 const int payloadSize = 2000;       // Configuration uses 1404
 const int msgSize = 300;
+char msg[msgSize];
+char logMsg[msgSize];
 
 const int outSize = 300;
-char logMsg[msgSize];
+char out[outSize];
 
 const int statusSize = 300;
 char status[statusSize];
@@ -75,8 +78,8 @@ struct inputS {
   char tags[tagSize];
 };
 
-const int inputMax = 3;
-const int outputMax = 3;
+const int inputMax = 2;
+const int outputMax = 2;
 inputS inputA[inputMax];
 outputS outputA[outputMax];
 int inputN = 0;
@@ -354,6 +357,7 @@ void(* resetFunction) (void) = 0;    // declare reset function @ address 0
 
 void getStatus() {
   const char *f = "getStatus";
+  char uptime[20];
 
   unsigned long timeDiff = (millis() - startTime) / 1000;
   unsigned int seconds = round(timeDiff % 60);
@@ -364,16 +368,15 @@ void getStatus() {
   timeDiff = floor(timeDiff / 24);
   unsigned int days = timeDiff;
 
-  char uptime[30];
-  snprintf(uptime,30,"%d %d:%d:%d", days, hours, minutes, seconds);
+  snprintf(uptime,20,"%d %d:%d:%d", days, hours, minutes, seconds);
 
   snprintf(status,statusSize,
     "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": %d, \"enabled\":%d, \"debugLevel\":%d, \"uptime\":\"%s\", \"sampleInterval\":\"%d\"}",
     clientId, mqttClientId.c_str(), mqttConnected, enabled, debugLevel, uptime, sampleInterval);
 
   logit(2,MD, f, status, NULL);
-  char statusLen[10];
-  itoa(strlen(status), statusLen, 10);
+//char statusLen[10];
+//itoa(strlen(status), statusLen, 10);
   mqttClient.publish(mqttRspPub, status);
 }
 
@@ -497,8 +500,6 @@ void setConfig(const char *topic,
 void mqttCB(char* _topic, byte* _payload, unsigned int length) {
   const char *f = "mqttCB";
   char cmd[20];
-  char out[outSize];
-  char msg[msgSize];
   char topic[topicSize];
   char outTopic[topicSize];
 
@@ -619,7 +620,6 @@ void mqttConnect() {
 void sampleInputs() {
   // Loop through the inputs, read value, and post to MQTT
   const char *f = "sampleInputs";
-  char out[outSize];
   logit(3,MD,f,"sampleInputs enter ", NULL);
   for (int m = 0; m < inputN; m++) {
     inputS *input = &inputA[m];

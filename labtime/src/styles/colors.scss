@@ -1,5 +1,4 @@
 // @import "styles/colors.scss";
-
 $fg-color: #f0f0ff;
 $topic-fg-color: #fc2;
 $date-fg-color: #ff4;
@@ -19,9 +18,9 @@ $bg2-color: #505050;
 
 $link-color: #77bbff;
 
-$input-fg-color: #ff8;
+$input-fg-color: $fg-color;
 $input-bd-color: #593cb3;
-$input-bg-color: #001b54;
+$input-bg-color: #113333;
 
 $button-fg-color: $fg-color;
 $button-bg-color: #445588;
@@ -39,6 +38,66 @@ $table-odd-bg-color: #245;
 $table-even-bg-color: #36a;
 
 $stat-fg-color: #ccff33;
+
+:root {
+   /**
+   * Gray colors.
+   * Color number roughly corresponds to its luminosity.
+   */
+  --color--gray-hue: 220;
+  --color--gray-saturation: 30%;
+  --color--gray-5: hsl(var(--color--gray-hue), var(--color--gray-saturation), 5%); /* Black */
+  --color--gray-10: hsl(var(--color--gray-hue), var(--color--gray-saturation), 11%);
+  --color--gray-20: hsl(var(--color--gray-hue), var(--color--gray-saturation), 20%); /* Black 2 */
+  --color--gray-45: hsl(var(--color--gray-hue), var(--color--gray-saturation), 44%); /* Gray Dark */
+  --color--gray-60: hsl(var(--color--gray-hue), var(--color--gray-saturation), 57%); /* Gray medium */
+  --color--gray-65: hsl(var(--color--gray-hue), var(--color--gray-saturation), 63%); /* Black 4 */
+  --color--gray-70: hsl(var(--color--gray-hue), var(--color--gray-saturation), 72%); /* Gray medium 2 */
+  --color--gray-90: hsl(var(--color--gray-hue), var(--color--gray-saturation), 88%); /* Gray light */
+  --color--gray-95: hsl(var(--color--gray-hue), var(--color--gray-saturation), 93%); /* Gray light 1 */
+  --color--gray-100: hsl(var(--color--gray-hue), var(--color--gray-saturation), 97%); /* Gray light 2 */
+
+   /**
+   * Primary colors.
+   * Color number roughly corresponds to its luminosity.
+   */
+  --color--primary-hue: 250;
+  --color--primary-saturation: 90%;
+  --color--primary-lightness: 50;
+  --color--primary-20: hsl(var(--color--primary-hue), var(--color--primary-saturation), calc(1% * (var(--color--primary-lightness) - (0.47 * var(--color--primary-lightness)))));
+  --color--primary-30: hsl(var(--color--primary-hue), var(--color--primary-saturation), calc(1% * (var(--color--primary-lightness) - (0.36 * var(--color--primary-lightness)))));
+  --color--primary-40: hsl(var(--color--primary-hue), var(--color--primary-saturation), calc(1% * (var(--color--primary-lightness) - (0.24 * var(--color--primary-lightness))))); /* Blue dark */
+  --color--primary-50: hsl(var(--color--primary-hue), var(--color--primary-saturation), calc(1% * var(--color--primary-lightness))); /* Blue medium */
+  --color--primary-60: hsl(var(--color--primary-hue), var(--color--primary-saturation), calc(1% * (var(--color--primary-lightness) + (0.24 * (100 - var(--color--primary-lightness)))))); /* Blue bright */
+  --color--primary-80: hsl(var(--color--primary-hue), var(--color--primary-saturation), calc(1% * (var(--color--primary-lightness) + (0.85 * (100 - var(--color--primary-lightness)))))); /* Blue very bright */
+
+  /**
+   * Variables specific to text.
+   */
+  --color-text-neutral-soft: var(--color--gray-60);
+  --color-text-neutral-medium: var(--color--gray-90);
+  --color-text-neutral-loud: var(--color--gray-100);
+
+  --color-text-primary-medium: var(--color--primary-80);
+  --color-text-primary-loud: var(--color--primary-60);
+
+  --tabs-text-color: var(--color--primary-20);
+  --tabs-background-color: var(--color--primary-80);
+}
+
+.mqtt-clientId-bg {
+  // MQTT message client
+  .riolc         { background-color: #828; }
+  .epiclc        { background-color: #529; }
+  .arduino2      { background-color: #184; }
+  .arduino3      { background-color: #052; }
+  .arduino4      { background-color: #15f; }
+  .arduino5      { background-color: #22b; }
+  .labtime       { background-color: #a41; }
+  .administrator { background-color: #640; }
+  .controller    { background-color: #820; }
+  .drupal        { background-color: #a71; }
+}
 
 .mqtt-func-bg {
   // MQTT Message function
@@ -64,23 +123,11 @@ $stat-fg-color: #ccff33;
   .Warning           { background-color: #d70; }
 }
 
-.mqtt-clientId-bg {
-  // MQTT message client
-  .riolc         { background-color: #818; }
-  .epiclc        { background-color: #529; }
-  .arduino2      { background-color: #073; }
-  .arduino3      { background-color: #052; }
-  .arduino4      { background-color: #04f; }
-  .arduino5      { background-color: #22b; }
-  .labtime       { background-color: #930; }
-  .administrator { background-color: #640; }
-  .controller    { background-color: #922; }
-  .drupal        { background-color: #a71; }
-}
-
+/*
 .difference-grey-bg   { background-color: #666; }
 .difference-red-bg    { background-color: #a34; }
 .difference-orange-bg { background-color: #d70; }
 .difference-green-bg  { background-color: #0a0; }
 .difference-cyan-bg   { background-color: #46f; }
 .difference-blue-bg   { background-color: #20c; }
+ */

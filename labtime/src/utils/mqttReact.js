@@ -28,11 +28,9 @@ const onConnectPromise = (cb) => {
     mqttClient.on('connect', (event) => {
       global.aaa.status.mqttConnected++
       console.log(f,"connected ", mqttClient.connected)
-      mqttUnsubscribe(global.aab.topics.subscribe)
-      mqttSubscribe(global.aab.topics.subscribe, () => {
-        console.log(f, 'subscribed', global.aaa.topics.subscribe)
-        mqttClient.on('message', cb);
-      })
+//    mqttUnsubscribe(global.aab.topics.subscribe)
+      mqttSubscribe(global.aab.topics.subscribe);
+      mqttClient.on('message', cb);
       resolve('connected')
     })
   })
@@ -61,11 +59,13 @@ const mqttConnect = (cb) => {
   onConnectPromise(cb)
   console.log(f,'we\'re on')
 
+  /*
   mqttSubscribe(global.aab.topics.subscribe, () => {
     console.log(f, 'subscribed', global.aab.topics.subscribe)
   })
 
   mqttClient.on('message', cb);
+  */
   console.log(f,'exit')
 }
 
