@@ -51,8 +51,8 @@ const MqttPanel = (props) => {
     })
 
     setList((prevList) => {
-      if (prevList.length > 4000) {
-        prevList = prevList.slice(1,3500)
+      if (prevList.length > 2000) {
+        prevList = prevList.slice(1,1500)
         setFilteredList (() => {
           return prevList.filter(validMsg);
         })
@@ -80,7 +80,7 @@ const MqttPanel = (props) => {
    * @returns {boolean}
    */
   const validMsg = (item) => {
-    const [,instance,func,clientId] = item.topic.split('/')
+    const [,,func,clientId] = item.topic.split('/')
     if (global.aaa.clients.all.selected) {
     } else {
       if (global.aaa.clients[clientId] && !global.aaa.clients[clientId].selected) {

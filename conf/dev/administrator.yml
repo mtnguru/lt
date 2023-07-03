@@ -188,15 +188,15 @@ projects:
         format: yml
         statusDefault:
           debugLevel: 0
+          mqttConnected: 0
         topics:
           subscribe:
-            adm: a/#
-            prj: PROJECTID/#
-          register:
-            cmd: a/admin/cmd
-            rsp: a/admin/rsp
-            inp: PROJECTID/inp
-            act: PROJECTID/act
+            all: a/admin/cmd/all
+            cmd: a/admin/cmd/CLIENTID
+            msg: PROJECTID/INSTANCE/msg
+            act: PROJECTID/INSTANCE/act
+            alm: PROJECTID/INSTANCE/alm
           publish:
             rsp: a/admin/rsp/CLIENTID
-            msg: PROJECTID/msg/CLIENTID
+            cms: PROJECTID/INSTANCE/cms/DCLIENTID
+            wll: a/admin/wll/CLIENTID
