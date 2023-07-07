@@ -17,21 +17,13 @@ import seedrandom from 'seedrandom'
 const clientId = "labtime"
 const generator = seedrandom(Date.now())
 const mqttClientId = `${clientId}_${generator().toString(16).slice(3)}`
+const userId = `user_${generator().toString(16).slice(3)}`
 
 const f = "index::main - "
 
 global.aaa = {
-  status: {
-    debugLevel: 0,
-    enabled: 1,
-    mqttConnected: 0,
-  }  
-}
- 
-
-// Initial configuration to get the client started
-global.aab = {
   clientId: clientId,
+  userId: userId,
   started: false,
   startTime: Date.now(),
   topics: {
@@ -42,8 +34,14 @@ global.aab = {
       adm: 'a/admin/cmd/administrator'
     }
   },
+  status: {
+    debugLevel: 0,
+    enabled: 1,
+    mqttConnected: 0,
+  }
 }
 
+// MQTT configuration
 global.aam = {
   mqttClientId: mqttClientId,
   url: 'mqtt://labtime.org:8081',
@@ -60,7 +58,7 @@ global.aam = {
 }
 
 const getStatus = () => {
-  var timeDiff = parseInt((Date.now() - global.aab.startTime) / 1000)
+  var timeDiff = parseInt((Date.now() - global.aaa.startTime) / 1000)
   var seconds = Math.round(timeDiff % 60)
   timeDiff = Math.floor(timeDiff / 60)
   var minutes = Math.round(timeDiff % 60)
@@ -113,16 +111,17 @@ const loadConfigCB = (_topic, _payload) => {
   const f = "index::loadConfigCB - "
   console.log(f,'enter', _topic)
 
-  if (global.aab.started) return;
-  global.aab.started = true
+  if (global.aaa.started) return;
+  _payload.started = true
 
-  mqttUnsubscribe(global.aab.topics.subscribe);
-  mqttUnregisterTopicCB(global.aab.topics.subscribe.rsp, loadConfigCB,{})
+  mqttUnsubscribe(global.aaa.topics.subscribe);
+  mqttUnregisterTopicCB(global.aaa.topics.subscribe.rsp, loadConfigCB,{})
 
   try {
     // Replace global.aaa object with new configuration
-//  _payload.topics.subscribe.rsp = global.aab.topics.subscribe.rsp
-    _payload.topics.publish.adm = global.aab.topics.publish.adm
+    _payload.startTime = global.aaa.startTime
+    _payload.status = global.aaa.status
+    _payload.userId = global.aaa.userId
     global.aaa = _payload
 
     // Create full list of inputs and outputs by combining them from all clients
@@ -157,12 +156,16 @@ const getConfig = () => {
   const f = "index::getConfig - "
   console.log(f,'enter')
   const payloadStr = `{"cmd": "requestConfig", "clientId": "${clientId}"}`
-  mqttRegisterTopicCB(global.aab.topics.subscribe.rsp, loadConfigCB,{})
-  mqttPublish(global.aab.topics.publish.adm, payloadStr)
+  mqttRegisterTopicCB(global.aaa.topics.subscribe.rsp, loadConfigCB,{})
+  mqttPublish(global.aaa.topics.publish.adm, payloadStr)
   console.log(f,'exit')
 }
 
-mqttConnect(mqttProcessCB);
+const connectCb = () => {
+//mqttUnsubscribe(global.aaa.topics)
+}
+
+mqttConnect(connectCb, mqttProcessCB);
 console.log(f,'requestConfig')
 getConfig();
 

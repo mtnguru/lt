@@ -1,3 +1,10 @@
+Command
+Response
+
+Request
+Reply Answer Response
+
+
 Subscribe
    a/admin/cmd/all
    a/admin/cmd/drupal
@@ -9,7 +16,14 @@ Save
    messages
    outputs
    alarms
-   
+
+Requests
+   getNode
+      nid: 123
+   getInstances
+      organization: ORGANIZATIONID
+      type: inProcess
+    
 Serve
    Nodes
       Project

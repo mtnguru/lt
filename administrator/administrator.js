@@ -19,15 +19,11 @@ const stageId = "dev"
 
 // global.aaa is overwritten when the configuration is read in from a file
 global.aaa = {
+  startTime: Date.now(),
   status: {
     debugLevel: 0,
     mqttConnected: 0,
   }
-}
-
-// global.aab - base configuration which is needed at startup
-global.aab = {
-  startTime: Date.now(),
 }
 
 /* Use the administrator.yml file instead
@@ -77,7 +73,7 @@ const findClient = (id) => {
 }
 
 const getStatus = () => {
-  var timeDiff = parseInt((Date.now() - global.aab.startTime) / 1000)
+  var timeDiff = parseInt((Date.now() - global.aaa.startTime) / 1000)
   var seconds = Math.round(timeDiff % 60)
   timeDiff = Math.floor(timeDiff / 60)
   var minutes = Math.round(timeDiff % 60)
@@ -366,6 +362,7 @@ const readConfig = () => {
 
   var conf = YAML.safeLoad(ymlStr)
   conf.status = global.aaa.status
+  conf.startTime = global.aaa.startTime
   global.aaa = conf
   global.aaa.ips = {}
   global.aaa.stageId = stageId

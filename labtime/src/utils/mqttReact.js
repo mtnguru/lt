@@ -22,21 +22,22 @@ function sleep(milliseconds) {
 }
 */
 
-const onConnectPromise = (cb) => {
+const onConnectPromise = (connectCb, processCb) => {
   const f = "mqttReact::onConnectPromise"
   return new Promise((resolve, reject) => {
     mqttClient.on('connect', (event) => {
       global.aaa.status.mqttConnected++
       console.log(f,"connected ", mqttClient.connected)
-//    mqttUnsubscribe(global.aab.topics.subscribe)
-      mqttSubscribe(global.aab.topics.subscribe);
-      mqttClient.on('message', cb);
+      mqttUnsubscribe(global.aaa.topics.subscribe)
+      mqttSubscribe(global.aaa.topics.subscribe)
+      connectCb()
+      mqttClient.on('message', processCb)
       resolve('connected')
     })
   })
 }
 
-const mqttConnect = (cb) => {
+const mqttConnect = (connectCb, processCb) => {
   topicsCB = {};
   const f = 'mqttReact::mqttConnect'
   console.log(f, 'connect to mqtt url/ip', global.aam.url)
@@ -56,12 +57,12 @@ const mqttConnect = (cb) => {
   })
 
   console.log(f,'wait for the On event')
-  onConnectPromise(cb)
+  onConnectPromise(connectCb, processCb)
   console.log(f,'we\'re on')
 
   /*
-  mqttSubscribe(global.aab.topics.subscribe, () => {
-    console.log(f, 'subscribed', global.aab.topics.subscribe)
+  mqttSubscribe(global.aaa.topics.subscribe, () => {
+    console.log(f, 'subscribed', global.aaa.topics.subscribe)
   })
 
   mqttClient.on('message', cb);
@@ -128,7 +129,7 @@ const mqttUnregisterTopicCB = (_topic, cb, args) => {
       console.log(f, "   Topic found", topicsCB[t].length)
       // Execute the callbacks for this topic
       for (let rcb of topicsCB[t]) {
-        if (cb === rcb ) {
+        if (cb === rcb.cb ) {
           topicsCB[t] = topicsCB[t].filter((item) => {
             return item.name !== cb.name
           })
