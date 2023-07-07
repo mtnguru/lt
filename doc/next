@@ -1,3 +1,20 @@
+
+
+
+
+Drupal - get a node
+So what now?
+Work on loading data into Drupal
+Create the activity entity
+Load messages and activities into Drupal
+Display those messages on the instance page.
+
+Query Drupal for the currently active instances for a organization
+Can have more than one instance per project.
+A project is a piece of hardware in an experiment.  :q
+
+
+
 Documentation
 Drupal code -
 Video panel

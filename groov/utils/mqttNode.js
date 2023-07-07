@@ -27,10 +27,8 @@ const connect = (connectCB, messageCB) => {
     return new Promise((resolve, reject) => {
       mqttClient.on('connect', (event) => {
         msg(1,f,NOTIFY,'Connected to MQTT broker ' + mc.url)
-//      mqttClient.unsubscribe([])
-        var topics = (global.aab && global.aab.topics) ? global.aab.topics.subscribe : global.aaa.topics.subscribe
-        mqttClient.unsubscribe(Object.values(topics));
-        mqttClient.subscribe(Object.values(topics), () => {
+        mqttClient.unsubscribe(Object.values(global.aaa.topics.subscribe));
+        mqttClient.subscribe(Object.values(global.aaa.topics.subscribe), () => {
           connectCB();
           mqttClient.on('message', (inTopic, payloadRaw) => {
             msg(3,f,NOTIFY,'MQTT message received ', inTopic)

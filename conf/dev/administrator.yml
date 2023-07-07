@@ -162,6 +162,7 @@ projects:
         format: yml
         statusDefault:
           debugLevel: 0
+          mqttConnected: 0
         topics:
           subscribe:
             adm: a/#
@@ -193,10 +194,12 @@ projects:
           subscribe:
             all: a/admin/cmd/all
             cmd: a/admin/cmd/CLIENTID
-            msg: PROJECTID/INSTANCE/msg
-            act: PROJECTID/INSTANCE/act
-            alm: PROJECTID/INSTANCE/alm
+            get: PROJECTID/INSTANCE/get/drupal
+            msg: PROJECTID/INSTANCE/msg/#
+            act: PROJECTID/INSTANCE/act/#
+            alm: PROJECTID/INSTANCE/alm/#
           publish:
+            adm: a/admin/cmd/administrator
             rsp: a/admin/rsp/CLIENTID
-            cms: PROJECTID/INSTANCE/cms/DCLIENTID
             wll: a/admin/wll/CLIENTID
+            rpy: PROJECTID/INSTANCE/rpy/DCLIENTID

@@ -1,0 +1,29 @@
+Request     Command
+Reply       Response
+
+cmd 
+rsp
+   Use these for both a/admin and PROJECTID/INSTANCE/???
+
+request
+   requestReset
+   requestStatus
+   requestConfig
+   setDebugLevel
+   setEnabled
+
+   requestNode
+   requestInstance
+
+save
+   activities
+   messages
+   alarms
+   commands
+   responses
+   
+
+getNode
+   
+   NID
+getInstances

@@ -21,15 +21,6 @@ if (process.argv[2]) {
 }
 
 global.aaa = {
-  status: {
-    mqttConnected: 0,
-    debugLevel: 0,
-    enabled: 1,
-    sampleInterval: 10000,
-  }
-}
-
-global.aab = {
   clientId: clientId,
   startTime: Date.now(),
   started: false,
@@ -40,6 +31,12 @@ global.aab = {
     publish: {
       adm: 'a/admin/cmd/administrator'
     }
+  },
+  status: {
+    mqttConnected: 0,
+    debugLevel: 0,
+    enabled: 1,
+    sampleInterval: 10000,
   }
 }
 
@@ -63,13 +60,13 @@ const getConfig = () => {
 
   msg(2, f, DEBUG, 'enter ')
   const payloadStr = `{\"clientId\": \"${clientId}\", \"cmd\": \"requestConfig\"}`
-  mqttNode.publish(global.aab.topics.publish.adm, payloadStr)
-  mqttNode.registerTopicCB(global.aab.topics.subscribe.rsp, loadConfigCB)
+  mqttNode.publish(global.aaa.topics.publish.adm, payloadStr)
+  mqttNode.registerTopicCB(global.aaa.topics.subscribe.rsp, loadConfigCB)
   msg(2, f,DEBUG,'exit')
 }
 
 const getStatus = () => {
-  var timeDiff = parseInt((Date.now() - global.aab.startTime) / 1000)
+  var timeDiff = parseInt((Date.now() - global.aaa.startTime) / 1000)
   var seconds = Math.round(timeDiff % 60)
   timeDiff = Math.floor(timeDiff / 60)
   var minutes = Math.round(timeDiff % 60)
@@ -139,8 +136,13 @@ const loadConfigCB = (_topic, _payload) => {
   msg(2, f, DEBUG, 'enter ', _topic)
 
   var config = JSON.parse(_payload.toString())
-  var rsp = config.rsp
-  if (rsp !== 'requestConfig') return;
+  if (config.rsp !== 'requestConfig') return;
+
+  mqttNode.unsubscribe(global.aaa.topics.subscribe)
+  config.startTime = global.aaa.startTime
+  config.status = global.aaa.status
+  config.started = true
+
   global.aaa = config;
   mqttNode.subscribe(config.topics.subscribe)
   mqttNode.registerTopicCB(config.topics.subscribe.cmd, cmdCB)

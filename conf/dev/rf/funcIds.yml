@@ -22,6 +22,14 @@ msg:
   name: Messages
   num: 8
   enabled: true
+get:
+  name: Get
+  num: 5
+  enabled: true
+snd:
+  name: Send
+  num: 4
+  enabled: true
 cmd:
   name: Command
   num: 5

@@ -103,13 +103,15 @@ $stat-fg-color: #ccff33;
   // MQTT Message function
   .Activity, .act    { background-color: #421; }
   .Alarm,    .alm    { background-color: #c32; }
-  .Input,    .inp    { background-color: #339; }
-  .Output,   .out    { background-color: #262; }
+  .Input,    .inp    { background-color: #239; }
+  .Output,   .out    { background-color: #45a; }
   .Human,    .hum    { background-color: #953; }
   .Command,  .cmd    { background-color: #305; }
   .Response, .rsp    { background-color: #537; }
+  .Get,      .get    { background-color: #141; }
+  .Send,     .snd    { background-color: #383; }
   .Code,     .cod    { background-color: #222; }
-  .Message,  .msg    { background-color: #056; }
+  .Message,  .msg    { background-color: #078; }
 
   // Code sub categories
   .Debug             { background-color: #72c; }
