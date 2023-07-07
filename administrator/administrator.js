@@ -8,6 +8,7 @@ const Topics  = require('./utils/topics');
 const {msg} = require("./utils/msg");
 const influx = require("./utils/influx");
 const {currentDate} = require("./utils/tools");
+const os = require('os')
 
 const seedrandom  = require('seedrandom')
 const clientId = "administrator"
@@ -93,6 +94,7 @@ const getStatus = () => {
     clientId: clientId,
     mqttClientId: mqttClientId,
     mqttConnected: global.aaa.status.mqttConnected,
+    hostname: os.hostname(),
     debugLevel: global.aaa.status.debugLevel,
     uptime: uptime,
   }

@@ -6,6 +6,7 @@ const { readInputs } = require('./readInputs')
 const mqttNode  = require('./utils/mqttNode')
 const { msg, setDebugLevel } = require('./utils/msg')
 const groov_api = require('./groov_api')
+const os = require('os')
 let started = false
 const sampling = false
 
@@ -85,8 +86,8 @@ const getStatus = () => {
     rsp: "requestStatus",
     clientId: clientId,
     mqttClientId: mqttClientId,
-    hostname: os.hostname(),
     mqttConnected: global.aaa.status.mqttConnected,
+    hostname: os.hostname(),
     enabled: global.aaa.status.enabled,
     debugLevel: global.aaa.status.debugLevel,
     sampleInterval: global.aaa.status.sampleInterval,
@@ -99,7 +100,7 @@ const cmdCB = (_topic, _payload) => {
   const f = "groov.js::cmdCB"
   try {
     var out;
-    payload = JSON.parse(_payload)
+    var payload = JSON.parse(_payload)
     if (payload.cmd === "setEnabled") {
       global.aaa.status.enabled = payload.enabled
       out = {
