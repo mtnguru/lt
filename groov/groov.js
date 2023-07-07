@@ -85,6 +85,7 @@ const getStatus = () => {
     rsp: "requestStatus",
     clientId: clientId,
     mqttClientId: mqttClientId,
+    hostname: os.hostname(),
     mqttConnected: global.aaa.status.mqttConnected,
     enabled: global.aaa.status.enabled,
     debugLevel: global.aaa.status.debugLevel,
