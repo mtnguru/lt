@@ -2,17 +2,15 @@
 Activities - entity type in Drupal
    Start Date
    End Date (optional)
-   Elapsed Time - video
-   Event NID or ID
-   ProjectID - can be found from Event
+   Elapsed Time - place in the video
    UserID - email address?
-   Description - 255 chars?
-   Content - infinite characters
-     
-   Activity type
+   ProjectID - can be found from Event
+   Instance
+   Message - Infinite chars?
+   Activity type & Activity ID
       hmi: enter_screen, leave_screen
       vid: play, pause, elapsed, rewind
-           volume_up, volumn_down
+           volume_up, volume_down
            full_screen, normal_screen
            cc_on, cc_off
       hum: Change setpoint
@@ -20,15 +18,13 @@ Activities - entity type in Drupal
       alm: on, off  - this might be better under messages
 
 Messages
-   Date
-   User ID
-   Project ID
-   Event ID
-   Msg - 255 chars?
+   Start Date - start typing
+   End Date - press Submit or ENTER
+   UserID
+   ProjectID
+   Instance
+   Message - Infinite chars?
    Type
       msg: chat, notes, polls, questionaire, notifications
       cod: warning, debug, error
-          
-          
-
    

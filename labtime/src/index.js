@@ -165,6 +165,15 @@ const connectCb = () => {
 //mqttUnsubscribe(global.aaa.topics)
 }
 
+fetch("https://api.ipdata.co")
+  .then(response => {
+    return response.json();
+   }, "jsonp")
+  .then(res => {
+    console.log(res.ip)
+  })
+  .catch(err => console.log(err))
+
 mqttConnect(connectCb, mqttProcessCB);
 console.log(f,'requestConfig')
 getConfig();

@@ -9,6 +9,7 @@
 #include <math.h>
 //#include <MemoryFree.h>
 
+const char *version = "2.0";
 const char *programId = "arduino.js";
 int debugLevel = 0;
 unsigned long startTime = 0;
@@ -371,8 +372,8 @@ void getStatus() {
   snprintf(uptime,20,"%d %d:%d:%d", days, hours, minutes, seconds);
 
   snprintf(status,statusSize,
-    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": %d, \"enabled\":%d, \"debugLevel\":%d, \"uptime\":\"%s\", \"sampleInterval\":\"%d\"}",
-    clientId, mqttClientId.c_str(), mqttConnected, enabled, debugLevel, uptime, sampleInterval);
+    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": %d, \"enabled\":%d, \"debugLevel\":%d, \"uptime\":\"%s\", \"sampleInterval\":\"%d\", \"version\":\"%s\"}",
+    clientId, mqttClientId.c_str(), mqttConnected, enabled, debugLevel, uptime, sampleInterval, (char *)version);
 
   logit(2,MD, f, status, NULL);
 //char statusLen[10];

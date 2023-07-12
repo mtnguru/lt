@@ -1,4 +1,13 @@
+Create a realistic :q`
 
+Group     Gm  GeigerMeister
+Component Ch  Flame/Chamber
+Device    N2  Node 2-13
+Position  1-6 Level
+Units     CPM
+
+Create the activity entity - you have what you need.:
+activity entity - watch the videos.
 
 
 

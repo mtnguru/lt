@@ -9,10 +9,8 @@ function SelectPretty (props) {
         <option value="pretty">Pretty</option>
         <option value="raw">Raw</option>
         <option value="json">JSON/InfluxDB</option>
-        <option value="topic">Topic</option>
       </select>
     </div>
   )
 }
 export default SelectPretty;
-

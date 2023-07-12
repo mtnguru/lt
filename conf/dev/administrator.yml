@@ -1,7 +1,7 @@
 clientId: administrator
 name: Administrator
 clientType: administrator
-userId: Gandalf
+userId: Frodo
 mqtt:  # Each client must have it's own mqtt config
   mqttClientId: "loadatruntime"
 # ip:   http://172.16.45.7   # merlin
@@ -116,7 +116,7 @@ projects:
       labtime:
         name: LabTime
         clientType: hmi
-        userId: bilbo
+        userId: Bilbo
         format: yml
         clients:
           all:
@@ -148,6 +148,7 @@ projects:
             act: PROJECTID/INSTANCE/act
           publish:
             rsp: a/admin/rsp/CLIENTID
+            adm: a/admin/cmd/administrator
             msg: PROJECTID/INSTANCE/msg/CLIENTID
             cod: PROJECTID/INSTANCE/cod/CLIENTID
             hum: PROJECTID/INSTANCE/hum/CLIENTID
@@ -158,7 +159,7 @@ projects:
       controller:
         name: Controller
         clientType: controller
-        userId: Sauron
+        userId: Bilbo
         format: yml
         statusDefault:
           debugLevel: 0
@@ -185,7 +186,7 @@ projects:
       drupal:
         name: Drupal
         clientType: cms
-        userId: Galadriel
+        userId: Arwin
         format: yml
         statusDefault:
           debugLevel: 0

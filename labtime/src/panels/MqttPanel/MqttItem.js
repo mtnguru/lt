@@ -20,12 +20,14 @@ const makeJsonPretty = (payloadStr) => {
 const MqttItem = (props) => {
   const f = 'MqttItem';
   const [payloadOut, setPayloadOut] = useState('')
+  const [short, setShort] = useState('')
   const [type, setType] = useState('')
 
   // Format the payload - Raw, JSON, Pretty
   useEffect(() => {
     var payloadStr = props.item.payload         // Display the Raw payload
 
+    var short = ''
     if (props.pretty === 'raw') {
        // Already set
     } else if (props.pretty === 'topic') {
@@ -48,51 +50,51 @@ const MqttItem = (props) => {
           }
           if (props.pretty === "pretty") {
             if (payload.content) {
-              payloadStr = `???: ${payload["function"]} - ${payload.content}`
+              short = `???: ${payload["function"]} - ${payload.content}`
             } else if (props.item.func === 'out') {
-              payloadStr = `out: ${payload.value} - ${payload.metric}`
+              short = `out: ${payload.value} - ${payload.metric}`
             } else if (props.item.func === 'inp') {
-              payloadStr = `inp: ${payload.value} - ${payload.metric}`
+              short = `${payload.value} - ${payload.metric}`
             } else if (props.item.func === 'cmd') {
               switch (payload.cmd) {
                 case 'setEnabled':
-                  payloadStr = `cmd: ${payload.cmd} - ${payload.enabled}`
+                  short = `${payload.cmd} - ${payload.enabled}`
                   break
                 case 'setDebugLevel':
-                  payloadStr = `cmd: ${payload.cmd} - ${payload.debugLevel}`
+                  short = `${payload.cmd} - ${payload.debugLevel}`
                   break
                 case 'setSampleInterval':
-                  payloadStr = `cmd: ${payload.cmd} - ${payload.sampleInterval}`
+                  short = `${payload.cmd} - ${payload.sampleInterval}`
                   break
                 case 'requestConfig':
-                  payloadStr = `cmd: ${payload.cmd} - ${payload.clientId}`
+                  short = `${payload.cmd} - ${payload.clientId}`
                   break
                 default:
-                  payloadStr = `cmd: ${payload.cmd}`
+                  short = `${payload.cmd}`
                   break
               }
             } else if (props.item.func === 'rsp') {
               switch (payload.rsp) {
                 case 'setEnabled':
-                  payloadStr = `rsp: ${payload.rsp} - ${payload.enabled}`
+                  short = `${payload.rsp} - ${payload.enabled}`
                   break
                 case 'setDebugLevel':
-                  payloadStr = `rsp: ${payload.rsp} - ${payload.debugLevel}`
+                  short = `${payload.rsp} - ${payload.debugLevel}`
                   break
                 case 'setSampleInterval':
-                  payloadStr = `rsp: ${payload.rsp} - ${payload.sampleInterval}`
+                  short = `${payload.rsp} - ${payload.sampleInterval}`
                   break
                 default:
                   payloadStr = makeJsonPretty(payloadStr)
                   break
               }
             } else if (props.item.func === 'cod') {
-              payloadStr = `cod: ${payload["function"]}\n${payload.msg}` ;
+              short = `${payload["function"]}\n${payload.msg}` ;
               setType(payload.type)
             } else if (props.item.func === 'msg') {
               payloadStr = (payload.author)
-                ? `msg: ${payload.author}\n${payload.msg}`
-                : `msg: ${payload["function"]}\n${payload.msg}` ;
+                ? `${payload.author}\n${payload.msg}`
+                : `${payload["function"]}\n${payload.msg}` ;
               if (payload.author) {
 
               } else {
@@ -103,7 +105,7 @@ const MqttItem = (props) => {
               payloadStr = makeJsonPretty(payloadStr)
             }
           }
-        } else if (props.pretty === "pretty") { // Non JSON pretty
+        } else if (props.pretty === "pretty") { // Non JSON pretty - inputs, outputs and human
           if (props.item.func === 'inp' ||
               props.item.func === 'hum' ||
               props.item.func === 'out') {
@@ -111,24 +113,31 @@ const MqttItem = (props) => {
             var val = `${values["value"]}`
             var len = val.length;
             for (var i = 0; i < 7-len; i++) val += ' '
-            payloadStr = `${props.item.func}: ${val} ${tags["MetricId"]}`
+            short = `${val} ${tags["MetricId"]}`
           }
         }
       }
     }
-    setPayloadOut(payloadStr)
+    if (short) {
+      setShort(short);
+      setPayloadOut('')
+    } else {
+      setShort('')
+      setPayloadOut(payloadStr)
+    }
   }, [props.item.action, props.item.func, props.item.payload, props.pretty])
 
   return (
     <div className='mqtt-item'>
       <Card funcId={props.item.func} className={props.pretty}>
         <div className='right'>
-          <span className='date'>{props.item.date}</span>
           <span className='nitems'>{props.item.nitems.toString()}</span>
+          <span className='date'>{props.item.date}</span>
+          <span className='topic'>{props.item.topic}</span>
         </div>
         <div className={`left mqtt-clientId-bg`}>
           <span className={`clientId ${props.item.clientId}`}>{props.item.clientId}</span>
-          <span className='topic'>{props.item.topic}</span>
+          <span className='short'><pre>{short}</pre></span>
         </div>
         <pre className='payload'>
           {type &&  <span className={type}>{type}</span>}

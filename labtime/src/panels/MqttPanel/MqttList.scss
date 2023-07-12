@@ -3,7 +3,10 @@
 
 .mqtt-display {
   display: inline;
-  width: calc(100% - 138px);
+  width: 100%;
+  @media(min-width: $bp-md) {
+    width: calc(100% - 138px);
+  }
   .mqtt-list {
     height: calc(100vh - 146px);
 //  max-height: 800px;
