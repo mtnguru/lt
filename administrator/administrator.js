@@ -101,6 +101,14 @@ const getStatus = () => {
 }
 
 const resetServer = () => {
+  var out = {
+    rsp: "requestReset",
+    clientId: global.aaa.clientId,
+    msg: `Resetting ${global.aaa.clientId}`
+  }
+  mqttNode.unsubscribe(global.aaa.topics.subscribe)
+  mqttNode.subscribe(global.aaa.topics.subscribe)
+  return out;
 }
 
 const connectCB = () => {
@@ -167,7 +175,9 @@ const processCB = (_topic, _payload) => {
           }
           // Request to reset administrator client
           if (input.cmd === 'requestReset') {
-            resetServer();
+            outTopic = global.aaa.topics.publish.rsp
+            outTopic = outTopic.replace(/DCLIENTID/, global.aaa.clientId)
+            out = resetServer();
           }
           // Request for status
           if (input.cmd === 'requestStatus') {

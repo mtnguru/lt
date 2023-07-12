@@ -124,6 +124,14 @@ const cmdCB = (_topic, _payload) => {
       }
     } else if (payload.cmd === "requestStatus") {
       out = getStatus()
+    } else if (payload.cmd === "requestReset") {
+      var out = {
+        rsp: "requestReset",
+        clientId: global.aaa.clientId,
+        msg: `Resetting ${global.aaa.clientId}`,
+      }
+      mqttNode.unsubscribe(global.aaa.topics.subscribe)
+      mqttNode.subscribe(global.aaa.topics.subscribe)
     }
     if (out) {
       mqttNode.publish(global.aaa.topics.publish.rsp, JSON.stringify(out))
