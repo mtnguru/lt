@@ -10,7 +10,6 @@ function MainNavigation() {
         <ul>
           <li key="expt"><Link to='/expt'>Experiment</Link></li>
           <li key="mqtt"><Link to='/mqtt'>MQTT</Link></li>
-          <li key="play"><Link to='/admin'>Administration</Link></li>
         </ul>
       </nav>
     </header>

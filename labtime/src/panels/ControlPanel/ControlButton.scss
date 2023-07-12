@@ -5,7 +5,9 @@
   display: inline-block;
   float:right;
   &.reset {
-    margin-left: 20px;
+    @media(min-width: $bp-md) {
+      margin-left: 20px;
+    }
   }
   &.onboard {
     margin-left: 10px;
@@ -15,8 +17,15 @@
     background-color: $button-bg-color;
     padding: 5px 12px;
     border-radius: 3px;
+    font-size: 70%;
     &.on {
       background-color: darken($button-bg-color, 20%);
+    }
+    @media(min-width: $bp-sm) {
+      font-size: 85%;
+    }
+    @media(min-width: $bp-md) {
+      font-size: 100%;
     }
   }
   &.red button {

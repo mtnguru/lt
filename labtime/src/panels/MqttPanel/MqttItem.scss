@@ -1,4 +1,5 @@
 @import "../../styles/colors";
+@import "../../styles/base";
 
 .mqtt-item {
   font-size: 80%;
@@ -8,68 +9,97 @@
   }
   .topic {
     color: $topic-fg-color;
+    margin-top: 3px;
+    margin-right: 10px;
+    font-size: 80%;
+    display: inline-block;
+    display: none;
+    @media(min-width: $bp-sm) {
+      display: inline-block;
+      font-size: 85%;
+      width: 162px;
+    }
+    @media(min-width: $bp-md) {
+      margin-top: 1px;
+      width: 210px;
+      font-size: 100%;
+    }
   }
   .type {
     font-size: 90%;
     margin-right: 1rem;
   }
   .date {
+    float: right;
     display: inline-block;
     color: $date-fg-color;
-//  width: 90px;
-    margin-right: 1rem;
+    width: 66px;
+    font-size: 80%;
+    margin: 2px 0px 0px 10px;
+    @media(min-width: $bp-md) {
+      width: 90px;
+      margin-top: 0;
+      font-size: 100%;
+    }
   }
   .nitems {
-    display: inline-block;
-    width: 30px;
+    display: none;
+    float: right;
+    @media(min-width: $bp-lg) {
+      display: inline-block;
+      width: 30px;
+    }
     font-weight: bold;
     text-align: right;
-  }
-  .payload {
-    margin-top: 5px;
   }
   pre {
     margin: 4px 0 0;
   }
-  .clientId {
-    display: inline-block;
-    width: 86px;
-    margin: 0 8px 0 -6px;
-    padding: 1px 0 2px;
-    text-align: center;
-    border-radius: 5px;
-  }
-  .card {
-    &.pretty {
-      .nitems {
-        display: none;
+  .card.pretty {
+    .short {
+      display: block;
+      @media(min-width: $bp-md) {
+        display: inline-block;
       }
-      .date {
-        margin-right: 0;
+      letter-spacing: -.02rem;
+    }
+    .payload {
+      margin-top: 0;
+//    width: calc(100% - 240px);
+      span {
+        display: inline-block;
+        padding: 1px 8px 2px;
+        border-radius: 5px;
+        margin-right: 5px;
       }
       pre {
-        margin-top: 1px;
-        float: left;
-        width: calc(100% - 240px);
-        span {
-          display: inline-block;
-          padding: 1px 8px 2px;
-          border-radius: 5px;
-          margin-right: 5px;
+        @media(min-width: $bp-md) {
+          margin: 0px;
         }
       }
-      .left {
-        .topic {
-          display: none;
-        }
-        float: left;
+    }
+    .left {
+//    float: left;
+    }
+    &.config {
+      .left,
+      pre {
+        float: none;
       }
-      &.config {
-        .left,
-        pre {
-          float: none;
-        }
-      }
+    }
+  }
+  .clientId {
+    display: block;
+    width: 75px;
+    font-size: 90%;
+    margin: 0px 8px 0 -6px;
+    padding: 3px 0 2px;
+    text-align: center;
+    border-radius: 5px;
+      font-size: 100%;
+      @media(min-width: $bp-md) {
+      display:inline-block;
+      width: 86px;
     }
   }
 }
