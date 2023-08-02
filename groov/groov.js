@@ -35,6 +35,8 @@ global.aaa = {
   },
   status: {
     mqttConnected: 0,
+    mqttSubscribe: 0,
+    mqttUnsubscribe: 0,
     debugLevel: 0,
     enabled: 1,
     sampleInterval: 10000,
@@ -87,6 +89,8 @@ const getStatus = () => {
     clientId: clientId,
     mqttClientId: mqttClientId,
     mqttConnected: global.aaa.status.mqttConnected,
+    mqttSubscribe: global.aaa.status.mqttSubscribe,
+    mqttUnsubscribe: global.aaa.status.mqttUnsubscribe,
     hostname: os.hostname(),
     enabled: global.aaa.status.enabled,
     debugLevel: global.aaa.status.debugLevel,
@@ -151,6 +155,8 @@ const loadConfigCB = (_topic, _payload) => {
   mqttNode.unsubscribe(global.aaa.topics.subscribe)
   config.startTime = global.aaa.startTime
   config.status = global.aaa.status
+  config.mqttSubscribe = 0;
+  config.mqttUnsubscribe = 0;
   config.started = true
 
   global.aaa = config;

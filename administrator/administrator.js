@@ -24,6 +24,8 @@ global.aaa = {
   status: {
     debugLevel: 0,
     mqttConnected: 0,
+    mqttSubscribed: 0,
+    mqttUnsubscribed: 0,
   }
 }
 
@@ -94,6 +96,8 @@ const getStatus = () => {
     clientId: clientId,
     mqttClientId: mqttClientId,
     mqttConnected: global.aaa.status.mqttConnected,
+    mqttSubscribe: global.aaa.status.mqttSubscribe,
+    mqttUnsubscribe: global.aaa.status.mqttUnsubscribe,
     hostname: os.hostname(),
     debugLevel: global.aaa.status.debugLevel,
     uptime: uptime,

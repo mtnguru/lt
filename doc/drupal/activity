@@ -1,3 +1,115 @@
+Applications
+   Experiments, laboratory, manufacturing
+   Manufacturing
+   Meetings
+   Games - Finance Game
+   Training
+
+Projects 
+   E: Experiments
+   M: Meetings
+   G: Game Sessions - finance game
+ 
+
+Content Types
+   Organization
+      School, company, experimenter
+   Realm
+      A combination of the virtual space, real space, and equipment set necessary to instantiate a project.
+
+Entities - by implementing entities I can use my own bundles.
+
+   Project
+     Bundles:
+       E: Experiment
+       M: Meeting
+       G: Game - Finance
+       P: Project Management
+     Project ID
+     Parent project Reference
+     Organization Reference
+     Abstract
+     Method
+     Conclusion
+     Discussion
+     Owner
+     Team
+
+   Instances
+     Bundles  
+       E: Run
+       M: Meeting
+       G: A Team playing a game
+       P: Milestone - project management?
+     Realm reference
+     Start/Stop date
+     Project Reference
+     Abstract
+     Method
+     Conclusion
+     Owner
+     Team members
+      
+   Activity
+      Bundles  
+         Application
+         Video
+         HMI
+      Application start/stop
+      Video action
+      Game move
+      Human Machine Interface entry
+      Start|End video/experiment/meeting
+   Messages
+      Chat
+      Notes
+      Notification
+      Alarm
+      Debug
+
+Activities
+   Start/End a instance
+   Start/End an instance
+   Change status on an instances 
+
+I still like the idea of Realm
+   A realm the virtual and real space and equipment necessary to instantiate a project
+   There can be one instance per realm running at a time
+   A project can have multiple instances running simultaneously if they are in differenct realms
+
+   
+
+Realm
+   Set of equipment - chamber, arduinos, plc's, location
+   Realms have to be kept isolated - through topics
+
+Projects
+   Fields
+      Project ID
+      Project Name
+      Start Date / End Date
+      Status - Proposed, Queued, In Process, Hold, Completed, Abandoned
+      Parent Project Reference - 1
+      Organization Reference - 1
+      Team member References - N
+
+      Abstract
+      Method
+      Conclusion
+      Discussion - Hierarchical Comments
+
+   References
+      Media - N
+      Activity - N
+      External webpage Links - N
+
+Instance
+   Fields
+      Realm Reference - I kinda like this here - before I had it in the project - allows project to be executed in multiple realms
+      Project Reference
+      Instance ID - 
+      Start Date / End Date
+      Status - Proposed, Queued, In Process, Hold, Completed, Abandoned
 
 Activities - entity type in Drupal
    Start Date
