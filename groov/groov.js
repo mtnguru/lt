@@ -2,10 +2,9 @@
 //
 require('dotenv').config();
 
-const { readInputs } = require('./readInputs')
 const mqttNode  = require('./utils/mqttNode')
+const groov_api = require('./groov_api');
 const { msg, setDebugLevel } = require('./utils/msg')
-const groov_api = require('./groov_api')
 const os = require('os')
 let started = false
 const sampling = false
@@ -15,6 +14,7 @@ const seedrandom  = require('seedrandom')
 const generator = seedrandom(Date.now())
 const mqttClientId = `${clientId}_${generator().toString(16).slice(3)}`
 
+let readInterval;
 const f = "groov:main"
 
 if (process.argv[2]) {
@@ -35,6 +35,8 @@ global.aaa = {
   },
   status: {
     mqttConnected: 0,
+    mqttSubscribe: 0,
+    mqttUnsubscribe: 0,
     debugLevel: 0,
     enabled: 1,
     sampleInterval: 10000,
@@ -87,6 +89,8 @@ const getStatus = () => {
     clientId: clientId,
     mqttClientId: mqttClientId,
     mqttConnected: global.aaa.status.mqttConnected,
+    mqttSubscribe: global.aaa.status.mqttSubscribe,
+    mqttUnsubscribe: global.aaa.status.mqttUnsubscribe,
     hostname: os.hostname(),
     enabled: global.aaa.status.enabled,
     debugLevel: global.aaa.status.debugLevel,
@@ -196,6 +200,71 @@ const outputCB = (metric, _topic, _payload, tags, values) => {
 
   groov_api.writeChannel(metric.metricId, metric.output, `\{"value": ${value}\}`)
 }
+
+const stopInputs = () => {
+  console.log (f,'start')
+  clearInterval(readInterval)
+  console.log (f,'stop')
+}
+
+const readInput = async (name,input,ctime) => {
+  const f = "readInput:readInput - "
+  console.log(f, 'enter ', name)
+
+  const channelReadCB = (data) => {
+    const f = 'readInput::channelReadCB'
+    console.log(f,'enter')
+    const topic = global.aaa.topics.publish.inp;
+    let payload = `${input.tags} value=${data.value.toFixed(2)}`
+    mqttNode.publish(topic, payload)
+  }
+
+  await groov_api.readChannel(name, input, channelReadCB)
+}
+
+/*
+  if (input.lastValue) {
+    if (input.lastValue == value)  {
+      input.nochange++;
+      console.log(' ## ', name, '--------------- ', input.nochange, ' no change', value)
+    } else {
+      input.nochange = 0;
+      console.log(' ## ', name, '-- change ', value)
+      // Format the influxdb line protocol
+      let line = `${input.tags} value=${value} ${ctime}`;
+      console.log('      ', input.topic, line);
+      mqttNode.publish(input.topic, line)
+    }
+  } else {
+    input.nochange = 0;
+  }
+  input.lastValue = value;
+  console.log (f,'exit')
+ */
+
+const readInputs = async () => {
+  const f = "readInputs:readInputs - "
+  readInterval = setInterval(async () => {
+    if (!global.aaa.status.enabled) return
+    console.log (f, 'enter')
+//  const start = performance.now();
+    const ntime = new Date().getTime() * 1000000;
+
+    const funcs = [];
+    for (let name in global.aaa.inputs) {
+      let input = global.aaa.inputs[name].input;
+      funcs.push(readInput(name,input,ntime));
+    }
+
+    await Promise.all(funcs)
+
+//  const end = performance.now();
+//  console.log (f, 'end ', end - start)
+  }, global.aaa.status.sampleInterval)
+}
+
+module.exports = { readInputs }
+
 
 const connectCB = () => {
   getConfig();
