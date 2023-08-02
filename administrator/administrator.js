@@ -24,6 +24,8 @@ global.aaa = {
   status: {
     debugLevel: 0,
     mqttConnected: 0,
+    mqttSubscribed: 0,
+    mqttUnsubscribed: 0,
   }
 }
 

@@ -164,6 +164,8 @@ projects:
         statusDefault:
           debugLevel: 0
           mqttConnected: 0
+          mqttSubscribe: 0
+          mqttUnsubscribe: 0
         topics:
           subscribe:
             adm: a/#
@@ -191,6 +193,8 @@ projects:
         statusDefault:
           debugLevel: 0
           mqttConnected: 0
+          mqttSubscribe: 0
+          mqttUnsubscribe: 0
         topics:
           subscribe:
             all: a/admin/cmd/all

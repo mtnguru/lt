@@ -29,12 +29,11 @@ const connect = (connectCB, messageCB) => {
         msg(1,f,NOTIFY,'Connected to MQTT broker ' + mc.url)
         connectCB();
         global.aaa.status.mqttConnected++;
-        mqttClient.unsubscribe(global.aaa.topics.subscribe);
-        mqttClient.subscribe(global.aaa.topics.subscribe, () => {
-          mqttClient.on('message', (inTopic, payloadRaw) => {
-            msg(3,f,NOTIFY,'MQTT message received ', inTopic)
-            messageCB(inTopic, payloadRaw)
-          })
+        unsubscribe(global.aaa.topics.subscribe);
+        subscribe(global.aaa.topics.subscribe);
+        mqttClient.on('message', (inTopic, payloadRaw) => {
+          msg(3,f,NOTIFY,'MQTT message received ', inTopic)
+          messageCB(inTopic, payloadRaw)
         })
         resolve('connected')
       })

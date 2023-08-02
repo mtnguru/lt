@@ -1,10 +1,24 @@
+What should I do today - work on drupal client
+Start with entities again?
+Get it working first with the content types
+
+
+Fix nodejs clients so they don't get multiple ???? subscriptions?
+
+
+
+Entities
+
+
+
+
 Create a realistic :q`
 
-Group     Gm  GeigerMeister
-Component Ch  Flame/Chamber
+Group     E1  Electroyzer 1
+Component Gm  GeigerMeister
 Device    N2  Node 2-13
 Position  1-6 Level
-Units     CPM
+Units     CPS Counts per second
 
 Create the activity entity - you have what you need.:
 activity entity - watch the videos.

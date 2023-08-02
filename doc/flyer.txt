@@ -1,0 +1,63 @@
+
+Labtime
+
+The Open Source Data Acquistion, Equipment Control and
+Communication Solution for Your Laboratory Needs
+
+Links
+   labtime.org - Drupal Content Management site
+   app.labtime.org - Labtime Demo
+   labtime.org:3000 - Historian
+   
+For more information contact James Sorensen
+   james@ecosleuth.com
+   
+   
+
+Features
+
+Primary components
+
+Labtime data acquisition and equipment control - SCADA
+
+InfluxDB & Grafana Historian
+
+Drupal CMS
+
+My objectives goals
+
+===================================================
+   Labtime
+  Quote
+
+   Links
+---------------------------------------------------
+
+Features                    Based on Open Source solutions
+
+
+My Objective at SciFoo
+
+LabTime started as a platform for me to learn about IIOT, MQTT, the Historian, and the REACT JavaScript framework.  It has involved into a working solution to acquire, manage and display the information used to run a laboratory or manufacturing operation. 
+
+LabTime uses state of the art technology to bring together all of your data into one place.  All information is available anywhere in the world through a web browser.
+
+It currently works well to acquire data from sensors and display that data in a Grafana dashboard.  However to take it the next step and start controlling equipment it needs a lot of development.  The framework is in place and solid, but there is still much to do.
+
+About James Sorensen
+
+I have over 30 years experience creating software applications to acquire, save, analyze and communicate data in the semiconductor industry and in scientific laboratories.  I started developing LabTime as a platform to learn about the IIoT, MQTT, Historians and the REACT JavaScript framework.  LabTime has since evolved into a comprehensive solution to manage the data associated with running experiments or operating a production line.
+ 
+My objective for this weekend is to accomplish any (or all :-) of the following
+
+  - Find a laboratory or company that is looking into implementing MQTT technology and work for them as a consultant to either install LabTime or to develop a similar solution of their own.
+
+  - Find someone experienced with Open Source software and discuss the feasibility of making LabTime into an Open Source solution.
+
+  - Find work as a contractor designing and developing a Drupal web site for managing content or media in a laboratory or company.
+
+Please contact me and let's meet this weekend.  I can give you a demo and explain the benefits of this system.
+
+
+
+

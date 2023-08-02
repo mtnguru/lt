@@ -28,12 +28,11 @@ const connect = (connectCB, messageCB) => {
       mqttClient.on('connect', (event) => {
         msg(1,f,NOTIFY,'Connected to MQTT broker ' + mc.url)
         connectCB();
-        mqttClient.unsubscribe(Object.values(global.aaa.topics.subscribe));
-        mqttClient.subscribe(Object.values(global.aaa.topics.subscribe), () => {
-          mqttClient.on('message', (inTopic, payloadRaw) => {
-            msg(3,f,NOTIFY,'MQTT message received ', inTopic)
-            messageCB(inTopic, payloadRaw)
-          })
+        unsubscribe(global.aaa.topics.subscribe);
+        subscribe(global.aaa.topics.subscribe);
+        mqttClient.on('message', (inTopic, payloadRaw) => {
+          msg(3,f,NOTIFY,'MQTT message received ', inTopic)
+          messageCB(inTopic, payloadRaw)
         })
         resolve('connected')
       })
@@ -68,6 +67,7 @@ const subscribe = (topics) => {
   msg(2,f,DEBUG, "mqtt subscribe ", mqttClient.connected)
   for (let topic in topics) {
     mqttClient.subscribe(topics[topic])
+    global.aaa.status.mqttSubscribe++;
   }
   msg(3,f,DEBUG, 'mqtt subscribe exit')
 }
@@ -77,6 +77,7 @@ const unsubscribe = (topics) => {
   msg(2,f,DEBUG, "mqtt unsubscribe ", mqttClient.connected)
   for (let topic in topics) {
     mqttClient.unsubscribe(topics[topic])
+    global.aaa.status.mqttUnsubscribe++;
   }
   msg(3,f,DEBUG, 'mqtt unsubscribe exit')
 }

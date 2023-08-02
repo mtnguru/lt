@@ -155,6 +155,8 @@ const loadConfigCB = (_topic, _payload) => {
   mqttNode.unsubscribe(global.aaa.topics.subscribe)
   config.startTime = global.aaa.startTime
   config.status = global.aaa.status
+  config.mqttSubscribe = 0;
+  config.mqttUnsubscribe = 0;
   config.started = true
 
   global.aaa = config;
