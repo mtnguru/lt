@@ -1,3 +1,39 @@
+Architecture
+   What is MQTT?
+   System Diagram
+   Topics and Payloads
+   Metrics
+Clients   
+   MQTT Monitor
+   Administrator
+   Controller
+   LabTime UI
+   Edge Devices
+   Drupal CMS
+   Telegraf data loaders
+Drupal
+   Entities
+   OrganizationExperiments
+   
+Historian
+   Telegraf
+   InfluxDB
+   Grafana dashboards
+Glossary of Terms
+   
+
+
+Create a document - glossar
+
+
+
+So what next?  Let's do something cool.
+Save the activities in Drupal.
+
+
+
+
+
 What should I do today - work on drupal client
 Start with entities again?
 Get it working first with the content types

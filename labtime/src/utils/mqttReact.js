@@ -80,15 +80,17 @@ const mqttSubscribe = (topics) => {
   for (let name in topics) {
     console.log(f, "topic: ", topics[name])
     mqttClient.subscribe(topics[name])
+    global.aaa.status.mqttSubscribe++;
   }
 }
 
 const mqttUnsubscribe = (topics) => {
-  const f = "mqttReact::mqttSubscribe - "
+  const f = "mqttReact::mqttUnsubscribe - "
   console.log(f, "enter ")
   for (let name in topics) {
     console.log(f, "topic: ", topics[name])
     mqttClient.unsubscribe(topics[name]);
+    global.aaa.status.mqttUnsubscribe++;
   }
 }
 

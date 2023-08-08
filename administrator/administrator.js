@@ -190,7 +190,7 @@ const processCB = (_topic, _payload) => {
             out = getStatus();
           }
           if (input.cmd === 'requestConfig') {
-            readConfig();
+            loadConfig();
             var id = (input.ip) ? input.ip : input.clientId
             outTopic = global.aaa.topics.publish.rsp
             outTopic = outTopic.replace(/DCLIENTID/, id)
@@ -372,7 +372,7 @@ const initClients = (projectId, instance, project, funcIds) => {
   } // for each client
 }
 
-const readConfig = () => {
+const loadConfig = () => {
   console.log('Read in administrator configuration')
   let ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${stageId}/administrator.yml`)
 
@@ -413,7 +413,7 @@ const readConfig = () => {
   } // for each project
 }
 
-readConfig();
+loadConfig();
 
 console.log(f, 'Connect to mqtt server and initiate process callback')
 mqttNode.connect(connectCB, processCB);

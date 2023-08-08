@@ -21,6 +21,7 @@ const MqttItem = (props) => {
   const f = 'MqttItem';
   const [payloadOut, setPayloadOut] = useState('')
   const [short, setShort] = useState('')
+  const [author, setAuthor] = useState('')
   const [type, setType] = useState('')
 
   // Format the payload - Raw, JSON, Pretty
@@ -28,6 +29,7 @@ const MqttItem = (props) => {
     var payloadStr = props.item.payload         // Display the Raw payload
 
     var short = ''
+    var author = ''
     if (props.pretty === 'raw') {
        // Already set
     } else if (props.pretty === 'topic') {
@@ -49,6 +51,7 @@ const MqttItem = (props) => {
             mgError(0,f, 'ERROR parsing JSON payload: ' + err)
           }
           if (props.pretty === "pretty") {
+
             if (payload.content) {
               short = `???: ${payload["function"]} - ${payload.content}`
             } else if (props.item.func === 'out') {
@@ -92,20 +95,17 @@ const MqttItem = (props) => {
               short = `${payload["function"]}\n${payload.msg}` ;
               setType(payload.type)
             } else if (props.item.func === 'msg') {
-              payloadStr = (payload.author)
-                ? `${payload.author}\n${payload.msg}`
-                : `${payload["function"]}\n${payload.msg}` ;
               if (payload.author) {
-
-              } else {
-
+                setAuthor(payload.author)
               }
+              payloadStr = payload.msg
               setType(payload.type)
             } else {
               payloadStr = makeJsonPretty(payloadStr)
             }
           }
         } else if (props.pretty === "pretty") { // Non JSON pretty - inputs, outputs and human
+
           if (props.item.func === 'inp' ||
               props.item.func === 'hum' ||
               props.item.func === 'out') {
@@ -137,10 +137,11 @@ const MqttItem = (props) => {
         </div>
         <div className={`left mqtt-clientId-bg`}>
           <span className={`clientId ${props.item.clientId}`}>{props.item.clientId}</span>
-          <span className='short'><pre>{short}</pre></span>
+          {type   && <span className={`type ${type}`}>{type}</span>}
+          {author && <span className='author'>{author}</span>}
+          {short  && <span className='short'><pre>{short}</pre></span>}
         </div>
         <pre className='payload'>
-          {type &&  <span className={type}>{type}</span>}
           {payloadOut}
         </pre>
       </Card>

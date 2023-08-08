@@ -57,6 +57,9 @@ projects:
           sampleInterval: 10000
           enabled: 1
           debugLevel: 0
+          mqttConnected: 0
+          mqttSubscribe: 0
+          mqttUnsubscribe: 0
       riolc:
         name: RioLC
         ip: 172.16.45.4
@@ -72,6 +75,9 @@ projects:
           sampleInterval: 10000
           enabled: 1
           debugLevel: 0
+          mqttConnected: 0
+          mqttSubscribe: 0
+          mqttUnsubscribe: 0
       arduino2:
         name: Arduino2
         ip: 172.16.45.32
@@ -198,7 +204,8 @@ projects:
         topics:
           subscribe:
             all: a/admin/cmd/all
-            cmd: a/admin/cmd/CLIENTID
+            adm: a/admin/cmd/CLIENTID
+            dru: a/cms/cmd/#
             get: PROJECTID/INSTANCE/get/drupal
             msg: PROJECTID/INSTANCE/msg/#
             act: PROJECTID/INSTANCE/act/#
@@ -208,3 +215,4 @@ projects:
             rsp: a/admin/rsp/CLIENTID
             wll: a/admin/wll/CLIENTID
             rpy: PROJECTID/INSTANCE/rpy/DCLIENTID
+            dru: a/cms/rsp/DCLIENTID/DUSERID
