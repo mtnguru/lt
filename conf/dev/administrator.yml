@@ -60,10 +60,10 @@ projects:
           mqttConnected: 0
           mqttSubscribe: 0
           mqttUnsubscribe: 0
-      riolc:
-        name: RioLC
-        ip: 172.16.45.4
-        url: https://riolc
+      rio1:
+        name: Rio1
+        ip: 172.21.69.117
+        url: https://rio1
         model: rio
         clientType: edge
         topics: edge
