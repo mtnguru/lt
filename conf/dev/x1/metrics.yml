@@ -9,7 +9,7 @@ C1_BeakerBottom_K_C:
     channel: "0"
     channelType: analog
 Lab_Table_K_C:
-  label: Beaker Top
+  label: Table Top
   desc: Lab Table Top
   value: 0
   decimals: 2
@@ -26,5 +26,15 @@ C1_BeakerTop_K_C:
   input:
     clientId: rio1
     module: "0"
-    channel: "0"
+    channel: "2"
+    channelType: analog
+C1_Air_Pressure_PSI:
+  label: Beaker Top
+  desc: Chamber 1 Beaker Top
+  value: 0
+  decimals: 2
+  input:
+    clientId: rio1
+    module: "0"
+    channel: "4"
     channelType: analog
