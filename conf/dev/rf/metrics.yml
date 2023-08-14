@@ -38,39 +38,6 @@ Epiclc_Backpanel_LED_Blue_On:
     channelType: digital
     module: "1"
     channel: "9"
-LivingRoom_Fireplace_K_F:
-  label: Living room fireplace
-  desc: Living room fireplace
-  value: 0
-  decimals: 2
-  convert: c2f
-  input:
-    clientId: riolc
-    module: "0"
-    channel: "0"
-    channelType: analog
-MasterBedroom_Door_K_F:
-  label: Cabin master bedroom
-  desc: Cabin master bedroom - K thermocouple
-  value: 0
-  decimals: 2
-  convert: c2f
-  input:
-    clientId: riolc
-    module: "0"
-    channel: "1"
-    channelType: analog
-Outside_Front_K_F:
-  label: Cabin Front Outside
-  desc: Cabin Front Outside - K thermocouple
-  value: 0
-  decimals: 2
-  convert: c2f
-  input:
-    clientId: riolc
-    module: "0"
-    channel: "2"
-    channelType: analog
 Outside_Bunkhouse_K_F:
   label: Bunkhouse Outside
   desc: Bunkhouse outside - K thermocouple

@@ -13,7 +13,7 @@
     "timestamp-nano": "^1.0.0"
   },
   "scripts": {
-    "start": "nodemon groov.js riolc",
+    "start": "nodemon groov.js rio1",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
