@@ -33,13 +33,13 @@ global.aaa = {
 // MQTT configuration - this will be the same for all clients except the port
 global.aam = {
   mqttClientId: mqttClientId,
-  url: "http://labtime.org:1883",    // labtime linode computer
+  url: "http://historian:1883",    // labtime linode computer
 //url: "http://172.16.45.7:1883",    // merlin
 //url: "http://192.168.122.90:1883",
   username: "data",
-  password: "datawp",
+  password: "datath",
   protocol: 'MQTT',
-  protocolVersion: 4,
+//protocolVersion: 4,
   connectTimeout: 60000,
   reconnectPeriod: 120000,
   keepAlive: 5000,
