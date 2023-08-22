@@ -40,13 +40,13 @@ global.aaa = {
 // MQTT configuration - this will be the same for all clients except the port
 global.aam = {
   mqttClientId: mqttClientId,
-  url: "http://labtime.org:1883",    // labtime linode computer
+  url: "http://historian:1883",    // labtime linode computer
 //url: "http://172.16.45.7:1883",    // merlin
 //url: "http://192.168.122.90:1883",
   username: "data",
-  password: "datawp",
+  password: "datath",
   protocol: 'MQTT',
-  protocolVersion: 4,
+//protocolVersion: 4,
   connectTimeout: 60000,
   reconnectPeriod: 120000,
   keepAlive: 5000,
@@ -311,6 +311,7 @@ const initClients = (projectId, instance, project, funcIds) => {
 //    var flds = metric.name.split('_')
       client.clientId = clientId
       client.projectId = projectId
+      client.instance = instance;
 
       global.aaa.clients[clientId] = client;
       if (client.ip) {
@@ -405,7 +406,6 @@ const loadConfig = () => {
     global.aaa.topics.publish = Topics.completeTopics(global.aaa.topics.publish);
   }
 
-  var instance = "42";
 // For each project in administrator config
   for (var projectId in global.aaa.projects) {
     let ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${adminId}/${projectId}/funcIds.yml`)
@@ -415,8 +415,8 @@ const loadConfig = () => {
     }
     var project = global.aaa.projects[projectId]
 
-    initMetrics(projectId, instance, project)
-    initClients(projectId, instance, project, funcIds)
+    initMetrics(projectId, project.instance, project)
+    initClients(projectId, project.instance, project, funcIds)
   } // for each project
 }
 

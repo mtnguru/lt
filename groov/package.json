@@ -5,7 +5,7 @@
   "main": "groov.js",
   "dependencies": {
     "axios": "^0.27.2",
-    "dotenv": "^16.0.0",
+    "dotenv": "^16.3.1",
     "mqtt": "^4.3.7",
     "nodemon": "^2.0.15",
     "seedrandom": "^3.0.5",
@@ -13,7 +13,7 @@
     "timestamp-nano": "^1.0.0"
   },
   "scripts": {
-    "start": "nodemon groov.js riolc",
+    "start": "nodemon groov.js rio1",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

@@ -7,9 +7,10 @@ mqtt:  # Each client must have it's own mqtt config
 # ip:   http://172.16.45.7   # merlin
 # url:  http://172.16.45.7
 # url:  http://192.168.122.90
-  url:  http://labtime.org:1883
+# url:  http://labtime.org:1883
+  url:  http://historian:1883
   username: data
-  password: datawp
+  password: datath
   protocol: 'MQTT'
   protocolVersion: 4
   connectTimeout: 60000
@@ -27,8 +28,9 @@ topics:
     hum: a/admin/rsp/DCLIENTID/DUSERID
     all: a/admin/cmd/all
 projects:
-  rf:
-    name: Cabin in Red Feather
+  x1:
+    name: Experiment 1
+    instance: R01
     topics:
       edge:
         subscribe:
@@ -38,87 +40,53 @@ projects:
           out: PROJECTID/INSTANCE/out/CLIENTID
         publish:
           rsp: a/admin/rsp/CLIENTID
-          inp: PROJECTID/INSTANCE/inp/CLIENTID/USERID/cabin_lt
+          inp: PROJECTID/INSTANCE/inp/CLIENTID/USERID/sl
           cod: PROJECTID/INSTANCE/cod/CLIENTID
           msg: PROJECTID/INSTANCE/msg/CLIENTID
     clients:
-      epiclc:
-        name: EpicLC
-        ip: 172.16.45.3
-        url: https://epiclc
-        model: epic
-        clientType: edge
-        topics: edge
-        headers:
-          apiKey: mnMmq5awnB3DwMsmwFFVToYTqeHtJ8Xf
-          Content-Type: application/json; charset utf-8;
-          _rejectUnauthorized: false
-        statusDefault:
-          sampleInterval: 10000
-          enabled: 1
-          debugLevel: 0
-          mqttConnected: 0
-          mqttSubscribe: 0
-          mqttUnsubscribe: 0
-      riolc:
-        name: RioLC
-        ip: 172.16.45.4
-        url: https://riolc
+      rio1:
+        name: Rio1
+        ip: 172.21.69.147
+        url: https://rio1
         model: rio
         clientType: edge
         topics: edge
         headers:
-          apiKey: yedg7SAJWgtf3jZNjPYfR5XTjWRrX59X
+          apiKey: hR8gaEwm8mVzNPTUK3VV97kkKhF6GqbP
           Content-Type: application/json; charset utf-8;
           _rejectUnauthorized: false
         statusDefault:
-          sampleInterval: 10000
+          sampleInterval:
           enabled: 1
           debugLevel: 0
           mqttConnected: 0
           mqttSubscribe: 0
           mqttUnsubscribe: 0
-      arduino2:
-        name: Arduino2
-        ip: 172.16.45.32
-        model: arduino
-        clientType: edge
-        topics: edge
+      drupal:
+        name: Drupal
+        clientType: cms
+        userId: Arwin
+        format: yml
         statusDefault:
-          sampleInterval: 10000
-          enabled: 1
           debugLevel: 0
-      arduino3:
-        name: Arduino3
-        ip: 172.16.45.33
-        model: arduino
-        clientType: edge
-        topics: edge
-        statusDefault:
-          sampleInterval: 10000
-          enabled: 1
-          debugLevel: 0
-      arduino4:
-        name: Arduino4
-        ip: 172.16.45.121
-        model: arduino
-        clientType: edge
-        topics: edge
-        statusDefault:
-          sampleInterval: 10000
-          enabled: 1
-          debugLevel: 0
-      arduino5:
-        name: Arduino5
-        ip: 172.16.45.56
-#       ip: 192.168.0.102
-        model: arduino
-        clientType: edge
-        topics: edge
-        statusDefault:
-          sampleInterval: 10000
-          enabled: 1
-          debugLevel: 0
+          mqttConnected: 0
+          mqttSubscribe: 0
+          mqttUnsubscribe: 0
+        topics:
+          subscribe:
+            all: a/admin/cmd/all
+            adm: a/admin/cmd/CLIENTID
+            dru: a/cms/cmd/#
+            get: PROJECTID/INSTANCE/get/drupal
+            msg: PROJECTID/INSTANCE/msg/#
+            act: PROJECTID/INSTANCE/act/#
+            alm: PROJECTID/INSTANCE/alm/#
+          publish:
+            adm: a/admin/cmd/administrator
+            rsp: a/admin/rsp/CLIENTID
+            wll: a/admin/wll/CLIENTID
+            rpy: PROJECTID/INSTANCE/rpy/DCLIENTID
+            dru: a/cms/rsp/DCLIENTID/DUSERID
       labtime:
         name: LabTime
         clientType: hmi
@@ -132,12 +100,7 @@ projects:
           administrator: {}
           controller: {}
           drupal: {}
-          epiclc: {}
-          riolc: {}
-          arduino2: {}
-          arduino3: {}
-          arduino4: {}
-          arduino5: {}
+          rio1: {}
         topics:
           subscribe:
             adm: a/#
@@ -191,28 +154,3 @@ projects:
             msg: PROJECTID/INSTANCE/msg/CLIENTID
             cod: PROJECTID/INSTANCE/cod/CLIENTID
             hum: PROJECTID/INSTANCE/hum/CLIENTID
-      drupal:
-        name: Drupal
-        clientType: cms
-        userId: Arwin
-        format: yml
-        statusDefault:
-          debugLevel: 0
-          mqttConnected: 0
-          mqttSubscribe: 0
-          mqttUnsubscribe: 0
-        topics:
-          subscribe:
-            all: a/admin/cmd/all
-            adm: a/admin/cmd/CLIENTID
-            dru: a/cms/cmd/#
-            get: PROJECTID/INSTANCE/get/drupal
-            msg: PROJECTID/INSTANCE/msg/#
-            act: PROJECTID/INSTANCE/act/#
-            alm: PROJECTID/INSTANCE/alm/#
-          publish:
-            adm: a/admin/cmd/administrator
-            rsp: a/admin/rsp/CLIENTID
-            wll: a/admin/wll/CLIENTID
-            rpy: PROJECTID/INSTANCE/rpy/DCLIENTID
-            dru: a/cms/rsp/DCLIENTID/DUSERID

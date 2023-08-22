@@ -1,3 +1,27 @@
+Next
+   act - getActive - a/cms/cmd/$CLIENTID/$USERID - getActive
+       cmd: getActive
+       username: james
+       uid: 5
+
+   n - getNode - a/cms/cmd/$CLIENTID/$USERID
+       cmd: getNode
+       nid: 123
+       format: full
+
+   m - Message Chat - rf/42/msg/$CLIENTID/$USERID
+       type: Chat
+       author: Ralph
+       date: 2023-07-06 17:21:35
+       msg: dude, what's happening man
+
+   alm - Alarm - rf/42/alm/$CLIENTID
+       alm: temperature high
+       temperature: 98.7 
+
+
+=======================================================================
+
 Applications
    Experiments, laboratory, manufacturing
    Manufacturing

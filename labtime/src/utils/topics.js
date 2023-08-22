@@ -20,7 +20,7 @@ const completeTopic = (topic,args) => {
         if (args && args["instance"]) {
           fields[1] = args["instance"];
         } else {
-          fields[1] = (global.aaa.instance) ? global.aaa.projectId : "42"
+          fields[1] = (global.aaa.instance) ? global.aaa.instance : "+"
         }
       }
       if (f === "3" && field === "CLIENTID") {

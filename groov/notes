@@ -4,7 +4,7 @@ Influx line format - taken from starlark loader
   tags={
     "Component": "Outdoor", 
     "Device": "K", 
-    "EdgeID": "riolc", 
+    "EdgeID": "rio1", 
     "Experiment": "Exp1000", 
     "Metric": "I_Outdoor_K_FrontDoor_C", 
     "Position": "FrontDoor", 
