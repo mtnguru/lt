@@ -1,0 +1,34 @@
+
+#  $ROOT/conf/
+
+#  Red Feather Lakes - labtime.org
+   rf - adminId
+     administrator.yml
+     cb - projectId
+       metrics
+         edge.yml
+         hmi.yml
+       clients
+         labtime.yml
+         epiclc.yml
+         arduino2.yml
+         arduino3.yml
+         arduino4.yml
+         arduino5.yml
+         controller.yml
+         drupal.yml
+
+# SAFIRE Lab Computer
+   sl - adminId
+     administrator.yml
+     x1 - projectId
+       metrics:
+         edge.yml
+         hmi.yml
+       clients:
+         labtime.yml
+         rio1.yml
+         controller.yml
+         drupal.yml
+         
+       

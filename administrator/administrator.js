@@ -16,7 +16,14 @@ const generator = seedrandom(Date.now())
 const mqttClientId = `${clientId}_${generator().toString(16).slice(3)}`
 
 const f = "administrator:main - "
-const stageId = "dev"
+
+const adminId = "none"
+if (process.argv[2]) {
+  adminId = process.argv[2]
+} else {
+  console.log('ERROR: No adminId specified');
+  exit(1);
+}
 
 // global.aaa is overwritten when the configuration is read in from a file
 global.aaa = {
@@ -254,7 +261,7 @@ const findProject = (projectId) => {
 
 const initMetrics = (projectId, instance, project) => {
   // Read in the metrics for this project
-  var filepath = `${process.env.ROOT_PATH}/${stageId}/${projectId}/metrics.yml`
+  var filepath = `${process.env.ROOT_PATH}/${adminId}/${projectId}/metrics.yml`
   project.metrics = YAML.safeLoad(fs.readFileSync(filepath));
   // for each metric in project
   for (var oMetricId in project.metrics) {
@@ -374,14 +381,14 @@ const initClients = (projectId, instance, project, funcIds) => {
 
 const loadConfig = () => {
   console.log('Read in administrator configuration')
-  let ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${stageId}/administrator.yml`)
+  let ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${adminId}/administrator.yml`)
 
   var conf = YAML.safeLoad(ymlStr)
   conf.status = global.aaa.status
   conf.startTime = global.aaa.startTime
   global.aaa = conf
   global.aaa.ips = {}
-  global.aaa.stageId = stageId
+  global.aaa.adminId = adminId
   global.aaa.clients = {}
 
   global.aam = global.aaa.mqtt
@@ -401,7 +408,7 @@ const loadConfig = () => {
   var instance = "42";
 // For each project in administrator config
   for (var projectId in global.aaa.projects) {
-    let ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${stageId}/${projectId}/funcIds.yml`)
+    let ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${adminId}/${projectId}/funcIds.yml`)
     const funcIds = YAML.safeLoad(ymlStr)
     for (var id in funcIds) {
       funcIds[id].typeId = id
