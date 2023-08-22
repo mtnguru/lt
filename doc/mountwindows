@@ -1,0 +1,2 @@
+Mount windows drive on linux
+   mount.cifs //172.21.69.177/J /tmp/shit/ -o user=safire,password=sa
