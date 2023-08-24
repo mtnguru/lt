@@ -13,10 +13,10 @@ const mg = (level, f, _funcId, _type, ...snippets) => {
     funcId: funcId,
     type: type,
     program: global.aaa.program,
-    Msg: snippets.join(' '),
+    msg: snippets.join(' '),
   }
 
-  const topic = global.aaa.topics.publish.msg
+  const topic = global.aaa.topics.publish[_funcId]
   const jpayload = JSON.stringify(payload);
   if (mqttConnected()) {
     mqttPublish(topic, jpayload);

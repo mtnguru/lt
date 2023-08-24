@@ -1,10 +1,16 @@
-// metric.js -
+// metrics.js -
+require("./msgE");
+const {msg} = require("./msg");
 
 const findMetric = (metricId) => {
-//const f = "metrics::findMetric"
-  let metric = global.aaa.metrics[metricId.toLowerCase()]
-  if (metric)  {
-    return metric;
+  const f = "metrics::findMetric"
+  try {
+    let metric = global.aaa.metrics[metricId.toLowerCase()]
+    if (metric)  {
+      return metric;
+    }
+  } catch(err) {
+    msg(0, f, ERROR, `Cannot find metric ${metricId}`);
   }
   return null;
 }

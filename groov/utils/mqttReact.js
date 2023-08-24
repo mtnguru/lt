@@ -22,34 +22,33 @@ function sleep(milliseconds) {
 }
 */
 
-const onConnectPromise = (cb) => {
+const onConnectPromise = (connectCb, processCb) => {
   const f = "mqttReact::onConnectPromise"
   return new Promise((resolve, reject) => {
     mqttClient.on('connect', (event) => {
+      global.aaa.status.mqttConnected++
       console.log(f,"connected ", mqttClient.connected)
       mqttUnsubscribe(global.aaa.topics.subscribe)
-      mqttSubscribe(global.aaa.topics.subscribe, () => {
-        console.log(f, 'subscribed', global.aaa.topics.subscribe)
-        mqttClient.on('message', cb);
-      })
+      mqttSubscribe(global.aaa.topics.subscribe)
+      connectCb()
+      mqttClient.on('message', processCb)
       resolve('connected')
     })
   })
 }
 
-const mqttConnect = (cb) => {
+const mqttConnect = (connectCb, processCb) => {
   topicsCB = {};
   const f = 'mqttReact::mqttConnect'
-  console.log(f, 'connect it up', global.aaa.mqtt.url)
-  mqttClient = mqtt.connect(global.aaa.mqtt.url, {
-//  clientId: global.aaa.mqtt.clientId,
-    clientId: `mqtt_${Math.random().toString(16).slice(3)}`, // create a random id
+  console.log(f, 'connect to mqtt url/ip', global.aam.url)
+  mqttClient = mqtt.connect(global.aam.url, {
+    clientId: global.aam.mqttClientId,
     clean: true,
-    protocol: 'MQTT',
-    username: global.aaa.mqtt.username,
-    password: global.aaa.mqtt.password,
-    reconnectPeriod: global.aaa.mqtt.reconnectPeriod,
-    connectTimeout: global.aaa.mqtt.connectTimeout,
+    protocol: global.aam.protocol,
+    username: global.aam.username,
+    password: global.aam.password,
+    reconnectPeriod: global.aam.reconnectPeriod,
+    connectTimeout: global.aam.connectTimeout,
   });
   console.log(f, 'connected it up', mqttClient.connected)
 
@@ -58,14 +57,16 @@ const mqttConnect = (cb) => {
   })
 
   console.log(f,'wait for the On event')
-  onConnectPromise(cb)
+  onConnectPromise(connectCb, processCb)
   console.log(f,'we\'re on')
 
+  /*
   mqttSubscribe(global.aaa.topics.subscribe, () => {
     console.log(f, 'subscribed', global.aaa.topics.subscribe)
   })
 
   mqttClient.on('message', cb);
+  */
   console.log(f,'exit')
 }
 
@@ -79,15 +80,17 @@ const mqttSubscribe = (topics) => {
   for (let name in topics) {
     console.log(f, "topic: ", topics[name])
     mqttClient.subscribe(topics[name])
+    global.aaa.status.mqttSubscribe++;
   }
 }
 
 const mqttUnsubscribe = (topics) => {
-  const f = "mqttReact::mqttSubscribe - "
+  const f = "mqttReact::mqttUnsubscribe - "
   console.log(f, "enter ")
   for (let name in topics) {
     console.log(f, "topic: ", topics[name])
     mqttClient.unsubscribe(topics[name]);
+    global.aaa.status.mqttUnsubscribe++;
   }
 }
 
@@ -116,7 +119,7 @@ const mqttRegisterTopicCB = (_topic, cb, args) => {
     }
   }
   console.log(f, "add topic", topic)
-  topicsCB[topic].push({args, cb});
+  topicsCB[topic].push({args: args, cb:cb});
 }
 
 const mqttUnregisterTopicCB = (_topic, cb, args) => {
@@ -128,7 +131,7 @@ const mqttUnregisterTopicCB = (_topic, cb, args) => {
       console.log(f, "   Topic found", topicsCB[t].length)
       // Execute the callbacks for this topic
       for (let rcb of topicsCB[t]) {
-        if (cb === rcb ) {
+        if (cb === rcb.cb ) {
           topicsCB[t] = topicsCB[t].filter((item) => {
             return item.name !== cb.name
           })
@@ -176,11 +179,11 @@ const mqttRequestFile = (clientId, name, filepath, fileType, cb) => {
       inFile = JSON.parse(inPayload)
     }
     if (inFile.rsp === cmd) {
-      mqttUnregisterTopicCB(global.aaa.topics.subscribe.rsp, onLoadCB)
+      mqttUnregisterTopicCB(global.aaa.topics.register.rsp, onLoadCB)
       cb(inTopic, inFile)
     }
   }
-  mqttRegisterTopicCB(global.aaa.topics.subscribe.rsp, onLoadCB)
+  mqttRegisterTopicCB((global.aaa.topics.register.rsp) , onLoadCB)
   let payload = `{"cmd": "${cmd}", "clientId": "${clientId}", "filepath": "${filepath}"}`
   mqttPublish(global.aaa.topics.publish.adm, payload)
 }
@@ -194,7 +197,7 @@ const mqttProcessCB = (_topic, _payload) => {
   try {
     // If this is a metricCB - influx line buf - call metric callbacks
     const fields = _topic.split("/")
-    const func = fields[1]
+    const func = fields[2]
     if (func === 'inp' || func === 'out' || func === 'hum') {
       const {tags, values} = extractFromTags(payloadStr)
       if (!tags["MetricId"]) {
@@ -220,7 +223,6 @@ const mqttProcessCB = (_topic, _payload) => {
             metric.input.value = values.value
 //        metric.value = values.value
             break;
-
           case 'O':
             if (!metric.output) {
               mgWarning(0, f, 'Metric does not have a output', metric.metricId)
@@ -264,19 +266,22 @@ const mqttProcessCB = (_topic, _payload) => {
               }
             }
             if (valid) {
-              rec.cb(_topic,payload)
+              try {
+                rec.cb(_topic,payload)
+              } catch(err) {
+                console.log(f, 'ERROR in cb w/args: ' + err)
+              }
             }
           } else {
-            if (payload) {
-              rec.cb(_topic,payload)
-            } else {
+            try {
               rec.cb(_topic,payloadStr)
+            } catch(err) {
+              console.log(f, 'ERROR in cb: ' + err)
             }
           }
         }
       }
     }
-
   } catch (err) {
     console.log(f, 'ERROR: ' + err)
   }

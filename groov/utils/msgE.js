@@ -25,3 +25,5 @@ msgE = [
   'output',
   'doe',
 ]
+
+module.exports.msgE =  msgE

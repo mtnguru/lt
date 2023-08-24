@@ -1,6 +1,9 @@
 // File: administrator.js
+
+
 const fs = require('fs')
 const YAML = require('yaml-parser')
+const path = require('path')
 require('dotenv').config();
 
 const mqttNode  = require('./utils/mqttNode');
@@ -17,12 +20,12 @@ const mqttClientId = `${clientId}_${generator().toString(16).slice(3)}`
 
 const f = "administrator:main - "
 
-const adminId = "none"
+var adminId = "none"
 if (process.argv[2]) {
   adminId = process.argv[2]
 } else {
   console.log('ERROR: No adminId specified');
-  exit(1);
+  process.exit(1);
 }
 
 // global.aaa is overwritten when the configuration is read in from a file
@@ -160,14 +163,14 @@ const processCB = (_topic, _payload) => {
   const f = 'administrator::processCB'
   msg(1,f,DEBUG, 'enter');
   console.log(f, 'enter', _topic);
-  let out;
-  let outTopic;
+  var out;
+  var outTopic;
   var dclientId;
   try {
     var [projectId, instance, func, clientId, userId, telegrafId] = _topic.split('/')
 
     const inputStr = _payload.toString();
-    let input = {}
+    var input = {}
 
     // If the payload is JSON, parse it
     if (inputStr && inputStr !== '{}') {
@@ -205,13 +208,13 @@ const processCB = (_topic, _payload) => {
             addStatus(out)
           }
           if (input.cmd === 'requestJsonFile') {
-            msg(2, f, DEBUG, "Read json file: ", filepath)
+            msg(2, f, DEBUG, "Read json file: ", filePath)
             dclientId = (input.ip) ? input.ip : input.clientId
             outTopic = global.aaa.topics.publish.rsp
             outTopic = outTopic.replace(/DCLIENTID/, dclientId)
 
-            const filepath = `${process.env.ROOT_PATH}/${input.filepath}`
-            const data = fs.readFileSync(filepath);
+            const filePath = `${process.env.ROOT_PATH}/${input.filePath}`
+            const data = fs.readFileSync(filePath);
             out = JSON.parse(data)
           }
           if (input.cmd === 'requestYmlFile') {
@@ -219,9 +222,9 @@ const processCB = (_topic, _payload) => {
             outTopic = global.aaa.topics.publish.rsp
             outTopic = outTopic.replace(/DCLIENTID/, dclientId)
 
-            const filepath = `${process.env.ROOT_PATH}/${input.filepath}`
-            msg(2, f, DEBUG, "Read yml file: ", filepath)
-            out = YAML.safeLoad(fs.readFileSync(filepath));
+            const filePath = `${process.env.ROOT_PATH}/${input.filePath}`
+            msg(2, f, DEBUG, "Read yml file: ", filePath)
+            out = YAML.safeLoad(fs.readFileSync(filePath));
           }
         }
       }
@@ -260,10 +263,19 @@ const findProject = (projectId) => {
 }
 
 const initMetrics = (projectId, instance, project) => {
-  // Read in the metrics for this project
-  var filepath = `${process.env.ROOT_PATH}/${adminId}/${projectId}/metrics.yml`
-  project.metrics = YAML.safeLoad(fs.readFileSync(filepath));
-  // for each metric in project
+  // Read in all the metrics/*.yml files for this project
+  var dirPath = `${process.env.ROOT_PATH}/${adminId}/${projectId}/metrics`
+  var files = fs.readdirSync(dirPath);
+  project.metrics = {}
+  files.forEach(filename => {
+    if (path.extname(filename) == '.yml') {
+      var filePath = dirPath + '/' + filename;
+      var metrics = YAML.safeLoad(fs.readFileSync(filePath));
+      for (metric in metrics) {
+        project.metrics[metric] = metrics[metric]
+      }
+    }
+  });
   for (var oMetricId in project.metrics) {
     var metric = project.metrics[oMetricId]
     var metricId = oMetricId.toLowerCase();
@@ -281,7 +293,9 @@ const initMetrics = (projectId, instance, project) => {
     var client
     if (metric.input) {
       if (client = project.clients[metric.input.clientId]) {
-        if (!client.inputs) client.inputs = {}
+        if (!client.inputs) {
+          client.inputs = {}
+        }
         client.inputs[metricId] = metric
         metric.input.tags = influx.makeTagsFromMetricId(metric.name, "I", projectId, instance)
       }
@@ -306,56 +320,56 @@ const initMetrics = (projectId, instance, project) => {
 const initClients = (projectId, instance, project, funcIds) => {
   // For each client create lookup lists by clientId and IP
   for (var clientId in project.clients) {
-    var client = project.clients[clientId]
-    if (client) {
-//    var flds = metric.name.split('_')
-      client.clientId = clientId
-      client.projectId = projectId
-      client.instance = instance;
+    if (project.clients[clientId] !== "enabled") {
+      delete project.clients[clientId]
+      continue;
+    }
 
-      global.aaa.clients[clientId] = client;
-      if (client.ip) {
-        global.aaa.ips[client.ip] = client;
-      }
+    var filePath = `${process.env.ROOT_PATH}/${adminId}/${projectId}/clients/${clientId}.yml`
+    var ymlStr = fs.readFileSync(filePath)
+    var client = YAML.safeLoad(ymlStr)
+    project.clients[clientId] = client
+    client.clientId = clientId
+    client.projectId = projectId
+    client.instance = instance;
 
-      if (client.metrics && client.metrics === 'project') {
-        client.metrics = project.metrics
-      }
+    global.aaa.clients[clientId] = client;
+    if (client.ip) {
+      global.aaa.ips[client.ip] = client;
+    }
 
-      if (client.topics) {
-        var project = findProject(client.projectId)
-        if (project.topics && project.topics[client.topics]) {
-          var topics = project.topics[client.topics]
-          client.topics = {}
-          if (topics.subscribe) {
-            client.topics.subscribe = Topics.completeTopics(JSON.parse(JSON.stringify(topics.subscribe)), client);
-          }
-          if (topics.publish) {
-            client.topics.publish   = Topics.completeTopics(JSON.parse(JSON.stringify(topics.publish)), client);
-          }
-          if (topics.register) {
-            client.topics.register  = Topics.completeTopics(JSON.parse(JSON.stringify(topics.register)), client);
-          }
-        } else {
-          if (client.topics.subscribe) {
-            client.topics.subscribe = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.subscribe)), client);
-          }
-          if (client.topics.publish) {
-            client.topics.publish   = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.publish)), client);
-          }
-          if (client.topics.register) {
-            client.topics.register  = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.register)), client);
-          }
+    if (client.topics) {
+      if (project.topics && project.topics[client.topics]) {
+        var topics = project.topics[client.topics]
+        client.topics = {}
+        if (topics.subscribe) {
+          client.topics.subscribe = Topics.completeTopics(JSON.parse(JSON.stringify(topics.subscribe)), client);
+        }
+        if (topics.publish) {
+          client.topics.publish   = Topics.completeTopics(JSON.parse(JSON.stringify(topics.publish)), client);
+        }
+        if (topics.register) {
+          client.topics.register  = Topics.completeTopics(JSON.parse(JSON.stringify(topics.register)), client);
+        }
+      } else {
+        if (client.topics.subscribe) {
+          client.topics.subscribe = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.subscribe)), client);
+        }
+        if (client.topics.publish) {
+          client.topics.publish   = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.publish)), client);
+        }
+        if (client.topics.register) {
+          client.topics.register  = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.register)), client);
         }
       }
+    }
 
-      if (client.funcIds) {
-        client.funcIds = funcIds;
-      }
-    } // if project.clients[clientId]
-  } // for each client
+    if (client.funcIds) {
+      client.funcIds = funcIds;
+    }
+  }
 
-  // Now that the clients are complete, copy them into the client.clients
+// Now that the clients are complete, copy them into the client.clients
   for (var clientId in project.clients) {
     var client = project.clients[clientId]
     if (client && client.clients) {
@@ -372,6 +386,7 @@ const initClients = (projectId, instance, project, funcIds) => {
             client.clients[clientId2] = JSON.parse(JSON.stringify(project.clients[clientId2]))
             addStatus(client.clients[clientId2])
           } else {
+            delete client.clients[clientId2]
             msg(2, f, ERROR, `${clientId} - Client not found ${clientId2} in administrator config`);
           }
         }
@@ -382,10 +397,11 @@ const initClients = (projectId, instance, project, funcIds) => {
 
 const loadConfig = () => {
   console.log('Read in administrator configuration')
-  let ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${adminId}/administrator.yml`)
+
+  var ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${adminId}/administrator.yml`)
 
   var conf = YAML.safeLoad(ymlStr)
-  conf.status = global.aaa.status
+  conf.status    = global.aaa.status
   conf.startTime = global.aaa.startTime
   global.aaa = conf
   global.aaa.ips = {}
@@ -408,15 +424,39 @@ const loadConfig = () => {
 
 // For each project in administrator config
   for (var projectId in global.aaa.projects) {
-    let ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${adminId}/${projectId}/funcIds.yml`)
-    const funcIds = YAML.safeLoad(ymlStr)
-    for (var id in funcIds) {
-      funcIds[id].typeId = id
-    }
-    var project = global.aaa.projects[projectId]
+    if (global.aaa.projects[projectId] === 'enabled') {
+      var ymlStr
+      var filePath
+      var funcIds
+      try {
+        filePath = `${process.env.ROOT_PATH}/${adminId}/${projectId}/hmi/funcIds.yml`
+        ymlStr = fs.readFileSync(filePath)
+        funcIds = YAML.safeLoad(ymlStr)
+        for (var id in funcIds) {
+          funcIds[id].typeId = id
+        }
 
-    initMetrics(projectId, project.instance, project)
-    initClients(projectId, project.instance, project, funcIds)
+      } catch(err) {
+        msg(0,f,ERROR,err,filePath);
+      }
+
+      try {
+        ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${adminId}/${projectId}/project.yml`)
+        var project = YAML.safeLoad(ymlStr)
+        initClients(projectId, project.instance, project, funcIds)
+        initMetrics(projectId, project.instance, project)
+        for (var clientId in project.clients) {
+          if (client.metrics && client.metrics === 'project') {
+            client.metrics = project.metrics
+          }
+        }
+      } catch(err) {
+        msg(0,f,ERROR,err,filePath);
+      }
+
+    } else {
+      delete global.aaa.projects[projectId]
+    }
   } // for each project
 }
 

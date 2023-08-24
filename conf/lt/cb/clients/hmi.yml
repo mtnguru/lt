@@ -1,0 +1,41 @@
+name: LabTime HMI
+clientType: hmi
+userId: Bilbo
+format: yml
+clients:
+  all:
+    clientId: all
+    name: All
+  hmi: {}
+  administrator: {}
+  controller: {}
+  drupal: {}
+  epiclc: {}
+  arduino2: {}
+  arduino3: {}
+  arduino4: {}
+  arduino5: {}
+topics:
+  subscribe:
+    adm: a/#
+    prj: PROJECTID/INSTANCE/#
+  register:
+    cmd: a/admin/cmd
+    rsp: a/admin/rsp
+    inp: PROJECTID/INSTANCE/inp
+    out: PROJECTID/INSTANCE/out
+    hum: PROJECTID/INSTANCE/hum
+    alm: PROJECTID/INSTANCE/alm
+    cod: PROJECTID/INSTANCE/cod
+    msg: PROJECTID/INSTANCE/msg
+    act: PROJECTID/INSTANCE/act
+  publish:
+    rsp: a/admin/rsp/CLIENTID
+    adm: a/admin/cmd/administrator
+    msg: PROJECTID/INSTANCE/msg/CLIENTID
+    cod: PROJECTID/INSTANCE/cod/CLIENTID
+    hum: PROJECTID/INSTANCE/hum/CLIENTID
+metrics: project
+funcIds: {}
+statusDefault:
+  debugLevel: 0

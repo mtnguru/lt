@@ -1,0 +1,10 @@
+arduino3:
+  name: Arduino3
+  ip: 172.16.45.33
+  model: arduino
+  clientType: edge
+  topics: edge
+  statusDefault:
+    sampleInterval: 10000
+    enabled: 1
+    debugLevel: 0

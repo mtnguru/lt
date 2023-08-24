@@ -1,0 +1,11 @@
+arduino2:
+  name: Arduino2
+  ip: 172.16.45.32
+  model: arduino
+  clientType: edge
+  topics: edge
+  statusDefault:
+    sampleInterval: 10000
+    enabled: 1
+    debugLevel: 0
+

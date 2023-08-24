@@ -1,34 +1,35 @@
 
 #  $ROOT/conf/
+#  
 
-#  Red Feather Lakes - labtime.org
-   rf - adminId
-     administrator.yml
-     cb - projectId
-       metrics
-         edge.yml
-         hmi.yml
-       clients
-         labtime.yml
-         epiclc.yml
-         arduino2.yml
-         arduino3.yml
-         arduino4.yml
-         arduino5.yml
-         controller.yml
-         drupal.yml
+  $ROOT/conf/
+    lt - adminId      # labtime.org
+      administrator.yml
+      cb - projectId  # Cabin 
+        metrics
+          edge.yml
+          hmi.yml
+        clients
+          hmi.yml
+          epiclc.yml
+          arduino2.yml
+          arduino3.yml
+          arduino4.yml
+          arduino5.yml
+          controller.yml
+          drupal.yml
+      fg - projectId  # Finance Game
 
-# SAFIRE Lab Computer
-   sl - adminId
-     administrator.yml
-     x1 - projectId
-       metrics:
-         edge.yml
-         hmi.yml
-       clients:
-         labtime.yml
-         rio1.yml
-         controller.yml
-         drupal.yml
+    sl - adminId      # SAFIRE Lab Computer
+      administrator.yml
+      x1 - projectId  # Experiment 1
+        metrics:
+          edge.yml
+          hmi.yml
+        clients:
+          hmi.yml
+          rio1.yml
+          controller.yml
+          drupal.yml
          
        

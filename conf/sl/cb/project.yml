@@ -1,0 +1,22 @@
+name: Cabin in Red Feather
+topics:
+  edge:
+    subscribe:
+      all: a/admin/cmd/all
+      cmd: a/admin/cmd/CLIENTID
+      rsp: a/admin/rsp/CLIENTID
+      out: PROJECTID/INSTANCE/out/CLIENTID
+    publish:
+      rsp: a/admin/rsp/CLIENTID
+      inp: PROJECTID/INSTANCE/inp/CLIENTID/USERID/cabin_lt
+      cod: PROJECTID/INSTANCE/cod/CLIENTID
+      msg: PROJECTID/INSTANCE/msg/CLIENTID
+clients:
+  epiclc:
+  arduino2:
+  arduino3:
+  arduino4:
+  arduino5:
+  hmi:
+  controller:
+  drupal:

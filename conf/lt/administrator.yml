@@ -1,0 +1,32 @@
+clientId: administrator
+name: Administrator
+clientType: administrator
+userId: Frodo
+adminId: AssignedAtRunTime
+mqtt:  # Each client must have it's own mqtt config
+  mqttClientId: "create-at-runtime"
+# ip:   http://172.16.45.7   # merlin
+# url:  http://172.16.45.7
+# url:  http://192.168.122.90
+  url:  http://labtime.org:1883
+  username: data
+  password: datawp
+  protocol: 'MQTT'
+  protocolVersion: 4
+  connectTimeout: 60000
+  reconnectPeriod: 120000
+  keepAlive: 5000,
+  port: 1883
+  websocket: 8081
+topics:
+  subscribe:
+    cmd: a/admin/cmd/CLIENTID
+    all: a/admin/cmd/all
+    rsp: a/admin/rsp/#
+  publish:
+    rsp: a/admin/rsp/DCLIENTID
+    hum: a/admin/rsp/DCLIENTID/DUSERID
+    all: a/admin/cmd/all
+projects:
+  cb: enabled
+  fg: enabled

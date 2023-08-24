@@ -1,0 +1,70 @@
+@import "../../styles/base";
+@import "../../styles/colors";
+
+.clients {
+
+  .row2 {
+    @include clearfix;
+    margin-left: 12px;
+
+    .chakra-button {
+      color: $fg-color;
+      border-radius: 30%;
+      background-color: $button-bg-color;
+      border: $button-bd-color solid 1px;
+      border-right: $button-bd2-color;
+      border-bottom: $button-bd2-color;
+      padding: 2px 4px;
+      margin: 0px 2px;
+      font-size: 75%;
+    }
+
+    .enabled {
+      &.true {
+        background-color: $button-green-color;
+      }
+
+      &.false {
+        background-color: $button-red-color;
+      }
+    }
+
+    .status {
+      &.running {
+        background-color: $button-green-color;
+      }
+      &.stopped {
+        background-color: $button-red-color;
+      }
+    }
+    .chakra-select__wrapper {
+      display: inline;
+      width: 50px;
+      .chakra-select__icon-wrapper {
+        display: none;
+      }
+    }
+    .chakra-select {
+      display: inline;
+      font-size: 70%;
+      color: $fg-color;
+      background: $button-bg-color;
+      border: $button-bd-color solid 1px;
+      border-right: $button-bd2-color;
+      border-bottom: $button-bd2-color;
+      padding: 2px 1px;
+      border-radius: 20%;
+      margin-left: 3px;
+    }
+  }
+
+  .administrator,
+  .drupal,
+  .controller,
+  .hmi {
+    .row2 {
+      margin-left: 32px;
+    }
+  }
+
+}

@@ -1,0 +1,11 @@
+arduino5:
+  name: Arduino5
+  ip: 172.16.45.56
+# ip: 192.168.0.102
+  model: arduino
+  clientType: edge
+  topics: edge
+  statusDefault:
+    sampleInterval: 10000
+    enabled: 1
+    debugLevel: 0

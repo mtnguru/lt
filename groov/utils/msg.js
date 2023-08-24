@@ -1,5 +1,5 @@
 //require('dotenv').config();
-require('./msgE');
+require("./msgE");
 // const mqttNode = require('./mqttNode');
 
 const setDebugLevel = (level) => {
@@ -30,11 +30,11 @@ const msg = (level, func, _funcId, ...snippets) => {
 //
 
   var funcId = msgE[_funcId]
-  if (_funcId == ERROR) {
+  if (_funcId === ERROR) {
     funcId = '********** ERROR'
-  } else if (_funcId == ALARM) {
+  } else if (_funcId === ALARM) {
     funcId = '---------- ALARM'
-  } else if (_funcId == WARNING) {
+  } else if (_funcId === WARNING) {
     funcId = '!!!!!!!!!! WARNING'
   }
   if (snippets.length > 0) {
