@@ -1,5 +1,5 @@
 name: Arduino4
-ip: 172.16.45.121
+ip: 192.168.0.16
 model: arduino
 clientType: edge
 topics: edge

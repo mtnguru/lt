@@ -5,7 +5,6 @@ userId: Frodo
 adminId: AssignedAtRunTime
 mqtt:  # Each client must have it's own mqtt config
   mqttClientId: "create-at-runtime"
-# ip:   http://172.16.45.7   # merlin
 # url:  http://172.16.45.7
 # url:  http://192.168.122.90
   url:  http://labtime.org:1883

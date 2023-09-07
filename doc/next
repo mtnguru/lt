@@ -1,5 +1,23 @@
+
+Get labtime working at the lab.
+  Get atlas2 configured 1 hr
+
+
 So what now?  Jesus its late.
 Wait for Ben, work on telegraf
+
+Work on telegraf loaders for Michael
+Get telegraf and the historian working at the Complex.
+  Install a debian computer
+  Install Mosquitto
+  Install Influx
+    create database s1
+  Install Grafana
+  Install my telegraf 
+    git a copy
+
+
+
 
 
 

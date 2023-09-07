@@ -446,7 +446,6 @@ const loadConfig = () => {
         initClients(projectId, project.instance, project, funcIds)
         initMetrics(projectId, project.instance, project)
         for (var clientId in project.clients) {
-          var client = project.clients[clientId]
           if (client.metrics && client.metrics === 'project') {
             client.metrics = project.metrics
           }
