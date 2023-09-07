@@ -17,7 +17,7 @@ boolean enabled = 1;
 int mqttConnected = 0;
 
 ///////////// WiFi
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
 WiFiClient wifiClient;
 
 // ASUS at cabin
@@ -264,7 +264,7 @@ void wifiInit() {
   Serial.println("");
 
   randomSeed(micros());  // Why?
-  WiFi.setSleepMode(WIFI_NONE_SLEEP);
+//WiFi.setSleepMode(WIFI_NONE_SLEEP);
   WiFi.setAutoReconnect(true);
   WiFi.persistent(true);
   wifiIP = WiFi.localIP().toString();
@@ -655,6 +655,8 @@ void setup() {
   Serial.begin(115200);
   logit(2,MD,f,"starting program",NULL);
   startTime = millis();
+
+  Serial.println(ARDUINO_BOARD);
 
   strcpy(projectId, "unknown");
   randomSeed(micros());
