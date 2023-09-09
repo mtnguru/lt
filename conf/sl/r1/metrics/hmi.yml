@@ -1,0 +1,53 @@
+############################## Input development
+
+R1_Ch_Human_PSI:
+  label: Chamber Pressure
+  desc: Chamber Pressure
+  value: 1
+  decimals: 1
+  human:
+    clientId: hmi
+    channelType: number
+    default: 10
+    min: 0
+    max: 100
+    step: 1
+R1_Ch_Pico_V:
+  label: PS Voltage
+  desc: Power Supply Voltage
+  value: 0
+  decimals: 0
+  input:
+    clientId: hmi
+    channelType: slider
+    default: 150
+    min: 0
+    max: 120
+    step: 1
+  output: {}
+R1_Ch_Pico_A:
+  label: PS Amps
+  desc: Power Supply Amps
+  value: 0
+  decimals: 0
+  input:
+    clientId: hmi
+    channelType: slider
+    default: 40
+    min: 0
+    max: 10
+    step: .1
+  output: {}
+R1_Ch_K_Internal_C:
+  label: Chamber internal 
+  desc: Chamber internal temperature
+  value: 0
+  decimals: 0
+  human:
+    clientId: hmi
+    channelType: slider
+    default: 1200
+    min: 1000
+    max: 1500
+    step: 10
+  output: {}
