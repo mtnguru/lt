@@ -34,7 +34,7 @@ const ControlImagePanel = (props) => {
          aspectRatio: 1.1275 }} >
       <Heading as="h3">Overlay Image Panel</Heading>
       <div className="controls">
-        <div className="stats">
+        <div className="metrics">
           {Object.keys(hmi.inputs).map((metricId) => {
             return <ControlValue key={metricId} metric={hmi.inputs[metricId]} metricId={metricId}></ControlValue>
           })}

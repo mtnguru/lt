@@ -168,7 +168,7 @@ const processInflux = (topic, payloadStr) => {
     switch (funcId) {
       case 'input':
         if (!metric.input) {
-          msg(0,f,WARNING, 'Metric does not have a input',metric.metricId)
+          msg(0,f,WARNING, 'Metric does not have a input metric',metric.metricId)
         } else {
           metric.input.value = values.value
         }
@@ -176,15 +176,15 @@ const processInflux = (topic, payloadStr) => {
         break;
       case 'output':
         if (!metric.output) {
-          msg(0,f, WARNING, 'Metric does not have a output',metric.metricId)
+          msg(0,f, WARNING, 'Metric does not have a output metric',metric.metricId)
         } else {
           metric.output.value = values.value
         }
         metric.value = values.value
         break;
-      case 'user':
-        if (!metric.user) {
-          msg(0,f, WARNING, 'Metric does not have a user',metric.metricId)
+      case 'human':
+        if (!metric.human) {
+          msg(0,f, WARNING, 'Metric does not have a user metric',metric.metricId)
         } else {
           metric.user.value = values.value
         }

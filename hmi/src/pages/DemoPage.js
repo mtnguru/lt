@@ -1,7 +1,7 @@
 
 import ControlImagePanel from '../panels/ControlPanel/ControlImagePanel.js';
 //import MqttPanel from '../panels/MqttPanel/MqttPanel.js';
-import ControlPanel from '../panels/ControlPanel/ControlPanel.js';
+import ControlPanel from '../panels/ControlPanel/ControlSafirePanel.js';
 
 //import ControlSliderPanel from '../panels/ControlPanel/ControlSliderPanel.js';
 //import DoePanel from '../panels/DoePanel/DoePanel.js';
@@ -12,7 +12,7 @@ function MqttPage() {
     <div className="mqtt-page">
 
       <ControlImagePanel title='Experiment Panel'/>
-      <ControlPanel title='Control Panel'/>
+      <ControlArduinoPanel title='Control Panel'/>
     </div>
   )
 }

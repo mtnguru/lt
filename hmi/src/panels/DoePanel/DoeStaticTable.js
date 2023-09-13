@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 
 import DoeElement from "./DoeElement";
-import ControlStats from "../ControlPanel/ControlStats";
+import ControlMetric from "../ControlPanel/ControlMetric";
 
 import './DoeStaticTable.scss'
 
@@ -25,7 +25,7 @@ const DoeStaticTable = (props) => {
         {Object.keys(props.doe.static).map(xstatic => {
           return (
             <th key={xstatic}>
-              <ControlStats metricId={xstatic} metricCB={metricCB}/>
+              <ControlMetric metricId={xstatic} metricCB={metricCB}/>
             </th>
           )
         })}

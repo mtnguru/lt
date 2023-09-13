@@ -1,0 +1,45 @@
+name: Reactor 1
+metrics:
+frame:
+  name: panel
+  title:
+  children:
+    - 
+      type: row
+      children:
+
+    R1_Ch_K_Internal_C
+      type: metric
+    R1_Ch_K_External_C
+    R1_Ch_K_Ambient_C
+    R1_Ch_Human_PSI
+    R1_PS_Pico_V
+    R1_PS_Pico_A
+
+
+page:
+  ContainerOuter    .safire-page
+    header
+      Heading
+    FlexLeft        .expt-flex
+      ContainerLeft .left-col
+        ControlImagePanel
+        ControlSafirePanel
+      MsgPanel      .right-col  panelId msg_chat
+   
+
+
+Alarm 
+   can be either a double ended slider or 2 text fields
+
+Widgets
+  Frame Parameters     
+    Metric Pressure   Alarm Pressure  Slider Pressure
+    Metric Voltage    Alarm Voltage   Slider Voltage
+    Metric Current    Alarm Current   Slider Current
+
+    Metric Internal
+    Metric External
+    Metric Ambient
+
+

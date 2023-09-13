@@ -1,5 +1,34 @@
 // File: administrator.js
 
+/*
+
+Get a list of all metrics from administrator
+
+No, I'll know everything I need to identify a value
+   projectId   RF
+   instance    42
+   metricId    LivingRoom_Desk_K_F
+   Source
+     I input
+     H human
+     O output
+     A alarm
+
+Functions
+   GetValue
+   SetValue
+   Upon receipt of IOHA
+      if new value is out of alarm
+        if alarm == false
+           Post alarm OFF message to mqtt
+           Set alarm true
+      else if new value is ok
+        If alarm == true
+          Post alarm ON message to mqtt
+          Set Alarm false
+*/
+
+
 
 const fs = require('fs')
 const YAML = require('yaml-parser')

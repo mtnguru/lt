@@ -25,4 +25,4 @@ topics:
     rsp: a/admin/rsp/CLIENTID
     msg: PROJECTID/INSTANCE/msg/CLIENTID
     cod: PROJECTID/INSTANCE/cod/CLIENTID
-    hum: PROJECTID/INSTANCE/hum/CLIENTID
+    hum: PROJECTID/INSTANCE/hum/CLIENTID/USERID/cabin_lt

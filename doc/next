@@ -1,3 +1,81 @@
+Getting the SAFIRE lab page near completion
+  Save Msgs into Influx
+    It doesn't appear to be getting any messages.
+      Nothing shows up
+      No messages
+      log file?
+
+  Get telegraf install onto atlas2
+
+Hold off on the simulator.
+Instead focus on the UI slider
+  For now create one for pressure and put it on the SAFIRE page
+  a bunch of them for testing
+
+  Create an alarm for pressure and temperature
+
+  Use slider to fake the pressures and temperature
+
+  Internal     R1_Ch_K_Internal_C    Another slide to set alarms
+  External     R1_Ch_K_External_C
+  Ambient      R1_Ch_K_Ambient_C
+  Pressure     R1_Ch_Human_PSI
+  AC Voltage   R1_PS_Pico_V
+  AC Current   R1_PS_Pico_A
+
+  Slider with upper and lower values
+
+  Text entry field
+
+
+ 
+   
+
+
+
+UI
+  Create SAFIRE Lab Experiment Panel 
+    Sensors
+      Pressure
+      Temperature C
+      AC Voltage/Current
+    Messages
+      Chat
+      Notes
+      Notifications
+    MQTT Activity - I like this on a separate page
+  
+    
+    
+  Create Inputs to simulate human or sensor input
+    Slider
+    On/Off
+    Text
+    
+Administrator
+   Monitor all Source types
+      I Edge Input - thermocouples, voltages
+      O Output - control
+      H Human Input, O, H, A
+      A Alarm on/off
+   Keep track of values for each - project instance metric type 
+
+   GetValue
+   SetValue
+   Upon receipt of IOHA
+      if new value is out of alarm
+        if alarm == false
+           Post alarm OFF message to mqtt
+           Set alarm true
+      else if new value is ok
+        If alarm == true
+          Post alarm ON message to mqtt
+          Set Alarm false
+      
+    
+
+
+
 
 Get labtime working at the lab.
   Get atlas2 configured 1 hr

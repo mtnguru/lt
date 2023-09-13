@@ -1,21 +1,21 @@
-// File: ControlStats.js
+// File: ControlMetric.js
 import React, {useState, useEffect} from 'react';
 import {mqttRegisterMetricCB} from '../../utils/mqttReact'
 import {c2f, findMetric} from '../../utils/metrics'
 
-import './ControlStats.scss'
+import './ControlMetric.scss'
 
-const ControlStats = (props) => {
+const ControlMetric = (props) => {
 //const [register, setRegister] = useState(true);
-  const [stat, setStat] = useState(0);
+  const [value, setValue] = useState(0);
   const [metric, setMetric] = useState({});
 
   const { metricId } = props
 
   const metricCB = (metric, topic, payload, tags, values) => {
-//    const f = "ControlStats::metricCB"
+//    const f = "ControlMetric::metricCB"
 //    console.log(f,"enter ", topic)
-    setStat((prevStat) => {
+    setValue((prevValue) => {
       let val = values.value
       if (metric.convert === 'c2f') {
         val = c2f(val)
@@ -38,12 +38,11 @@ const ControlStats = (props) => {
 //}
 
   return (
-    <div className="control-stats">
-      <h3>{metric && metric.label}</h3>
-      <div className="metric">{metric && metric.metricId}</div>
-      <div className="stat">{stat}</div>
+    <div className="control-metrics">
+      {/*<div className="metric">{metric && metric.metricId}</div>*/}
+      <div className="value">{value}</div>
     </div>
   )
 }
 
-export default ControlStats
+export default ControlMetric

@@ -217,7 +217,7 @@ const mqttProcessCB = (_topic, _payload) => {
         switch (sourceId) {
           case 'I':
             if (!metric.input) {
-              mgWarning(0, f, 'Metric does not have a input', metric.metricId)
+              mgWarning(0, f, 'Metric does not have a input metric', metric.metricId)
               return
             }
             metric.input.value = values.value
@@ -225,14 +225,14 @@ const mqttProcessCB = (_topic, _payload) => {
             break;
           case 'O':
             if (!metric.output) {
-              mgWarning(0, f, 'Metric does not have a output', metric.metricId)
+              mgWarning(0, f, 'Metric does not have a output metric', metric.metricId)
               return
             }
             metric.output.value = values.value
             break;
           case 'H':
-            if (!metric.user) {
-              mgWarning(0, f, 'Metric does not have a user', metric.metricId)
+            if (!metric.human) {
+              mgWarning(0, f, 'Metric does not have a human metric', metric.metricId)
               return
             }
             metric.human.value = values.value

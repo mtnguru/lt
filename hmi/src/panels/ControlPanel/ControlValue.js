@@ -8,7 +8,7 @@ import './ControlValue.scss'
 
 const ControlValue = (props) => {
 //const [register, setRegister] = useState(true);
-  const [stat, setStat] = useState(0);
+  const [value, setValue] = useState(0);
 //const [metric, setMetric] = useState({});
 
   const {metricId, metric} = props
@@ -17,7 +17,7 @@ const ControlValue = (props) => {
     const metricCB = (metric, topic, payload, tags, values) => {
 //    const f = "ControlValue::metricCB"
 //    console.log(f,"enter ", topic)
-      setStat((prevStat) => {
+      setValue((prevValue) => {
         let val = values.value;
         if (metric.convert === 'c2f') {
           val = c2f(val)
@@ -108,7 +108,7 @@ const ControlValue = (props) => {
          onMouseUp={onDragEnd}
          style={{top: props.metric.position[0] + '%', left:props.metric.position[1] + '%'}}
     >
-      <div className="stat">{stat}</div>
+      <div className="Metric">{value}</div>
     </div>
   )
 }

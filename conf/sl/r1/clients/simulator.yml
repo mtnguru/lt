@@ -10,7 +10,7 @@ topics:
     rsp: a/admin/rsp/CLIENTID
     inp: PROJECTID/INSTANCE/inp/CLIENTID
     out: PROJECTID/INSTANCE/out/CLIENTID
-    hum: PROJECTID/INSTANCE/hum/CLIENTID
+    hum: PROJECTID/INSTANCE/hum/CLIENTID/USERID/cabin_lt
     alm: PROJECTID/INSTANCE/alm/CLIENTID
 metrics: 
   all

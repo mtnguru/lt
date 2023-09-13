@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 
 import { Container } from '@chakra-ui/react'
 import ExptPage from    './pages/ExptPage'
+import SafirePage from  './pages/SafirePage'
 import MqttPage from    './pages/MqttPage'
 import AdminPage from   './pages/AdminPage'
 
@@ -28,7 +29,8 @@ function App() {
       <MainNavigation />
       <Container as="main">
         <Routes>
-          <Route path='/'         element={<MqttPage />}  />
+          <Route path='/'         element={<SafirePage />}  />
+          <Route path='/safire'   element={<SafirePage />}  />
           <Route path='/mqtt'     element={<MqttPage />}  />
           <Route path='/expt'     element={<ExptPage />}  />
           <Route path='/admin'    element={<AdminPage />} />

@@ -1,5 +1,5 @@
 import MsgPanel from '../panels/MsgPanel/MsgPanel'
-import ControlPanel from '../panels/ControlPanel/ControlPanel'
+import ControlArduinoPanel from '../panels/ControlPanel/ControlArduinoPanel'
 import ControlImagePanel from '../panels/ControlPanel/ControlImagePanel'
 import { Container,
          Flex,
@@ -19,7 +19,7 @@ function ExptPage() {
       <Flex className="expt-flex">
         <Container className="left-col">
           <ControlImagePanel panelId="image_cabin" />
-          <ControlPanel      panelId="cont_clients" />
+          <ControlArduinoPanel      panelId="cont_clients" />
         </Container>
         <MsgPanel  classC="right-col" panelId="msg_chat" />
       </Flex>

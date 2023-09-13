@@ -1,4 +1,4 @@
-name: SAFIRE LabTime HMI
+name: LabTime HMI
 clientType: hmi
 userId: Bilbo
 format: yml
@@ -32,9 +32,9 @@ topics:
   publish:
     rsp: a/admin/rsp/CLIENTID
     adm: a/admin/cmd/administrator
-    msg: PROJECTID/INSTANCE/msg/CLIENTID
-    cod: PROJECTID/INSTANCE/cod/CLIENTID
-    hum: PROJECTID/INSTANCE/hum/CLIENTID
+    msg: PROJECTID/INSTANCE/msg/CLIENTID/all
+    cod: PROJECTID/INSTANCE/cod/CLIENTID/all
+    hum: PROJECTID/INSTANCE/hum/CLIENTID/USERID/cabin_lt
 metrics: project
 funcIds: {}
 statusDefault:
