@@ -6,9 +6,8 @@ import {c2f, findMetric} from '../../utils/metrics'
 import './ControlMetric.scss'
 
 const ControlMetric = (props) => {
-//const [register, setRegister] = useState(true);
   const [value, setValue] = useState(0);
-  const [metric, setMetric] = useState({});
+//const [metric, setMetric] = useState({});
 
   const { metricId } = props
 
@@ -28,14 +27,9 @@ const ControlMetric = (props) => {
   }
 
   useEffect(() => {
-    setMetric(findMetric(metricId))
+//  setMetric(findMetric(metricId))
     mqttRegisterMetricCB(metricId, metricCB)
   }, [metricId])
-
-//if (register) {
-//  mqttRegisterMetricCB(props.metric, metricCB)
-//  register = false
-//}
 
   return (
     <div className="control-metrics">

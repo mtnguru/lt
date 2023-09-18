@@ -21,7 +21,7 @@ const ControlArduinoPanel = (props) => {
   }
 
   return (
-    <Container className="panel control-arduino-panel mqtt-clientId-bg">
+    <Container className="panel control-panel mqtt-clientId-bg">
       <h2>Control panel</h2>
       <Container className="control-flex">
         <div className="controls">

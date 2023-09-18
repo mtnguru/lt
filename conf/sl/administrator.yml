@@ -7,9 +7,15 @@ mqtt:  # Each client must have it's own mqtt config
 # ip:   http://172.16.45.7   # merlin
 # url:  http://172.16.45.7
 # url:  http://192.168.122.90
-  url:  http://labtime.org:1883
-  username: data
-  password: datawp
+
+# url:  http://labtime.org:1883
+# username: data
+# password: datawp
+
+  url:  http://192.168.202.108:1883
+  username: mqtt
+  password: mqttsl
+
   protocol: 'MQTT'
   protocolVersion: 4
   connectTimeout: 60000

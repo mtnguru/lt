@@ -154,7 +154,7 @@ const mqttRegisterMetricCB = (_metricId, cb) => {
   }
   if (metric.cbs) {
     if (metric.cbs.includes(cb)) {
-      mgWarning.log(1, f, "already registered ", metricId)
+      mgWarning(1, f, "already registered ", metricId)
     } else {
       metric.cbs.push(cb)
     }

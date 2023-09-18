@@ -16,8 +16,8 @@ import {mqttConnect,
 import seedrandom from 'seedrandom'
 const clientId = "hmi"
 const generator = seedrandom(Date.now())
-const mqttClientId = `${clientId}_${generator().toString(16).slice(3)}`
-const userId = `user_${generator().toString(16).slice(3)}`
+const mqttClientId = `${clientId}_${generator().toString(16).slice(3,7)}`
+const userId = `user_${generator().toString(16).slice(0,6)}`
 
 const f = "index::main - "
 
@@ -46,12 +46,12 @@ global.aaa = {
 // MQTT configuration
 global.aam = {
   mqttClientId: mqttClientId,
-  url: 'mqtt://labtime.org:8081',
 //url: 'mqtt://194.195.214.212:8081',
 //url: 'mqtt://192.168.122.90:8081',
 //url: 'mqtt://172.16.45.7:8081',     // merlin
-  username: 'data',
-  password: 'datawp',
+  url: 'mqtt://192.168.202.108:8081',
+  username: 'mqtt',
+  password: 'mqttsl',
   protocol: 'MQTT',
   protocolVersion: 4,
   connectTimeout: 60000,
@@ -169,6 +169,7 @@ const connectCb = () => {
 //mqttUnsubscribe(global.aaa.topics)
 }
 
+/*
 fetch("https://api.ipdata.co")
   .then(response => {
     return response.json();
@@ -176,7 +177,10 @@ fetch("https://api.ipdata.co")
   .then(res => {
     console.log(res.ip)
   })
-  .catch(err => console.log(err))
+  .catch(
+    err => console.log(err)
+  )
+ */
 
 mqttConnect(connectCb, mqttProcessCB);
 console.log(f,'requestConfig')

@@ -8,23 +8,26 @@ import {mgError} from "../../utils/mg";
 
 const ControlSlider = (props) => {
 
-  const metric = findMetric(props.metricId)
+  const { metricId } = props
+
+  const metric = findMetric(metricId)
 //const [metric, setMetric] = useState({});
   const [value, setValue] = useState(metric.human.default)
-  const [outValue, setOutValue] = useState(0)
+//const [outValue, setOutValue] = useState(0)
 
   useEffect(() => {
-    mqttRegisterMetricCB(props.metricId, metricCB)
-//  setMetric(findMetric(props.metricId))
-  }, [props.metricId])
+//  setMetric(findMetric(metricId))
+    mqttRegisterMetricCB(metricId, metricCB)
+  }, [metricId])
 
   const metricCB = (metric, topic, payload, tags, values) => {
     const f = "ControlMetric::metricCB"
     const funcId = topic.split('/')[2]
-    if (funcId === 'human') {
-//    setValue(values.value)
-    } else if (funcId === 'output') {
-      setOutValue(parseFloat(values.value).toFixed(metric.decimals))
+    const userId = topic.split('/')[4]
+    if (funcId === 'hum' && userId != global.aam.mqttClientId) {
+      setValue(values.value)
+    } else if (funcId === 'out') {
+//    setOutValue(parseFloat(values.value).toFixed(metric.decimals))
     }
     console.log(f,"enter ", topic)
   }
@@ -37,7 +40,8 @@ const ControlSlider = (props) => {
     if (!metric) {
       mgError(0, f,"Metric not found: ",event.target.id)
     }
-    const topic = global.aaa.topics.publish['hum'];
+    const topic = global.aaa.topics.publish['hum'].replace('DUSERID',global.aam.mqttClientId);
+
     let value = event.target.value;
     let payload = `${metric.human.tags} value=${parseFloat(value).toFixed(2)}`
     mqttPublish(topic, payload)
@@ -45,7 +49,7 @@ const ControlSlider = (props) => {
 
   return (
     <div className="control-slider">
-      {/*<label htmlFor={props.metricId}>{metric.label}</label>*/}
+      {/*<label htmlFor={metricId}>{metric.label}</label>*/}
       <div className="container">
         <input
           id={metric.metricId}

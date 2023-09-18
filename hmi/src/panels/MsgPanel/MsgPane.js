@@ -39,8 +39,23 @@ const MsgPane = (props) => {
     //Runs only on the first render
   }, [paneId]);
 
-  // Whem the click button is pressed - submit a new item
+  // Submit button pressed
   const clickH = (event) => {
+    submitMsg(event)
+
+  }
+
+  const onKeyH = (event) => {
+    if (event.keyCode === 13 && !event.shiftKey) {
+      submitMsg(event)
+    }
+  }
+
+  const onChangeH = (event) => {
+    setMsg(event.target.value)
+  }
+
+  const submitMsg = (event) => {
     const topic = global.aaa.topics.publish['msg']
     if (msg.length === 0) return;
     event.preventDefault();
@@ -55,12 +70,6 @@ const MsgPane = (props) => {
     console.log(payload)
   }
 
-//function jsonEscape(str)  {
-//  return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t");
-//}
-  const onChangeH = (event) => {
-    setMsg(event.target.value)
-  }
 
   const pretty = 'pretty'
 
@@ -70,7 +79,7 @@ const MsgPane = (props) => {
       {paneId !== "Notifications" &&
         <Button onClick={clickH} className="msg-submit">Submit</Button>}
       <MsgHeader name={props.paneId} type={props.type}></MsgHeader>
-      <textarea onChange={onChangeH} className="msg" ref={ref}/>
+      <textarea onChange ={onChangeH} onKeyDown={onKeyH} className="msg" ref={ref}/>
       <MsgList className="msg-list" pretty={pretty} list={list}></MsgList>
     </AccordionItem>
   )

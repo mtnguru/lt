@@ -18,7 +18,7 @@ function currentDate(format) {
       ('0' + now.getDate()).slice(-2) + ' ' +
       now.getHours() + ':' +
       ('0' + now.getMinutes()).slice(-2) + ':' +
-      ('0' + now.getSeconds()).slice(-2) + ' - ' +
+      ('0' + now.getSeconds()).slice(-2) + '.' +
       ('00' + now.getMilliseconds()).slice(-3)
   } else if (format === 'short') {
     datestr =

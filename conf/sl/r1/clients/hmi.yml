@@ -1,6 +1,6 @@
-name: LabTime HMI
+name: LabTime UI
 clientType: hmi
-userId: Bilbo
+userId: Legolas
 format: yml
 clients:
   all:
@@ -10,7 +10,6 @@ clients:
   administrator: {}
   controller: {}
   drupal: {}
-  epiclc: {}
   arduino2: {}
   arduino3: {}
   arduino4: {}
@@ -32,9 +31,9 @@ topics:
   publish:
     rsp: a/admin/rsp/CLIENTID
     adm: a/admin/cmd/administrator
-    msg: PROJECTID/INSTANCE/msg/CLIENTID/all
+    msg: PROJECTID/INSTANCE/msg/CLIENTID/all/msg
     cod: PROJECTID/INSTANCE/cod/CLIENTID/all
-    hum: PROJECTID/INSTANCE/hum/CLIENTID/USERID/cabin_lt
+    hum: PROJECTID/INSTANCE/hum/CLIENTID/DUSERID/lab
 metrics: project
 funcIds: {}
 statusDefault:

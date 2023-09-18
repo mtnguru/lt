@@ -1,3 +1,22 @@
+Save notes and chat into grafana
+   Why wasn't telegraf getting my messages
+  *Add Enter key to msgPane
+   am
+
+
+
+Install labtime on atlas2
+   labtime software 
+   npm
+   node
+   mosquitto
+   
+
+Get telegraf install onto atlas2
+Gat
+
+
+
 Getting the SAFIRE lab page near completion
   Save Msgs into Influx
     It doesn't appear to be getting any messages.
@@ -5,7 +24,6 @@ Getting the SAFIRE lab page near completion
       No messages
       log file?
 
-  Get telegraf install onto atlas2
 
 Hold off on the simulator.
 Instead focus on the UI slider

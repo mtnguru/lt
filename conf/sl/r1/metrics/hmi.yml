@@ -4,14 +4,14 @@ R1_Ch_Human_PSI:
   label: Pressure
   desc: Chamber Pressure
   value: 1
-  decimals: 1
+  decimals: 0
   human:
     clientId: hmi
     channelType: number
     default: 10
     min: 0
     max: 200
-    step: .1
+    step: 1
 R1_Ch_Pico_V:
   label: PS Voltage
   desc: Power Supply Voltage
