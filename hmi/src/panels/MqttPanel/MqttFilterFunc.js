@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 
-import { Heading, Container } from '@chakra-ui/react'
+import { Heading, Box } from '@chakra-ui/react'
 
-import "./MqttFilterFunc.scss";
+//import "./MqttFilterFunc.scss";
 import CheckboxList from "../../components/ui/CheckboxList";
 
 const lsKey = "ltFilterFunc"
@@ -54,12 +54,12 @@ function MqttFilterFunc(props) {
   }
 
   return (
-    <Container className="mqtt-filter-func">
+    <Box className="mqtt-filter-func">
       <Heading as="h3">Function</Heading>
-      <Container className={`select mqtt-func-bg ${allSelected ? "all-selected" : ""}`}>
+      <Box className={`select mqtt-func-bg ${allSelected ? "all-selected" : ""}`}>
         <CheckboxList list={(global.aaa.funcIds) ? global.aaa.funcIds : {}} onChangeH={onChangeH} />
-      </Container>
-    </Container>
+      </Box>
+    </Box>
   );
 }
 

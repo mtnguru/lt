@@ -1,8 +1,14 @@
-//import React, {useState, useEffect} from 'react';
 import React, {useEffect, useState, useRef} from 'react';
-import {AccordionItem,
-        Button} from '@chakra-ui/react'
-import MsgHeader from './MsgHeader'
+import {
+  AccordionItem,
+  AccordionButton,
+  AccordionIcon,
+  AccordionPanel,
+  Box,
+  Heading,
+  Textarea,
+  //Button
+} from '@chakra-ui/react'
 import MsgList from './MsgList'
 import {mqttPublish, mqttRegisterTopicCB} from '../../utils/mqttReact'
 import {currentDate} from "../../utils/tools";
@@ -34,16 +40,18 @@ const MsgPane = (props) => {
     })
   }
 
+  const topicCBRef = useRef(topicCB)
+
   useEffect(() => {
-    mqttRegisterTopicCB(global.aaa.topics.register.msg, topicCB, { type: paneId })
-    //Runs only on the first render
+    mqttRegisterTopicCB(global.aaa.topics.register.msg, topicCBRef.current, {type: paneId })
   }, [paneId]);
 
   // Submit button pressed
+  /*
   const clickH = (event) => {
     submitMsg(event)
-
   }
+   */
 
   const onKeyH = (event) => {
     if (event.keyCode === 13 && !event.shiftKey) {
@@ -70,17 +78,23 @@ const MsgPane = (props) => {
     console.log(payload)
   }
 
-
   const pretty = 'pretty'
-
 
   return (
     <AccordionItem className={`msg-pane ${paneId}`}>
-      {paneId !== "Notifications" &&
-        <Button onClick={clickH} className="msg-submit">Submit</Button>}
-      <MsgHeader name={props.paneId} type={props.type}></MsgHeader>
-      <textarea onChange ={onChangeH} onKeyDown={onKeyH} className="msg" ref={ref}/>
-      <MsgList className="msg-list" pretty={pretty} list={list}></MsgList>
+      {/*paneId !== "Notifications" &&
+      <Button onClick={clickH} size="xsm" className="msg-submit">Submit</Button>*/}
+      <AccordionButton>
+        <Box as="span" flex='1' textAlign='left'>
+          <Heading as="h3" fg="titleFg" color="titleFg" fontSize="130%" className="msg-header-name">{paneId}</Heading>
+        </Box>
+        <AccordionIcon width="30px" height="30px"/>
+      </AccordionButton>
+      <AccordionPanel pb={4}>
+          {props.paneId !== 'Notifications' &&
+            <Textarea p="5px" mb={2} bg="bg4" minH="36px" onChange ={onChangeH} onKeyDown={onKeyH} className="msg" ref={ref}/>}
+         <MsgList className="msg-list" pretty={pretty} list={list}></MsgList>
+      </AccordionPanel>
     </AccordionItem>
   )
 }

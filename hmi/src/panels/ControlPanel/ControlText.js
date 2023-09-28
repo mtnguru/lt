@@ -1,7 +1,7 @@
 // File: ControlText.js
 // import React, {useState} from 'react';
 
-import './ControlText.scss'
+//import './ControlText.scss'
 
 const ControlText = (props) => {
   return (

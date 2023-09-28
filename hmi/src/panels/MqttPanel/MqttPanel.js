@@ -10,7 +10,7 @@ import MqttList from './MqttList';
 import {mqttRegisterTopicCB} from "../../utils/mqttReact";
 import {currentDate} from "../../utils/tools";
 
-import "./MqttPanel.scss";
+//import "./MqttPanel.scss";
 
 let registered = false;
 

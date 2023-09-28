@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import {mqttPublish} from '../../utils/mqttReact'
-import ('./DoeForm.scss')
+//import ('./DoeForm.scss')
 
 const DoeForm = (props) => {
   const [notes, setNotes] = useState('')

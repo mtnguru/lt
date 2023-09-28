@@ -4,7 +4,7 @@ import Panel from "../../components/ui/Panel"
 import DoeStaticTable from "./DoeStaticTable"
 import DoeVariableTable from "./DoeVariableTable"
 
-import './DoePanel.scss'
+//import './DoePanel.scss'
 
 const DoePanel = (props) => {
   const [doe, setDoe] = useState({

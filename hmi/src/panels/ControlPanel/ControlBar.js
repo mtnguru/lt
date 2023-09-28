@@ -2,7 +2,7 @@
 
 // import React, {useState} from 'react';
 
-import "./ControlBar.scss";
+//import "./ControlBar.scss";
 
 const ControlBar = (props) => {
   return (

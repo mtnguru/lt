@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import Card from '../../components/ui/Card'
 import {extractFromTags} from '../../utils/influxr'
 import {mgError} from '../../utils/mg'
-import ('./MqttItem.scss')
+//import ('./MqttItem.scss')
 
 const makeJsonPretty = (payloadStr) => {
   payloadStr = payloadStr

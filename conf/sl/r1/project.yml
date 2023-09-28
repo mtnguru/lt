@@ -1,5 +1,5 @@
 name: SAFIRE LAB
-instance: 42
+instance: 40
 topics:
   edge:
     subscribe:

@@ -5,7 +5,7 @@ import DoeElement from './DoeElement'
 import DoeForm from './DoeForm'
 import {findMetric, getValue} from '../../utils/metrics'
 import {currentDate} = '../../utils/tools'
-import ('./DoeRun.scss')
+//import ('./DoeRun.scss')
 
 const DoeRun = (props) => {
   const [showModal, setShowModal] = useState(false)

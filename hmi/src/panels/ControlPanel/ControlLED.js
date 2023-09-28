@@ -7,7 +7,7 @@ import {makeTagsFromMetric} from "../../utils/influxr"
 //const makeTagsFromMetric = require('../../utils/influx')
 import {findMetric} from "../../utils/metrics"
 
-import "./ControlButton.scss";
+//import "./ControlButton.scss";
 
 const ControlButton = (props) => {
   const [btnState, setBtnState] = useState(false)

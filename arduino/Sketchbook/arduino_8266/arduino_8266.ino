@@ -496,10 +496,8 @@ void setConfig(const char *topic,
       pinMode(atoi(channel), OUTPUT);
       logit(0,MD,f,"Output channel ", channel);
       outputN++;
-      logit(0,MD, f, "shitty", NULL);
     }
   }
-  logit(0,MD, f, "crappy", NULL);
 
   haveConfig = true;
   logit(3,MD, f, "exit", NULL);

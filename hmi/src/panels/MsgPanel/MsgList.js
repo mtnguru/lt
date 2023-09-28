@@ -1,13 +1,13 @@
 // import React, {useState} from 'react';
 
-import { Container } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 //import MsgItem from './MsgItem'
 
 function MsgList(props) {
   let list = (props.list) ? props.list : []
 
   return (
-    <Container className="msg-list-container">
+    <Box className="msg-list-container" minH="30vh" maxH="55vh" bg="bg3">
       <div className="msg-list">
         {list.map(item =>
           <div className="msg-item">
@@ -20,7 +20,7 @@ function MsgList(props) {
           </div>
         )}
       </div>
-    </Container>
+    </Box>
   );
 }
 

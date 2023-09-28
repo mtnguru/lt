@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import {findMetric, getValue} from '../../utils/metrics'
 import {mqttRegisterMetricCB} from '../../utils/mqttReact'
-import './DoeElement.scss'
+//import './DoeElement.scss'
 
 const DoeElement = (props) => {
   const [metric, setMetric] = useState(null)

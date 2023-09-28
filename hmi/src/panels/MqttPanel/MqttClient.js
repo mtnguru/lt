@@ -1,8 +1,9 @@
-import React, {useState, useEffect} from 'react'
-import './MqttClient.scss'
+import React, {useState, useEffect, useRef} from 'react'
+//import './MqttClient.scss'
+//import '../../chakra.scss'
 import { mqttRegisterTopicCB } from '../../utils/mqttReact'
 
-import { Container, Select, Button, Tooltip } from '@chakra-ui/react'
+import { Box, Select, Button, Tooltip } from '@chakra-ui/react'
 
 import {mgDebug} from "../../utils/mg"
 import {mqttPublish} from "../../utils/mqttReact"
@@ -41,9 +42,13 @@ function MqttClient (props) {
       setNumRunning(0)
     }
   }
+
+  const rspCBRef = useRef(rspCB)
+  const cmdCBRef = useRef(cmdCB)
+
   useEffect(() => {
-    mqttRegisterTopicCB(global.aaa.topics.register.rsp, rspCB, {});
-    mqttRegisterTopicCB(global.aaa.topics.register.cmd, cmdCB, {});
+    mqttRegisterTopicCB(global.aaa.topics.register.rsp, rspCBRef, {});
+    mqttRegisterTopicCB(global.aaa.topics.register.cmd, cmdCBRef, {});
   }, [clientId])
 
   const onSelectH = (event) => {
@@ -98,7 +103,7 @@ function MqttClient (props) {
   }
 
   return (
-    <Container className={`checkbox ${props.client.clientId}`} key={`${props.client.id}`}>
+    <Box className={`checkbox ${props.client.clientId}`} key={`${props.client.id}`}>
       <div className="row1">
         <input id={props.id} type='checkbox' name={props.client.id} onChange={props.onChangeH} checked={props.client.selected ? "checked" : ""} />
         <label htmlFor={props.client.clientId}>{props.client.name}</label>
@@ -106,20 +111,20 @@ function MqttClient (props) {
       <div className="row2">
         {props.id !== 'administrator' && props.id !== 'drupal' && props.id !== 'hmi' && props.id !== 'project' && props.id !== "controller" &&
           <Tooltip label="Enable" bg="white" p="10px" placement="bottom">
-            <Button className={`enabled ${enabled ? "true" : "false"}`} onClick={onClickH}>E</Button>
+            <Button className={`small enabled ${enabled ? "true" : "false"}`} onClick={onClickH}>E</Button>
           </Tooltip>
         }
         <Tooltip label="Request status" bg="white" p="10px" placement="bottom">
-          <Button className={`status ${running}`}   onClick={onClickH}>{numRunning}</Button>
+          <Button className={`small status ${running}`}   onClick={onClickH}>{numRunning}</Button>
         </Tooltip>
         {props.id !== 'all' &&
           <Tooltip label="Reset client" bg="white" p="10px" placement="bottom">
-            <Button className="reset"    onClick={onClickH}>R</Button>
+            <Button className="small reset"    onClick={onClickH}>R</Button>
           </Tooltip>
         }
         {props.id !== 'all' &&
           <Tooltip label="Set Debug Level" bg="white" p="10px" placement="bottom">
-            <Select className="debug-level" value={debugLevel} onChange={onSelectH}>
+            <Select className="small debug-level" value={debugLevel} onChange={onSelectH}>
               <option value="0">0</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -128,6 +133,6 @@ function MqttClient (props) {
           </Tooltip>
         }
       </div>
-    </Container> )
+    </Box> )
 }
 export default MqttClient;

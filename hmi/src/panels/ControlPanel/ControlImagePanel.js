@@ -11,7 +11,7 @@ import { Heading } from '@chakra-ui/react'
 
 import ControlValue from './ControlValue'
 
-import './ControlImagePanel.scss'
+//import './ControlImagePanel.scss'
 import {mqttRequestFile} from "../../utils/mqttReact";
 
 const ControlImagePanel = (props) => {
@@ -23,7 +23,7 @@ const ControlImagePanel = (props) => {
       global.aaa[panelId] = payload;
       setHmi(global.aaa[panelId])
     }
-    mqttRequestFile(global.aaa.clientId, panelId, `hmi/panels/${panelId}.yml`, 'yml', onLoadCB)
+    mqttRequestFile(global.aaa.clientId, panelId, `labtime/panels/${panelId}.yml`, 'yml', onLoadCB)
   }, [panelId])
 
 //var backgroundImage = "../../../assets/cabin.png";

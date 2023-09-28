@@ -15,13 +15,3 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-#root {
-  background: $bg-color;
-  color: $fg-color;
-  overflow: hidden;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}

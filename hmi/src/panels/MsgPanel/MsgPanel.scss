@@ -9,10 +9,6 @@
     margin-left: 10px;
   }
 
-  .msg-pane {
-    margin-top: 10px;
-  }
-
   .msg-submit {
     background: $button-bg-color;
     color: $button-fg-color;
@@ -26,6 +22,7 @@
     padding: 2px 8px;
   }
 
+  /*
   .msg {
     padding: 3px 6px;
     width: calc(100% - 4px);
@@ -63,5 +60,5 @@
       }
     }
   }
-
+ */
 }

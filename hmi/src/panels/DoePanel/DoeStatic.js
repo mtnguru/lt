@@ -1,5 +1,5 @@
 import DoeElement from './DoeElement'
-import ('./DoeStatic.scss')
+//import ('./DoeStatic.scss')
 
 const DoeStatic = (props) => {
 

@@ -1,7 +1,7 @@
 import React, {Fragment} from 'react'
 import ReactDOM from 'react-dom'
 
-import classes from './Popup.module.scss'
+//import classes from './Popup.module.scss'
 
 const PopupOverlay = (props) => {
   return (

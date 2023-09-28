@@ -1,29 +1,29 @@
 import MsgPanel from '../panels/MsgPanel/MsgPanel'
 import ControlArduinoPanel from '../panels/ControlPanel/ControlArduinoPanel'
 import ControlImagePanel from '../panels/ControlPanel/ControlImagePanel'
-import { Container,
+import { Box,
          Flex,
 //       Box,
 //       Spacer,
          Heading
        } from '@chakra-ui/react'
 
-import './ExptPage.scss'
+//import './CabinPage.scss'
 
-function ExptPage() {
+function CabinPage() {
   return (
-    <Container className="page expt-page">
+    <Box className="page cabin-page">
       <header>
         <Heading>Experiment - Red Feather Cabin</Heading>
       </header>
-      <Flex className="expt-flex">
-        <Container className="left-col">
+      <Flex className="cabin-flex">
+        <Box className="left-col">
           <ControlImagePanel panelId="image_cabin" />
           <ControlArduinoPanel      panelId="cont_clients" />
-        </Container>
+        </Box>
         <MsgPanel  classC="right-col" panelId="msg_chat" />
       </Flex>
-    </Container>
+    </Box>
   )
 }
-export default ExptPage;
+export default CabinPage;

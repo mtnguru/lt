@@ -8,12 +8,12 @@ import ControlButton from './ControlButton'
 import ControlMetric from './ControlStats'
 // import ControlBar from './ControlBar'
 
-import { Container,
+import { Box,
 //       Heading,
 //       IconButton
        } from '@chakra-ui/react'
 
-import './ControlPanel.scss'
+//import './ControlPanel.scss'
 
 const ControlPanel = (props) => {
   const clickH = (event) => {
@@ -21,9 +21,9 @@ const ControlPanel = (props) => {
   }
 
   return (
-    <Container className="panel control-panel mqtt-clientId-bg">
+    <Box className="panel control-panel mqtt-clientId-bg">
       <h2>Control panel</h2>
-      <Container className="control-flex">
+      <Box className="control-flex">
         <div className="controls">
           <div className="control-bar arduino2">
             <label className="label">Arduino2</label>
@@ -54,9 +54,9 @@ const ControlPanel = (props) => {
             <ControlButton clientId="epiclc" metricId="Backpanel_LED_Red_On" type="toggle" cname="red" label="Red" clickH={clickH}></ControlButton>
           </div>
         </div>
-      </Container>
+      </Box>
 
-      <Container>
+      <Box>
         <div className="metrics">
           <ControlStats metricId="Outside_Bunkhouse_K_F" type="status" label="Outdoors" cname=""></ControlStats>
           <ControlStats metricId="Outside_Front_K_F" type="status" label="Rio Outside" cname=""></ControlStats>
@@ -69,8 +69,8 @@ const ControlPanel = (props) => {
           <ControlStats metricId="MasterBedroom_Door_K_F" type="status" label="Rio Bedroom" cname=""></ControlStats>
           <ControlStats metricId="LivingRoom_Fireplace_K_F" type="status" label="Rio Fireplace" cname=""></ControlStats>
         </div>
-      </Container>
-    </Container>
+      </Box>
+    </Box>
   )
 }
 

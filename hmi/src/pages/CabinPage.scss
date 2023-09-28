@@ -1,12 +1,12 @@
 @import "../styles/colors";
 @import "../styles/base";
 
-.expt-page {
+.cabin-page {
   padding: 0 5px;
   @media(min-width: $bp-md) {
     padding: 0 12px;
   }
-  .expt-flex {
+  .cabin-flex {
     @media(max-width: $bp-md) {
       display: block;
     }

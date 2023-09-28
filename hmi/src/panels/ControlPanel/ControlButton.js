@@ -6,7 +6,7 @@ import { mqttPublish } from '../../utils/mqttReact'
 //import {makeTagsFromMetric} from "../../utils/influxr"
 //import {findMetric} from "../../utils/metrics"
 
-import "./ControlButton.scss";
+//import "./ControlButton.scss";
 
 const ControlButton = (props) => {
   const [btnState, setBtnState] = useState(false)

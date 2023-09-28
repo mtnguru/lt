@@ -8,8 +8,9 @@ function MainNavigation() {
       <div className={classes.logo}><h2>LabTime</h2></div>
       <nav>
         <ul>
+          <li key="oxy"><Link to='/oxy'>OXY</Link></li>
           <li key="safire"><Link to='/safire'>SAFIRE</Link></li>
-          <li key="expt"><Link to='/expt'>Experiment</Link></li>
+          <li key="cabin"><Link to='/cabin'>Experiment</Link></li>
           <li key="mqtt"><Link to='/mqtt'>MQTT</Link></li>
         </ul>
       </nav>

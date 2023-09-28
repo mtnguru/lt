@@ -4,7 +4,7 @@
 import ControlSlider from './ControlSlider'
 import Card from '../../components/ui/Card'
 
-import './ControlSliderPanel.scss'
+//import './ControlSliderPanel.scss'
 
 const ControlSliderPanel = (props) => {
   const onChange = (event) => {

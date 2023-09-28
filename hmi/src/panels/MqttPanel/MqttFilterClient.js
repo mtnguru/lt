@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react'
 
-import { Container,
+import { Box,
          Heading,
          IconButton } from '@chakra-ui/react'
 import { SettingsIcon } from '@chakra-ui/icons'
 
-import "./MqttFilterClient.scss";
+//import "./MqttFilterClient.scss";
+//import "../../chakra.scss";
 import MqttClientList from "./MqttClientList";
 
 const lsKey = "cnFilterClient"
@@ -61,15 +62,15 @@ function MqttFilterClient(props) {
   }
 
   return (
-    <Container className={`mqtt-filter-client ${(settingsBtn) ? "showSettings" : '' }`}>
-      <Container>
-        <IconButton className="settings" onClick={onClickH} aria-label='Display MqttClient Actions' icon={<SettingsIcon />}></IconButton>
+    <Box className={`mqtt-filter-client ${(settingsBtn) ? "showSettings" : '' }`}>
+      <Box>
+        <IconButton className="settings small" onClick={onClickH} aria-label='Display MqttClient Actions' icon={<SettingsIcon />}></IconButton>
         <Heading as="h3">MqttClient</Heading>
-      </Container>
-      <Container className={`clients mqtt-clientId-bg ${allSelected ? "all-selected" : ""}`}>
+      </Box>
+      <Box className={`clients mqtt-clientId-bg ${allSelected ? "all-selected" : ""}`}>
         <MqttClientList list={(global.aaa.clients) ? global.aaa.clients : {}} onChangeH={onChangeH} />
-      </Container>
-    </Container>
+      </Box>
+    </Box>
   );
 }
 

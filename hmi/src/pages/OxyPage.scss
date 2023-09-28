@@ -1,0 +1,22 @@
+@import "../styles/colors";
+@import "../styles/base";
+
+.oxy-page {
+  padding: 0 5px;
+  width: 100%;
+  max-width: 100%;
+
+//.oxy-flex {
+//  @media(max-width: $bp-md) {
+//    display: block;
+//  }
+//}
+  .left-col {
+    flex-basis: 30%;
+    max-width: 500px;
+  }
+  .right-col {
+    flex-grow: 1;
+    overflow: auto;
+  }
+}

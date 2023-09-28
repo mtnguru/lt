@@ -1,7 +1,7 @@
 
-import { Container } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 
-import './Checkbox.scss'
+//import './Checkbox.scss'
 import Checkbox from './Checkbox.js'
 
 function CheckboxList (props) {
@@ -13,12 +13,12 @@ function CheckboxList (props) {
     props.onChangeH(event)
   }
   return (
-    <Container className='checkbox-list'>
+    <Box className='checkbox-list'>
       {Object.keys(props.list).map(key => {
         return <Checkbox onChangeH={onChangeH} className={key} key={key} id={key}
                          type={props.list[key]} />
       })}
-    </Container>
+    </Box>
   );
 }
 

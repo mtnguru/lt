@@ -237,13 +237,13 @@ const processCB = (_topic, _payload) => {
             addStatus(out)
           }
           if (input.cmd === 'requestJsonFile') {
-            msg(2, f, DEBUG, "Read json file: ", filePath)
+            msg(2, f, DEBUG, "Read json file: ", filepath)
             dclientId = (input.ip) ? input.ip : input.clientId
             outTopic = global.aaa.topics.publish.rsp
             outTopic = outTopic.replace(/DCLIENTID/, dclientId)
 
-            const filePath = `${process.env.ROOT_PATH}/${input.filePath}`
-            const data = fs.readFileSync(filePath);
+            const filepath = `${process.env.ROOT_PATH}/${input.filepath}`
+            const data = fs.readFileSync(filepath);
             out = JSON.parse(data)
           }
           if (input.cmd === 'requestYmlFile') {
@@ -251,9 +251,9 @@ const processCB = (_topic, _payload) => {
             outTopic = global.aaa.topics.publish.rsp
             outTopic = outTopic.replace(/DCLIENTID/, dclientId)
 
-            const filePath = `${process.env.ROOT_PATH}/${input.filePath}`
-            msg(2, f, DEBUG, "Read yml file: ", filePath)
-            out = YAML.safeLoad(fs.readFileSync(filePath));
+            const filepath = `${process.env.ROOT_PATH}/${input.filepath}`
+            msg(2, f, DEBUG, "Read yml file: ", filepath)
+            out = YAML.safeLoad(fs.readFileSync(filepath));
           }
         }
       }
@@ -298,8 +298,8 @@ const initMetrics = (projectId, instance, project) => {
   project.metrics = {}
   files.forEach(filename => {
     if (path.extname(filename) == '.yml') {
-      var filePath = dirPath + '/' + filename;
-      var metrics = YAML.safeLoad(fs.readFileSync(filePath));
+      var filepath = dirPath + '/' + filename;
+      var metrics = YAML.safeLoad(fs.readFileSync(filepath));
       for (metric in metrics) {
         project.metrics[metric] = metrics[metric]
       }
@@ -354,8 +354,8 @@ const initClients = (projectId, instance, project, funcIds) => {
       continue;
     }
 
-    var filePath = `${process.env.ROOT_PATH}/${adminId}/${projectId}/clients/${clientId}.yml`
-    var ymlStr = fs.readFileSync(filePath)
+    var filepath = `${process.env.ROOT_PATH}/${adminId}/${projectId}/clients/${clientId}.yml`
+    var ymlStr = fs.readFileSync(filepath)
     var client = YAML.safeLoad(ymlStr)
     project.clients[clientId] = client
     client.clientId = clientId
@@ -455,18 +455,18 @@ const loadConfig = () => {
   for (var projectId in global.aaa.projects) {
     if (global.aaa.projects[projectId] === 'enabled') {
       var ymlStr
-      var filePath
+      var filepath
       var funcIds
       try {
-        filePath = `${process.env.ROOT_PATH}/${adminId}/${projectId}/hmi/funcIds.yml`
-        ymlStr = fs.readFileSync(filePath)
+        filepath = `${process.env.ROOT_PATH}/${adminId}/${projectId}/hmi/funcIds.yml`
+        ymlStr = fs.readFileSync(filepath)
         funcIds = YAML.safeLoad(ymlStr)
         for (var id in funcIds) {
           funcIds[id].typeId = id
         }
 
       } catch(err) {
-        msg(0,f,ERROR,err,filePath);
+        msg(0,f,ERROR,err,filepath);
       }
 
       try {
@@ -481,7 +481,7 @@ const loadConfig = () => {
           }
         }
       } catch(err) {
-        msg(0,f,ERROR,err,filePath);
+        msg(0,f,ERROR,err,filepath);
       }
 
     } else {

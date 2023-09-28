@@ -8,12 +8,12 @@ import ControlSlider from './ControlSlider'
 
 // import ControlBar from './ControlBar'
 
-import { Container,
+import { Box,
 //       Heading,
 //       IconButton
        } from '@chakra-ui/react'
 
-import './ControlSafirePanel.scss'
+//import './ControlSafirePanel.scss'
 
 const ControlSafirePanel = (props) => {
 
@@ -32,16 +32,16 @@ const ControlSafirePanel = (props) => {
     }
     const topic = global.aaa.topic.publish['human'];
     let value = event.target.value;
-    let payload = `${metric.human.tags} value=${parseFloat(value).toFixed(2)}`
+    let payload = `${metric.human.tags} value=${parseFloat(value).toFixed(metric.decimals)}`
     mqttPublish(topic, payload)
     */
   }
 
 
   return (
-    <Container className="panel control-safire-panel mqtt-clientId-bg">
+    <Box className="panel control-safire-panel mqtt-clientId-bg">
       {/*<h2>Control panel</h2>*/}
-      <Container className="controls" >
+      <Box className="controls" >
         <div className="control-bar pressure">
           <label className="label">Pressure</label>
           <ControlMetric metricId="R1_Ch_Human_PSI" type="status" label="Pressure" cname=""></ControlMetric>
@@ -69,8 +69,8 @@ const ControlSafirePanel = (props) => {
           <label className="label">Ambient</label>
           <ControlMetric metricId="R1_Ch_K_Ambient_C" type="status" label="Pressure" cname=""></ControlMetric>
         </div>
-      </Container>
-    </Container>
+      </Box>
+    </Box>
   )
 }
 

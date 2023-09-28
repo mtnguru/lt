@@ -1,0 +1,60 @@
+
+
+
+
+Labtime Host Computer
+  - sl SAFIRE Lab
+  - rf Red Feather
+
+
+
+
+
+        
+
+
+sl   SAFIRE Complex labtime.aureon.ca  rename atlas2
+   r1
+      sl_edge
+      sl_msg
+      sl_inst
+
+      sl_edge_test
+      sl_msg_test
+      sl_inst_test
+
+      safire_inst   - Leave these alone
+      safire_scada
+      safire_dataq
+
+lt - labtime.org
+   oxy
+      oxy_edge
+      oxy_msg
+      oxy_inst      - rename  sohe  - delete
+
+      oxy_lab_test
+      oxy_msg_test
+      oxy_inst_test
+
+   cb
+      cb_edge       * rename cabin_lt
+      cb_epic       - rename cabin_edge
+      cb_msg
+      cb_inst
+
+      cb_edge_test
+      cb_epic_test  - rename  cabin_edge
+      cb_msg_test
+      cb_inst_test
+
+system
+_internal
+cabin_cn  - delete
+sl        - remove
+sld       - remove
+oxy       - remove
+oxy_msg   - remove
+oxy_test  - remove
+oxy_msgdd - remove
+

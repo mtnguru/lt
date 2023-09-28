@@ -1,0 +1,21 @@
+######################### arduino metrics ###################
+
+E1_Gm_N2_L3_CPS:
+  label: N23
+  desc: Node 2 Level 3
+  value: 0
+  decimals: 2
+  input:
+    clientId: arduino_gm
+    channelType: GeigerMeister
+    channels: 2,4,5
+
+arduino-gm_Onboard_LED_On:
+  label: Arduino_gm Onboard LED
+  desc: Arduino_gm Onboard LED
+  value: 0
+  decimals: 0
+  output:
+    clientId: arduino_gm
+    channelType: digital
+    channel: "16"

@@ -1,15 +1,16 @@
 import React, {useState} from 'react'
 import { Route, Routes } from 'react-router-dom'
 
-import { Container } from '@chakra-ui/react'
-import ExptPage from    './pages/ExptPage'
-import SafirePage from  './pages/SafirePage'
+import { Box } from '@chakra-ui/react'
+import CabinPage from   './pages/CabinPage'
+////import SafirePage from  './pages/SafirePage'
+import OxyPage from     './pages/OxyPage'
 import MqttPage from    './pages/MqttPage'
 import AdminPage from   './pages/AdminPage'
 
 import Welcome from './components/popup/Welcome'
 
-import './App.scss'
+//import './App.scss'
 import MainNavigation from './components/layout/MainNavigation'
 import Footer from './panels/Footer/Footer'
 
@@ -24,22 +25,22 @@ function App() {
   }
 
   return (
-    <Container id="app">
+    <Box id="app" bg="bg" color="fg">
       {welcomeOpen && <Welcome onClose={onClose}/>}
       <MainNavigation />
-      <Container as="main">
+      <Box as="main">
         <Routes>
-          <Route path='/'         element={<SafirePage />}  />
-          <Route path='/safire'   element={<SafirePage />}  />
+          <Route path='/'         element={<OxyPage />}  />
+          <Route path='/oxy'      element={<OxyPage />}  />
           <Route path='/mqtt'     element={<MqttPage />}  />
-          <Route path='/expt'     element={<ExptPage />}  />
+          {/*<Route path='/safire'   element={<SafirePage />}  /> */}
+          <Route path='/cabin'    element={<CabinPage />}  />
           <Route path='/admin'    element={<AdminPage />} />
         </Routes>
-      </Container>
+      </Box>
       <Footer />
-    </Container>
+    </Box>
   );
 }
-
 
 export default App;

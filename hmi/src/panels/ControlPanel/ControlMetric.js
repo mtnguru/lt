@@ -1,9 +1,16 @@
 // File: ControlMetric.js
 import React, {useState, useEffect} from 'react';
 import {mqttRegisterMetricCB} from '../../utils/mqttReact'
-import {c2f, findMetric} from '../../utils/metrics'
+import {c2f} from '../../utils/metrics'
 
-import './ControlMetric.scss'
+import {
+  Text,
+  Flex,
+} from '@chakra-ui/react'
+
+
+
+//import './ControlMetric.scss'
 
 const ControlMetric = (props) => {
   const [value, setValue] = useState(0);
@@ -32,10 +39,12 @@ const ControlMetric = (props) => {
   }, [metricId])
 
   return (
-    <div className="control-metrics">
-      {/*<div className="metric">{metric && metric.metricId}</div>*/}
-      <div className="value">{value}</div>
-    </div>
+    <Flex mb={1}>
+      <Text mt={-1} w={28} pw={4} fontWeight="bold" fontSize="120%">{props.label}</Text>
+      <Text variant="metric" display={props.display ? props.display : null}>
+        <span>{value}</span>
+      </Text>
+    </Flex>
   )
 }
 

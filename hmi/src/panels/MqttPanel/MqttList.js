@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 
 import { mqttRegisterTopicCB } from '../../utils/mqttReact'
 import MqttItem from './MqttItem'
-import './MqttList.scss';
+//import './MqttList.scss';
 
 function MqttList(props) {
   // if list does not exist - set list to an empty array

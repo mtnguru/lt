@@ -195,9 +195,10 @@ const mqttProcessCB = (_topic, _payload) => {
   console.log(f, 'enter ', _topic, payloadStr)
 
   try {
-    // If this is a metricCB - influx line buf - call metric callbacks
     const fields = _topic.split("/")
     const func = fields[2]
+
+    // If Input, output, human - process and Metric Callbacks
     if (func === 'inp' || func === 'out' || func === 'hum') {
       const {tags, values} = extractFromTags(payloadStr)
       if (!tags["MetricId"]) {
@@ -248,6 +249,7 @@ const mqttProcessCB = (_topic, _payload) => {
       }
     }
 
+    // Process any Topic Callbacks
     var payload;
     if (payloadStr[0] === '{') {
       payload = JSON.parse(payloadStr);
@@ -267,14 +269,22 @@ const mqttProcessCB = (_topic, _payload) => {
             }
             if (valid) {
               try {
-                rec.cb(_topic,payload)
+                if (rec.cb.current) {
+                  rec.cb.current(_topic,payload)
+                } else {
+                  rec.cb(_topic,payload)
+                }
               } catch(err) {
                 console.log(f, 'ERROR in cb w/args: ' + err)
               }
             }
           } else {
             try {
-              rec.cb(_topic,payloadStr)
+              if (rec.cb.current) {
+                rec.cb.current(_topic,payloadStr)
+              } else {
+                rec.cb(_topic,payloadStr)
+              }
             } catch(err) {
               console.log(f, 'ERROR in cb: ' + err)
             }

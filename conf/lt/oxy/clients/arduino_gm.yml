@@ -1,0 +1,10 @@
+name: GM Arduino
+ip: 192.168.0.100
+model: arduino
+clientType: edge
+topics: edge
+statusDefault:
+  sampleInterval: 10000
+  enabled: 1
+  debugLevel: 0
+

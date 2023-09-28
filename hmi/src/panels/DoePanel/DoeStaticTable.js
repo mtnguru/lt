@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react'
 import DoeElement from "./DoeElement";
 import ControlMetric from "../ControlPanel/ControlMetric";
 
-import './DoeStaticTable.scss'
+//import './DoeStaticTable.scss'
 
 const DoeStaticTable = (props) => {
   const [doe, setDoe] = useState(props.doe)

@@ -1,0 +1,18 @@
+name: Edge Simulator
+clientType: simulator
+userId: Sam
+format: yml
+topics:
+  subscribe:
+    adm: a/#
+    prj: PROJECTID/INSTANCE/#
+  publish:
+    rsp: a/admin/rsp/CLIENTID
+    inp: PROJECTID/INSTANCE/inp/CLIENTID
+    out: PROJECTID/INSTANCE/out/CLIENTID
+    hum: PROJECTID/INSTANCE/hum/CLIENTID/USERID/oxy_lab
+    alm: PROJECTID/INSTANCE/alm/CLIENTID
+metrics: 
+  all
+statusDefault:
+  debugLevel: 0

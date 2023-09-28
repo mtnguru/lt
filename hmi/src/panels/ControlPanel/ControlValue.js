@@ -4,7 +4,7 @@ import React, {useState, useEffect} from 'react';
 import {mqttRegisterMetricCB} from '../../utils/mqttReact'
 import {c2f} from '../../utils/metrics'
 
-import './ControlValue.scss'
+//import './ControlValue.scss'
 
 const ControlValue = (props) => {
 //const [register, setRegister] = useState(true);

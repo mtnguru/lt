@@ -1,9 +1,12 @@
 import React from 'react'
+import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
+
 import ReactDOM from 'react-dom/client'
 import './index.scss'
 import App from './App'
-import { BrowserRouter } from 'react-router-dom'
+import {BrowserRouter} from 'react-router-dom'
 import {mgDebug} from './utils/mg'
+import theme from './theme/theme'
 
 import {mqttConnect,
         mqttPublish,
@@ -46,12 +49,15 @@ global.aaa = {
 // MQTT configuration
 global.aam = {
   mqttClientId: mqttClientId,
-//url: 'mqtt://194.195.214.212:8081',
-//url: 'mqtt://192.168.122.90:8081',
-//url: 'mqtt://172.16.45.7:8081',     // merlin
-  url: 'mqtt://192.168.202.108:8081',
-  username: 'mqtt',
-  password: 'mqttsl',
+
+  url: 'mqtt://194.195.214.212:8081',
+  username: 'data',
+  password: 'datawp',
+
+//url: 'mqtt://192.168.202.108:8081',
+//username: 'mqtt',
+//password: 'mqttsl',
+
   protocol: 'MQTT',
   protocolVersion: 4,
   connectTimeout: 60000,
@@ -197,7 +203,12 @@ const startReact = () => {
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(
       <BrowserRouter>
-        <App/>
+        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+        <ChakraProvider theme={theme}>
+          <React.StrictMode>
+            <App />
+          </React.StrictMode>
+        </ChakraProvider>
       </BrowserRouter>
     );
   } catch(err) {

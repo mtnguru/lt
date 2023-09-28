@@ -7,7 +7,7 @@ import "./MsgPanel.scss";
 
 const MsgPanel = (props) => {
   return (
-    <Accordion id='msg-panel' className={props.classC}>
+    <Accordion id='msg-panel' className={props.classC} allowMultiple>
       <MsgPane paneId="Chat"></MsgPane>
       <MsgPane paneId="Notes"></MsgPane>
       <MsgPane paneId="Notifications"></MsgPane>

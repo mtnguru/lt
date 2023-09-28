@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import DoeRun from './DoeRun'
 import ControlMetric from "../ControlPanel/ControlMetric";
 
-import './DoeVariableTable.scss'
+//import './DoeVariableTable.scss'
 
 const DoeVariableTable = (props) => {
   const [doe, setDoe] = useState(props.doe)
