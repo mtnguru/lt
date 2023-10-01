@@ -9,6 +9,7 @@ import {
   Textarea,
   //Button
 } from '@chakra-ui/react'
+import { Resizable } from 're-resizable'
 import MsgList from './MsgList'
 import {mqttPublish, mqttRegisterTopicCB} from '../../utils/mqttReact'
 import {currentDate} from "../../utils/tools";
@@ -84,19 +85,36 @@ const MsgPane = (props) => {
     <AccordionItem className={`msg-pane ${paneId}`}>
       {/*paneId !== "Notifications" &&
       <Button onClick={clickH} size="xsm" className="msg-submit">Submit</Button>*/}
-      <AccordionButton>
+      <AccordionButton pb={0} pt={0}>
         <Box as="span" flex='1' textAlign='left'>
           <Heading as="h3" fg="titleFg" color="titleFg" fontSize="130%" className="msg-header-name">{paneId}</Heading>
         </Box>
         <AccordionIcon width="30px" height="30px"/>
       </AccordionButton>
-      <AccordionPanel pb={4}>
+        <AccordionPanel pt={0} pb={2}>
           {props.paneId !== 'Notifications' &&
-            <Textarea p="5px" mb={2} bg="bg4" minH="36px" onChange ={onChangeH} onKeyDown={onKeyH} className="msg" ref={ref}/>}
-         <MsgList className="msg-list" pretty={pretty} list={list}></MsgList>
-      </AccordionPanel>
+            <Textarea p="10px" mb={2} bg="bg4" minH="30px" onChange ={onChangeH} onKeyDown={onKeyH} className="msg" ref={ref}/>}
+          <MsgList className="msg-list" pretty={pretty} list={list}></MsgList>
+        </AccordionPanel>
     </AccordionItem>
   )
 }
+/*
+<Resizable
+  width="100%"
+  height="30%"
+  handleStyles = {{
+    right: { zIndex: 1 },
+    bottom: { zIndex: 1 },
+    bottomRight: { zIndex: 1 },
+  }}
+>
+  <AccordionPanel pt={0} pb={2}>
+    {props.paneId !== 'Notifications' &&
+      <Textarea p="10px" mb={2} bg="bg4" minH="30px" onChange ={onChangeH} onKeyDown={onKeyH} className="msg" ref={ref}/>}
+    <MsgList className="msg-list" pretty={pretty} list={list}></MsgList>
+  </AccordionPanel>
+</Resizable>
+ */
 
 export default MsgPane

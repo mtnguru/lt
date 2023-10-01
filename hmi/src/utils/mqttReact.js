@@ -112,10 +112,22 @@ const mqttRegisterTopicCB = (_topic, cb, args) => {
     console.log(f, "Initialize topic", topic)
     topicsCB[topic] = [];
   }
-  for (let rcb in topicsCB[topic]) {
-    if (rcb === cb) {
-      console.log(f, "Already added", topic)
-      return;
+  for (let t in topicsCB[topic]) {
+    var tcb = topicsCB[topic][t]
+    if (tcb.cb === cb) {
+      var matched = true;
+      for (var a in tcb.args) {
+        for (var a2 in args) {
+          if (a !== a2) {
+            matched = false;
+            continue;
+          }
+        }
+      }
+      if (matched) {
+        console.log(f, "Already added", topic)
+        return;
+      }
     }
   }
   console.log(f, "add topic", topic)
@@ -198,7 +210,9 @@ const mqttProcessCB = (_topic, _payload) => {
     const fields = _topic.split("/")
     const func = fields[2]
 
-    // If Input, output, human - process and Metric Callbacks
+    // Metric Callbacks
+    // If Input, output, human
+
     if (func === 'inp' || func === 'out' || func === 'hum') {
       const {tags, values} = extractFromTags(payloadStr)
       if (!tags["MetricId"]) {
@@ -249,7 +263,8 @@ const mqttProcessCB = (_topic, _payload) => {
       }
     }
 
-    // Process any Topic Callbacks
+    // Topic Callbacks
+
     var payload;
     if (payloadStr[0] === '{') {
       payload = JSON.parse(payloadStr);

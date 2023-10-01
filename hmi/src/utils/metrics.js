@@ -23,7 +23,6 @@ const getValue = (metric) => {
 }
 
 const c2f = c => { return c * 1.8 + 32 }
-
 const f2c = f => { return (f - 32) / 1.8 }
 
 module.exports.findMetric = findMetric

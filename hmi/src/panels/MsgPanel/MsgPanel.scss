@@ -9,17 +9,21 @@
     margin-left: 10px;
   }
 
-  .msg-submit {
-    background: $button-bg-color;
-    color: $button-fg-color;
-    border-radius: 3px;
-    border: $button-bd-color solid 1px;
-    border-right: $button-bd2-color;
-    border-bottom: $button-bd2-color;
-    float: right;
-    margin-top: 2px;
-    font-size: 84%;
-    padding: 2px 8px;
+  .msg-item {
+    margin-bottom: 5px;
+    .header {
+      color: $msg-header-fg-color;
+      font-size: 65%;
+      margin-bottom: 2px;
+    }
+    .msg-text {
+      overflow-wrap: break-word;
+      font-size: 90%;
+      line-height: 1.3;
+      div {
+        min-width: 1px;
+      }
+    }
   }
 
   /*

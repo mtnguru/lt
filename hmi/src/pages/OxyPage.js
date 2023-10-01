@@ -3,9 +3,7 @@ import ControlOxyPanel from '../panels/ControlPanel/ControlOxyPanel'
 //import ControlImagePanel from '../panels/ControlPanel/ControlImagePanel'
 import { Box,
          Flex,
-         Container,
-//       Spacer,
-         Heading
+         Container
        } from '@chakra-ui/react'
 
 import './OxyPage.scss'

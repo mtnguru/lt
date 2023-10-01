@@ -2,15 +2,11 @@
 // import React, {useState} from 'react';
 
 import ControlMetric from './ControlMetric'
-//import ControlNumber from './ControlNumber'
-//import ControlButton from './ControlButton'
 import ControlSlider from './ControlSlider'
-
-// import ControlBar from './ControlBar'
 
 import {
   Box,
-  Heading,
+  Heading
 } from '@chakra-ui/react'
 
 //import './ControlOxyPanel.scss'
