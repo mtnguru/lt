@@ -30,7 +30,7 @@ topics:
     adm: a/admin/cmd/administrator
     msg: PROJECTID/INSTANCE/msg/CLIENTID/all/oxy_msg
     cod: PROJECTID/INSTANCE/cod/CLIENTID/all
-    hum: PROJECTID/INSTANCE/hum/CLIENTID/DUSERID/oxy_lab
+    hum: PROJECTID/INSTANCE/hum/CLIENTID/DUSERID/oxy_edge
 metrics: project
 funcIds: {}
 statusDefault:

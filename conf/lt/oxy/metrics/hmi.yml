@@ -4,7 +4,7 @@ E1_PS_H_V:
   label: PS Volts
   desc: Power Supply Voltage - Human Input
   value: 0
-  decimals: 0
+  decimals: 1
   human:
     clientId: hmi
     channelType: slider

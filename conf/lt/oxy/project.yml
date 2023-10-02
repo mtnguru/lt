@@ -9,7 +9,7 @@ topics:
       out: PROJECTID/INSTANCE/out/CLIENTID
     publish:
       rsp: a/admin/rsp/CLIENTID
-      inp: PROJECTID/INSTANCE/inp/CLIENTID/USERID/oxy_lab
+      inp: PROJECTID/INSTANCE/inp/CLIENTID/USERID/oxy_edge
       cod: PROJECTID/INSTANCE/cod/CLIENTID
       msg: PROJECTID/INSTANCE/msg/CLIENTID
 clients:
