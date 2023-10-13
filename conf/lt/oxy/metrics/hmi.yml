@@ -24,13 +24,13 @@ E1_PS_H_A:
     default: 40
     min: 0
     max: 200
-    step: .1
+    step: 1
   output: {}
 E1_Ez_MTR_C:
   label: Ez Temperature
   desc: Electrolyzer Temperature
   value: 0
-  decimals: 0
+  decimals: 1
   human:
     clientId: hmi
     channelType: slider
