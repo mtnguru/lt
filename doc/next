@@ -4,6 +4,24 @@ Get the fucking hmi working again
     MqttPanel doesn't update 
       Do I have an error I'm not seeing?
 
+Finish Oxy
+  administrator history
+    save history
+    set values to history or default
+    Use this history when creating sliders, metrics, buttons
+
+  Get the MQTT monitor working correctly
+
+  arduino code
+    Get my ethernet connection working
+    Put an create a simulation function?
+    Plot it on grafana - oxy
+
+    
+  Contact Slobodan and Edo
+
+What's next?
+
 
 Finish install of Oxy.
 Get labtime working - 
