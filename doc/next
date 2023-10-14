@@ -1,11 +1,16 @@
+Get the fucking hmi working again
+  Issues
+    Client filters don't use localStorage
+    MqttPanel doesn't update 
+      Do I have an error I'm not seeing?
+
+
 Finish install of Oxy.
 Get labtime working - 
   start telegraf sessions first
 
 
-
 Install and get running for Oxy
-
 
 
 Save notes and chat into grafana

@@ -185,6 +185,45 @@ const addStatus = (out) => {
   }
 }
 
+const compressConfig = (inp) => {
+  var out = {
+    clientId: inp.clientId,
+    projectID: inp.projectID,
+    instance: inp.instance,
+    topics: inp.topics,
+    ip: inp.ip,
+    status: inp.status,
+    rsp: inp.rsp,
+  }
+
+  if (inp.inputs) {
+    out.inputs = {}
+    for (var metricId in inp.inputs) {
+      var metric = inp.inputs[metricId]
+      out.inputs[metricId] = {
+        input: metric.input,
+        decimals: metric.decimals,
+        value: 0
+      }
+    }
+  }
+
+  if (inp.outputs) {
+    out.outputs = {}
+    for (var metricId in inp.outputs) {
+      var metric = inp.outputs[metricId]
+      out.outputs[metricId] = {
+        output: metric.output,
+        decimals: metric.decimals,
+        value: 0
+      }
+    }
+  }
+
+
+  return out
+}
+
 /**
  * processCB
  */
@@ -196,6 +235,7 @@ const processCB = (_topic, _payload) => {
   var outTopic;
   var dclientId;
   try {
+    var compress = false
     var [projectId, instance, func, clientId, userId, telegrafId] = _topic.split('/')
 
     const inputStr = _payload.toString();
@@ -235,6 +275,10 @@ const processCB = (_topic, _payload) => {
             outTopic = outTopic.replace(/DCLIENTID/, id)
             out = findClient(id)
             addStatus(out)
+            if (out.model == 'arduino') {
+              out = compressConfig(out);
+              compress = true
+            }
           }
           if (input.cmd === 'requestJsonFile') {
             msg(2, f, DEBUG, "Read json file: ", filepath)
@@ -271,7 +315,9 @@ const processCB = (_topic, _payload) => {
 
     if (out) {
       out.rsp = input.cmd;
-      out.date = currentDate()
+      if (!compress) {
+        out.date = currentDate()
+      }
       var outStr = JSON.stringify(out)
       msg(0,f, DEBUG,`call mqttNode.publish - topic: ${outTopic} length:${outStr.length}`)
       mqttNode.publish(outTopic, outStr);
@@ -348,21 +394,22 @@ const initMetrics = (projectId, instance, project) => {
 
 const initClients = (projectId, instance, project, funcIds) => {
   // For each client create lookup lists by clientId and IP
-  for (var clientId in project.clients) {
-    if (project.clients[clientId] !== "enabled") {
-      delete project.clients[clientId]
+  var c
+  for (c in project.clients) {
+    if (project.clients[c] !== "enabled") {
+      delete project.clients[c]
       continue;
     }
 
-    var filepath = `${process.env.ROOT_PATH}/${adminId}/${projectId}/clients/${clientId}.yml`
+    var filepath = `${process.env.ROOT_PATH}/${adminId}/${projectId}/clients/${c}.yml`
     var ymlStr = fs.readFileSync(filepath)
     var client = YAML.safeLoad(ymlStr)
-    project.clients[clientId] = client
-    client.clientId = clientId
+    project.clients[c] = client
+    client.clientId = c
     client.projectId = projectId
     client.instance = instance;
 
-    global.aaa.clients[clientId] = client;
+    global.aaa.clients[c] = client;
     if (client.ip) {
       global.aaa.ips[client.ip] = client;
     }
@@ -398,29 +445,29 @@ const initClients = (projectId, instance, project, funcIds) => {
     }
   }
 
-// Now that the clients are complete, copy them into the client.clients
-  for (var clientId in project.clients) {
-    var client = project.clients[clientId]
+// Now that the clients are complete, copy them into client.clients
+  for (c in project.clients) {
+    var client = project.clients[c]
     if (client && client.clients) {
-      for (var clientId2 in client.clients) {
-        if (clientId2 === 'administrator') {
+      for (var c2 in client.clients) {
+        if (c2 === 'administrator') {
           client.clients.administrator = {
             clientId: global.aaa.clientId,
             name: global.aaa.name,
           }
-        } else if (clientId2 === 'all') {
+        } else if (c2 === 'all') {
           // Ignore all
         } else {
-          if (project.clients[clientId2]) {
-            client.clients[clientId2] = JSON.parse(JSON.stringify(project.clients[clientId2]))
-            addStatus(client.clients[clientId2])
+          if (project.clients[c2]) {
+            client.clients[c2] = JSON.parse(JSON.stringify(project.clients[c2]))
+            addStatus(client.clients[c2])
           } else {
-            delete client.clients[clientId2]
-            msg(2, f, ERROR, `${clientId} - Client not found ${clientId2} in administrator config`);
+            delete client.clients[c2]
+            msg(2, f, ERROR, `${c} - Client not found ${c2} in administrator config`);
           }
         }
       }
-    } // if project.clients[clientId]
+    } // if project.clients[c]
   } // for each client
 }
 
@@ -474,8 +521,8 @@ const loadConfig = () => {
         var project = YAML.safeLoad(ymlStr)
         initClients(projectId, project.instance, project, funcIds)
         initMetrics(projectId, project.instance, project)
-        for (var clientId in project.clients) {
-          var client = project.clients[clientId]
+        for (var c in project.clients) {
+          var client = project.clients[c]
           if (client.metrics && client.metrics === 'project') {
             client.metrics = project.metrics
           }

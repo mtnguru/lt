@@ -140,6 +140,7 @@ const registerMetricCB = (metricId, cb, func) => {
       metric.cbs = [cb]
     }
   } catch(err){
+    console.log(f, 'ERROR: Cannot register metric ' + id + '  '  + err)
     mgError(1, f,'Cannot register metric ', id, func);
   }
 }
@@ -225,8 +226,8 @@ const processCB = (_topic, _payload) => {
       }
     }
   } catch (err) {
+    console.log(f, 'ERROR: Error processing ' + _topic + '  '  + err)
     msg(0,f, ERROR, "Error processing:", _topic, "Error", err);
-    console.log(f, 'ERROR: ' + err)
   }
 }
 

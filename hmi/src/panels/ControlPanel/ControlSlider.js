@@ -43,8 +43,18 @@ const ControlSlider = (props) => {
     mqttRegisterMetricCB(metricId, metricCB)
   }, [metricId])
 
-  const onChangeH = (_value) => {
-    const f = "ControlSliderPanel::onChange"
+  const onKeyH = (e) => {
+    if (e.key === "ArrowRight") {
+      setValue((prev) => Math.min(prev + metric.human.step, 100));
+    } else if (e.key === "ArrowLeft") {
+      setValue((prev) => Math.max(prev - metric.human.step, 10));
+    }
+  }
+
+
+const onChangeH = (_value) => {
+
+  const f = "ControlSliderPanel::onChange"
     console.log('onChange', _value);
     if (!metric) {
       mgError(0, f, "Metric not found: ")
@@ -57,10 +67,11 @@ const ControlSlider = (props) => {
   }
 
   return (
-    <Flex>
+    <Flex w="full">
       <NumberInput
         min={metric.human.min}
         max={metric.human.max}
+        step={metric.human.step}
         w="5em"
         h="30px"
         size="sm"
@@ -75,26 +86,21 @@ const ControlSlider = (props) => {
         </NumberInputStepper>
       </NumberInput>
 
-      <Flex align="center" justify="center">
-        <Box width="300px">
-          {/* Slider */}
+      <Flex flex="3" align="center" justify="center">
+        <Box
+          flex='1'
+        >
           <Slider
             min={metric.human.min}
             max={metric.human.max}
+            step={metric.human.step}
             size="sm"
-            flex='1'
             focusThumbOnChange={false}
             value={value}
             onChange={onChangeH}
             mb={0}
             pb={0}
-            onKeyDown={(e) => {
-              if (e.key === "ArrowRight") {
-                setValue((prev) => Math.min(prev + 1, 100));
-              } else if (e.key === "ArrowLeft") {
-                setValue((prev) => Math.max(prev - 1, 10));
-              }
-            }}
+            onKeyDown={onKeyH}
           >
             <SliderTrack>
               <SliderFilledTrack />

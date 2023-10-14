@@ -1,8 +1,19 @@
 @import "../../styles/base";
 @import "../../styles/colors";
 
-.clients {
+.client {
+  border-radius: 6px;
+  margin-bottom: 2px;
 
+  .row1 {
+    padding-left: 6px;
+    input {
+      margin-top: 5px;
+    }
+    label {
+      margin-left: .5em;
+    }
+  }
   .row2 {
     @include clearfix;
     margin-left: 12px;
@@ -37,9 +48,10 @@
         background-color: $button-red-color;
       }
     }
-    .chakra-select__wrapper {
-      display: inline;
-      width: 50px;
+    .debug-level-wrapper {
+      display: inline-block;
+      width: 30px;
+      text-align: right;
       .chakra-select__icon-wrapper {
         display: none;
       }
@@ -47,6 +59,7 @@
     .chakra-select {
       display: inline;
       font-size: 70%;
+      font-weight: bold;
       color: $fg-color;
       background: $button-bg-color;
       border: $button-bd-color solid 1px;
@@ -55,7 +68,9 @@
       padding: 2px 1px;
       border-radius: 20%;
       margin-left: 3px;
+      height: auto;
     }
+
   }
 
   .administrator,

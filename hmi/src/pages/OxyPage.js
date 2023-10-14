@@ -6,14 +6,14 @@ import { Box,
          Container
        } from '@chakra-ui/react'
 
-import './OxyPage.scss'
+//import './OxyPage.scss'
 
 function OxyPage() {
   return (
     <Box className="page oxy-page" w="100%" >
       <Flex className="flex">
         <Container className="left-col">
-          <ControlOxyPanel   panelId="reactor1" />
+          <ControlOxyPanel   panelId="EZ1" />
           {/*<ControlImagePanel    panelId="image_cabin" />*/}
         </Container>
         <MsgPanel  classC="right-col" panelId="msg_chat" />

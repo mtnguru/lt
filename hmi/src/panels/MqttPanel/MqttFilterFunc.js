@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react'
 
 import { Heading, Box } from '@chakra-ui/react'
 
-//import "./MqttFilterFunc.scss";
 import CheckboxList from "../../components/ui/CheckboxList";
+
+import "./MqttFilterFunc.scss";
 
 const lsKey = "ltFilterFunc"
 

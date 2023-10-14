@@ -9,10 +9,13 @@ import {
   Textarea,
   //Button
 } from '@chakra-ui/react'
-import { Resizable } from 're-resizable'
+//import { Resizable } from 're-resizable'
+
 import MsgList from './MsgList'
 import {mqttPublish, mqttRegisterTopicCB} from '../../utils/mqttReact'
 import {currentDate} from "../../utils/tools";
+
+const { DateTime } = require('luxon');
 
 const MsgPane = (props) => {
   const [msg, setMsg] =   useState('')
@@ -23,7 +26,6 @@ const MsgPane = (props) => {
 
   const topicCB = (_topic, _payload) => {
     console.log("Shazam " + _payload.type)
-    var date = currentDate("short");
     var key = Math.random().toString(16).slice(3)
     console.log("received " + _payload.msg)
     var m = _payload.msg.replace(/\n/g, '<br>')
@@ -33,8 +35,9 @@ const MsgPane = (props) => {
         lines[line] = '\u00A0';
       }
     }
+    const time = _payload.date.split(' ')[1]
     console.log("after " + m)
-    var item = {key, msg: lines, author: _payload.author, date: date}
+    var item = {key, msg: lines, author: _payload.author, date: time}
 
     setList((prevList) => {
       return (prevList) ? [item, ...prevList] : [item]
@@ -68,10 +71,12 @@ const MsgPane = (props) => {
     const topic = global.aaa.topics.publish['msg']
     if (msg.length === 0) return;
     event.preventDefault();
-    var cdate = currentDate("full")
+    const date = DateTime.now().setZone('Europe/Zurich')
+    const fdate = date.toFormat('yyyy-LL-dd HH:mm:ss')
+//  const fdate = DateTime.date.format('YYYY-MM-DD HH:mm:ss');;
     var paneId = props.paneId
     var m = msg.replace(/\n/g, "\\n")
-    const payload = `{"type":"${paneId}", "author":"James", "date":"${cdate}", "msg":"${m}"}`
+    const payload = `{"type":"${paneId}", "author":"James", "date":"${fdate}", "msg":"${m}"}`
 
     mqttPublish(topic, payload)
 //  setMsg('')
@@ -85,36 +90,19 @@ const MsgPane = (props) => {
     <AccordionItem className={`msg-pane ${paneId}`}>
       {/*paneId !== "Notifications" &&
       <Button onClick={clickH} size="xsm" className="msg-submit">Submit</Button>*/}
-      <AccordionButton pb={0} pt={0}>
+      <AccordionButton ps={0} pe={0} py={0} my={0}>
         <Box as="span" flex='1' textAlign='left'>
           <Heading as="h3" fg="titleFg" color="titleFg" fontSize="130%" className="msg-header-name">{paneId}</Heading>
         </Box>
         <AccordionIcon width="30px" height="30px"/>
       </AccordionButton>
-        <AccordionPanel pt={0} pb={2}>
+      <AccordionPanel px={0} pb={2} pt={1}>
           {props.paneId !== 'Notifications' &&
-            <Textarea p="10px" mb={2} bg="bg4" minH="30px" onChange ={onChangeH} onKeyDown={onKeyH} className="msg" ref={ref}/>}
-          <MsgList className="msg-list" pretty={pretty} list={list}></MsgList>
-        </AccordionPanel>
+            <Textarea px="5px" py="0px" mb={2} borderRadius={4} bg="metricBg" h="25px" minH="25px" onChange ={onChangeH} onKeyDown={onKeyH} className="msg" ref={ref}/>}
+         <MsgList className="msg-list" pretty={pretty} list={list}></MsgList>
+      </AccordionPanel>
     </AccordionItem>
   )
 }
-/*
-<Resizable
-  width="100%"
-  height="30%"
-  handleStyles = {{
-    right: { zIndex: 1 },
-    bottom: { zIndex: 1 },
-    bottomRight: { zIndex: 1 },
-  }}
->
-  <AccordionPanel pt={0} pb={2}>
-    {props.paneId !== 'Notifications' &&
-      <Textarea p="10px" mb={2} bg="bg4" minH="30px" onChange ={onChangeH} onKeyDown={onKeyH} className="msg" ref={ref}/>}
-    <MsgList className="msg-list" pretty={pretty} list={list}></MsgList>
-  </AccordionPanel>
-</Resizable>
- */
 
 export default MsgPane

@@ -14,6 +14,7 @@ topics:
       msg: PROJECTID/INSTANCE/msg/CLIENTID
 clients:
   arduino_gm:  enabled
+  arduino5:    enabled
   hmi:         enabled
   controller:  enabled
   drupal:      enabled

@@ -2,10 +2,11 @@ import React, {useEffect, useState} from 'react'
 
 import { Box,
          Heading,
+         Container,
          IconButton } from '@chakra-ui/react'
 import { SettingsIcon } from '@chakra-ui/icons'
 
-//import "./MqttFilterClient.scss";
+import "./MqttFilterClient.scss";
 //import "../../chakra.scss";
 import MqttClientList from "./MqttClientList";
 
@@ -62,15 +63,15 @@ function MqttFilterClient(props) {
   }
 
   return (
-    <Box className={`mqtt-filter-client ${(settingsBtn) ? "showSettings" : '' }`}>
+    <Container className={`mqtt-filter-client ${(settingsBtn) ? "showSettings" : '' }`}>
       <Box>
-        <IconButton className="settings small" onClick={onClickH} aria-label='Display MqttClient Actions' icon={<SettingsIcon />}></IconButton>
+        <IconButton variant="small" className="settings small" onClick={onClickH} aria-label='Display MqttClient Actions' icon={<SettingsIcon />}></IconButton>
         <Heading as="h3">MqttClient</Heading>
       </Box>
       <Box className={`clients mqtt-clientId-bg ${allSelected ? "all-selected" : ""}`}>
         <MqttClientList list={(global.aaa.clients) ? global.aaa.clients : {}} onChangeH={onChangeH} />
       </Box>
-    </Box>
+    </Container>
   );
 }
 

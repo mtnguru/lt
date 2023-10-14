@@ -1,5 +1,5 @@
 import React from 'react'
-//import './SelectPretty.scss'
+import './SelectPretty.scss'
 
 function SelectPretty (props) {
 

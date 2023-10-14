@@ -1,7 +1,10 @@
 // File: MqttPanel.js
 
 import React, {useState} from 'react';
-
+import {
+  Box,
+  Flex,
+  Container } from '@chakra-ui/react'
 
 import MqttFilterFunc from './MqttFilterFunc';
 import MqttFilterClient from './MqttFilterClient';
@@ -10,7 +13,7 @@ import MqttList from './MqttList';
 import {mqttRegisterTopicCB} from "../../utils/mqttReact";
 import {currentDate} from "../../utils/tools";
 
-//import "./MqttPanel.scss";
+import "./MqttPanel.scss";
 
 let registered = false;
 
@@ -39,33 +42,38 @@ const MqttPanel = (props) => {
   const topicCB = (_topic, _payload) => {
 //  const f = "MqttPanel::topicCB - "
 //  if (_topic.indexOf('a/cmd') > -1) return;
-    const dateStr = currentDate()
-    const [project, instance, func, clientId] = _topic.split('/')
-    let rnd = Math.random().toString(16).slice(3)
-    let key = `${clientId}-${dateStr}-${rnd}`
-    console.log("nitems ", nitems, ni);
-    let item = { key, date: dateStr, project, instance, func, clientId, topic:_topic, payload:_payload, nitems: ni }
+    try {
+      const dateStr = currentDate()
+      const [project, instance, func, clientId] = _topic.split('/')
+      let rnd = Math.random().toString(16).slice(3)
+      let key = `${clientId}-${dateStr}-${rnd}`
+      console.log("nitems ", nitems, ni);
+      let item = {key, date: dateStr, project, instance, func, clientId, topic: _topic, payload: _payload, nitems: ni}
 
-    setNItems((prevNItems) => {
-      return ni = prevNItems + 1
-    })
+      setNItems((prevNItems) => {
+        return ni = prevNItems + 1
+      })
 
-    setList((prevList) => {
-      if (prevList.length > 2000) {
-        prevList = prevList.slice(1,1500)
-        setFilteredList (() => {
-          return prevList.filter(validMsg);
+      setList((prevList) => {
+        if (prevList.length > 2000) {
+          prevList = prevList.slice(1, 1500)
+          setFilteredList(() => {
+            return prevList.filter(validMsg);
+          })
+        }
+        return (prevList) ? [item, ...prevList] : [item]
+      })
+
+      // Add the item to the filtered list
+      if (validMsg(item)) {
+        setFilteredList((prevFilteredList) => {
+          return (prevFilteredList) ? [item, ...prevFilteredList] : [item]
         })
       }
-      return (prevList) ? [item, ...prevList] : [item]
-    })
-
-    // Add the item to the filtered list
-    if (validMsg(item)) {
-      setFilteredList((prevFilteredList) => {
-        return (prevFilteredList) ? [item, ...prevFilteredList] : [item]
-      })
+    } catch(err) {
+      console.log("Error in MqttPanel::topicCB " + err)
     }
+//    width: 135px;
   }
 
   if (!registered) {
@@ -115,17 +123,16 @@ const MqttPanel = (props) => {
 
   return (
     <div className="panel mqtt-panel">
-      <h2>{props.title}</h2>
-      <div className="content">
-        <div className='filters'>
+      <Flex className="content">
+        <Container className='filters'>
           <MqttFilterClient onChangeH={onFilterClientChangeH} />
           <MqttFilterFunc onChangeH={onFilterFuncChangeH} />
-        </div>
-        <div className="mqtt-display">
+        </Container>
+        <Box className="mqtt-display" flexGrow={1}>
           <MqttDisplayActions actions={{onClearList, onPretty}} pretty={pretty}></MqttDisplayActions>
           <MqttList className="mqtt-clientId-bg" pretty={pretty} list={filteredList}></MqttList>
-        </div>
-      </div>
+        </Box>
+      </Flex>
     </div>
   )
 }

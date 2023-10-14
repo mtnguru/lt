@@ -11,6 +11,7 @@ clients:
   controller: {}
   drupal: {}
   arduino_gm: {}
+  arduino5: {}
 topics:
   subscribe:
     adm: a/#

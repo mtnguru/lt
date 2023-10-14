@@ -1,5 +1,4 @@
 import React, {useState, useEffect, useRef} from 'react'
-//import './MqttClient.scss'
 //import '../../chakra.scss'
 import { mqttRegisterTopicCB } from '../../utils/mqttReact'
 
@@ -7,6 +6,8 @@ import { Box, Select, Button, Tooltip } from '@chakra-ui/react'
 
 import {mgDebug} from "../../utils/mg"
 import {mqttPublish} from "../../utils/mqttReact"
+
+import './MqttClient.scss'
 
 function MqttClient (props) {
   const clientId = props.client.clientId;
@@ -47,8 +48,8 @@ function MqttClient (props) {
   const cmdCBRef = useRef(cmdCB)
 
   useEffect(() => {
-    mqttRegisterTopicCB(global.aaa.topics.register.rsp, rspCBRef, {});
-    mqttRegisterTopicCB(global.aaa.topics.register.cmd, cmdCBRef, {});
+    mqttRegisterTopicCB(global.aaa.topics.register.rsp, rspCBRef, { clientId: clientId });
+    mqttRegisterTopicCB(global.aaa.topics.register.cmd, cmdCBRef, { clientId: clientId });
   }, [clientId])
 
   const onSelectH = (event) => {
@@ -65,14 +66,14 @@ function MqttClient (props) {
     mgDebug(1, f,'Button pressed',name)
     let topic;
     let payload;
-    if (classList[1] === "reset") {
+    if (classList.contains('reset')) {
       topic = `a/admin/cmd/${props.client.clientId}`
       payload = `{"cmd": "requestReset", "clientId": "${props.client.clientId}"}`;
-    } else if (classList[1] === "status") {
+    } else if (classList.contains("status")) {
       topic = `a/admin/cmd/${props.client.clientId}`
       payload = `{"cmd": "requestStatus", "clientId": "${props.client.clientId}"}`;
       if (clientId === 'all') {}
-    } else if (classList[1] === "enabled") {
+    } else if (classList.contains("enabled")) {
       // Set the "all" button on other hmi instances
       // Set the enabled button
       topic = `a/admin/cmd/${props.client.clientId}`
@@ -103,7 +104,7 @@ function MqttClient (props) {
   }
 
   return (
-    <Box className={`checkbox ${props.client.clientId}`} key={`${props.client.id}`}>
+    <Box className={`client ${props.client.clientId}`} key={`${props.client.id}`}>
       <div className="row1">
         <input id={props.id} type='checkbox' name={props.client.id} onChange={props.onChangeH} checked={props.client.selected ? "checked" : ""} />
         <label htmlFor={props.client.clientId}>{props.client.name}</label>
@@ -111,26 +112,28 @@ function MqttClient (props) {
       <div className="row2">
         {props.id !== 'administrator' && props.id !== 'drupal' && props.id !== 'hmi' && props.id !== 'project' && props.id !== "controller" &&
           <Tooltip label="Enable" bg="white" p="10px" placement="bottom">
-            <Button className={`small enabled ${enabled ? "true" : "false"}`} onClick={onClickH}>E</Button>
+            <Button variant="client" className={`small enabled ${enabled ? "true" : "false"}`} onClick={onClickH}>E</Button>
           </Tooltip>
         }
         <Tooltip label="Request status" bg="white" p="10px" placement="bottom">
-          <Button className={`small status ${running}`}   onClick={onClickH}>{numRunning}</Button>
+          <Button variant="client" className={`small status ${running}`}   onClick={onClickH}>{numRunning}</Button>
         </Tooltip>
         {props.id !== 'all' &&
           <Tooltip label="Reset client" bg="white" p="10px" placement="bottom">
-            <Button className="small reset"    onClick={onClickH}>R</Button>
+            <Button variant="client" className="small reset"    onClick={onClickH}>R</Button>
           </Tooltip>
         }
         {props.id !== 'all' &&
-          <Tooltip label="Set Debug Level" bg="white" p="10px" placement="bottom">
-            <Select className="small debug-level" value={debugLevel} onChange={onSelectH}>
-              <option value="0">0</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-            </Select>
-          </Tooltip>
+          <Box className="debug-level-wrapper">
+            <Tooltip label="Set Debug Level" bg="white" p="10px" placement="bottom">
+              <Select variant="client" className="small debug-level" value={debugLevel} onChange={onSelectH}>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </Select>
+            </Tooltip>
+          </Box>
         }
       </div>
     </Box> )

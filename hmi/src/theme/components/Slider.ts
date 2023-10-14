@@ -16,4 +16,4 @@ const baseStyle = definePartsStyle({
     bg: 'blue.400', // change the background of the filled track to blue.600
   },
 })
-export const sliderTheme = defineMultiStyleConfig({ baseStyle })
+export const slider = defineMultiStyleConfig({ baseStyle })

@@ -6,7 +6,7 @@ import './index.scss'
 import App from './App'
 import {BrowserRouter} from 'react-router-dom'
 import {mgDebug} from './utils/mg'
-import theme from './theme/theme'
+import theme from './theme/theme.ts'
 
 import {mqttConnect,
         mqttPublish,
@@ -155,7 +155,7 @@ const loadConfigCB = (_topic, _payload) => {
       }
     }
   } catch(err) {
-    console.log(f,'ERROR', err)
+    console.log('ERROR in', f, '  Error:', err)
   }
   console.log(f,'exit')
 

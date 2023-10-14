@@ -1,7 +1,7 @@
 
 import { Box } from '@chakra-ui/react'
 
-//import './Checkbox.scss'
+import './Checkbox.scss'
 import Checkbox from './Checkbox.js'
 
 function CheckboxList (props) {

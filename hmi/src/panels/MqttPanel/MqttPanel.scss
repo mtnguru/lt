@@ -9,8 +9,8 @@
   .filters {
     font-size:90%;
     display: none;
+    width: 170px;
     @media(min-width: $bp-md) {
-      width: 135px;
       display: block;
     }
     margin-right:10px;

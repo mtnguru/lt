@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import Card from '../../components/ui/Card'
 import {extractFromTags} from '../../utils/influxr'
 import {mgError} from '../../utils/mg'
-//import ('./MqttItem.scss')
+import ('./MqttItem.scss')
 
 const makeJsonPretty = (payloadStr) => {
   payloadStr = payloadStr
@@ -48,6 +48,7 @@ const MqttItem = (props) => {
             payload = JSON.parse(props.item.payload);
             payloadStr = JSON.stringify(payload, null, 3)
           } catch(err) {
+            console.log(f, 'ERROR: parsing JSON payload: ' + props.item.topic + '  '  + err)
             mgError(0,f, 'ERROR parsing JSON payload: ' + err)
           }
           if (props.pretty === "pretty") {
