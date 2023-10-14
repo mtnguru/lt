@@ -1,0 +1,55 @@
+@import "../../styles/base";
+@import "../../styles/colors";
+
+.control-button {
+  float: none;
+  margin: 0 1px;
+  padding: 0;
+
+  &.reset {
+    display: inline-block;
+    margin-left: 48px;
+  }
+  &.status {
+    display: inline-block;
+  }
+  button {
+    padding: 0 2px;
+    font-size: 75%;
+    background: #446;
+  }
+}
+.select-debug-level {
+  display: inline-block;
+  select {
+    font-size: 80%;
+    color: $fg-color;
+    background: $button-bg-color;
+    padding: 0px;
+    margin-left: 2px;
+    border-radius: 3px;
+  }
+}
+
+.row2 {
+  @include clearfix;
+}
+
+/*
+.checkbox {
+  margin-bottom: 2px;
+  border-radius: 4px;
+  &.all {
+    margin-bottom: 10px;
+  }
+  padding: 1px 0;
+  input {
+    margin: 4px 4px;
+  }
+  label {
+    display: inline-block;
+    margin-left: 4px;
+    width: calc(100% - 30px);
+  }
+}
+*/

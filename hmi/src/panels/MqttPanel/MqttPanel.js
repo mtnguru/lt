@@ -124,7 +124,7 @@ const MqttPanel = (props) => {
   return (
     <div className="panel mqtt-panel">
       <Flex className="content">
-        <Container className='filters'>
+        <Container className='filters' w="170px">
           <MqttFilterClient onChangeH={onFilterClientChangeH} />
           <MqttFilterFunc onChangeH={onFilterFuncChangeH} />
         </Container>

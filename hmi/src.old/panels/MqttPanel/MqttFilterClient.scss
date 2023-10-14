@@ -1,0 +1,56 @@
+@import "../../styles/colors";
+@import "../../styles/base";
+
+.mqtt-filter-client {
+  display: inline;
+
+  h3 {
+    margin-bottom: 3px;
+    font-size: 130%;
+    color: $title2-fg-color;
+  }
+
+  .client-list {
+    padding: 6px;
+    .all {
+      padding-bottom: 10px;
+    }
+  }
+
+  .clients {
+    background: $bg1-color;
+    border-radius: 8px;
+    &.all-selected {
+      background: lighten($bg1-color, 10%);
+    }
+  }
+
+  .row2 {
+    display: none;
+  }
+
+  &.showSettings .row2 {
+    display: block;
+  }
+
+  .settings {
+    background-color: inherit;
+    color: $fg-color;
+    opacity: .7;
+    border: none;
+    float: right;
+    width: auto;
+    height: auto;
+    min-width: auto;
+    font-size: 90%;
+    margin-right: 12px;
+    margin-top: 38px;
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  input:checked {
+    background: #555;
+  }
+}

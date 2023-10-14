@@ -1,4 +1,7 @@
 import React, {useEffect} from 'react';
+import {
+  Container,
+  } from '@chakra-ui/react'
 
 import { mqttRegisterTopicCB } from '../../utils/mqttReact'
 import MqttItem from './MqttItem'
@@ -18,12 +21,12 @@ function MqttList(props) {
   }, []);
 
   return (
-    <div className="mqtt-display">
+    <Container w="100%" maxW="1200px" className="mqtt-display">
       <div className="nitems">{list.length}</div>
        <div className="mqtt-list mqtt-func-bg mqtt-clientId-bg">
           {list.map(item => <MqttItem key={item.key} item={item} pretty={props.pretty}/>) }
        </div>
-    </div>
+    </Container>
   );
 }
 

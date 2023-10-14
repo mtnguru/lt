@@ -1,0 +1,56 @@
+@import "./colors.scss";
+
+.page {
+  > header {
+    padding: 5px 10px;
+  }
+  > section {
+    padding: 0px 10px;
+  }
+}
+
+@mixin clearfix {
+  &::after {
+    clear: both;
+    content: "";
+    display: table;
+  }
+}
+
+strong {
+  color: $strong-fg-color;
+}
+
+table {
+  border: 2px solid $table-bd-color;
+}
+thead {
+  th {
+    padding: 10px;
+    background-color: $table-head-bg-color;
+  }
+}
+tbody {
+  tr:nth-child(odd) {
+    background-color: $table-odd-bg-color;
+  }
+  tr:nth-child(even) {
+    background-color: $table-even-bg-color;
+  }
+}
+
+textarea {
+  font-family: inherit;
+}
+
+// breakpoints
+$bp-sm: 360px;
+$bp-md: 768px;
+$bp-lg: 1200px;
+$bp-xlg: 1600px;
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}

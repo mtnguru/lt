@@ -1,0 +1,11 @@
+@import "../../styles/base";
+@import "../../styles/colors";
+
+.control-number {
+  display: inline-block;
+  width: 60px;
+  input {
+    background-color: var(--color--gray-20);
+    color: white;
+  }
+}

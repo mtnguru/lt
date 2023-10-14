@@ -1,7 +1,9 @@
 import React, {useState, useEffect} from 'react';
-import Card from '../../components/ui/Card'
 import {extractFromTags} from '../../utils/influxr'
 import {mgError} from '../../utils/mg'
+import {
+  Box,
+  } from '@chakra-ui/react'
 import ('./MqttItem.scss')
 
 const makeJsonPretty = (payloadStr) => {
@@ -126,15 +128,15 @@ const MqttItem = (props) => {
       setShort('')
       setPayloadOut(payloadStr)
     }
-  }, [props.item.action, props.item.func, props.item.payload, props.pretty])
+  }, [props.item.topic, props.item.action, props.item.func, props.item.payload, props.pretty])
 
   return (
     <div className='mqtt-item'>
-      <Card funcId={props.item.func} className={props.pretty}>
+      <Box className={`card ${props.pretty} ${props.item.func}`}>
         <div className='right'>
-          <span className='nitems'>{props.item.nitems.toString()}</span>
-          <span className='date'>{props.item.date}</span>
           <span className='topic'>{props.item.topic}</span>
+          <span className='date'>{props.item.date}</span>
+          <span className='nitems'>{props.item.nitems.toString()}</span>
         </div>
         <div className={`left mqtt-clientId-bg`}>
           <span className={`clientId ${props.item.clientId}`}>{props.item.clientId}</span>
@@ -145,7 +147,7 @@ const MqttItem = (props) => {
         <pre className='payload'>
           {payloadOut}
         </pre>
-      </Card>
+      </Box>
     </div>
   )
 }

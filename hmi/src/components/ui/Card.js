@@ -1,7 +1,7 @@
 //import './Card.scss'
 
 function Card(props) {
-  return <div className={`card ${props.funcId} ${props.className}`}>{props.children}</div>
+  return <div className={`card ${props.className}`}>{props.children}</div>
 
 }
 

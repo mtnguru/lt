@@ -1,0 +1,13 @@
+@import "styles/colors.scss";
+main {
+  h2, h3 {
+    color: $title-fg-color;
+  }
+  h2 {
+    font-size: 150%;
+    margin: 6px 10px;
+  }
+  h3 {
+    margin: 6px 10px;
+  }
+}

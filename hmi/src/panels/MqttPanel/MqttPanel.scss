@@ -13,7 +13,9 @@
     @media(min-width: $bp-md) {
       display: block;
     }
-    margin-right:10px;
+  }
+  .mqtt-display {
+//  width: calc(100% - 170px);
   }
   header {
     width: 100%;

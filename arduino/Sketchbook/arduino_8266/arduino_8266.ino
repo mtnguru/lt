@@ -130,7 +130,7 @@ float temps[inputMax][avgN];
 const int thermoDO  = 2;
 const int thermoCS  = 4;
 const int thermoCLK = 5;
-unsigned int sampleInterval = 10000;
+unsigned int sampleInterval = 2000;
 MAX6675 tc(thermoCLK, thermoCS, thermoDO);
 
 /////////////
@@ -456,9 +456,9 @@ void setConfig(const char *topic,
       logit(2,MD,f,"Input added ", metricId);
       strcpy(inputA[inputN].tags,      metric.value()["input"]["tags"]);
       strcpy(inputA[inputN].channels,  metric.value()["input"]["channels"]);
-      strcpy(inputA[inputN].metricId,  metric.value()["metricId"]);
+//    strcpy(inputA[inputN].metricId,  metric.value()["metricId"]);
       logit(2,MD,f,"Input ",inputA[inputN].metricId);
-      strcpy(inputA[inputN].name,      metric.value()["name"]);
+//    strcpy(inputA[inputN].name,      metric.value()["name"]);
       logit(2,MD,f,"input channel ", inputA[inputN].channels);
       logit(2,MD,f,"Input ",inputA[inputN].metricId);
       inputN++;

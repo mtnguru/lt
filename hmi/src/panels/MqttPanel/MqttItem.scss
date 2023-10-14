@@ -3,25 +3,30 @@
 
 .mqtt-item {
   font-size: 80%;
+  margin-bottom: 2px;
+  border-radius: 5px;
+  @include clearfix();
   .right {
     float: right;
     margin-top: 1px;
   }
   .topic {
     color: $topic-fg-color;
-    margin-top: 3px;
+    margin-top: 4px;
     margin-right: 10px;
+    line-height: 1;
     font-size: 80%;
     display: inline-block;
     display: none;
+    overflow: hidden;
     @media(min-width: $bp-sm) {
       display: inline-block;
       font-size: 80%;
-      width: 150px;
+      width: 190px;
     }
     @media(min-width: $bp-md) {
       margin-top: 1px;
-      width: 170px;
+      width: 200px;
       font-size: 90%;
     }
     @media(min-width: $bp-lg) {
@@ -31,27 +36,25 @@
     }
   }
   .date {
-    float: right;
     display: inline-block;
     color: $date-fg-color;
     width: 66px;
     font-size: 80%;
-    margin: 2px 0px 0px 10px;
+    margin: 2px 0px 0px 5px;
     @media(min-width: $bp-md) {
-      width: 90px;
-      margin-top: 0;
+      width: 85px;
       font-size: 100%;
     }
   }
   .nitems {
     display: none;
-    float: right;
-    @media(min-width: $bp-lg) {
+    @media(min-width: $bp-md) {
       display: inline-block;
       width: 30px;
     }
     font-weight: bold;
     text-align: right;
+    margin-right: 10px;
   }
   pre {
     margin: 4px 0 0;
@@ -66,6 +69,9 @@
     &.error {
       background-color: red;
     }
+  }
+  .card {
+    border-radius: 5px;
   }
   .card.pretty {
     .short {
@@ -100,12 +106,12 @@
     vertical-align: top;
     width: 75px;
     font-size: 90%;
-    margin: 0px 8px 0 -6px;
+    margin: 0px 8px 0 0px;
     padding: 3px 0 2px;
     text-align: center;
     border-radius: 5px;
-      font-size: 100%;
-      @media(min-width: $bp-md) {
+    font-size: 100%;
+    @media(min-width: $bp-md) {
       display:inline-block;
       width: 86px;
     }

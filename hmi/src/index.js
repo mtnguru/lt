@@ -205,9 +205,7 @@ const startReact = () => {
       <BrowserRouter>
         <ColorModeScript initialColorMode={theme.config.initialColorMode} />
         <ChakraProvider theme={theme}>
-          <React.StrictMode>
             <App />
-          </React.StrictMode>
         </ChakraProvider>
       </BrowserRouter>
     );

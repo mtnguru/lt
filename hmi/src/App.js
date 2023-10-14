@@ -1,12 +1,18 @@
-import React, {useState} from 'react'
+/* App.js */
+
+import React, {useState, useEffect} from 'react';
+import { useDisclosure } from "@chakra-ui/react";
 import { Route, Routes } from 'react-router-dom'
 
-import { Box } from '@chakra-ui/react'
+import { CSSReset, Box, Button } from '@chakra-ui/react';
+import UserNamePopup from './UserNamePopup';
+
 import CabinPage from   './pages/CabinPage'
-////import SafirePage from  './pages/SafirePage'
+import SafirePage from  './pages/SafirePage'
 import OxyPage from     './pages/OxyPage'
 import MqttPage from    './pages/MqttPage'
 import AdminPage from   './pages/AdminPage'
+
 
 import Welcome from './components/popup/Welcome'
 
@@ -18,27 +24,39 @@ function App() {
   const f = "App:App - ";
   console.log(f,'enter')
 
-  const [welcomeOpen, setWelcomeOpen] = useState(false)
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [username, setUsername] = useState("ralph")
 
-  const onClose = () => {
-    setWelcomeOpen(false)
-  }
+  const handleUsernameSubmit = (value) => {
+    setUsername(value);
+  };
+
+  // Open the popup on startup
+  React.useEffect(() => {
+    onOpen();
+  }, [onOpen]);
 
   return (
     <Box id="app" bg="bg" color="fg">
-      {welcomeOpen && <Welcome onClose={onClose}/>}
+
       <MainNavigation />
+      <Button onClick={onOpen}>Change Username: {username}</Button>
       <Box as="main">
         <Routes>
-          <Route path='/'         element={<OxyPage />}  />
+          <Route path='/'         element={<MqttPage />}  />
           <Route path='/oxy'      element={<OxyPage />}  />
           <Route path='/mqtt'     element={<MqttPage />}  />
-          {/*<Route path='/safire'   element={<SafirePage />}  /> */}
+          <Route path='/safire'   element={<SafirePage />}  />
           <Route path='/cabin'    element={<CabinPage />}  />
-          <Route path='/admin'    element={<AdminPage />} />
         </Routes>
       </Box>
       <Footer />
+
+      <UserNamePopup
+        isOpen={isOpen}
+        onClose={onClose}
+        onUsernameSubmit={handleUsernameSubmit}
+      />
     </Box>
   );
 }

@@ -36,8 +36,7 @@ const ControlOxyPanel = (props) => {
 
   return (
     <Box className="panel control-oxy-panel mqtt-clientId-bg">
-      <Heading as="h4" mt={2} mb={4} fontSize="150%" color="titleFg">Swiss Oxyhydrogen Energy</Heading>
-      {/*<h2>Control panel</h2>*/}
+      <Heading as="h4" mt={2} mb={8} fontSize="130%" color="titleFg">Swiss Oxyhydrogen Energy</Heading>
       <Box className="controls" >
         <Box className="control-bar gas-flow"       mb={10}>
           <ControlMetric metricId="E1_Ez_SmartTrack_slpm" label="HHO Flow" cname=""></ControlMetric>
