@@ -206,7 +206,7 @@ const mqttProcessCB = (_topic, _payload) => {
       }
       const metricId = tags["MetricId"].toLowerCase()
       const metric = findMetric(tags["MetricId"])
-      const sourceId = tags["SourceId"]
+      const funcId = tags["FuncId"]
 //    const projectId = tags["ProjectId"]
       if (metric == null) {
         mgError(0, f, "Could not find Metric: ", metricId)
@@ -214,8 +214,8 @@ const mqttProcessCB = (_topic, _payload) => {
       }
 
       if (metric.cbs) {
-        switch (sourceId) {
-          case 'I':
+        switch (funcId) {
+          case 'inp':
             if (!metric.input) {
               mgWarning(0, f, 'Metric does not have a input', metric.metricId)
               return
@@ -223,22 +223,22 @@ const mqttProcessCB = (_topic, _payload) => {
             metric.input.value = values.value
 //        metric.value = values.value
             break;
-          case 'O':
+          case 'out':
             if (!metric.output) {
               mgWarning(0, f, 'Metric does not have a output', metric.metricId)
               return
             }
             metric.output.value = values.value
             break;
-          case 'H':
+          case 'hum':
             if (!metric.user) {
               mgWarning(0, f, 'Metric does not have a user', metric.metricId)
               return
             }
-            metric.human.value = values.value
+            metric.hum.value = values.value
             break;
           default:
-            mgError(0, f, 'Unknown sourceId ', sourceId)
+            mgError(0, f, 'Unknown funcId ', funcId)
             return;
         }
 

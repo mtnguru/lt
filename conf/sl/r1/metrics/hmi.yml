@@ -1,105 +1,105 @@
 ############################## Input development
 
-R1_Ch_Human_PSI:
+Ch_NA_Human_PSI:
   label: Pressure
   desc: Chamber Pressure
   value: 1
   decimals: 0
-  human:
+  hum:
     clientId: hmi
     channelType: number
     default: 10
     min: 0
     max: 200
     step: 1
-R1_Ch_Pico_V:
+PS_NA_Pico_V:
   label: PS Voltage
   desc: Power Supply Voltage - Picoscope
   value: 0
   decimals: 0
-  input:
+  inp:
     clientId: hmi
     channelType: slider
     default: 150
     min: 0
     max: 120
     step: .1
-  output: {}
-R1_PS_Pico_A:
+  out: {}
+PS_NA_Pico_A:
   label: PS Amps
   desc: Power Supply Amps - Picoscope
   value: 0
   decimals: 0
-  input:
+  inp:
     clientId: hmi
     channelType: slider
     default: 40
     min: 0
     max: 10
     step: .1
-  output: {}
-R1_PS_DataQ_V:
+  out: {}
+PS_NA_DataQ_V:
   label: PS Voltage
   desc: Power Supply Voltage - DataQ
   value: 0
   decimals: 0
-  input:
+  inp:
     clientId: hmi
     channelType: slider
     default: 150
     min: 0
     max: 120
     step: .1
-  output: {}
-R1_PS_DataQ_A:
+  out: {}
+PS_NA_DataQ_A:
   label: PS Amps
   desc: Power Supply Amps - DataQ
   value: 0
   decimals: 0
-  input:
+  inp:
     clientId: hmi
     channelType: slider
     default: 40
     min: 0
     max: 10
     step: .1
-  output: {}
-R1_Ch_K_Internal_C:
+  out: {}
+Ch_Internal_K_C:
   label: Internal
   desc: Chamber internal temperature
   value: 0
   decimals: 0
-  human:
+  hum:
     clientId: hmi
     channelType: slider
     default: 1200
     min: 0
     max: 1000
     step: .1
-  output: {}
-R1_Ch_K_External_C:
+  out: {}
+Ch_External_K_C:
   label: External
   desc: Chamber external temperature
   value: 0
   decimals: 0
-  human:
+  hum:
     clientId: hmi
     channelType: slider
     default: 1200
     min: 0
     max: 1000
     step: .1
-  output: {}
-R1_Ch_K_Ambient_C:
+  out: {}
+Ch_Ambient_K_C:
   label: Ambient
   desc: Chamber ambient temperature
   value: 0
   decimals: 0
-  human:
+  hum:
     clientId: hmi
     channelType: slider
     default: 1200
     min: 0
     max: 1000
     step: .1
-  output: {}
+  out: {}

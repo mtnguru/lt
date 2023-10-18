@@ -6,8 +6,8 @@ MQTT analyzer - Filter by Topics - color coded - subscribe to all activity
   lab/chat               Chat with each other - recorded for posterity
   lab/labbook            Record observations about the experiment
   lab/alarms             Recipe conditions were out of spec  
-  lab/inputs/$IP         Edge Sensors/Channels - temperature, voltage, counter
-  lab/outputs/$IP        Edge outputs - turn on LED, move motor, voltage
+  lab/inp/$IP            Edge Sensors/Channels - temperature, voltage, counter
+  lab/out/$IP            Edge outputs - turn on LED, move motor, voltage
   lab/outputsRest/$IP    If device cannot fulfill output request - why?
   lab/user               Button, Slider, Text - physical devices or computer interface
   lab/configReq/$IP      Request configuration for an application or device - recipes - procedures

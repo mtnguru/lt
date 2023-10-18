@@ -23,13 +23,13 @@ const ControlSlider = (props) => {
   const metricId = props.metricId
 
   const [metric, setMetric] = useState(findMetric(metricId));
-  const [value, setValue] = useState(metric.human.default)
+  const [value, setValue] = useState(metric.hum.default)
 //const [outValue, setOutValue] = useState(0)
 
   const metricCB = (metric, topic, payload, tags, values) => {
     const f = "ControlMetric::metricCB"
-    const funcId = topic.split('/')[2]
-    const userId = topic.split('/')[4]
+    const funcId = topic.split('/')[1]
+    const userId = topic.split('/')[3]
     if (funcId === 'hum' && userId !== global.aam.mqttClientId) {
       setValue(values.value)
     } else if (funcId === 'out') {
@@ -45,9 +45,9 @@ const ControlSlider = (props) => {
 
   const onKeyH = (e) => {
     if (e.key === "ArrowRight") {
-      setValue((prev) => Math.min(prev + metric.human.step, 100));
+      setValue((prev) => Math.min(prev + metric.hum.step, 100));
     } else if (e.key === "ArrowLeft") {
-      setValue((prev) => Math.max(prev - metric.human.step, 10));
+      setValue((prev) => Math.max(prev - metric.hum.step, 10));
     }
   }
 
@@ -62,16 +62,16 @@ const onChangeH = (_value) => {
     setValue(parseFloat(_value).toFixed(metric.decimals))
     const topic = global.aaa.topics.publish['hum'].replace('DUSERID', global.aam.mqttClientId);
 
-    let payload = `${metric.human.tags} value=${parseFloat(_value).toFixed(metric.decimals)}`
+    let payload = `${metric.hum.tags} value=${parseFloat(_value).toFixed(metric.decimals)}`
     mqttPublish(topic, payload)
   }
 
   return (
     <Flex w="full">
       <NumberInput
-        min={metric.human.min}
-        max={metric.human.max}
-        step={metric.human.step}
+        min={metric.hum.min}
+        max={metric.hum.max}
+        step={metric.hum.step}
         w="5em"
         h="30px"
         size="sm"
@@ -91,9 +91,9 @@ const onChangeH = (_value) => {
           flex='1'
         >
           <Slider
-            min={metric.human.min}
-            max={metric.human.max}
-            step={metric.human.step}
+            min={metric.hum.min}
+            max={metric.hum.max}
+            step={metric.hum.step}
             size="sm"
             focusThumbOnChange={false}
             value={value}
@@ -109,9 +109,9 @@ const onChangeH = (_value) => {
           </Slider>
 
           <Flex mt={-2} justifyContent="space-between">
-            <Text verticalAlign="middle" fontSize="xs" mb="1">{metric.human.min}</Text>
-            <Text verticalAlign="middle" fontSize="xs" mb="1">{metric.human.min + (metric.human.max-metric.human.min)/2}</Text>
-            <Text verticalAlign="middle" fontSize="xs" mb="1">{metric.human.max}</Text>
+            <Text verticalAlign="middle" fontSize="xs" mb="1">{metric.hum.min}</Text>
+            <Text verticalAlign="middle" fontSize="xs" mb="1">{metric.hum.min + (metric.hum.max-metric.hum.min)/2}</Text>
+            <Text verticalAlign="middle" fontSize="xs" mb="1">{metric.hum.max}</Text>
           </Flex>
         </Box>
       </Flex>

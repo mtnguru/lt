@@ -19,14 +19,17 @@ mqtt:  # Each client must have it's own mqtt config
   websocket: 8081
 topics:
   subscribe:
-    cmd: a/admin/cmd/CLIENTID
-    all: a/admin/cmd/all
-    rsp: a/admin/rsp/#
+    cmd: a/cmd/CLIENTID
+    all: a/cmd/all
+    rsp: a/rsp/#
+    inp: +/inp/#
+    out: +/out/#
+    hum: +/hum/#
   publish:
-    rsp: a/admin/rsp/DCLIENTID
-    hum: a/admin/rsp/DCLIENTID/DUSERID
-    all: a/admin/cmd/all
+    rsp: a/rsp/DCLIENTID
+    hum: a/rsp/DCLIENTID/DUSERID
+    all: a/cmd/all
 projects:
   cb: enabled
-  fg: enabled
+  fg: disabled
   oxy: enabled

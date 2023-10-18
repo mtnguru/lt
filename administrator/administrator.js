@@ -8,11 +8,11 @@ No, I'll know everything I need to identify a value
    projectId   RF
    instance    42
    metricId    LivingRoom_Desk_K_F
-   Source
-     I input
-     H human
-     O output
-     A alarm
+   funcId
+     inp
+     hum
+     out
+     ala
 
 Functions
    GetValue
@@ -35,11 +35,12 @@ const YAML = require('yaml-parser')
 const path = require('path')
 require('dotenv').config();
 
-const mqttNode  = require('./utils/mqttNode');
-const Topics  = require('./utils/topics');
-const {msg} = require("./utils/msg");
-const influx = require("./utils/influx");
-const {currentDate} = require("./utils/tools");
+const mqttNode  = require('./utils/mqttNode')
+const Topics  = require('./utils/topics')
+const metricValues = {}
+const {msg} = require("./utils/msg")
+const influx = require("./utils/influx")
+const {currentDate} = require("./utils/tools")
 const os = require('os')
 
 const seedrandom  = require('seedrandom')
@@ -53,7 +54,7 @@ var adminId = "none"
 if (process.argv[2]) {
   adminId = process.argv[2]
 } else {
-  console.log('ERROR: No adminId specified');
+  console.log('ERROR: No adminId specified')
   process.exit(1);
 }
 
@@ -92,7 +93,7 @@ global.aas = {
 }
 
 /*
- * Processes a request for a devices configuration - device, inputs, outputs.
+ * Processes a request for a devices configuration - device, inp, out.
  */
 const findClient = (id) => {
   const f = 'administrator:findClient'
@@ -107,7 +108,7 @@ const findClient = (id) => {
     client = global.aaa.ips[id]
   }
   if (!client) {
-    msg(0, f, ERROR, 'Cannot find client', id)
+    msg(0, f, WARNING, 'Cannot find client', id)
     return null;
   }
   msg(2,f,DEBUG, 'exit');
@@ -144,14 +145,15 @@ const getStatus = () => {
 }
 
 const resetServer = () => {
-  var out = {
-    rsp: "requestReset",
-    clientId: global.aaa.clientId,
-    msg: `Resetting ${global.aaa.clientId}`
-  }
-  mqttNode.unsubscribe(global.aaa.topics.subscribe)
-  mqttNode.subscribe(global.aaa.topics.subscribe)
-  return out;
+  console.log('Restarting the program...');
+  // You can perform any necessary cleanup or configuration here before restarting
+  const exec = require('child_process').exec;
+  exec('node your_program.js', (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error while restarting: ${error}`);
+    }
+  });
+  process.exit(); // Exit the current process
 }
 
 const connectCB = () => {
@@ -185,6 +187,135 @@ const addStatus = (out) => {
   }
 }
 
+const addMetricValues = (processId, metricId, funcId, values) => {
+  //   Process  Instance  MetricId  Func - inp, out, hum
+  if (!metricValues?.[processId]?.[metricId]?.[funcId]) {
+    if (!(processId in metricValues)) {
+      metricValues[processId] = {[metricId]: {[funcId]: {}}}
+
+    } else if (!(metricId in metricValues[processId])) {
+      metricValues[processId][metricId] = {[funcId]: {}}
+
+    } else if (!(funcId in metricValues[processId][metricId])) {
+      metricValues[processId][metricId][funcId] = {}
+    }
+  }
+
+  for (var key in values) {
+    metricValues[processId][metricId][funcId][key] = {
+      val: values[key],
+      date: Date.now(),
+    }
+  }
+}
+
+const processMqttInput = (_topic, _payload) => {
+  // Values array - Save by
+  //   Process
+  //     Instance
+  //       MetricId
+  //       Func - inp, out, hum
+  //         value
+  //         time received
+  var [processId,funcId,...rest] = _topic.split('/')
+  var payload = _payload.toString()
+  var flds = payload.split(' ')
+  var tags = {};
+  var values = {}
+
+  // Extract metricId from tags
+  var metricId
+  var itags = flds[0].split(',')
+  for (var t = 1; t < itags.length; t++) {
+    var key, val;
+    [key, val] = itags[t].split('=')
+    if (key.toLowerCase() === "metricid") {
+      metricId = val.toLowerCase()
+      break;
+    }
+  }
+
+  // Extract values into values array
+  var ivalues = flds[1].split(',')
+  for (var v = 0; v < ivalues.length; v++) {
+    var [key, val] = ivalues[v].split('=')
+    values[key.toLowerCase()] = val
+  }
+
+  // Add to metricValues array
+  addMetricValues(processId.toLowerCase(), metricId, funcId.toLowerCase(), values)
+
+  return ['', null];
+}
+
+const getMetricValue = (args) => {
+  var value;
+  if (value = metricValues?.
+                [args.processId.toLowerCase()]?.
+                [args.metricId.toLowerCase()]?.
+                [args.funcId.toLowerCase()]?.
+                [args.valueId.toLowerCase()]) {
+    return value
+  }
+  return null;
+}
+
+const processCmd = (_topic, payload) => {
+  var outTopic = ''
+  var out
+  if (clientId === global.aaa.clientId || clientId === 'all') {  // commands specifically for the server
+    if (payload.cmd === 'setDebugLevel') {
+      global.aaa.status.debugLevel = payload.debugLevel;
+    // Request to reset administrator client
+    } else if (payload.cmd === 'requestReset') {
+      outTopic = global.aaa.topics.publish.rsp
+      outTopic = outTopic.replace(/DCLIENTID/, global.aaa.clientId)
+      out = resetServer();
+    // Request for status
+    } else if (payload.cmd === 'requestStatus') {
+      outTopic = global.aaa.topics.publish.rsp
+      outTopic = outTopic.replace(/DCLIENTID/, global.aaa.clientId)
+      out = getStatus();
+    } else if (payload.cmd === 'requestConfig') {
+      loadConfig();
+      var id = (payload.ip) ? payload.ip : payload.clientId
+      outTopic = global.aaa.topics.publish.rsp
+      outTopic = outTopic.replace(/DCLIENTID/, id)
+      out = findClient(id)
+      if (out === null) {
+        msg(0,WARNING,"Cannot find client:", id)
+      } else {
+        addStatus(out)
+        if (out.model == 'arduino') {
+          out = compressConfig(out);
+          compress = true
+        }
+      }
+    } else if (payload.cmd === 'getMetricValue') {
+      const value = getMetricValue(payload)
+      console.log (value);
+    } else if (payload.cmd === 'requestJsonFile') {
+      msg(2, f, DEBUG, "Read json file: ", filepath)
+      dclientId = (payload.ip) ? payload.ip : payload.clientId
+      outTopic = global.aaa.topics.publish.rsp
+      outTopic = outTopic.replace(/DCLIENTID/, dclientId)
+
+      const filepath = `${process.env.ROOT_PATH}/${payload.filepath}`
+      const data = fs.readFileSync(filepath);
+      out = JSON.parse(data)
+    } else if (payload.cmd === 'requestYmlFile') {
+      dclientId = (payload.ip) ? payload.ip : payload.clientId
+      outTopic = global.aaa.topics.publish.rsp
+      outTopic = outTopic.replace(/DCLIENTID/, dclientId)
+
+      const filepath = `${process.env.ROOT_PATH}/${payload.filepath}`
+      msg(2, f, DEBUG, "Read yml file: ", filepath)
+      out = YAML.safeLoad(fs.readFileSync(filepath));
+    }
+  }
+  return [outTopic, out]
+}
+
 const compressConfig = (inp) => {
   var out = {
     clientId: inp.clientId,
@@ -196,30 +327,29 @@ const compressConfig = (inp) => {
     rsp: inp.rsp,
   }
 
-  if (inp.inputs) {
-    out.inputs = {}
-    for (var metricId in inp.inputs) {
-      var metric = inp.inputs[metricId]
-      out.inputs[metricId] = {
-        input: metric.input,
+  if (inp.inp) {
+    out.inp = {}
+    for (var metricId in inp.inp) {
+      var metric = inp.inp[metricId]
+      out.inp[metricId] = {
+        input: metric.inp,
         decimals: metric.decimals,
         value: 0
       }
     }
   }
 
-  if (inp.outputs) {
-    out.outputs = {}
-    for (var metricId in inp.outputs) {
-      var metric = inp.outputs[metricId]
-      out.outputs[metricId] = {
-        output: metric.output,
+  if (inp.out) {
+    out.out = {}
+    for (var metricId in inp.out) {
+      var metric = inp.out[metricId]
+      out.out[metricId] = {
+        output: metric.out,
         decimals: metric.decimals,
         value: 0
       }
     }
   }
-
 
   return out
 }
@@ -230,77 +360,31 @@ const compressConfig = (inp) => {
 const processCB = (_topic, _payload) => {
   const f = 'administrator::processCB'
   msg(1,f,DEBUG, 'enter');
-  console.log(f, 'enter', _topic);
+//console.log(f, 'enter', _topic);
   var out;
   var outTopic;
-  var dclientId;
   try {
     var compress = false
-    var [projectId, instance, func, clientId, userId, telegrafId] = _topic.split('/')
+    var [,funcId, clientId,,] = _topic.split('/')
 
     const inputStr = _payload.toString();
+    msg(1,f,DEBUG, 'topic: ', _topic, '\n' + ' payload:', inputStr);
     var input = {}
 
     // If the payload is JSON, parse it
-    if (inputStr && inputStr !== '{}') {
+    if (inputStr && inputStr[0] === '{' && inputStr !== '{}') {
       msg(3,f, DEBUG,"Parse inputStr:", inputStr.toString)
       input = JSON.parse(inputStr)
     }
-    msg(3,f,DEBUG, 'func', func, ' clientId', clientId);
+    msg(3,f,DEBUG, 'funcId', funcId, ' clientId', clientId);
 
     // If this is a cmd to the administrator
     if (global.aaa.topics.subscribe['cmd'] === _topic ||
         global.aaa.topics.subscribe['all'] === _topic) {
       if (input.cmd) {
-        if (clientId === global.aaa.clientId || clientId === 'all') {  // commands specifically for the server
-          if (input.cmd === 'setDebugLevel') {
-            global.aaa.status.debugLevel = input.debugLevel;
-          }
-          // Request to reset administrator client
-          if (input.cmd === 'requestReset') {
-            outTopic = global.aaa.topics.publish.rsp
-            outTopic = outTopic.replace(/DCLIENTID/, global.aaa.clientId)
-            out = resetServer();
-          }
-          // Request for status
-          if (input.cmd === 'requestStatus') {
-            outTopic = global.aaa.topics.publish.rsp
-            outTopic = outTopic.replace(/DCLIENTID/, global.aaa.clientId)
-            out = getStatus();
-          }
-          if (input.cmd === 'requestConfig') {
-            loadConfig();
-            var id = (input.ip) ? input.ip : input.clientId
-            outTopic = global.aaa.topics.publish.rsp
-            outTopic = outTopic.replace(/DCLIENTID/, id)
-            out = findClient(id)
-            addStatus(out)
-            if (out.model == 'arduino') {
-              out = compressConfig(out);
-              compress = true
-            }
-          }
-          if (input.cmd === 'requestJsonFile') {
-            msg(2, f, DEBUG, "Read json file: ", filepath)
-            dclientId = (input.ip) ? input.ip : input.clientId
-            outTopic = global.aaa.topics.publish.rsp
-            outTopic = outTopic.replace(/DCLIENTID/, dclientId)
-
-            const filepath = `${process.env.ROOT_PATH}/${input.filepath}`
-            const data = fs.readFileSync(filepath);
-            out = JSON.parse(data)
-          }
-          if (input.cmd === 'requestYmlFile') {
-            dclientId = (input.ip) ? input.ip : input.clientId
-            outTopic = global.aaa.topics.publish.rsp
-            outTopic = outTopic.replace(/DCLIENTID/, dclientId)
-
-            const filepath = `${process.env.ROOT_PATH}/${input.filepath}`
-            msg(2, f, DEBUG, "Read yml file: ", filepath)
-            out = YAML.safeLoad(fs.readFileSync(filepath));
-          }
-        }
+        [outTopic, out] = processCmd(_topic, input);
       }
+    // If this is a response from one of the client Id's
     } else if (_topic.indexOf(global.aaa.topics.subscribe.rsp.replace(/\/#/,'')) > -1) {
       if (input.rsp === 'requestStatus')  {
         global.aas.clients[clientId] = input
@@ -309,6 +393,9 @@ const processCB = (_topic, _payload) => {
       } else if (input.rsp === 'setEnabled') {
         global.aas.clients[clientId].enabled = input.enabled
       }
+    // If this is inp, out, hum influx data then update values in the metricValues array
+    } else if (funcId === 'inp' || funcId === 'out' || funcId === 'hum') {
+      [outTopic, out] = processMqttInput(_topic,inputStr)
     }
     var short = global.aaa.topics.subscribe.rsp.replace(/\/#/,'')
     var ind = _topic.indexOf(short)
@@ -319,7 +406,7 @@ const processCB = (_topic, _payload) => {
         out.date = currentDate()
       }
       var outStr = JSON.stringify(out)
-      msg(0,f, DEBUG,`call mqttNode.publish - topic: ${outTopic} length:${outStr.length}`)
+      msg(1,f, DEBUG,`call mqttNode.publish - topic: ${outTopic} length:${outStr.length}`)
       mqttNode.publish(outTopic, outStr);
     }
   } catch (err) {
@@ -364,29 +451,29 @@ const initMetrics = (projectId, instance, project) => {
       project.metrics[metricId] = metric
     }
 
-    // assign inputs, outputs and human to correct clients
+    // assign inp, out and hum to correct clients
     var client
-    if (metric.input) {
-      if (client = project.clients[metric.input.clientId]) {
-        if (!client.inputs) {
-          client.inputs = {}
+    if (metric.inp) {
+      if (client = project.clients[metric.inp.clientId]) {
+        if (!client.inp) {
+          client.inp = {}
         }
-        client.inputs[metricId] = metric
-        metric.input.tags = influx.makeTagsFromMetricId(metric.name, "I", projectId, instance)
+        client.inp[metricId] = metric
+        metric.inp.tags = influx.makeTagsFromMetricId(metric.name, "inp", projectId, instance)
       }
     }
-    if (metric.output) {
-      if (client = project.clients[metric.output.clientId]) {
-        if (!client.outputs) client.outputs = {}
-        client.outputs[metricId] = metric
-        metric.output.tags = influx.makeTagsFromMetricId(metric.name, "O", projectId, instance)
+    if (metric.out) {
+      if (client = project.clients[metric.out.clientId]) {
+        if (!client.out) client.out = {}
+        client.out[metricId] = metric
+        metric.out.tags = influx.makeTagsFromMetricId(metric.name, "out", projectId, instance)
       }
     }
-    if (metric.human) {
-      if (client = project.clients[metric.human.clientId]) {
-        if (!client.humans) client.humans = {}
-        client.humans[metricId] = metric
-        metric.human.tags = influx.makeTagsFromMetricId(metric.name, "H", projectId, instance)
+    if (metric.hum) {
+      if (client = project.clients[metric.hum.clientId]) {
+        if (!client.hum) client.hum = {}
+        client.hum[metricId] = metric
+        metric.hum.tags = influx.makeTagsFromMetricId(metric.name, "hum", projectId, instance)
       }
     }
   } // for each metric in project

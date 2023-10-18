@@ -47,20 +47,20 @@ const loadConfigCB = (topic, payload) => {
     console.log(f, 'do subscribe', Object.values(global.aaa.subscribeTopics))
     mqttSubscribe(global.aaa.subscribeTopics)
 
-    // Create full list of inputs and outputs by combining them from all clients
-    global.aaa.inputs = {}
-    global.aaa.outputs = {}
+    // Create full list of inp and out by combining them from all clients
+    global.aaa.inp = {}
+    global.aaa.out = {}
     for (let clientId in global.aaa.clients) {
       if (clientId !== "server") {
         const client = global.aaa.clients[clientId]
-        for (let inputName in client.inputs) {
-          const input = client.inputs[inputName]
-          global.aaa.inputs[inputName.toLowerCase()] = input;
+        for (let inputName in client.inp) {
+          const input = client.inp[inputName]
+          global.aaa.inp[inputName.toLowerCase()] = input;
 
         }
-        for (let outputName in client.outputs) {
-          const output = client.outputs[outputName]
-          global.aaa.outputs[outputName.toLowerCase()] = output;
+        for (let outputName in client.out) {
+          const output = client.out[outputName]
+          global.aaa.out[outputName.toLowerCase()] = output;
         }
       }
     }

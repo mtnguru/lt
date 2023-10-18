@@ -6,8 +6,8 @@ Reply Answer Response
 
 
 Subscribe
-   a/admin/cmd/all
-   a/admin/cmd/drupal
+   a/cmd/all
+   a/cmd/drupal
    rf/42/msg
    rf/42/act
    rf/42/alm

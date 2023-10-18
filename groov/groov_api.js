@@ -62,7 +62,7 @@ const readChannel = async (name, sensor, cb) => {
   let payload;
   let res;
   try {
-    let metric = global.aaa.inputs[name];
+    let metric = global.aaa.inp[name];
     if (metric) {
       res = await axios.get(url,{headers: client.headers});
       console.log(f,' channel read ', res.data.value)

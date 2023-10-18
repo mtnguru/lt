@@ -69,12 +69,12 @@ Instead focus on the UI slider
 
   Use slider to fake the pressures and temperature
 
-  Internal     R1_Ch_K_Internal_C    Another slide to set alarms
-  External     R1_Ch_K_External_C
-  Ambient      R1_Ch_K_Ambient_C
-  Pressure     R1_Ch_Human_PSI
-  AC Voltage   R1_PS_Pico_V
-  AC Current   R1_PS_Pico_A
+  Internal     Ch_Internal_K_C    Another slide to set alarms
+  External     Ch_External_K_C
+  Ambient      Ch_Ambient_K_C
+  Pressure     Ch_NA_Human_PSI
+  AC Voltage   PS_NA_Pico_V
+  AC Current   PS_NA_Pico_A
 
   Slider with upper and lower values
 
@@ -205,10 +205,10 @@ Entities
 
 Create a realistic :q`
 
-Group     E1  Electroyzer 1
 Component Gm  GeigerMeister
-Device    N2  Node 2-13
 Position  1-6 Level
+Device    N2  Node 2-13
+Composition (optional)  - N2, xray, IR, etc.
 Units     CPS Counts per second
 
 Create the activity entity - you have what you need.:
@@ -372,9 +372,9 @@ msg  mqttMsgPub[topicSize]       rf/msg/CLIENTID
 RegisterMetric CB - The type is embedded in the Influx string
 Use the metric and the type - every time
 Also use the projectId
-Register for a projectId, sourceId, metricId - 
+Register for a projectId, funcId, metricId - 
 
-*Change the name source to sourceId
+*Change the name source to funcId
 
 
 

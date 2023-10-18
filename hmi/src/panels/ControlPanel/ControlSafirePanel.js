@@ -31,9 +31,9 @@ const ControlSafirePanel = (props) => {
     if (!metric) {
       mgError(0, f,"Metric not found: ",event.target.id)
     }
-    const topic = global.aaa.topic.publish['human'];
+    const topic = global.aaa.topic.publish['hum'];
     let value = event.target.value;
-    let payload = `${metric.human.tags} value=${parseFloat(value).toFixed(metric.decimals)}`
+    let payload = `${metric.hum.tags} value=${parseFloat(value).toFixed(metric.decimals)}`
     mqttPublish(topic, payload)
     */
   }
@@ -45,25 +45,23 @@ const ControlSafirePanel = (props) => {
       {/*<h2>Control panel</h2>*/}
       <Box className="controls" >
         <div className="control-bar pressure">
-          <ControlMetric metricId="R1_Ch_Human_PSI" type="status" label="Pressure" cname=""></ControlMetric>
-          {/*<ControlNumber metricId="R1_Ch_Human_PSI" type="status" label="Pressure" cname=""></ControlNumber>*/}
-          <ControlSlider clientId="hmi" metricId="R1_Ch_Human_PSI" onChange={onChange} />
-          {/*<ControlButton clientId="hmi" metricId="R1_Ch_Human_PSI" type="push" label="Reset" cname="reset" clickH={clickH}></ControlButton>*/}
+          <ControlMetric metricId="Ch_NA_Human_PSI" type="status" label="Pressure" cname=""></ControlMetric>
+          <ControlSlider clientId="hmi" metricId="Ch_NA_Human_PSI" onChange={onChange} />
         </div>
         <div className="control-bar voltage">
-          <ControlMetric metricId="R1_PS_Pico_V" type="status" label="Voltage" cname=""></ControlMetric>
+          <ControlMetric metricId="PS_NA_Pico_V" type="status" label="Voltage" cname=""></ControlMetric>
         </div>
         <div className="control-bar amps">
-          <ControlMetric metricId="R1_PS_Pico_A" type="status" label="Amps" cname=""></ControlMetric>
+          <ControlMetric metricId="PS_NA_Pico_A" type="status" label="Amps" cname=""></ControlMetric>
         </div>
         <div className="control-bar internal">
-          <ControlMetric metricId="R1_Ch_K_Internal_C" type="status" label="Internal" cname=""></ControlMetric>
+          <ControlMetric metricId="Ch_Internal_K_C" type="status" label="Internal" cname=""></ControlMetric>
         </div>
         <div className="control-bar external">
-          <ControlMetric metricId="R1_Ch_K_External_C" type="status" label="External" cname=""></ControlMetric>
+          <ControlMetric metricId="Ch_External_K_C" type="status" label="External" cname=""></ControlMetric>
         </div>
         <div className="control-bar ambient">
-          <ControlMetric metricId="R1_Ch_K_Ambient_C" type="status" label="Ambient" cname=""></ControlMetric>
+          <ControlMetric metricId="Ch_Ambient_K_C" type="status" label="Ambient" cname=""></ControlMetric>
         </div>
       </Box>
     </Box>

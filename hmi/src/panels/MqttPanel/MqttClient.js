@@ -53,7 +53,7 @@ function MqttClient (props) {
   }, [clientId])
 
   const onSelectH = (event) => {
-    let topic = `a/admin/cmd/${props.client.clientId}`
+    let topic = `a/cmd/${props.client.clientId}`
     let payload = `{"cmd": "setDebugLevel", "clientId": "${clientId}", "debugLevel": "${event.target.value}"}`;
     console.log('   send ', topic, payload)
     mqttPublish(topic, payload)
@@ -67,16 +67,16 @@ function MqttClient (props) {
     let topic;
     let payload;
     if (classList.contains('reset')) {
-      topic = `a/admin/cmd/${props.client.clientId}`
+      topic = `a/cmd/${props.client.clientId}`
       payload = `{"cmd": "requestReset", "clientId": "${props.client.clientId}"}`;
     } else if (classList.contains("status")) {
-      topic = `a/admin/cmd/${props.client.clientId}`
+      topic = `a/cmd/${props.client.clientId}`
       payload = `{"cmd": "requestStatus", "clientId": "${props.client.clientId}"}`;
       if (clientId === 'all') {}
     } else if (classList.contains("enabled")) {
       // Set the "all" button on other hmi instances
       // Set the enabled button
-      topic = `a/admin/cmd/${props.client.clientId}`
+      topic = `a/cmd/${props.client.clientId}`
       if (enabled) {
         payload = `{"cmd": "setEnabled", "enabled": 0, "clientId": "${props.client.clientId}"}`;
         setEnabled(0)
@@ -86,7 +86,7 @@ function MqttClient (props) {
       }
       if (props.client.clientId === 'all') {
         mqttPublish(topic, payload)  // looks weird, Doing it this way publishes the cmd before the rsp
-        topic = `a/admin/rsp/${props.client.clientId}`
+        topic = `a/rsp/${props.client.clientId}`
         if (enabled) {
           payload = `{"rsp": "setEnabled", "enabled": 0, "clientId": "${props.client.clientId}"}`;
         } else {

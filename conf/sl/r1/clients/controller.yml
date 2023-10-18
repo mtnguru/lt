@@ -10,19 +10,19 @@ statusDefault:
 topics:
   subscribe:
     adm: a/#
-    prj: PROJECTID/INSTANCE/#
+    prj: PROJECTID/#
   register:
-    cmd: a/admin/cmd
-    rsp: a/admin/rsp
-    inp: PROJECTID/INSTANCE/inp
-    out: PROJECTID/INSTANCE/out
-    hum: PROJECTID/INSTANCE/hum
-    alm: PROJECTID/INSTANCE/alm
-    cod: PROJECTID/INSTANCE/cod
-    msg: PROJECTID/INSTANCE/msg
-    act: PROJECTID/INSTANCE/act
+    cmd: a/cmd
+    rsp: a/rsp
+    inp: PROJECTID/inp
+    out: PROJECTID/out
+    hum: PROJECTID/hum
+    alm: PROJECTID/alm
+    cod: PROJECTID/cod
+    msg: PROJECTID/msg
+    act: PROJECTID/act
   publish:
-    rsp: a/admin/rsp/CLIENTID
-    msg: PROJECTID/INSTANCE/msg/CLIENTID
-    cod: PROJECTID/INSTANCE/cod/CLIENTID
-    hum: PROJECTID/INSTANCE/hum/CLIENTID/USERID/cabin_lt
+    rsp: a/rsp/CLIENTID
+    msg: PROJECTID/msg/CLIENTID
+    cod: PROJECTID/cod/CLIENTID
+    hum: PROJECTID/hum/CLIENTID/USERID/cabin_lt

@@ -466,7 +466,7 @@ void setConfig(const char *topic,
   // Loop through metrics, initialize inputA[]
   inputN = 0;
   logit(0,MD,f,"Check Inputs",NULL);
-  JsonObject rootInput = jsonDoc["inputs"].as<JsonObject>();
+  JsonObject rootInput = jsonDoc["inp"].as<JsonObject>();
   if (rootInput) {
     logit(0,MD,f,"Process input metrics ",NULL);
     for (JsonPair metric : rootInput) {
@@ -495,7 +495,7 @@ void setConfig(const char *topic,
     logit(0,MD,f,"===================== shit",NULL);
   }
 
-  JsonObject rootOutput = jsonDoc["outputs"].as<JsonObject>();
+  JsonObject rootOutput = jsonDoc["out"].as<JsonObject>();
   logit(0,MD,f,"Check Outputs",NULL);
   if (rootOutput) {
     logit(0,MD,f,"Process output metrics ",NULL);
@@ -654,7 +654,7 @@ void mqttConnect() {
 }
 
 void sampleInputs() {
-  // Loop through the inputs, read value, and post to MQTT
+  // Loop through the inp, read value, and post to MQTT
   const char *f = "sampleInputs";
   logit(3,MD,f,"sampleInputs enter ", NULL);
   for (int m = 0; m < inputN; m++) {
@@ -711,10 +711,10 @@ void setup() {
   mqttClient.setCallback(mqttCB);
   mqttConnect();
 
-  strcpy(mqttCmdPub, "a/admin/cmd/administrator");
+  strcpy(mqttCmdPub, "a/cmd/administrator");
 
   logit(2,MD,f,"Subscribe to admin response messages ", NULL);
-  snprintf(mqttRspSub, topicSize, "a/admin/rsp/%s", lip);   // admin responses
+  snprintf(mqttRspSub, topicSize, "a/rsp/%s", lip);   // admin responses
   res = mqttClient.subscribe(mqttRspSub);
 
   requestConfig();

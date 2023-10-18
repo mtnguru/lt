@@ -27,10 +27,10 @@ global.aaa = {
   started: false,
   topics: {
     subscribe: {
-      rsp: `a/admin/rsp/${clientId}`,
+      rsp: `a/rsp/${clientId}`,
     },
     publish: {
-      adm: 'a/admin/cmd/administrator'
+      adm: 'a/cmd/administrator'
     }
   },
   status: {
@@ -164,9 +164,9 @@ const loadConfigCB = (_topic, _payload) => {
   mqttNode.registerTopicCB(config.topics.subscribe.cmd, cmdCB)
   mqttNode.registerTopicCB(config.topics.subscribe.all, cmdCB)
 
-  for (let metricId in config.outputs) {
+  for (let metricId in config.out) {
     // Register the metrics that have an output
-    const output = config.outputs[metricId]
+    const output = config.out[metricId]
     mqttNode.registerMetricCB(metricId, outputCB, "out")
   }
 
@@ -253,8 +253,8 @@ const readInputs = async () => {
     const ntime = new Date().getTime() * 1000000;
 
     const funcs = [];
-    for (let name in global.aaa.inputs) {
-      let input = global.aaa.inputs[name].input;
+    for (let name in global.aaa.inp) {
+      let input = global.aaa.inp[name].input;
       funcs.push(readInput(name,input,ntime));
     }
 

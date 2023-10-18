@@ -15,23 +15,23 @@ clients:
 topics:
   subscribe:
     adm: a/#
-    prj: PROJECTID/INSTANCE/#
+    prj: PROJECTID/#
   register:
-    cmd: a/admin/cmd
-    rsp: a/admin/rsp
-    inp: PROJECTID/INSTANCE/inp
-    out: PROJECTID/INSTANCE/out
-    hum: PROJECTID/INSTANCE/hum
-    alm: PROJECTID/INSTANCE/alm
-    cod: PROJECTID/INSTANCE/cod
-    msg: PROJECTID/INSTANCE/msg
-    act: PROJECTID/INSTANCE/act
+    cmd: a/cmd
+    rsp: a/rsp
+    inp: PROJECTID/inp
+    out: PROJECTID/out
+    hum: PROJECTID/hum
+    alm: PROJECTID/alm
+    cod: PROJECTID/cod
+    msg: PROJECTID/msg
+    act: PROJECTID/act
   publish:
-    rsp: a/admin/rsp/CLIENTID
-    adm: a/admin/cmd/administrator
-    msg: PROJECTID/INSTANCE/msg/CLIENTID/all/oxy_msg
-    cod: PROJECTID/INSTANCE/cod/CLIENTID/all
-    hum: PROJECTID/INSTANCE/hum/CLIENTID/DUSERID/oxy_edge
+    rsp: a/rsp/CLIENTID
+    adm: a/cmd/administrator
+    msg: PROJECTID/msg/CLIENTID/all/oxy_msg
+    cod: PROJECTID/cod/CLIENTID/all
+    hum: PROJECTID/hum/CLIENTID/DUSERID/oxy_edge
 metrics: project
 funcIds: {}
 statusDefault:

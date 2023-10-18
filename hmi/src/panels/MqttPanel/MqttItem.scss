@@ -5,6 +5,7 @@
   font-size: 80%;
   margin-bottom: 2px;
   border-radius: 5px;
+  max-width: 100%;
   @include clearfix();
   .right {
     float: right;
@@ -22,7 +23,7 @@
     @media(min-width: $bp-sm) {
       display: inline-block;
       font-size: 80%;
-      width: 190px;
+      width: 200px;
     }
     @media(min-width: $bp-md) {
       margin-top: 1px;
@@ -56,9 +57,6 @@
     text-align: right;
     margin-right: 10px;
   }
-  pre {
-    margin: 4px 0 0;
-  }
   .type {
     display: inline-block;
     vertical-align: top;
@@ -73,6 +71,14 @@
   .card {
     border-radius: 5px;
   }
+  .payload {
+    margin: 4px 0 0 5px;
+    overflow: hidden;
+  }
+
+  .short {
+    margin-left: 5px;
+  }
   .card.pretty {
     .short {
       display: block;
@@ -83,10 +89,8 @@
     }
     .payload {
       margin-top: 0;
-      pre {
-        @media(min-width: $bp-md) {
-          margin: 0px;
-        }
+      @media(min-width: $bp-md) {
+        margin: 0px;
       }
     }
     .left {
@@ -106,8 +110,8 @@
     vertical-align: top;
     width: 75px;
     font-size: 90%;
-    margin: 0px 8px 0 0px;
-    padding: 3px 0 2px;
+    margin: 0px 0px 0 0px;
+    padding: 2px 0 2px;
     text-align: center;
     border-radius: 5px;
     font-size: 100%;

@@ -1,6 +1,6 @@
 //require('dotenv').config();
 require("./msgE");
-// const mqttNode = require('./mqttNode');
+const mqttNode = require('./mqttNode');
 
 const setDebugLevel = (level) => {
   global.aaa.status.debugLevel = level;
@@ -12,22 +12,22 @@ const msg = (level, func, _funcId, ...snippets) => {
     if (level > global.aaa.status.debugLevel)
       return;
   } else {
-    console.log (f, "ERROR: debugLevel not set");
+    console.log(f, "ERROR: debugLevel not set");
     return;
   }
 
-//let payload = {
-//  function: func,
-//  program: global.aaa.program,
-//  funcId: msgE[_funcId],
-//  content: snippets.join(' '),
-//}
+  if (mqttNode.connected()) {
+    let payload = {
+      function: func,
+      program: global.aaa.program,
+      funcId: msgE[_funcId],
+      content: snippets.join(' '),
+    }
 
-//const topic = mqttNode.makeTopic(_funcId,"post")
-//const jpayload = JSON.stringify(payload);
-//if (mqttNode.connected()) {
-//  mqttNode.publish(topic, jpayload);
-//
+    const topic = global.aaa.topics.publish.msg
+    const jpayload = JSON.stringify(payload);
+    mqttNode.publish(topic, jpayload);
+  }
 
   var funcId = msgE[_funcId]
   if (_funcId === ERROR) {

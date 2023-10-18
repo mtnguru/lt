@@ -64,8 +64,8 @@ const readInputs = async () => {
     const ntime = new Date().getTime() * 1000000;
 
     const funcs = [];
-    for (let name in global.aaa.inputs) {
-      let input = global.aaa.inputs[name].input;
+    for (let name in global.aaa.inp) {
+      let input = global.aaa.inp[name].input;
       funcs.push(readInput(name,input,ntime));
     }
 

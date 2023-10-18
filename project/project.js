@@ -17,7 +17,7 @@ const f = "project:main"
 //      lab1/admin/+/$IP
 //         Set the configuration
 //
-//      lab1/inputs/#
+//      lab1/inp/#
 //      lab1/user/#
 //   Publishes out
 //      lab1/output
@@ -48,19 +48,19 @@ const loadClientConfigCB = (inTopic, inPayload) => {
 
   // Unsubscribe from all current topics
 
-  // Create full list of inputs and outputs by combining them from all clients
-  config.inputs = {}
-  config.outputs = {}
+  // Create full list of inp and out by combining them from all clients
+  config.inp = {}
+  config.out = {}
   for (let clientId in config.clients) {
     if (clientId !== "server") {
       const client = config.clients[clientId]
-      for (let inputName in client.inputs) {
-        const input = client.inputs[inputName]
-        config.inputs[inputName.toLowerCase()] = input;
+      for (let inputName in client.inp) {
+        const input = client.inp[inputName]
+        config.inp[inputName.toLowerCase()] = input;
       }
-      for (let outputName in client.outputs) {
-        const output = client.outputs[outputName]
-        config.outputs[outputName.toLowerCase()] = output;
+      for (let outputName in client.out) {
+        const output = client.out[outputName]
+        config.out[outputName.toLowerCase()] = output;
       }
     }
   }
@@ -98,7 +98,7 @@ const metricUserCB = (metric, inTopic, inPayload, inTags, inValues) => {
     if (msgType === "user") {
       // Create an output message
       const outTopic = mqttNode.makeTopic(OUTPUT, 'influx', {clientId: clientId})
-      const outPayload = `${influx.makeTagsFromMetric(tags['Metric'], 'O', 'unknown')} value=${values['value']}`
+      const outPayload = `${influx.makeTagsFromMetric(tags['Metric'], 'out', 'unknown')} value=${values['value']}`
       msg(2,f, DEBUG, 'payload ', outPayload)
       mqttNode.publish(outTopic, outPayload)
     }

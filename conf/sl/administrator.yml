@@ -8,13 +8,13 @@ mqtt:  # Each client must have it's own mqtt config
 # url:  http://172.16.45.7
 # url:  http://192.168.122.90
 
-  url:  http://labtime.org:1883
-  username: data
-  password: datawp
+# url:  http://labtime.org:1883
+# username: data
+# password: datawp
 
-# url:  http://192.168.202.108:1883
-# username: mqtt
-# password: mqttsl
+  url:  http://192.168.202.108:1883
+  username: mqtt
+  password: mqttsl
 
   protocol: 'MQTT'
   protocolVersion: 4
@@ -25,12 +25,12 @@ mqtt:  # Each client must have it's own mqtt config
   websocket: 8081
 topics:
   subscribe:
-    cmd: a/admin/cmd/CLIENTID
-    all: a/admin/cmd/all
-    rsp: a/admin/rsp/#
+    cmd: a/cmd/CLIENTID
+    all: a/cmd/all
+    rsp: a/rsp/#
   publish:
-    rsp: a/admin/rsp/DCLIENTID
-    hum: a/admin/rsp/DCLIENTID/DUSERID
-    all: a/admin/cmd/all
+    rsp: a/rsp/DCLIENTID
+    hum: a/rsp/DCLIENTID/DUSERID
+    all: a/cmd/all
 projects:
   r1: enabled

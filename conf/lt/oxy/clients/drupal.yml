@@ -9,16 +9,16 @@ statusDefault:
   mqttUnsubscribe: 0
 topics:
   subscribe:
-    all: a/admin/cmd/all
-    adm: a/admin/cmd/CLIENTID
+    all: a/cmd/all
+    adm: a/cmd/CLIENTID
     dru: a/cms/cmd/#
-    get: PROJECTID/INSTANCE/get/drupal
-    msg: PROJECTID/INSTANCE/msg/#
-    act: PROJECTID/INSTANCE/act/#
-    alm: PROJECTID/INSTANCE/alm/#
+    get: PROJECTID/get/drupal
+    msg: PROJECTID/msg/#
+    act: PROJECTID/act/#
+    alm: PROJECTID/alm/#
   publish:
-    adm: a/admin/cmd/administrator
-    rsp: a/admin/rsp/CLIENTID
-    wll: a/admin/wll/CLIENTID
-    rpy: PROJECTID/INSTANCE/rpy/DCLIENTID
+    adm: a/cmd/administrator
+    rsp: a/rsp/CLIENTID
+    wll: a/wll/CLIENTID
+    rpy: PROJECTID/rpy/DCLIENTID
     dru: a/cms/rsp/DCLIENTID/DUSERID

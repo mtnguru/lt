@@ -2,20 +2,20 @@ All Clients
 ====================
 On startup clients only know the MQTT server IP, name:password and possibly their mqtt client name
 They connect to the MQTT server and request their configuration file.
-  P a/admin/cmd/server
+  P a/cmd/server
       CLIENTID = Command line option | CLIENT_NAME | IP
 
-  S a/admin/cmd/all
-  S a/admin/cmd/CLIENTID
-  S a/admin/rsp/CLIENTID      # Receive status messages
+  S a/cmd/all
+  S a/cmd/CLIENTID
+  S a/rsp/CLIENTID      # Receive status messages
 
 if CLIENTID = IP then change to CLIENT_NAME after bootstrap - why?
    
 All clients can publish:
-  P PROJECTID/INSTANCE/act/CLIENTID/USERID
-  P PROJECTID/INSTANCE/cod/CLIENTID/USERID
-  P PROJECTID/INSTANCE/msg/CLIENTID/USERID
-  P a/admin/rpt/CLIENTID  - post reports: status
+  P PROJECTID/act/CLIENTID/USERID
+  P PROJECTID/cod/CLIENTID/USERID
+  P PROJECTID/msg/CLIENTID/USERID
+  P a/rpt/CLIENTID  - post reports: status
 
 player is the only client which requires a unique user id 
    email_address:random_number     Example: james@ecosleuth.com:98257  
@@ -23,15 +23,15 @@ player is the only client which requires a unique user id
 Clients
 ====================
 Server node.js   CLIENTID = command line option - default = server    USERID = server
-  P a/admin/rsp/CLIENTID
-  S a/admin/cmd/server
+  P a/rsp/CLIENTID
+  S a/cmd/server
 
-  P a/admin/cmd/CLIENTID
+  P a/cmd/CLIENTID
        CLIENTID = IP, or email address from request message
 
 MQTT Admin node  CLIENTID = command line option - default=MQTT        USERID = mqtt
-  P a/admin/cmd/CLIENTID/#
-  S #  (or  PROJECTID/INSTANCE/# a/admin/#)
+  P a/cmd/CLIENTID/#
+  S #  (or  PROJECTID/# a/#)
 
 Project - CLIENTID = command line option - default = P1               USERID = project
   Not sure this client is needed
@@ -39,35 +39,35 @@ Project - CLIENTID = command line option - default = P1               USERID = p
 Drupal php       CLIENTID = drupal                                    USERID = drupal
   S +/act/#
   S +/cms/#
-  P PROJECTID/INSTANCE/rsp/CLIENTID
+  P PROJECTID/rsp/CLIENTID
   
 Player REACT     USERID = email address - initially generate random id
-  S PROJECTID/INSTANCE/msg/+/all/#
-  S PROJECTID/INSTANCE/msg/+/USERID/#
-  P PROJECTID/INSTANCE/act/player/USERID
-  P PROJECTID/INSTANCE/msg/player/USERID
+  S PROJECTID/msg/+/all/#
+  S PROJECTID/msg/+/USERID/#
+  P PROJECTID/act/player/USERID
+  P PROJECTID/msg/player/USERID
 
 Labtime REACT     CLIENTID = hmi (rename to Labtime) - randomly generated? login?
-  S PROJECTID/INSTANCE/inp/#
-  S PROJECTID/INSTANCE/out/#
-  S PROJECTID/INSTANCE/usr/#
-  S PROJECTID/INSTANCE/alm/#
-  S PROJECTID/INSTANCE/msg/#
-  S PROJECTID/INSTANCE/cmd/labtime/USERID/#
-  P PROJECTID/INSTANCE/usr/labtime/USERID
+  S PROJECTID/inp/#
+  S PROJECTID/out/#
+  S PROJECTID/usr/#
+  S PROJECTID/alm/#
+  S PROJECTID/msg/#
+  S PROJECTID/cmd/labtime/USERID/#
+  P PROJECTID/usr/labtime/USERID
   
 Controller node   CLIENTID = command line option - default = controller - USERID = controller
-  S PROJECTID/INSTANCE/inp/#
-  S PROJECTID/INSTANCE/usr/#
-  S PROJECTID/INSTANCE/alm/#
-  P PROJECTID/INSTANCE/out/CLIENTID/controller/#
+  S PROJECTID/inp/#
+  S PROJECTID/usr/#
+  S PROJECTID/alm/#
+  P PROJECTID/out/CLIENTID/controller/#
 
 Edge arduino C++         CLIENTID initially = IP - On startup rename to config name
-  S PROJECTID/INSTANCE/out/CLIENTID/#
-  P a/admin/rsp/CLIENTID
-    PROJECTID/INSTANCE/inp/CLIENTID/arduino/TELEGRAF_ID
+  S PROJECTID/out/CLIENTID/#
+  P a/rsp/CLIENTID
+    PROJECTID/inp/CLIENTID/arduino/TELEGRAF_ID
 
 Edge RIO, EPIC node.js   CLIENTID initially = IP or command line options
-  S PROJECTID/INSTANCE/out/CLIENTID/#
-  P PROJECTID/INSTANCE/inp/CLIENTID/groov/TELEGRAFID
+  S PROJECTID/out/CLIENTID/#
+  P PROJECTID/inp/CLIENTID/groov/TELEGRAFID
 

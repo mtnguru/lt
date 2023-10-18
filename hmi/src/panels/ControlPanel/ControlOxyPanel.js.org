@@ -30,9 +30,9 @@ const ControlOxyPanel = (props) => {
     if (!metric) {
       mgError(0, f,"Metric not found: ",event.target.id)
     }
-    const topic = global.aaa.topic.publish['human'];
+    const topic = global.aaa.topic.publish['hum'];
     let value = event.target.value;
-    let payload = `${metric.human.tags} value=${parseFloat(value).toFixed(metric.decimals)}`
+    let payload = `${metric.hum.tags} value=${parseFloat(value).toFixed(metric.decimals)}`
     mqttPublish(topic, payload)
     */
   }
@@ -44,24 +44,23 @@ const ControlOxyPanel = (props) => {
       <Box className="controls" >
         <div className="control-bar gas-flow">
           <label className="label">Gas Flow</label>
-          <ControlMetric metricId="E1_Ez_SmartTrack_slpm" type="status" label="Gas Flow" cname=""></ControlMetric>
-          <ControlSlider metricId="E1_Ez_SmartTrack_slpm" onChange={onChange} />
-          {/*<ControlButton clientId="hmi" metricId="R1_Ch_Human_PSI" type="push" label="Reset" cname="reset" clickH={clickH}></ControlButton>*/}
+          <ControlMetric metricId="Ez_NA_SmartTrack_slpm" type="status" label="Gas Flow" cname=""></ControlMetric>
+          <ControlSlider metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
         </div>
         <div className="control-bar voltage">
           <label className="label">PS Voltage</label>
-          <ControlMetric metricId="E1_PS_H_V" type="status" label="Voltage" cname=""></ControlMetric>
-          <ControlSlider metricId="E1_PS_H_V" onChange={onChange} />
+          <ControlMetric metricId="PS_NA_Human_V" type="status" label="Voltage" cname=""></ControlMetric>
+          <ControlSlider metricId="PS_NA_Human_V" onChange={onChange} />
         </div>
         <div className="control-bar amps">
           <label className="label">PS Amps</label>
-          <ControlMetric metricId="E1_PS_H_A" type="status" label="Amps" cname=""></ControlMetric>
-          <ControlSlider metricId="E1_PS_H_A" onChange={onChange} />
+          <ControlMetric metricId="PS_NA_Human_A" type="status" label="Amps" cname=""></ControlMetric>
+          <ControlSlider metricId="PS_NA_Human_A" onChange={onChange} />
         </div>
         <div className="control-bar ez-temperature">
           <label className="label">Ez Temperature</label>
-          <ControlMetric metricId="E1_Ez_Mtr_C" type="status" label="Internal" cname=""></ControlMetric>
-          <ControlSlider metricId="E1_Ez_Mtr_C" onChange={onChange} />
+          <ControlMetric metricId="Ez_NA_Mtr_C" type="status" label="Internal" cname=""></ControlMetric>
+          <ControlSlider metricId="Ez_NA_Mtr_C" onChange={onChange} />
         </div>
       </Box>
     </Box>

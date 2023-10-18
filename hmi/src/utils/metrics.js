@@ -17,10 +17,9 @@ const findMetric = (metricId) => {
 }
 
 const getValue = (metric) => {
-  if (metric.input  && metric.input.value)  return metric.input.value
-
-  if (metric.output && metric.output.value) return metric.output.value
-  if (metric.user   && metric.user.value)   return metric.user.value
+  if (metric.inp && metric.inp.value) return metric.inp.value
+  if (metric.out && metric.out.value) return metric.out.value
+  if (metric.hum && metric.hum.value) return metric.hum.value
   return "MV"
 }
 

@@ -438,7 +438,7 @@ void setConfig(const char *topic,
   // Loop through metrics, initialize inputA[]
   inputN = 0;
   logit(0,MD,f,"Check Inputs",NULL);
-  JsonObject rootInput = jsonDoc["inputs"].as<JsonObject>();
+  JsonObject rootInput = jsonDoc["inp"].as<JsonObject>();
   if (rootInput) {
     logit(0,MD,f,"Process input metrics ",NULL);
     for (JsonPair metric : rootInput) {
@@ -467,7 +467,7 @@ void setConfig(const char *topic,
     logit(0,MD,f,"===================== shit",NULL);
   }
 
-  JsonObject rootOutput = jsonDoc["outputs"].as<JsonObject>();
+  JsonObject rootOutput = jsonDoc["out"].as<JsonObject>();
   logit(0,MD,f,"Check Outputs",NULL);
   if (rootOutput) {
     logit(0,MD,f,"Process output metrics ",NULL);
@@ -488,9 +488,10 @@ void setConfig(const char *topic,
 
       logit(0,MD,f,"Output added ", metricId);
       strcpy(outputA[outputN].tags,      metric.value()["output"]["tags"]);
+      logit(0,MD,f,"Output added ", metricId);
       strcpy(outputA[outputN].channel,   metric.value()["output"]["channel"]);
-      strcpy(outputA[outputN].metricId,  metric.value()["metricId"]);
-      strcpy(outputA[outputN].name,      metric.value()["name"]);
+//    strcpy(outputA[outputN].metricId,  metric.value()["metricId"]);
+//    strcpy(outputA[outputN].name,      metric.value()["name"]);
 
       const char *channel = outputA[outputN].channel;
       pinMode(atoi(channel), OUTPUT);
@@ -500,7 +501,7 @@ void setConfig(const char *topic,
   }
 
   haveConfig = true;
-  logit(3,MD, f, "exit", NULL);
+  logit(0,MD, f, "exit", NULL);
 }
 
 void mqttCB(char* _topic, byte* _payload, unsigned int length) {
@@ -624,7 +625,7 @@ void mqttConnect() {
 }
 
 void sampleInputs() {
-  // Loop through the inputs, read value, and post to MQTT
+  // Loop through the inp, read value, and post to MQTT
   const char *f = "sampleInputs";
   logit(3,MD,f,"sampleInputs enter ", NULL);
   for (int m = 0; m < inputN; m++) {
@@ -673,10 +674,10 @@ void setup() {
   mqttClient.setCallback(mqttCB);
   mqttConnect();
 
-  strcpy(mqttCmdPub, "a/admin/cmd/administrator");
+  strcpy(mqttCmdPub, "a/cmd/administrator");
 
   logit(2,MD,f,"Subscribe to admin response messages ", NULL);
-  snprintf(mqttRspSub, topicSize, "a/admin/rsp/%s", ip);   // admin responses
+  snprintf(mqttRspSub, topicSize, "a/rsp/%s", ip);   // admin responses
   res = mqttClient.subscribe(mqttRspSub);
 
   requestConfig();

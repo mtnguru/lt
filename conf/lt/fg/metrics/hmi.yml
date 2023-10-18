@@ -5,75 +5,75 @@ Ch_Anode_K_C:
   desc: Anode temperature
   value: 1
   decimals: 1
-  human:
+  hum:
     clientId: player
     channelType: slider
     default: 142
     min: 1200
     max: 1500
     step: 1
-Ch_MFC_Gas_D2_sccm:
+Ch_Gas_MFC_D2_sccm:
   label: Deuterium Gas Flow
   desc: Deuterium gas flow
   value: 0
   decimals: 0
-  human:
+  hum:
     clientId: player
     channelType: slider
     default: 150
     min: 100
     max: 200
     step: 1
-  output: {}
-Ch_MFC_Gas_N2_sccm:
+  out: {}
+Ch_Gas_MFC_N2_sccm:
   label: Nitrogen Gas Flow
   desc: Nitrogen gas flow
   value: 0
   decimals: 0
-  human:
+  hum:
     clientId: player
     channelType: slider
     default: 40
     min: 30
     max: 50
     step: 1
-  output: {}
+  out: {}
 Ch_TopCenter_K_C:
   label: Chamber TopCenter Temperature
   desc: Chamber temperature - top center
   value: 0
   decimals: 1
-  human:
+  hum:
     clientId: player
     channelType: slider
     default: 450
     min: 300
     max: 500
     step: 1
-  output: {}
-Ch_Baratron_torr:
+  out: {}
+Ch_NA_Baratron_torr:
   label: Chamber Pressure
   desc: Chamber pressure - Baratron
   value: 0
   decimals: 0
-  human:
+  hum:
     clientId: player
     channelType: slider
     default: 150
     min: 100
     max: 150
     step: 1
-  output: {}
+  out: {}
 PS_DC_V:
   label: DC Power Supply Volts
   desc: DC Power supply output voltage
   value: 0
   decimals: 0
-  human:
+  hum:
     clientId: player
     channelType: slider
     default: 1200
     min: 1000
     max: 1500
     step: 10
-  output: {}
+  out: {}

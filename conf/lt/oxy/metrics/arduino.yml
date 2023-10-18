@@ -1,11 +1,11 @@
 ######################### arduino metrics ###################
 
-E1_Ez_K_Front_C:
+Ez_Front_K_C:
   label: Front
   desc: Node 2 Level 3
   value: 0
   decimals: 2
-  input:
+  inp:
     clientId: arduino5
     channelType: MAX6675
     channels: 2,4,5
@@ -15,7 +15,7 @@ arduino-gm_Onboard_LED_On:
   desc: Arduino_gm Onboard LED
   value: 0
   decimals: 0
-  output:
+  out:
     clientId: arduino_gm
     channelType: digital
     channel: "16"

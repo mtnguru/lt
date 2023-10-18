@@ -5,7 +5,7 @@ Epiclc_PID_RTD_C:
   desc: PID demo RTD temperature sensor
   value: 1
   decimals: 2
-  input:
+  inp:
     clientId: epiclc
     channelType: analog
     module: "2"
@@ -18,7 +18,7 @@ Epiclc_Backpanel_LED_Red_On:
   desc: epiclc Backpanel Red LED
   value: 0
   decimals: 0
-  output:
+  out:
     clientId: epiclc
     channelType: digital
     module: "1"
@@ -28,7 +28,7 @@ Epiclc_Backpanel_LED_Green_On:
   desc: epiclc Backpanel Green LED
   value: 0
   decimals: 0
-  output:
+  out:
     clientId: epiclc
     channelType: digital
     module: "1"
@@ -38,7 +38,7 @@ Epiclc_Backpanel_LED_Blue_On:
   desc: epiclc Backpanel Blue LED
   value: 0
   decimals: 0
-  output:
+  out:
     clientId: epiclc
     channelType: digital
     module: "1"

@@ -8,13 +8,12 @@ frame:
       type: row
       children:
 
-    R1_Ch_K_Internal_C
-      type: metric
-    R1_Ch_K_External_C
-    R1_Ch_K_Ambient_C
-    R1_Ch_Human_PSI
-    R1_PS_Pico_V
-    R1_PS_Pico_A
+    Ch_Internal_K_C
+    Ch_External_K_C
+    Ch_Ambient_K_C
+    Ch_NA_Human_PSI
+    PS_NA_Pico_V
+    PS_NA_Pico_A
 
 
 page:

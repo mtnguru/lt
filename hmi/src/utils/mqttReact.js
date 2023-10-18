@@ -208,10 +208,10 @@ const mqttProcessCB = (_topic, _payload) => {
 
   try {
     const fields = _topic.split("/")
-    const func = fields[2]
+    const func = fields[1]
 
     // Metric Callbacks
-    // If Input, output, human
+    // If inp, out, hum
 
     if (func === 'inp' || func === 'out' || func === 'hum') {
       const {tags, values} = extractFromTags(payloadStr)
@@ -221,7 +221,7 @@ const mqttProcessCB = (_topic, _payload) => {
       }
       const metricId = tags["MetricId"].toLowerCase()
       const metric = findMetric(tags["MetricId"])
-      const sourceId = tags["SourceId"]
+      const funcId = tags["FuncId"]
 //    const projectId = tags["ProjectId"]
       if (metric == null) {
         mgError(0, f, "Could not find Metric: ", metricId)
@@ -229,31 +229,31 @@ const mqttProcessCB = (_topic, _payload) => {
       }
 
       if (metric.cbs) {
-        switch (sourceId) {
-          case 'I':
-            if (!metric.input) {
-              mgWarning(0, f, 'Metric does not have a input metric', metric.metricId)
+        switch (funcId) {
+          case 'inp':
+            if (!metric.inp) {
+              mgWarning(0, f, 'Metric does not have a inp metric', metric.metricId)
               return
             }
-            metric.input.value = values.value
+            metric.inp.value = values.value
 //        metric.value = values.value
             break;
-          case 'O':
-            if (!metric.output) {
-              mgWarning(0, f, 'Metric does not have a output metric', metric.metricId)
+          case 'out':
+            if (!metric.out) {
+              mgWarning(0, f, 'Metric does not have a out metric', metric.metricId)
               return
             }
-            metric.output.value = values.value
+            metric.out.value = values.value
             break;
-          case 'H':
-            if (!metric.human) {
-              mgWarning(0, f, 'Metric does not have a human metric', metric.metricId)
+          case 'hum':
+            if (!metric.hum) {
+              mgWarning(0, f, 'Metric does not have a hum metric', metric.metricId)
               return
             }
-            metric.human.value = values.value
+            metric.hum.value = values.value
             break;
           default:
-            mgError(0, f, 'Unknown sourceId ', sourceId)
+            mgError(0, f, 'Unknown funcId ', funcId)
             return;
         }
 

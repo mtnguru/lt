@@ -1,54 +1,54 @@
 ############################## Input development
 
-E1_PS_H_V:
+PS_NA_Human_V:
   label: PS Volts
   desc: Power Supply Voltage - Human Input
   value: 0
   decimals: 1
-  human:
+  hum:
     clientId: hmi
     channelType: slider
     default: 0
     min: 20
     max: 30
     step: .1
-  output: {}
-E1_PS_H_A:
+  out: {}
+PS_NA_Human_A:
   label: PS Amps
   desc: Power Supply Amps - Human Input
   value: 0
   decimals: 0
-  human:
+  hum:
     clientId: hmi
     channelType: slider
     default: 40
     min: 0
     max: 200
     step: 1
-  output: {}
-E1_Ez_MTR_C:
+  out: {}
+Ez_NA_MTR_C:
   label: Ez Temperature
   desc: Electrolyzer Temperature
   value: 0
   decimals: 1
-  human:
+  hum:
     clientId: hmi
     channelType: slider
     default: 0
     min: 10
     max: 60
     step: .1
-  output: {}
-E1_Ez_SmartTrack_slpm:
+  out: {}
+Ez_NA_SmartTrack_slpm:
   label: HHO Flowrate
   desc: HHO Flowrate
   value: 0
   decimals: 1
-  human:
+  hum:
     clientId: hmi
     channelType: slider
     default: 40
     min: 0
     max: 6
     step: .1
-  output: {}
+  out: {}

@@ -16,25 +16,18 @@ const completeTopic = (topic,args) => {
           fields[0] = (global.aaa.projectId) ? global.aaa.projectId : "PROJECTID"
         }
       }
-      if (f === "1" && field === "INSTANCE") {
-        if (args && args["instance"]) {
-          fields[1] = args["instance"];
-        } else {
-          fields[1] = (global.aaa.instance) ? global.aaa.instance : "+"
-        }
-      }
-      if (f === "3" && field === "CLIENTID") {
+      if (f === "2" && field === "CLIENTID") {
         if (args && args["clientId"]) {
-          fields[3] = args["clientId"];
+          fields[2] = args["clientId"];
         } else {
-          fields[3] = (global.aaa.clientId) ? global.aaa.clientId : "CLIENTID"
+          fields[2] = (global.aaa.clientId) ? global.aaa.clientId : "CLIENTID"
         }
       }
-      if (f === "4" && field === "USERID") {
+      if (f === "3" && field === "USERID") {
         if (args && args["userId"]) {
-          fields[4] = args["userId"];
+          fields[3] = args["userId"];
         } else {
-          fields[4] = (global.aaa.userId) ? global.aaa.userId : "USERID"
+          fields[3] = (global.aaa.userId) ? global.aaa.userId : "USERID"
         }
       }
     }
@@ -54,16 +47,16 @@ const completeTopics = (_topics, args) => {
   return topics;
 }
 
-const makeTopic = (projectId, instance, func, clientId, userId, telegrafId) => {
+const makeTopic = (projectId, func, clientId, userId, telegrafId) => {
   var topic;
   if (telegrafId) {
-    topic = `${projectId}/${instance}/${func}/${clientId}/${userId}/${telegrafId}`
+    topic = `${projectId}/${func}/${clientId}/${userId}/${telegrafId}`
   } else if (userId) {
-    topic = `${projectId}/${instance}/${func}/${clientId}/${userId}`
+    topic = `${projectId}/${func}/${clientId}/${userId}`
   } else if (clientId) {
-    topic = `${projectId}/${instance}/${func}/${clientId}`
+    topic = `${projectId}/${func}/${clientId}`
   } else {
-    topic = `${projectId}/${instance}/${func}`
+    topic = `${projectId}/${func}`
   }
   return topic
 }

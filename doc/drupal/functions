@@ -3,7 +3,7 @@ Reply       Response
 
 cmd 
 rsp
-   Use these for both a/admin and PROJECTID/INSTANCE/???
+   Use these for both a and PROJECTID/???
 
 request
    requestReset

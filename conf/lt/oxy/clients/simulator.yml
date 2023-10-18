@@ -5,13 +5,13 @@ format: yml
 topics:
   subscribe:
     adm: a/#
-    prj: PROJECTID/INSTANCE/#
+    prj: PROJECTID/#
   publish:
-    rsp: a/admin/rsp/CLIENTID
-    inp: PROJECTID/INSTANCE/inp/CLIENTID
-    out: PROJECTID/INSTANCE/out/CLIENTID
-    hum: PROJECTID/INSTANCE/hum/CLIENTID/USERID/oxy_edge
-    alm: PROJECTID/INSTANCE/alm/CLIENTID
+    rsp: a/rsp/CLIENTID
+    inp: PROJECTID/inp/CLIENTID
+    out: PROJECTID/out/CLIENTID
+    hum: PROJECTID/hum/CLIENTID/USERID/oxy_edge
+    alm: PROJECTID/alm/CLIENTID
 metrics: 
   all
 statusDefault:

@@ -26,7 +26,7 @@ const ControlButton = (props) => {
 
       const metric = findMetric(props.metricId)
       if (metric == null) return;
-      payload = `${makeTagsFromMetricId(props.metricId)} value=${btnState ? "1" : "0"}`
+      payload = `${makeTagsFromMetricId(props.metricId), "hum"} value=${btnState ? "1" : "0"}`
     }
     console.log('   send ', topic, payload)
 //  props.onclick(event)

@@ -31,10 +31,10 @@ global.aaa = {
   startTime: Date.now(),
   topics: {
     subscribe: {
-      rsp: `a/admin/rsp/${clientId}`,
+      rsp: `a/rsp/${clientId}`,
     },
     publish: {
-      adm: 'a/admin/cmd/administrator'
+      adm: 'a/cmd/administrator'
     }
   },
   status: {
@@ -50,13 +50,15 @@ global.aaa = {
 global.aam = {
   mqttClientId: mqttClientId,
 
-  url: 'mqtt://194.195.214.212:8081',
-  username: 'data',
-  password: 'datawp',
+  // labtime.org
+//url: 'mqtt://194.195.214.212:8081',
+//username: 'data',
+//password: 'datawp',
 
-//url: 'mqtt://192.168.202.108:8081',
-//username: 'mqtt',
-//password: 'mqttsl',
+  // Complex
+  url: 'mqtt://192.168.202.108:8081',
+  username: 'mqtt',
+  password: 'mqttsl',
 
   protocol: 'MQTT',
   protocolVersion: 4,
@@ -134,9 +136,9 @@ const loadConfigCB = (_topic, _payload) => {
     _payload.userId = global.aaa.userId
     global.aaa = _payload
 
-    // Create full list of inputs and outputs by combining them from all clients
-    global.aaa.inputs = {}
-    global.aaa.outputs = {}
+    // Create full list of inp and out by combining them from all clients
+    global.aaa.inp = {}
+    global.aaa.out = {}
     for (var clientId in global.aaa.clients) {
       if (clientId !== "administrator") {
         const client = global.aaa.clients[clientId]
@@ -144,13 +146,13 @@ const loadConfigCB = (_topic, _payload) => {
           console.log('MqttClient not found ' + clientId);
           continue;
         }
-        for (let inputName in client.inputs) {
-          const input = client.inputs[inputName]
-          global.aaa.inputs[inputName.toLowerCase()] = input;
+        for (let inputName in client.inp) {
+          const input = client.inp[inputName]
+          global.aaa.inp[inputName.toLowerCase()] = input;
         }
-        for (let outputName in client.outputs) {
-          const output = client.outputs[outputName]
-          global.aaa.outputs[outputName.toLowerCase()] = output;
+        for (let outputName in client.out) {
+          const output = client.out[outputName]
+          global.aaa.out[outputName.toLowerCase()] = output;
         }
       }
     }
@@ -172,6 +174,7 @@ const getConfig = () => {
 }
 
 const connectCb = () => {
+  getConfig();
 //mqttUnsubscribe(global.aaa.topics)
 }
 
@@ -190,7 +193,6 @@ fetch("https://api.ipdata.co")
 
 mqttConnect(connectCb, mqttProcessCB);
 console.log(f,'requestConfig')
-getConfig();
 
 const startReact = () => {
   const f = "index::startReact"

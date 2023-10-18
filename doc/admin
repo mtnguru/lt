@@ -1,0 +1,15 @@
+
+
+
+Load configuration files for everything
+Create the full tree
+If this is for one client
+   Only send the config for that client
+
+Since the administrator creates the config and the config could use values
+   Input
+      Save all inp, hum, and out messages, get their value and save that also.
+   Output
+      When a client requests config, add the values to the metrics
+      Upon receipt the clients use those values to initialize.
+   

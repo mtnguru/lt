@@ -122,9 +122,9 @@ const registerMetricCB = (metricId, cb, func) => {
     const id = metricId.toLowerCase()
     var metric;
     switch (func) {
-      case 'inp': metric = global.aaa.inputs[id]; break;
-      case 'out': metric = global.aaa.outputs[id]; break;
-      case 'hum': metric = global.aaa.human[id]; break;
+      case 'inp': metric = global.aaa.inp[id]; break;
+      case 'out': metric = global.aaa.out[id]; break;
+      case 'hum': metric = global.aaa.hum[id]; break;
     }
     if (!metric) {
       mgError(1, f,'Cannot find metric ', id);
@@ -182,11 +182,11 @@ const processInflux = (topic, payloadStr) => {
         }
         metric.value = values.value
         break;
-      case 'human':
-        if (!metric.human) {
+      case 'hum':
+        if (!metric.hum) {
           msg(0,f, WARNING, 'Metric does not have a user metric',metric.metricId)
         } else {
-          metric.user.value = values.value
+          metric.hum.value = values.value
         }
         break;
       default:

@@ -3,15 +3,15 @@ instance: 40
 topics:
   edge:
     subscribe:
-      all: a/admin/cmd/all
-      cmd: a/admin/cmd/CLIENTID
-      rsp: a/admin/rsp/CLIENTID
-      out: PROJECTID/INSTANCE/out/CLIENTID
+      all: a/cmd/all
+      cmd: a/cmd/CLIENTID
+      rsp: a/rsp/CLIENTID
+      out: PROJECTID/out/CLIENTID
     publish:
-      rsp: a/admin/rsp/CLIENTID
-      inp: PROJECTID/INSTANCE/inp/CLIENTID/USERID/cabin_lt
-      cod: PROJECTID/INSTANCE/cod/CLIENTID
-      msg: PROJECTID/INSTANCE/msg/CLIENTID
+      rsp: a/rsp/CLIENTID
+      inp: PROJECTID/inp/CLIENTID/USERID/cabin_lt
+      cod: PROJECTID/cod/CLIENTID
+      msg: PROJECTID/msg/CLIENTID
 clients:
   epiclc:      enabled
   arduino2:    enabled

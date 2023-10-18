@@ -4,7 +4,7 @@ require('dotenv').config();
 
 
 /*
- * Processes a request for a devices configuration - device, inputs, outputs.
+ * Processes a request for a devices configuration - device, inp, out.
  */
 const getHmiConfig = (ip) => {
   const f = 'requests:getHmiConfig - '
@@ -13,7 +13,7 @@ const getHmiConfig = (ip) => {
 }
 
 /*
- * Processes a request for a devices configuration - device, inputs, outputs.
+ * Processes a request for a devices configuration - device, inp, out.
  */
 const getDeviceConfig = (ip) => {
   const f = 'requests:getDeviceConfig - '
@@ -36,28 +36,28 @@ const getDeviceConfig = (ip) => {
     msg(1,f, DEBUG `IP address for device not found: ${ip}`)
   }
 
-  // Find the inputs
-  let inputs = {};
-  for (name in global.config.inputs) {
-    let input = global.config.inputs[name]
+  // Find the inp
+  let inp = {};
+  for (name in global.config.inp) {
+    let input = global.config.inp[name]
     if (input.client == client) {
-      inputs[name] = input;
+      inp[name] = input;
       console.log(f,'  add input: ', name)
     }
   }
 
-  // Find the outputs
-  let outputs = {};
-  for (name in global.config.outputs) {
-    let output = global.config.outputs[name]
+  // Find the out
+  let out = {};
+  for (name in global.config.out) {
+    let output = global.config.out[name]
     console.log(f,'  ----------- check output --------- ', name, '  ', client, '  ', output.client)
     if (output.client == client) {
-      outputs[name] = output
+      out[name] = output
       console.log(f,'  add output: ', name)
     }
   }
 
-  let config = {client, device, inputs, outputs};
+  let config = {client, device, inp, out};
   console.log(f,'exit');
   return config;
 }

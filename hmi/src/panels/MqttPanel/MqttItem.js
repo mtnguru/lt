@@ -57,11 +57,11 @@ const MqttItem = (props) => {
 
             if (payload.content) {
               short = `???: ${payload["function"]} - ${payload.content}`
-            } else if (props.item.func === 'out') {
+            } else if (props.item.funcId === 'out') {
               short = `out: ${payload.value} - ${payload.metric}`
-            } else if (props.item.func === 'inp') {
+            } else if (props.item.funcId === 'inp') {
               short = `${payload.value} - ${payload.metric}`
-            } else if (props.item.func === 'cmd') {
+            } else if (props.item.funcId === 'cmd') {
               switch (payload.cmd) {
                 case 'setEnabled':
                   short = `${payload.cmd} - ${payload.enabled}`
@@ -79,7 +79,7 @@ const MqttItem = (props) => {
                   short = `${payload.cmd}`
                   break
               }
-            } else if (props.item.func === 'rsp') {
+            } else if (props.item.funcId === 'rsp') {
               switch (payload.rsp) {
                 case 'setEnabled':
                   short = `${payload.rsp} - ${payload.enabled}`
@@ -94,10 +94,10 @@ const MqttItem = (props) => {
                   payloadStr = makeJsonPretty(payloadStr)
                   break
               }
-            } else if (props.item.func === 'cod') {
+            } else if (props.item.funcId === 'cod') {
               short = `${payload["function"]}\n${payload.msg}` ;
               setType(payload.type)
-            } else if (props.item.func === 'msg') {
+            } else if (props.item.funcId === 'msg') {
               if (payload.author) {
                 setAuthor(payload.author)
               }
@@ -107,11 +107,11 @@ const MqttItem = (props) => {
               payloadStr = makeJsonPretty(payloadStr)
             }
           }
-        } else if (props.pretty === "pretty") { // Non JSON pretty - inputs, outputs and human
+        } else if (props.pretty === "pretty") { // Non JSON pretty - inp, out and hum
 
-          if (props.item.func === 'inp' ||
-              props.item.func === 'hum' ||
-              props.item.func === 'out') {
+          if (props.item.funcId === 'inp' ||
+              props.item.funcId === 'hum' ||
+              props.item.funcId === 'out') {
             var {tags, values} = extractFromTags(props.item.payload)
             var val = `${values["value"]}`
             var len = val.length;
@@ -128,11 +128,11 @@ const MqttItem = (props) => {
       setShort('')
       setPayloadOut(payloadStr)
     }
-  }, [props.item.topic, props.item.action, props.item.func, props.item.payload, props.pretty])
+  }, [props.item.topic, props.item.action, props.item.funcId, props.item.payload, props.pretty])
 
   return (
     <div className='mqtt-item'>
-      <Box className={`card ${props.pretty} ${props.item.func}`}>
+      <Box className={`card ${props.pretty} ${props.item.funcId}`}>
         <div className='right'>
           <span className='topic'>{props.item.topic}</span>
           <span className='date'>{props.item.date}</span>

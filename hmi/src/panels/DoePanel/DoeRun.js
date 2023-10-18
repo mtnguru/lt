@@ -4,7 +4,7 @@ import Modal from '../../components/ui/Modal'
 import DoeElement from './DoeElement'
 import DoeForm from './DoeForm'
 import {findMetric, getValue} from '../../utils/metrics'
-import {currentDate} = '../../utils/tools'
+import {currentDate} from '../../utils/tools'
 //import ('./DoeRun.scss')
 
 const DoeRun = (props) => {

@@ -122,9 +122,9 @@ const registerMetricCB = (metricId, cb, func) => {
     const id = metricId.toLowerCase()
     var metric;
     switch (func) {
-      case 'inp': metric = global.aaa.inputs[id]; break;
-      case 'out': metric = global.aaa.outputs[id]; break;
-      case 'hum': metric = global.aaa.human[id]; break;
+      case 'inp': metric = global.aaa.inp[id]; break;
+      case 'out': metric = global.aaa.out[id]; break;
+      case 'hum': metric = global.aaa.hum[id]; break;
     }
     if (!metric) {
       mgError(1, f,'Cannot find metric ', id);
@@ -167,27 +167,27 @@ const processInflux = (topic, payloadStr) => {
 //  console.log(f, 'Metric found ', metricId)
 
     switch (funcId) {
-      case 'input':
-        if (!metric.input) {
-          msg(0,f,WARNING, 'Metric does not have a input metric',metric.metricId)
+      case 'inp':
+        if (!metric.inp) {
+          msg(0,f,WARNING,  'Metric does not have a inp metric',metric.metricId)
         } else {
-          metric.input.value = values.value
+          metric.inp.value = values.value
         }
         metric.value = values.value
         break;
-      case 'output':
-        if (!metric.output) {
-          msg(0,f, WARNING, 'Metric does not have a output metric',metric.metricId)
+      case 'out':
+        if (!metric.out) {
+          msg(0,f, WARNING, 'Metric does not have a out metric',metric.metricId)
         } else {
-          metric.output.value = values.value
+          metric.out.value = values.value
         }
         metric.value = values.value
         break;
-      case 'human':
-        if (!metric.human) {
-          msg(0,f, WARNING, 'Metric does not have a user metric',metric.metricId)
+      case 'hum':
+        if (!metric.hum) {
+          msg(0,f, WARNING, 'Metric does not have a hum metric',metric.metricId)
         } else {
-          metric.user.value = values.value
+          metric.hum.value = values.value
         }
         break;
       default:
