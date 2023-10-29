@@ -16,18 +16,19 @@ const msg = (level, func, _funcId, ...snippets) => {
     return;
   }
 
-//let payload = {
-//  function: func,
-//  program: global.aaa.program,
-//  funcId: msgE[_funcId],
-//  content: snippets.join(' '),
-//}
+  if (mqttNode.connected()) {
+    let payload = {
+      function: func,
+      program: global.aaa.program,
+      funcId: msgE[_funcId],
+      content: snippets.join(' '),
+    }
 
-//const topic = mqttNode.makeTopic(_funcId,"post")
-//const jpayload = JSON.stringify(payload);
-//if (mqttNode.connected()) {
-//  mqttNode.publish(topic, jpayload);
-//
+    const topic = mqttNode.makeTopic(_funcId,"post")
+    const jpayload = JSON.stringify(payload);
+    mqttNode.publish(topic, jpayload);
+  }
+
 
   var funcId = msgE[_funcId]
   if (_funcId === ERROR) {

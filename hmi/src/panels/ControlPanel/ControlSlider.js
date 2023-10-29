@@ -30,7 +30,7 @@ const ControlSlider = (props) => {
     const f = "ControlMetric::metricCB"
     const funcId = topic.split('/')[1]
     const userId = topic.split('/')[3]
-    if (funcId === 'hum' && userId !== global.aam.mqttClientId) {
+    if (funcId === 'hum' && userId !== global.aaa.userId) {
       setValue(values.value)
     } else if (funcId === 'out') {
 //    setOutValue(parseFloat(values.value).toFixed(metric.decimals))
@@ -58,9 +58,10 @@ const onChangeH = (_value) => {
     console.log('onChange', _value);
     if (!metric) {
       mgError(0, f, "Metric not found: ")
+      return;
     }
     setValue(parseFloat(_value).toFixed(metric.decimals))
-    const topic = global.aaa.topics.publish['hum'].replace('DUSERID', global.aam.mqttClientId);
+    const topic = global.aaa.topics.publish['hum'].replace('DUSERID', global.aaa.userId);
 
     let payload = `${metric.hum.tags} value=${parseFloat(_value).toFixed(metric.decimals)}`
     mqttPublish(topic, payload)

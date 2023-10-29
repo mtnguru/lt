@@ -7,9 +7,10 @@
     margin-bottom: 5px;
   }
   .filters {
+    padding: 0 0 10px 10px;
     font-size:90%;
     display: none;
-    width: 170px;
+    width: 150px;
     @media(min-width: $bp-md) {
       display: block;
     }

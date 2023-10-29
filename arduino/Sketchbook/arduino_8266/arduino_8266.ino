@@ -28,6 +28,11 @@ WiFiClient wifiClient;
 const char* wifiSsid = "Solvay";
 const char* wifiPassword = "taichi23";
 
+// James Cell Phone
+//const char* wifiSsid = "Verizon-SM-G930V-6ED7";
+//const char* wifiPassword = "taichi23";
+
+
 String wifiIP;
 
 ///////////// JSON

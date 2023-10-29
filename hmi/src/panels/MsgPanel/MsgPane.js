@@ -75,7 +75,7 @@ const MsgPane = (props) => {
 //  const fdate = DateTime.date.format('YYYY-MM-DD HH:mm:ss');;
     var paneId = props.paneId
     var m = msg.replace(/\n/g, "\\n")
-    const payload = `{"type":"${paneId}", "author":"${global.aaa.username}", "date":"${fdate}", "msg":"${m}"}`
+    const payload = `{"type":"${paneId}", "author":"${global.aaa.userId}", "date":"${fdate}", "msg":"${m}"}`
 
     mqttPublish(topic, payload)
 //  setMsg('')

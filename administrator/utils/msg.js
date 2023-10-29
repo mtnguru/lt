@@ -16,10 +16,19 @@ const msg = (level, func, _funcId, ...snippets) => {
     return;
   }
 
+  var funcId = msgE[_funcId]
+  if (_funcId === ERROR) {
+    funcId = '********** ERROR'
+  } else if (_funcId === ALARM) {
+    funcId = '---------- ALARM'
+  } else if (_funcId === WARNING) {
+    funcId = '!!!!!!!!!! WARNING'
+  }
+
   if (mqttNode.connected()) {
     let payload = {
       function: func,
-      program: global.aaa.program,
+      name: global.aaa.name,
       funcId: msgE[_funcId],
       content: snippets.join(' '),
     }
@@ -29,14 +38,6 @@ const msg = (level, func, _funcId, ...snippets) => {
     mqttNode.publish(topic, jpayload);
   }
 
-  var funcId = msgE[_funcId]
-  if (_funcId === ERROR) {
-    funcId = '********** ERROR'
-  } else if (_funcId === ALARM) {
-    funcId = '---------- ALARM'
-  } else if (_funcId === WARNING) {
-    funcId = '!!!!!!!!!! WARNING'
-  }
   if (snippets.length > 0) {
     console.log(funcId, func, ...snippets)
   } else {

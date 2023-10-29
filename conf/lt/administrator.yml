@@ -27,6 +27,7 @@ topics:
     hum: +/hum/#
   publish:
     rsp: a/rsp/DCLIENTID
+    msg: a/msg/CLIENTID
     hum: a/rsp/DCLIENTID/DUSERID
     all: a/cmd/all
 projects:

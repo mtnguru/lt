@@ -31,7 +31,7 @@ topics:
   publish:
     rsp: a/rsp/CLIENTID
     adm: a/cmd/administrator
-    msg: PROJECTID/msg/CLIENTID/all/msg
+    msg: PROJECTID/msg/CLIENTID/all/sl_msg
     cod: PROJECTID/cod/CLIENTID/all
     hum: PROJECTID/hum/CLIENTID/DUSERID/sl_edge
 metrics: project
