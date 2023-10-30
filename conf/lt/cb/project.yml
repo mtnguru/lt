@@ -15,9 +15,9 @@ topics:
 clients:
   epiclc:     enabled
   arduino2:   enabled
-  arduino3:   disabled
+  arduino3:   enabled
   arduino4:   enabled
-  arduino5:   disabled
+  arduino5:   enabled
   hmi:        enabled
   controller: enabled
   drupal:     disabled
