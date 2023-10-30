@@ -11,7 +11,8 @@
 
 const char *version = "2.0";
 const char *programId = "arduino.js";
-int debugLevel = 3;
+int debugLevel = 2;
+int configNotReceived = 0;
 unsigned long startTime = 0;
 boolean enabled = 1;
 int mqttConnected = 0;
@@ -32,7 +33,6 @@ const char* wifiPassword = "taichi23";
 //const char* wifiSsid = "Verizon-SM-G930V-6ED7";
 //const char* wifiPassword = "taichi23";
 
-
 String wifiIP;
 
 ///////////// JSON
@@ -43,6 +43,8 @@ const int payloadSize = 2000;       // Configuration uses 1404
 const int msgSize = 300;
 char msg[msgSize];
 char logMsg[msgSize];
+const int tStrSize = 100;
+char tStr[100];
 
 const int outSize = 300;
 char out[outSize];
@@ -714,6 +716,13 @@ void loop() {
       logit(3,MD,f,"do Sample done",NULL);
     }
   } else {
-    logit(2,MD, f,"WARNING: Config not read",NULL);
+    snprintf(tStr, tStrSize, "Config not received: %d", configNotReceived);
+    logit(0,MD, f, tStr, NULL);
+    configNotReceived++;
+    if (configNotReceived > 200) {
+      logit(0,MD, f,"Too many attempts, rebooting arduino", NULL);
+      delay(500);
+      resetFunction();
+    }
   }
 }

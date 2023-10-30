@@ -73,7 +73,7 @@ const MqttItem = (props) => {
                   short = `${payload.cmd} - ${payload.sampleInterval}`
                   break
                 case 'requestConfig':
-                  short = `${payload.cmd} - ${payload.clientId}`
+                  short = `${payload.cmd} - ` + payload.clientID ? payload.clientId : payload.ip
                   break
                 default:
                   short = `${payload.cmd}`
