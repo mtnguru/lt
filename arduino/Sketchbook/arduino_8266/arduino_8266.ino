@@ -11,7 +11,8 @@
 
 const char *version = "2.0";
 const char *programId = "arduino.js";
-int debugLevel = 3;
+int debugLevel = 2;
+int configNotReceived = 0;
 unsigned long startTime = 0;
 boolean enabled = 1;
 int mqttConnected = 0;
@@ -32,7 +33,6 @@ const char* wifiPassword = "taichi23";
 //const char* wifiSsid = "Verizon-SM-G930V-6ED7";
 //const char* wifiPassword = "taichi23";
 
-
 String wifiIP;
 
 ///////////// JSON
@@ -40,18 +40,20 @@ String wifiIP;
 const int jsonDocSize = 2000;       // May 29, 2023 - crashes at 924
 StaticJsonDocument<jsonDocSize> jsonDoc;
 const int payloadSize = 2000;       // Configuration uses 1404
-const int msgSize = 300;
+const int msgSize = 600;
 char msg[msgSize];
 char logMsg[msgSize];
+const int tStrSize = 200;
+char tStr[tStrSize];
 
-const int outSize = 300;
+const int outSize = 600;
 char out[outSize];
 
-const int statusSize = 300;
+const int statusSize = 600;
 char status[statusSize];
 
 const int tagSize = 200;
-const int topicSize = 80;
+const int topicSize = 100;
 const int metricIdSize = 40;
 const int projectIdSize = 20;
 const int clientIdSize = 20;
@@ -617,7 +619,7 @@ void mqttConnect() {
       char ststr[20];
       itoa(st,ststr,10);
       logit(0,ME,f,"mqttClient.connected returned false   state: ",ststr);
-      delay(100);
+      delay(1000);
 
       attempts++;
       if (attempts == 10) {
@@ -714,6 +716,14 @@ void loop() {
       logit(3,MD,f,"do Sample done",NULL);
     }
   } else {
-    logit(2,MD, f,"WARNING: Config not read",NULL);
+    snprintf(tStr, tStrSize, "Config not received: %d", configNotReceived);
+    logit(0,MD, f, tStr, NULL);
+    configNotReceived++;
+    delay(1000);
+    if (configNotReceived > 20) {
+      logit(0,MD, f,"Too many attempts, rebooting arduino", NULL);
+      delay(500);
+      resetFunction();
+    }
   }
 }

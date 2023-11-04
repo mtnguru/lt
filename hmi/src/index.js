@@ -51,14 +51,14 @@ global.aam = {
   mqttClientId: mqttClientId,
 
   // labtime.org
-//url: 'mqtt://194.195.214.212:8081',
-//username: 'data',
-//password: 'datawp',
+  url: 'mqtt://194.195.214.212:8081',
+  username: 'data',
+  password: 'datawp',
 
   // Complex
-  url: 'mqtt://192.168.202.108:8081',
-  username: 'mqtt',
-  password: 'mqttsl',
+//url: 'mqtt://192.168.202.108:8081',
+//username: 'mqtt',
+//password: 'mqttsl',
 
   protocol: 'MQTT',
   protocolVersion: 4,

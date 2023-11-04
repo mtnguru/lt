@@ -7,7 +7,7 @@ import ControlImagePanel from "../panels/ControlPanel/ControlImagePanel";
 function PlayPage() {
   return (
     <div className="mqtt-page">
-      <ControlImagePanel title='Experiment Panel'/>
+      <ControlImagePanel title='Cabin Image Panel'/>
       <ControlArduinoPanel title='Control Panel'/>
       <ControlSliderPanel title='Control Slider Panel'/>
       <DoePanel title='DOE Panel' />

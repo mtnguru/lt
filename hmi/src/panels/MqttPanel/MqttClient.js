@@ -26,9 +26,9 @@ function MqttClient (props) {
     } else if (_payload.rsp === 'setDebugLevel') {
       setDebugLevel(_payload.debugLevel)
     } else if (_payload.rsp === 'requestStatus') {
-      setDebugLevel(_payload.debugLevel)
-      if (clientId !== 'all')
+      if (clientId !== 'all') {
         setRunning('running')
+      }
       setNumRunning(prevNumRunning => {
         return prevNumRunning + 1
       })
@@ -44,12 +44,13 @@ function MqttClient (props) {
     }
   }
 
-  const rspCBRef = useRef(rspCB)
-  const cmdCBRef = useRef(cmdCB)
+//const rspCBRef = useRef(rspCB)
+//const cmdCBRef = useRef(cmdCB)
 
   useEffect(() => {
-    mqttRegisterTopicCB(global.aaa.topics.register.rsp, rspCBRef, { clientId: clientId });
-    mqttRegisterTopicCB(global.aaa.topics.register.cmd, cmdCBRef, { clientId: clientId });
+    console.log("MqttClient::useEffect register callbacks " + clientId)
+    mqttRegisterTopicCB(global.aaa.topics.register.rsp, rspCB, { clientId: clientId });
+    mqttRegisterTopicCB(global.aaa.topics.register.cmd, cmdCB, { clientId: clientId });
   }, [clientId])
 
   const onSelectH = (event) => {

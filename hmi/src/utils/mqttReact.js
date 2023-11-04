@@ -5,8 +5,8 @@ import {findMetric} from './metrics'
 //import {msg} from "../../../../../apps/lt/administrator/utils/msg";
 import YAML from "yaml-parser";
 
-let mqttClient;
-let topicsCB = {}
+var mqttClient;
+var topicsCB = {}
 
 /**
  * sleep() - synchronous sleep function
@@ -278,8 +278,13 @@ const mqttProcessCB = (_topic, _payload) => {
           if (payload && rec.args) {
             var valid = true
             for (var field in rec.args) {
-              if (rec.args[field] && rec.args[field] !== payload[field]) {
-                valid = false
+              if (payload[field]) {
+                if (payload[field] === "all") {
+                  continue;
+                }
+                if (rec.args[field] !== payload[field]) {
+                  valid = false
+                }
               }
             }
             if (valid) {

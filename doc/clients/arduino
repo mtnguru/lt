@@ -3,7 +3,9 @@
   DOIT ESP-Mx DevKit (ESP8285)
 
 ESP32
-   ESP32 Dev Module
+   Board - esp32 by Espressif Systems - v 1.0.6
+     2.0.10 - 2.0.11 give compiler error
+   ESP32 Dev Module 
 
 
 Hist        Metric       IP              IDE Code

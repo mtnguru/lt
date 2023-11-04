@@ -192,7 +192,6 @@ const addMetricValues = (processId, metricId, funcId, values) => {
   if (!metricValues?.[processId]?.[metricId]?.[funcId]) {
     if (!(processId in metricValues)) {
       metricValues[processId] = {[metricId]: {[funcId]: {}}}
-
     } else if (!(metricId in metricValues[processId])) {
       metricValues[processId][metricId] = {[funcId]: {}}
 
@@ -209,6 +208,35 @@ const addMetricValues = (processId, metricId, funcId, values) => {
   }
 }
 
+const checkMetricStatus = () => {
+
+}
+
+//  output to MQTT all values of a metric
+const publishMetricValues = (processId, metricId, clientId) => {
+  // publish values
+  // topic PROCESSID/rsp/clientId
+  var mv;
+  if (mv = metricValues[metricId][processId]) {
+    var payload = {}
+    if (mv.stale)  { payload['stale'] = mv.stale}
+    if (mv.status) { payload['status'] = mv.status}
+    if (mv.value)  { payload['value'] = mv.value}
+    if (mv.high)   { payload['high'] = mv.high}
+    if (mv.low)    { payload['low'] = mv.low}
+    if (mv.upper)  { payload['upper'] = mv.upper }
+    if (mv.lower)  { payload['lower'] = mv.lower }
+
+    var outTopic = `${processId}/rsp/${clientId}`
+    var outStr = JSON.stringify(payload)
+    msg(1,f, DEBUG,`call mqttNode.publish - topic: ${outTopic} length:${outStr.length}`)
+    mqttNode.publish(outTopic, outStr);
+  } else {
+
+
+  }
+}
+
 const processMqttInput = (_topic, _payload) => {
   // Values array - Save by
   //   Process
@@ -218,18 +246,20 @@ const processMqttInput = (_topic, _payload) => {
   //         value
   //         time received
   var [processId,funcId,...rest] = _topic.split('/')
+  processId = processId.toLowerCase()
+  funcId = funcId.toLowerCase()
+
   var payload = _payload.toString()
   var flds = payload.split(' ')
-  var tags = {};
   var values = {}
 
   // Extract metricId from tags
   var metricId
-  var itags = flds[0].split(',')
-  for (var t = 1; t < itags.length; t++) {
-    var key, val;
-    [key, val] = itags[t].split('=')
-    if (key.toLowerCase() === "metricid") {
+  var tags = flds[0].split(',')
+  for (var t = 1; t < tags.length; t++) {
+    var [key, val] = tags[t].split('=')
+    key = key.toLowerCase();
+    if (key === "metricid") {
       metricId = val.toLowerCase()
       break;
     }
@@ -243,7 +273,8 @@ const processMqttInput = (_topic, _payload) => {
   }
 
   // Add to metricValues array
-  addMetricValues(processId.toLowerCase(), metricId, funcId.toLowerCase(), values)
+  addMetricValues(processId, metricId, funcId, values)
+  var status = checkMetricStatus()
 
   return ['', null];
 }
@@ -258,6 +289,9 @@ const getMetricValue = (args) => {
     return value
   }
   return null;
+}
+
+const checkMetricState = (processId, metricId, funcId) => {
 }
 
 const processCmd = (_topic, payload) => {

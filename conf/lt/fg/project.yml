@@ -2,15 +2,17 @@ name: Finance Game
 topics:
   edge:
     subscribe:
-      all: a/cmd/all
-      cmd: a/cmd/CLIENTID
+      all:  a/cmd/all
+      cmd:  a/cmd/CLIENTID
       rsp: a/rsp/CLIENTID
-      out: PROJECTID/out/CLIENTID
+      prsp: PROJECTID/rsp/CLIENTID
+      out:  PROJECTID/out/CLIENTID
     publish:
       rsp: a/rsp/CLIENTID
-      inp: PROJECTID/inp/CLIENTID/USERID/cabin_lt
-      cod: PROJECTID/cod/CLIENTID
-      msg: PROJECTID/msg/CLIENTID
+      prsp: PROJECTID/rsp/CLIENTID
+      inp:  PROJECTID/inp/CLIENTID/USERID/cabin_lt
+      cod:  PROJECTID/cod/CLIENTID
+      msg:  PROJECTID/msg/CLIENTID
 clients:
   hmi:
   controller:

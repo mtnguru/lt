@@ -11,7 +11,8 @@
 
 const char *version = "2.0";
 const char *programId = "arduino.js";
-int debugLevel = 3;
+int debugLevel = 2;
+int configNotReceived = 0;
 unsigned long startTime = 0;
 boolean enabled = 1;
 int mqttConnected = 0;
@@ -28,6 +29,10 @@ WiFiClient wifiClient;
 const char* wifiSsid = "Solvay";
 const char* wifiPassword = "taichi23";
 
+// James Cell Phone
+//const char* wifiSsid = "Verizon-SM-G930V-6ED7";
+//const char* wifiPassword = "taichi23";
+
 String wifiIP;
 
 ///////////// JSON
@@ -38,6 +43,8 @@ const int payloadSize = 2000;       // Configuration uses 1404
 const int msgSize = 300;
 char msg[msgSize];
 char logMsg[msgSize];
+const int tStrSize = 100;
+char tStr[100];
 
 const int outSize = 300;
 char out[outSize];
@@ -127,10 +134,23 @@ float temps[inputMax][avgN];
 
 ///////////// MAX6675 thermocouple
 #include "max6675.h"
-const int thermoDO  = 2;
-const int thermoCS  = 4;
-const int thermoCLK = 5;
-unsigned int sampleInterval = 10000;
+
+// Arduino 8266
+//const int thermoDO  = 2;
+//const int thermoCS  = 4;
+//const int thermoCLK = 5;
+
+// Arduino Breadboard shield on ESP32
+//const int thermoDO  = 3;
+//const int thermoCS  = 4;
+//const int thermoCLK = 5;
+
+// Arduino ESP32
+const int thermoDO  = 25;
+const int thermoCS  = 17;
+const int thermoCLK = 16;
+
+unsigned int sampleInterval = 2000;
 MAX6675 tc(thermoCLK, thermoCS, thermoDO);
 
 /////////////
@@ -150,7 +170,7 @@ String freeMem() {
 
   ltoa(fh, fhc, 16);
   String freeHeap = String(fhc);
-  logit(1,MD,f,"Free memory ",freeHeap.c_str());
+  logit(2,MD,f,"Free memory ",freeHeap.c_str());
   return freeHeap;
 }
 
@@ -440,10 +460,10 @@ void setConfig(const char *topic,
   logit(0,MD,f,"Check Inputs",NULL);
   JsonObject rootInput = jsonDoc["inp"].as<JsonObject>();
   if (rootInput) {
-    logit(2,MD,f,"Process input metrics ",NULL);
+    logit(0,MD,f,"Process input metrics ",NULL);
     for (JsonPair metric : rootInput) {
       const char *metricId = metric.key().c_str();
-      logit(2,MD,f,"Input ",metricId);
+      logit(0,MD,f,"Input ",metricId);
       const char *channelType = metric.value()["input"]["channelType"];
       if (strcmp(channelType,"Button") == 0) {
         inputA[inputN].channelType  = IN_BUTTON;
@@ -456,16 +476,19 @@ void setConfig(const char *topic,
       logit(2,MD,f,"Input added ", metricId);
       strcpy(inputA[inputN].tags,      metric.value()["input"]["tags"]);
       strcpy(inputA[inputN].channels,  metric.value()["input"]["channels"]);
-      strcpy(inputA[inputN].metricId,  metric.value()["metricId"]);
+//    strcpy(inputA[inputN].metricId,  metric.value()["metricId"]);
       logit(2,MD,f,"Input ",inputA[inputN].metricId);
-      strcpy(inputA[inputN].name,      metric.value()["name"]);
+//    strcpy(inputA[inputN].name,      metric.value()["name"]);
       logit(2,MD,f,"input channel ", inputA[inputN].channels);
       logit(2,MD,f,"Input ",inputA[inputN].metricId);
       inputN++;
     }
+  } else {
+    logit(0,MD,f,"===================== shit",NULL);
   }
 
   JsonObject rootOutput = jsonDoc["out"].as<JsonObject>();
+  logit(0,MD,f,"Check Outputs",NULL);
   if (rootOutput) {
     logit(0,MD,f,"Process output metrics ",NULL);
     for (JsonPair metric : rootOutput) {
@@ -485,9 +508,10 @@ void setConfig(const char *topic,
 
       logit(0,MD,f,"Output added ", metricId);
       strcpy(outputA[outputN].tags,      metric.value()["output"]["tags"]);
+      logit(0,MD,f,"Output added ", metricId);
       strcpy(outputA[outputN].channel,   metric.value()["output"]["channel"]);
-      strcpy(outputA[outputN].metricId,  metric.value()["metricId"]);
-      strcpy(outputA[outputN].name,      metric.value()["name"]);
+//    strcpy(outputA[outputN].metricId,  metric.value()["metricId"]);
+//    strcpy(outputA[outputN].name,      metric.value()["name"]);
 
       const char *channel = outputA[outputN].channel;
       pinMode(atoi(channel), OUTPUT);
@@ -497,7 +521,7 @@ void setConfig(const char *topic,
   }
 
   haveConfig = true;
-  logit(3,MD, f, "exit", NULL);
+  logit(0,MD, f, "exit", NULL);
 }
 
 void mqttCB(char* _topic, byte* _payload, unsigned int length) {
@@ -542,7 +566,7 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
       if (!strcmp(cmd, "requestReset")) {
         snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"msg\":\"reset requested\"}", cmd, clientId);
         logit(0,MN,f,"Resetting arduino", NULL);
-        delay(500);
+        delay(10000);
         resetFunction();
       } else if (!strcmp(cmd, "requestStatus")) {  // Ask arduino for its status
         logit(1,MD,f,"status requested", outTopic);
@@ -656,8 +680,6 @@ void setup() {
   logit(2,MD,f,"starting program",NULL);
   startTime = millis();
 
-  Serial.println(ARDUINO_BOARD);
-
   strcpy(projectId, "unknown");
   randomSeed(micros());
   mqttClientId = "arduino_" + String(random(0xffff), HEX);
@@ -688,7 +710,7 @@ void loop() {
 
   if (WiFi.status() != WL_CONNECTED) {
     logit(0,ME,f,"WiFi not connected - reset the arduino",NULL);
-    delay(500);
+    delay(10000);
     resetFunction();
   }
 
@@ -707,6 +729,14 @@ void loop() {
       logit(3,MD,f,"do Sample done",NULL);
     }
   } else {
-    //  logit(2,MD, f,"WARNING: Config not read",NULL);
+    snprintf(tStr, tStrSize, "Config not received: %d", configNotReceived);
+    logit(0,MD, f, tStr, NULL);
+    configNotReceived++;
+    delay(1000);
+    if (configNotReceived > 10) {
+      logit(0,MD, f,"Too many attempts, rebooting arduino", NULL);
+      delay(500);
+      resetFunction();
+    }
   }
 }
