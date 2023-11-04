@@ -1,10 +1,56 @@
-Get the fucking hmi working again
-  Issues
-    Client filters don't use localStorage
-    MqttPanel doesn't update 
-      Do I have an error I'm not seeing?
+administrator
+  Upon receipt of input values 
+    save values - metricId, ProjectId, valueId
+    valueId - value, upper, lower, high, low
+    set value state 
+      Upon changine state, 
+         send a message - topic: PROJECTID/msg/all
+      states
+         Ok
+         High/Low - out of range 
+         Upper/Lower Alarm
 
-Finish Oxy
+  Every 10 seconds cycle through each metric
+    Check the value, if it's old then set stale state
+       Initially set stalePeriod to the value in config - if not found set to 1 minute
+       0 - value is ok       grey
+       1 - 1x stalePeriod    green      
+       2 - 2x stalePeriod    blue
+       4 - 4x stalePeriod    purple
+       8 - 8x stalePeriod    red
+
+  Each metric save in administrator has
+       value upper lower high low stale state
+       each of the above stores a record with
+          value
+          date
+          source?
+          
+       
+ 
+
+hmi
+   Upon receipt of a state change message,
+      ValueStateChange - Update the color of the metric
+         orange  High/Low
+         red     Upper/lower alarm
+      StaleStateChange
+         5 states as defined above
+      
+   Create slider to change High/Low and Upper/Lower alarms
+      Send message to administrator to change value in 
+   
+         
+          
+    When building a clients configuration
+      Add values, state, etc.
+*Get the fucking hmi working again
+*  Issues
+*    Client filters don't use localStorage
+*    MqttPanel doesn't update 
+*      Do I have an error I'm not seeing?
+
+*Finish Oxy
   administrator history
     save history
     set values to history or default

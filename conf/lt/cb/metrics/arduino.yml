@@ -36,6 +36,24 @@ LivingRoom_Desk_K_F:
     clientId: arduino5
     channelType: MAX6675
     channels: 2,4,5
+arduino6_tst_K_F:
+  label: Arduino6 test - Onewire
+  desc: Arduino6 test - Onewire
+  value: 0
+  decimals: 2
+  inp:
+    clientId: arduino6
+    channelType: MAX6675
+    channels: 2,4,5
+arduino7_tst_OW_F:
+  label: Arduino7 test - Onewire
+  desc: Arduino7 test - Onewire
+  value: 0
+  decimals: 2
+  inp:
+    clientId: arduino7
+    channelType: MAX6675
+    channels: 2,4,5
 
 ############################## Input development
 

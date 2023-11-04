@@ -3,15 +3,17 @@ instance: 41
 topics:
   edge:
     subscribe:
-      all: a/cmd/all
-      cmd: a/cmd/CLIENTID
-      rsp: a/rsp/CLIENTID
-      out: PROJECTID/out/CLIENTID
+      all:  a/cmd/all
+      cmd:  a/cmd/CLIENTID
+      rsp:  a/rsp/CLIENTID
+      prsp: PROJECTID/rsp/CLIENTID
+      out:  PROJECTID/out/CLIENTID
     publish:
-      rsp: a/rsp/CLIENTID
-      inp: PROJECTID/inp/CLIENTID/USERID/oxy_edge
-      cod: PROJECTID/cod/CLIENTID
-      msg: PROJECTID/msg/CLIENTID
+      rsp:  a/rsp/DCLIENTID
+      prsp: PROJECTID/rsp/DCLIENTID
+      inp:  PROJECTID/inp/CLIENTID/USERID/oxy_edge
+      cod:  PROJECTID/cod/CLIENTID
+      msg:  PROJECTID/msg/CLIENTID
 clients:
   arduino_gm:  enabled
   arduino5:    disabled

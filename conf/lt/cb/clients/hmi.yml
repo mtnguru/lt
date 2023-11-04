@@ -15,6 +15,8 @@ clients:
   arduino3: {}
   arduino4: {}
   arduino5: {}
+  arduino6: {}
+  arduino7: {}
 topics:
   subscribe:
     adm: a/#

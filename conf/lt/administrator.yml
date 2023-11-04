@@ -33,4 +33,4 @@ topics:
 projects:
   cb: enabled
   fg: disabled
-  oxy: enabled
+  oxy: disabled

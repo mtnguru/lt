@@ -73,10 +73,10 @@
 
   }
 
-  .administrator,
-  .drupal,
-  .controller,
-  .hmi {
+  &.administrator,
+  &.drupal,
+  &.controller,
+  &.hmi {
     .row2 {
       margin-left: 32px;
     }

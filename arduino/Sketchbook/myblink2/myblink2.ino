@@ -26,6 +26,8 @@ int rin = 0;
 float vin = 0;
 float out = 0;
 
+const int LED_BUILTIN = 2;
+
 // the setup function runs once when you press reset or power the board
 void setup() {
   // initialize digital pin LED_BUILTIN as an output.

@@ -48,7 +48,7 @@ const MqttItem = (props) => {
           var payload = {};
           try {
             payload = JSON.parse(props.item.payload);
-            payloadStr = JSON.stringify(payload, null, 3)
+            payloadStr = JSON.stringify(payload, null, 2)
           } catch(err) {
             console.log(f, 'ERROR: parsing JSON payload: ' + props.item.topic + '  '  + err)
             mgError(0,f, 'ERROR parsing JSON payload: ' + err)

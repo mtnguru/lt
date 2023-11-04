@@ -9,7 +9,7 @@ headers:
   Content-Type: application/json; charset utf-8;
   _rejectUnauthorized: false
 statusDefault:
-  sampleInterval: 10000
+  sampleInterval: 30000
   enabled: 1
   debugLevel: 0
   mqttConnected: 0
