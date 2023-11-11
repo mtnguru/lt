@@ -31,6 +31,9 @@ global.aaa = {
   startTime: Date.now(),
   topics: {
     subscribe: {
+      adm: `a/rsp/${clientId}`,
+    },
+    register: {
       rsp: `a/rsp/${clientId}`,
     },
     publish: {
@@ -128,7 +131,7 @@ const loadConfigCB = (_topic, _payload) => {
   _payload.started = true
 
   mqttUnsubscribe(global.aaa.topics.subscribe);
-  mqttUnregisterTopicCB(global.aaa.topics.subscribe.rsp, loadConfigCB,{})
+  mqttUnregisterTopicCB(global.aaa.topics.register.rsp, loadConfigCB,{})
 
   try {
     // Replace global.aaa object with new configuration
@@ -169,7 +172,7 @@ const getConfig = () => {
   const f = "index::getConfig - "
   console.log(f,'enter')
   const payloadStr = `{"cmd": "requestConfig", "clientId": "${clientId}"}`
-  mqttRegisterTopicCB(global.aaa.topics.subscribe.rsp, loadConfigCB,{})
+  mqttRegisterTopicCB(global.aaa.topics.register.rsp, loadConfigCB,{})
   mqttPublish(global.aaa.topics.publish.adm, payloadStr)
   console.log(f,'exit')
 }

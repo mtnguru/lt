@@ -1,3 +1,15 @@
+Get the UI working - Search for 
+
+
+
+Get the code working on ESP32 to read one-wire temperature.
+   start administrator on saphira with new config
+   start arduino
+
+
+
+
+
 administrator
   Upon receipt of input values 
     save values - metricId, ProjectId, valueId

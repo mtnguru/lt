@@ -407,8 +407,13 @@ const processCB = (_topic, _payload) => {
 
     // If the payload is JSON, parse it
     if (inputStr && inputStr[0] === '{' && inputStr !== '{}') {
-      msg(3,f, DEBUG,"Parse inputStr:", inputStr.toString)
-      input = JSON.parse(inputStr)
+      try {
+        msg(3, f, DEBUG, "Parse inputStr:", inputStr.toString)
+        input = JSON.parse(inputStr)
+      } catch(err) {
+        msg(0,f,ERROR, 'Error parsing JSON -- ',inputStr)
+        return;
+      }
     }
     msg(3,f,DEBUG, 'funcId', funcId, ' clientId', clientId);
 

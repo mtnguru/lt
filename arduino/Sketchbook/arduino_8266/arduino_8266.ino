@@ -9,7 +9,7 @@
 #include <math.h>
 //#include <MemoryFree.h>
 
-const char *version = "2.0";
+const char *version = "2.1";
 const char *programId = "arduino.js";
 int debugLevel = 2;
 int configNotReceived = 0;
@@ -19,6 +19,7 @@ int mqttConnected = 0;
 
 ///////////// WiFi
 #include <ESP8266WiFi.h>
+//#include <WiFi.h>
 WiFiClient wifiClient;
 
 // ASUS at cabin
@@ -35,10 +36,27 @@ const char* wifiPassword = "taichi23";
 
 String wifiIP;
 
+///////////// MAX6675 thermocouple
+#include "max6675.h"
+
+unsigned int sampleInterval = 10000;
+
+///////////// OneWire
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+const int oneWirePin = 14;  // ESP32
+//const int oneWirePin = 7;   // ESP8266
+
+OneWire *oneWireP = NULL;
+//DallasTemperature *sensorsP = NULL;
+
 ///////////// JSON
-#include "ArduinoJson.h"
-const int jsonDocSize = 2000;       // May 29, 2023 - crashes at 924
-StaticJsonDocument<jsonDocSize> jsonDoc;
+//#include "ArduinoJson.h"
+//const int jsonDocSize = 2000;       // May 29, 2023 - crashes at 924
+//StaticJsonDocument<jsonDocSize> jsonDoc;
+
+#include "Arduino_JSON.h"
 const int payloadSize = 2000;       // Configuration uses 1404
 const int msgSize = 600;
 char msg[msgSize];
@@ -90,7 +108,7 @@ struct outputS {
   char value[valueSize];
 };
 
-enum inputTypeE {IN_MAX6675, IN_BUTTON};
+enum inputTypeE {IN_MAX6675, IN_ONEWIRE_F, IN_ONEWIRE_C, IN_BUTTON};
 struct inputS {
   char metricId[metricIdSize];
   char name[metricIdSize];
@@ -98,6 +116,8 @@ struct inputS {
   char channels[12];
   char topic[topicSize];
   char tags[tagSize];
+  MAX6675 *max6675P;         // channelType == "max6675"
+  byte deviceId[8];  // channelType == onewire
 };
 
 const int inputMax = 2;
@@ -106,7 +126,6 @@ inputS inputA[inputMax];
 outputS outputA[outputMax];
 int inputN = 0;
 int outputN = 0;
-
 
 ///////////// MQTT client
 #include <PubSubClient.h>
@@ -131,14 +150,6 @@ char mqttMsgPub[topicSize];       // publish messages - notifications, etc.
 const float MV = -999.999;
 const int avgN = 2;
 float temps[inputMax][avgN];
-
-///////////// MAX6675 thermocouple
-#include "max6675.h"
-const int thermoDO  = 2;
-const int thermoCS  = 4;
-const int thermoCLK = 5;
-unsigned int sampleInterval = 2000;
-MAX6675 tc(thermoCLK, thermoCS, thermoDO);
 
 /////////////
 unsigned long lastSample = 0;
@@ -362,7 +373,7 @@ void processOutput (char *_payload) {
   }
 }
 
-void(* resetFunction) (void) = 0;    // declare reset function @ address 0
+void(* reset) (void) = 0;    // declare reset function @ address 0
 
 void getStatus() {
   const char *f = "getStatus";
@@ -380,7 +391,7 @@ void getStatus() {
   snprintf(uptime,20,"%d %d:%d:%d", days, hours, minutes, seconds);
 
   snprintf(status,statusSize,
-    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": %d, \"enabled\":%d, \"debugLevel\":%d, \"uptime\":\"%s\", \"sampleInterval\":\"%d\", \"version\":\"%s\"}",
+    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": %d, \"enabled\":%d, \"debugLevel\":%d, \"uptime\":\"%s\", \"sampleInterval\":%d, \"version\":\"%s\"}",
     clientId, mqttClientId.c_str(), mqttConnected, enabled, debugLevel, uptime, sampleInterval, (char *)version);
 
   logit(2,MD, f, status, NULL);
@@ -403,8 +414,98 @@ void subscribeTopics() {
   res = mqttClient.subscribe(mqttOutputSub);
 }
 
+void startOneWire() {
+  if (!oneWireP) {
+    oneWireP = new OneWire(oneWirePin);
+//  sensorsP = new DallasTemperature(oneWireP);
+//  sensorsP->begin();
+  }
+}
+
+void findOneWireDevices(char *devices) {
+  byte address[8];
+
+  Serial.println("Searching for OneWire devices...");
+  oneWireP->reset_search();
+
+  int nDevices = 0;
+  devices[0] = '\0';
+  while (oneWireP->search(address)) {
+    if (OneWire::crc8(address, 7) == address[7]) {
+      nDevices++;
+      char deviceId[80];
+      snprintf(deviceId,80,
+        "\"0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x  %d,%d,%d,%d,%d,%d,%d,%d\"",
+        address[0],
+        address[1],
+        address[2],
+        address[3],
+        address[4],
+        address[5],
+        address[6],
+        address[7],
+        address[0],
+        address[1],
+        address[2],
+        address[3],
+        address[4],
+        address[5],
+        address[6],
+        address[7]
+      );
+      Serial.print("Device: ");
+      Serial.println(deviceId);
+
+      if (nDevices == 1) {
+        strcpy(devices,"\"devices\": [");
+        strcat(devices,deviceId);
+      } else {
+        strcat(devices,",");
+        strcat(devices,deviceId);
+      }
+    } else {
+      Serial.println("CRC is not valid!");
+    }
+  }
+  if (nDevices > 0) {
+    strcat(devices,"]");
+  } else {
+    strcpy(devices,"\"devices\": \"none\"");
+  }
+}
+
+float readOneWireTemp(char corf, byte *deviceId) {
+  const char *f = "readOneWireTemp";
+  byte data[12];
+
+  logit(1,MD,f,"Read onewire temperature", NULL);
+
+  oneWireP->reset();                // Reset the OneWire bus
+  oneWireP->select(deviceId);       // Select the DS18S20 using its address
+  oneWireP->write(0x44);            // Start temperature conversion
+  delay(750);                       // Wait for conversion to complete (750ms for DS18S20)
+  oneWireP->reset();                // Reset onewire bus
+  oneWireP->select(deviceId);       // Select the DS18S20 again
+
+  // Read the temperature data
+  oneWireP->write(0xBE);
+  for (byte i = 0; i < 9; i++) {
+    data[i] = oneWireP->read();
+  }
+
+  // Convert the data to Celsius
+  int16_t rawTemperature = (data[1] << 8) | data[0];
+  float c = (float)rawTemperature / 16.0;
+
+  if (corf == 'c') {
+    return c;
+  } else {
+    return c * 9 / 5 + 32;
+  }
+}
+
 void setConfig(const char *topic,
-               StaticJsonDocument<jsonDocSize> jsonDoc) {
+               JSONVar jsonDoc) {
   const char *f = "setConfig";
   logit(2,MD, f, "enter", topic);
   freeMem();
@@ -412,17 +513,17 @@ void setConfig(const char *topic,
   logit(1,MN, f, "Date ", jsonDoc["date"]);
   strcpy(clientId, jsonDoc["clientId"]);
   logit(1,MN, f, "What ",NULL);
-  sampleInterval = jsonDoc["status"]["sampleInterval"];
-  logit(1,MN, f, "sample ", NULL);
+  sampleInterval = (unsigned int)jsonDoc["status"]["sampleInterval"];
   if (sampleInterval == 0) {
-    sampleInterval = 10000;
+    sampleInterval = 30000;
   }
-  logit(1,MN, f, "next ", NULL);
   lastSample = sampleInterval;  // Force immediate read after changing
-  enabled = jsonDoc["status"]["enabled"];
-  logit(1,MN, f, "next thing ", NULL);
-  debugLevel = jsonDoc["status"]["debugLevel"];
-  logit(1,MN, f, "next debug ", NULL);
+  enabled = (int)jsonDoc["status"]["enabled"];
+  char ststr[10];
+  itoa(enabled,ststr,10);
+  debugLevel = (int)jsonDoc["status"]["debugLevel"];
+
+  haveConfig = true; // Enables logit messages to be printed
 
   ///////////// Unsubscribe to response messages
   res = mqttClient.unsubscribe(mqttRspSub);
@@ -444,38 +545,56 @@ void setConfig(const char *topic,
 
   // Loop through metrics, initialize inputA[]
   inputN = 0;
-  logit(0,MD,f,"Check Inputs",NULL);
-  JsonObject rootInput = jsonDoc["inp"].as<JsonObject>();
-  if (rootInput) {
-    logit(0,MD,f,"Process input metrics ",NULL);
-    for (JsonPair metric : rootInput) {
-      const char *metricId = metric.key().c_str();
-      logit(0,MD,f,"Input ",metricId);
-      const char *channelType = metric.value()["input"]["channelType"];
-      if (strcmp(channelType,"Button") == 0) {
+  logit(2,MD,f,"Check Inputs",NULL);
+  if (jsonDoc.hasOwnProperty("inp")) {
+    JSONVar keys = jsonDoc["inp"].keys();
+    logit(2,MD,f,"Process input metrics ",NULL);
+    for (int i = 0; i < keys.length(); i++) {
+      const char *metricId = keys[i];
+      strcpy(inputA[inputN].metricId, metricId);
+      JSONVar metric = jsonDoc["inp"][metricId];
+      logit(1,MD,f,"Input ",metricId);
+      const char *channelType = metric["input"]["channelType"];
+      strcpy(inputA[inputN].tags, metric["input"]["tags"]);
+      logit(2,MD,f,"tags ",inputA[inputN].tags);
+      if (strcmp(channelType,"button") == 0) {
         inputA[inputN].channelType  = IN_BUTTON;
-      } else if (strcmp(channelType,"MAX6675") == 0) {
-        logit(2,MD,f,"Set channelType as MAX6675 ",NULL);
+      } else if (strcmp(channelType,"max6675") == 0) {     // MAX6675 K Thermocouple
+        logit(1,MD,f,"Set channelType as MAX6675 ",NULL);
         inputA[inputN].channelType  = IN_MAX6675;
+        int thermoDO  = (int)metric["input"]["thermoDO"];
+        int thermoCS  = (int)metric["input"]["thermoCS"];
+        int thermoCLK = (int)metric["input"]["thermoCLK"];
+        inputA[inputN].max6675P = new MAX6675(thermoCLK, thermoCS, thermoDO);
+      } else if (strcmp(channelType,"onewire_c") == 0) {   // OneWire DS1820S C
+        logit(1,MD,f,"Set channelType as onewire_c ",NULL);
+        inputA[inputN].channelType  = IN_ONEWIRE_C;
+        JSONVar deviceId = metric["input"]["deviceId"];
+        for (int i = 0; i < 8; i++) {
+          inputA[inputN].deviceId[i] = (int)deviceId[i];
+        }
+        startOneWire();
+      } else if (strcmp(channelType,"onewire_f") == 0) {   // OneWire DS1820S F
+        logit(1,MD,f,"Set channelType as onewire_f ",NULL);
+        inputA[inputN].channelType  = IN_ONEWIRE_F;
+        JSONVar deviceId = metric["input"]["deviceId"];
+        for (int i = 0; i < 8; i++) {
+          inputA[inputN].deviceId[i] = (int)deviceId[i];
+        }
+        startOneWire();
       } else {
-        logit(0,MW, f, "Cannot find input channelType: ", channelType);
+        logit(1,ME, f, "Cannot find input channelType - rebooting: ", channelType);
+        delay(15000);
+        reset();
       }
       logit(2,MD,f,"Input added ", metricId);
-      strcpy(inputA[inputN].tags,      metric.value()["input"]["tags"]);
-      strcpy(inputA[inputN].channels,  metric.value()["input"]["channels"]);
-//    strcpy(inputA[inputN].metricId,  metric.value()["metricId"]);
-      logit(2,MD,f,"Input ",inputA[inputN].metricId);
-//    strcpy(inputA[inputN].name,      metric.value()["name"]);
-      logit(2,MD,f,"input channel ", inputA[inputN].channels);
-      logit(2,MD,f,"Input ",inputA[inputN].metricId);
       inputN++;
     }
-  } else {
-    logit(0,MD,f,"===================== shit",NULL);
   }
 
-  JsonObject rootOutput = jsonDoc["out"].as<JsonObject>();
-  logit(0,MD,f,"Check Outputs",NULL);
+  JSONVar rootOutput = jsonDoc["out"];
+  logit(1,MD,f,"Check Outputs",NULL);
+  /*
   if (rootOutput) {
     logit(0,MD,f,"Process output metrics ",NULL);
     for (JsonPair metric : rootOutput) {
@@ -491,6 +610,8 @@ void setConfig(const char *topic,
         outputA[outputN].channelType  = OUT_DIGITAL;
       } else {
         logit(1,MD, f, "Cannot find output channelType:", channelType);
+        delay(15000);
+        reset();
       }
 
       logit(0,MD,f,"Output added ", metricId);
@@ -500,15 +621,14 @@ void setConfig(const char *topic,
 //    strcpy(outputA[outputN].metricId,  metric.value()["metricId"]);
 //    strcpy(outputA[outputN].name,      metric.value()["name"]);
 
-      const char *channel = outputA[outputN].channel;
-      pinMode(atoi(channel), OUTPUT);
+      pinMode(outputA[outputN].channel, OUTPUT);
       logit(0,MD,f,"Output channel ", channel);
       outputN++;
     }
   }
+  */
 
-  haveConfig = true;
-  logit(0,MD, f, "exit", NULL);
+  logit(1,MD, f, "exit", NULL);
 }
 
 void mqttCB(char* _topic, byte* _payload, unsigned int length) {
@@ -534,12 +654,13 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
       processOutput(payload);
     }
   } else {                 // if payload is JSON
-    DeserializationError err = deserializeJson(jsonDoc, payload);
-    if (err) {
-      snprintf (msg, msgSize, "ERROR: deserializationJson - %s", err.c_str());
-      logit(0,ME, f, msg, NULL);
+    JSONVar jsonDoc = JSON.parse(payload);
+    if (JSON.typeof(jsonDoc) == "undefined") {
+      logit(0,ME,f,"Error parsing JSON",payload);
+      return;
     }
-    logit(1,MD,f,"deserialized ", outTopic);
+
+    logit(1,MD,f,"parsed ", payload);
 
     if (!strcmp(topic, mqttRspSub)) {
       char rsp[20];
@@ -553,21 +674,26 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
       if (!strcmp(cmd, "requestReset")) {
         snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"msg\":\"reset requested\"}", cmd, clientId);
         logit(0,MN,f,"Resetting arduino", NULL);
-        delay(500);
-        resetFunction();
+        delay(10000);
+        reset();
       } else if (!strcmp(cmd, "requestStatus")) {  // Ask arduino for its status
         logit(1,MD,f,"status requested", outTopic);
         getStatus();
       } else if (!strcmp(cmd, "setDebugLevel")) {          // Set debugLevel
-        debugLevel = atoi(jsonDoc["debugLevel"]);
+        debugLevel = (int)jsonDoc["debugLevel"];
         snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"debugLevel\":%d}", cmd, clientId, debugLevel);
         logit(0,MN,f,"set Debug Level", outTopic);
-      } else if (!strcmp(cmd, "setEnabled")) {                 // Enabled arduino
-        enabled = jsonDoc["enabled"];
+      } else if (!strcmp(cmd, "setEnabled")) {             // Enabled arduino
+        enabled = (int)jsonDoc["enabled"];
+        lastSample = sampleInterval;  // Force immediate read after changing
         snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"enabled\":%d}", cmd, clientId, enabled);
       } else if (!strcmp(cmd, "setSampleInterval")) {      // Set sample interval
-        sampleInterval = atoi(jsonDoc["sampleInterval"]);
+        sampleInterval = (int)jsonDoc["sampleInterval"];
         snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"sampleInterval\":%d}", cmd, clientId, sampleInterval);
+      } else if (!strcmp(cmd, "findOneWireDevices")) {     // Find one wire devices
+        char devices[160];
+        findOneWireDevices(devices);
+        snprintf(out,outSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", %s}", cmd, clientId, devices);
       }
     }
   }
@@ -625,7 +751,7 @@ void mqttConnect() {
       if (attempts == 10) {
         logit(0,ME,f,"mqttClient.connected returned false 10 times - reset the arduino",NULL);
         delay(500);
-        resetFunction();
+        reset();
       }
     }
   }
@@ -644,7 +770,7 @@ void sampleInputs() {
         break;
       case IN_MAX6675:
         logit(1,MD,f,"check temperature", NULL);
-        value = tc.readFahrenheit();
+        value = input->max6675P->readFahrenheit();
         if (value > 500) {
           snprintf(out, outSize, "temperature out of range: %f", value);
           logit(0,ME,f,out, NULL);
@@ -655,6 +781,16 @@ void sampleInputs() {
           snprintf(out, outSize, "%s value=%g", input->tags, value);
           mqttClient.publish(mqttInputPub, out);
         }
+        break;
+      case IN_ONEWIRE_F:
+        value = readOneWireTemp('F', input->deviceId);
+        snprintf(out, outSize, "%s value=%g", input->tags, value);
+        mqttClient.publish(mqttInputPub, out);
+        break;
+      case IN_ONEWIRE_C:
+        value = readOneWireTemp('C', input->deviceId);
+        snprintf(out, outSize, "%s value=%g", input->tags, value);
+        mqttClient.publish(mqttInputPub, out);
         break;
     }
   }
@@ -672,9 +808,6 @@ void setup() {
   mqttClientId = "arduino_" + String(random(0xffff), HEX);
 
   wifiInit();
-
-  logit(2,MD,f,"Assign mqtt*Pub paths",mqttCmdPub);
-
 
   logit(1,MD,f,"Init MQTT server",mqttIp);
   mqttClient.setServer(mqttIp, mqttPort);
@@ -697,8 +830,8 @@ void loop() {
 
   if (WiFi.status() != WL_CONNECTED) {
     logit(0,ME,f,"WiFi not connected - reset the arduino",NULL);
-    delay(500);
-    resetFunction();
+    delay(10000);
+    reset();
   }
 
   if (mqttClient.state() != 0) {
@@ -707,13 +840,18 @@ void loop() {
   }
 
   mqttClient.loop();
-  if (haveConfig && enabled) {
-    unsigned long now = millis();
-    if (now - lastSample > sampleInterval) {
-      logit(3,MD,f,"do Sample start",NULL);
-      lastSample = now;
-      sampleInputs();
-      logit(3,MD,f,"do Sample done",NULL);
+  if (haveConfig) {
+    if (enabled) {
+      unsigned long now = millis();
+      if (now - lastSample > sampleInterval) {
+        logit(3,MD,f,"do Sample start",NULL);
+        lastSample = now;
+        sampleInputs();
+        logit(3,MD,f,"do Sample done",NULL);
+      }
+    } else {
+      logit(3,MD,f,"arduino not enabled",NULL);
+      delay(3000);
     }
   } else {
     snprintf(tStr, tStrSize, "Config not received: %d", configNotReceived);
@@ -723,7 +861,7 @@ void loop() {
     if (configNotReceived > 20) {
       logit(0,MD, f,"Too many attempts, rebooting arduino", NULL);
       delay(500);
-      resetFunction();
+      reset();
     }
   }
 }

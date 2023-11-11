@@ -7,8 +7,10 @@ Ez_Front_K_C:
   decimals: 2
   inp:
     clientId: arduino5
-    channelType: MAX6675
-    channels: 2,4,5
+    channelType: max6675
+    thermoDO:  25
+    thermoCS:  17
+    thermoCLK: 16
 
 arduino-gm_Onboard_LED_On:
   label: Arduino_gm Onboard LED
@@ -18,4 +20,4 @@ arduino-gm_Onboard_LED_On:
   out:
     clientId: arduino_gm
     channelType: digital
-    channel: "16"
+    channel: 16

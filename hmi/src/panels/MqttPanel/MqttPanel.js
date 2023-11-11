@@ -78,8 +78,8 @@ const MqttPanel = (props) => {
 
   if (!registered) {
     registered = true;
-    mqttRegisterTopicCB(global.aaa.topics.subscribe.prj, topicCB)
-    mqttRegisterTopicCB(global.aaa.topics.subscribe.adm, topicCB)
+    mqttRegisterTopicCB(global.aaa.topics.register.prj, topicCB)
+    mqttRegisterTopicCB(global.aaa.topics.register.adm, topicCB)
   }
 
   /**

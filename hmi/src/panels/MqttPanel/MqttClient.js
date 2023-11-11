@@ -55,7 +55,7 @@ function MqttClient (props) {
 
   const onSelectH = (event) => {
     let topic = `a/cmd/${props.client.clientId}`
-    let payload = `{"cmd": "setDebugLevel", "clientId": "${clientId}", "debugLevel": "${event.target.value}"}`;
+    let payload = `{"cmd": "setDebugLevel", "clientId": "${clientId}", "debugLevel": ${event.target.value}}`;
     console.log('   send ', topic, payload)
     mqttPublish(topic, payload)
   }

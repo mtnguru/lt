@@ -271,7 +271,9 @@ const mqttProcessCB = (_topic, _payload) => {
     }
     console.log(f, "Look for topic", _topic)
     for (let topic in topicsCB) {
-      if (_topic.indexOf(topic) > -1) {
+//    var ind = _topic.indexOf(topic)
+//    console.log('index ' + ind)
+      if (_topic.indexOf(topic) == 0) {
 //      console.log(f, "   Topic found", topicsCB[topic].length)
         // Execute the callbacks for this topic
         for (let rec of topicsCB[topic]) {

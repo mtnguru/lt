@@ -1,4 +1,4 @@
-#############  Epic PID
+##nnel###########  Epic PID
 
 Epiclc_PID_RTD_C:
   label: PID Temperature
@@ -8,8 +8,8 @@ Epiclc_PID_RTD_C:
   inp:
     clientId: epiclc
     channelType: analog
-    module: "2"
-    channel: "0"
+    module: 2
+    channel: 0
 
 #############  Epic Backpanel
 
@@ -21,8 +21,8 @@ Epiclc_Backpanel_LED_Red_On:
   out:
     clientId: epiclc
     channelType: digital
-    module: "1"
-    channel: "7"
+    module: 1
+    channel: 7
 Epiclc_Backpanel_LED_Green_On:
   label: EPIC Green LED
   desc: epiclc Backpanel Green LED
@@ -31,8 +31,8 @@ Epiclc_Backpanel_LED_Green_On:
   out:
     clientId: epiclc
     channelType: digital
-    module: "1"
-    channel: "8"
+    module: 1
+    channel: 8
 Epiclc_Backpanel_LED_Blue_On:
   label: EPIC Blue LED
   desc: epiclc Backpanel Blue LED
@@ -41,5 +41,5 @@ Epiclc_Backpanel_LED_Blue_On:
   out:
     clientId: epiclc
     channelType: digital
-    module: "1"
-    channel: "9"
+    module: 1
+    channel: 9
