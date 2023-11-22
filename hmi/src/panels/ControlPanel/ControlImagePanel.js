@@ -29,9 +29,7 @@ const ControlImagePanel = (props) => {
 //var backgroundImage = "../../../assets/cabin.png";
 
   return (
-    <div className="panel control-image-panel"
-         style={{ backgroundImage: `url(${process.env.PUBLIC_URL + "/cabin.png"})`,
-         aspectRatio: 1.1275 }} >
+    <div className="panel control-image-panel" style={{ backgroundImage: `url(${process.env.PUBLIC_URL + "/cabin.png"})`, aspectRatio: 1.1275 }} >
       <Heading as="h3">Overlay Image Panel</Heading>
       <div className="controls">
         <div className="metrics">

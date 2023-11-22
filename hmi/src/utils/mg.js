@@ -2,21 +2,21 @@
 import {mqttPublish, mqttConnected} from "./mqttReact"
 //import Topics from "./topics"
 
-const mg = (level, f, _funcId, _type, ...snippets) => {
-  var funcId = _funcId
+const mg = (level, f, _sourceId, _type, ...snippets) => {
+  var sourceId = _sourceId
   var type = _type.toLowerCase()
 
   if (level > global.aaa.status.debugLevel) return;
 
   var payload = {
     "function": f,
-    funcId: funcId,
+    sourceId: sourceId,
     type: type,
     program: global.aaa.program,
     msg: snippets.join(' '),
   }
 
-  const topic = global.aaa.topics.publish[_funcId]
+  const topic = global.aaa.topics.publish[_sourceId]
   const jpayload = JSON.stringify(payload);
   if (mqttConnected()) {
     mqttPublish(topic, jpayload);
@@ -29,7 +29,7 @@ const mg = (level, f, _funcId, _type, ...snippets) => {
   } else if (type === 'warning') {
     type = '!!!!!!!!!! WARNING'
   }
-  console.log(funcId, type, ...snippets)
+  console.log(sourceId, type, ...snippets)
 }
 
 const mgError   = (level, f, ...snippets) => { mg(level, f,'cod','error',snippets) }

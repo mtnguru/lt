@@ -11,10 +11,13 @@
 
 const char *version = "2.1";
 const char *programId = "arduino.js";
-int debugLevel = 2;
 int configNotReceived = 0;
+int mqttNotConnected = 0;
 unsigned long startTime = 0;
-boolean enabled = 1;
+unsigned long lastSample = 0;
+unsigned long sampleInterval = 30000;
+int enabled = 1;
+int debugLevel = 2;
 int mqttConnected = 0;
 
 ///////////// WiFi
@@ -39,8 +42,6 @@ String wifiIP;
 ///////////// MAX6675 thermocouple
 #include "max6675.h"
 
-unsigned int sampleInterval = 10000;
-
 ///////////// OneWire
 #include <OneWire.h>
 #include <DallasTemperature.h>
@@ -53,18 +54,21 @@ OneWire *oneWireP = NULL;
 
 ///////////// JSON
 //#include "ArduinoJson.h"
-//const int jsonDocSize = 2000;       // May 29, 2023 - crashes at 924
+//const int jsonDocSize = 5000;       // May 29, 2023 - crashes at 924
 //StaticJsonDocument<jsonDocSize> jsonDoc;
 
 #include "Arduino_JSON.h"
-const int payloadSize = 2000;       // Configuration uses 1404
-const int msgSize = 600;
+const int jsonBufferSize = 5000;
+char jsonBuffer[jsonBufferSize];
+
+const int payloadSize = 5000;       // Configuration uses 1404
+const int msgSize = 1000;
 char msg[msgSize];
 char logMsg[msgSize];
 const int tStrSize = 200;
 char tStr[tStrSize];
 
-const int outSize = 600;
+const int outSize = 1000;
 char out[outSize];
 
 const int statusSize = 600;
@@ -142,7 +146,6 @@ char mqttOutputSub[topicSize];    // subscribe to commands to output channels
 // Publish
 char mqttCmdPub[topicSize];       // publish command to administrator
 char mqttRspPub[topicSize];       // publish responses to administrator commands
-char mqttInputPub[topicSize];     // publish channel readings
 char mqttCodPub[topicSize];       // publish code debug messages
 char mqttMsgPub[topicSize];       // publish messages - notifications, etc.
 
@@ -152,7 +155,6 @@ const int avgN = 2;
 float temps[inputMax][avgN];
 
 /////////////
-unsigned long lastSample = 0;
 
 #ifdef __arm__
 // should use uinstd.h to define sbrk but Due causes a conflict
@@ -168,7 +170,7 @@ String freeMem() {
 
   ltoa(fh, fhc, 16);
   String freeHeap = String(fhc);
-  logit(2,MD,f,"Free memory ",freeHeap.c_str());
+  logit(3,MD,f,"Free memory ",freeHeap.c_str());
   return freeHeap;
 }
 
@@ -189,7 +191,6 @@ String freeDude() {
   itoa(free, fhc, 16);
 //String freeHeap = String(fhc);
 //logit(0,MD,f,"Free dude ",freeHeap.c_str());
-  return "shit";
 //return freeHeap;
 }
 */
@@ -391,7 +392,7 @@ void getStatus() {
   snprintf(uptime,20,"%d %d:%d:%d", days, hours, minutes, seconds);
 
   snprintf(status,statusSize,
-    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": %d, \"enabled\":%d, \"debugLevel\":%d, \"uptime\":\"%s\", \"sampleInterval\":%d, \"version\":\"%s\"}",
+    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": %d, \"enabled\":%d, \"debugLevel\":%d, \"uptime\":\"%s\", \"sampleInterval\":%lu, \"version\":\"%s\"}",
     clientId, mqttClientId.c_str(), mqttConnected, enabled, debugLevel, uptime, sampleInterval, (char *)version);
 
   logit(2,MD, f, status, NULL);
@@ -478,7 +479,7 @@ float readOneWireTemp(char corf, byte *deviceId) {
   const char *f = "readOneWireTemp";
   byte data[12];
 
-  logit(1,MD,f,"Read onewire temperature", NULL);
+  logit(2,MD,f,"Read onewire temperature", NULL);
 
   oneWireP->reset();                // Reset the OneWire bus
   oneWireP->select(deviceId);       // Select the DS18S20 using its address
@@ -497,7 +498,7 @@ float readOneWireTemp(char corf, byte *deviceId) {
   int16_t rawTemperature = (data[1] << 8) | data[0];
   float c = (float)rawTemperature / 16.0;
 
-  if (corf == 'c') {
+  if (corf == 'C') {
     return c;
   } else {
     return c * 9 / 5 + 32;
@@ -512,18 +513,16 @@ void setConfig(const char *topic,
 
   logit(1,MN, f, "Date ", jsonDoc["date"]);
   strcpy(clientId, jsonDoc["clientId"]);
-  logit(1,MN, f, "What ",NULL);
-  sampleInterval = (unsigned int)jsonDoc["status"]["sampleInterval"];
+
+  sampleInterval = (unsigned long)jsonDoc["status"]["sampleInterval"];
   if (sampleInterval == 0) {
     sampleInterval = 30000;
   }
-  lastSample = sampleInterval;  // Force immediate read after changing
-  enabled = (int)jsonDoc["status"]["enabled"];
-  char ststr[10];
-  itoa(enabled,ststr,10);
-  debugLevel = (int)jsonDoc["status"]["debugLevel"];
+  lastSample = millis() - sampleInterval + 500;
 
-  haveConfig = true; // Enables logit messages to be printed
+  enabled = (int)jsonDoc["status"]["enabled"];
+  debugLevel = (int)jsonDoc["status"]["debugLevel"];
+  haveConfig = true;   // Enables logit messages to be printed
 
   ///////////// Unsubscribe to response messages
   res = mqttClient.unsubscribe(mqttRspSub);
@@ -539,7 +538,6 @@ void setConfig(const char *topic,
 
   ///////////// Publish MQTT topics
   strcpy(mqttRspPub,    jsonDoc["topics"]["publish"]["rsp"]);
-  strcpy(mqttInputPub,  jsonDoc["topics"]["publish"]["inp"]);
   strcpy(mqttCodPub,    jsonDoc["topics"]["publish"]["cod"]);
   strcpy(mqttMsgPub,    jsonDoc["topics"]["publish"]["msg"]);
 
@@ -554,17 +552,19 @@ void setConfig(const char *topic,
       strcpy(inputA[inputN].metricId, metricId);
       JSONVar metric = jsonDoc["inp"][metricId];
       logit(1,MD,f,"Input ",metricId);
-      const char *channelType = metric["input"]["channelType"];
-      strcpy(inputA[inputN].tags, metric["input"]["tags"]);
+      const char *channelType = metric["inp"]["channelType"];
+      strcpy(inputA[inputN].tags, metric["inp"]["tags"]);
       logit(2,MD,f,"tags ",inputA[inputN].tags);
+      strcpy(inputA[inputN].topic,  metric["inp"]["topic"]);
+      logit(2,MD,f,"topic ",inputA[inputN].topic);
       if (strcmp(channelType,"button") == 0) {
         inputA[inputN].channelType  = IN_BUTTON;
       } else if (strcmp(channelType,"max6675") == 0) {     // MAX6675 K Thermocouple
         logit(1,MD,f,"Set channelType as MAX6675 ",NULL);
         inputA[inputN].channelType  = IN_MAX6675;
-        int thermoDO  = (int)metric["input"]["thermoDO"];
-        int thermoCS  = (int)metric["input"]["thermoCS"];
-        int thermoCLK = (int)metric["input"]["thermoCLK"];
+        int thermoDO  = (int)metric["inp"]["thermoDO"];
+        int thermoCS  = (int)metric["inp"]["thermoCS"];
+        int thermoCLK = (int)metric["inp"]["thermoCLK"];
         inputA[inputN].max6675P = new MAX6675(thermoCLK, thermoCS, thermoDO);
       } else if (strcmp(channelType,"onewire_c") == 0) {   // OneWire DS1820S C
         logit(1,MD,f,"Set channelType as onewire_c ",NULL);
@@ -577,7 +577,7 @@ void setConfig(const char *topic,
       } else if (strcmp(channelType,"onewire_f") == 0) {   // OneWire DS1820S F
         logit(1,MD,f,"Set channelType as onewire_f ",NULL);
         inputA[inputN].channelType  = IN_ONEWIRE_F;
-        JSONVar deviceId = metric["input"]["deviceId"];
+        JSONVar deviceId = metric["inp"]["deviceId"];
         for (int i = 0; i < 8; i++) {
           inputA[inputN].deviceId[i] = (int)deviceId[i];
         }
@@ -616,6 +616,7 @@ void setConfig(const char *topic,
 
       logit(0,MD,f,"Output added ", metricId);
       strcpy(outputA[outputN].tags,      metric.value()["output"]["tags"]);
+      strcpy(outputA[outputN].topic,      metric.value()["output"]["topic"]);
       logit(0,MD,f,"Output added ", metricId);
       strcpy(outputA[outputN].channel,   metric.value()["output"]["channel"]);
 //    strcpy(outputA[outputN].metricId,  metric.value()["metricId"]);
@@ -685,11 +686,11 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
         logit(0,MN,f,"set Debug Level", outTopic);
       } else if (!strcmp(cmd, "setEnabled")) {             // Enabled arduino
         enabled = (int)jsonDoc["enabled"];
-        lastSample = sampleInterval;  // Force immediate read after changing
+        lastSample = millis() - sampleInterval + 500;      // Force immediate read after changing
         snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"enabled\":%d}", cmd, clientId, enabled);
       } else if (!strcmp(cmd, "setSampleInterval")) {      // Set sample interval
-        sampleInterval = (int)jsonDoc["sampleInterval"];
-        snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"sampleInterval\":%d}", cmd, clientId, sampleInterval);
+        sampleInterval = (unsigned long)jsonDoc["sampleInterval"];
+        snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"sampleInterval\":%ld}", cmd, clientId, sampleInterval);
       } else if (!strcmp(cmd, "findOneWireDevices")) {     // Find one wire devices
         char devices[160];
         findOneWireDevices(devices);
@@ -728,8 +729,6 @@ void unsubscribeCB() {
 void mqttConnect() {
   const char *f = "mqttConnect";
   logit(1,MN,f,"enter",NULL);
-  mqttClient.setKeepAlive(300);
-  mqttClient.setBufferSize(payloadSize);
   int attempts = 0;
 
   delay(100);
@@ -737,7 +736,6 @@ void mqttConnect() {
   connected = false;
   while (!mqttClient.connected()) {
     if (mqttClient.connect(mqttClientId.c_str(), mqttUser, mqttPassword)) {
-      connected = true;
       mqttConnected++;
       logit(0,MN, f, "Mqtt connected", NULL);
     } else {
@@ -755,6 +753,7 @@ void mqttConnect() {
       }
     }
   }
+  connected = true;
 }
 
 void sampleInputs() {
@@ -779,18 +778,18 @@ void sampleInputs() {
           logit(1,MD,f,"temperature acquired", out);
 
           snprintf(out, outSize, "%s value=%g", input->tags, value);
-          mqttClient.publish(mqttInputPub, out);
+          mqttClient.publish(input->topic, out);
         }
         break;
       case IN_ONEWIRE_F:
         value = readOneWireTemp('F', input->deviceId);
         snprintf(out, outSize, "%s value=%g", input->tags, value);
-        mqttClient.publish(mqttInputPub, out);
+        mqttClient.publish(input->topic, out);
         break;
       case IN_ONEWIRE_C:
         value = readOneWireTemp('C', input->deviceId);
         snprintf(out, outSize, "%s value=%g", input->tags, value);
-        mqttClient.publish(mqttInputPub, out);
+        mqttClient.publish(input->topic, out);
         break;
     }
   }
@@ -810,9 +809,13 @@ void setup() {
   wifiInit();
 
   logit(1,MD,f,"Init MQTT server",mqttIp);
+  mqttClient.setKeepAlive(300);
+  mqttClient.setBufferSize(payloadSize);
   mqttClient.setServer(mqttIp, mqttPort);
   mqttClient.setCallback(mqttCB);
   mqttConnect();
+
+  mqttClient.loop();
 
   strcpy(mqttCmdPub, "a/cmd/administrator");
 
@@ -834,32 +837,45 @@ void loop() {
     reset();
   }
 
-  if (mqttClient.state() != 0) {
+  if (!(mqttClient.connected())) {
+    logit(1,MD,f,"mqtt not connected()",NULL);
     mqttConnect();
-    subscribeTopics();
+//  subscribeTopics();
   }
 
   mqttClient.loop();
-  if (haveConfig) {
-    if (enabled) {
-      unsigned long now = millis();
-      if (now - lastSample > sampleInterval) {
-        logit(3,MD,f,"do Sample start",NULL);
-        lastSample = now;
-        sampleInputs();
-        logit(3,MD,f,"do Sample done",NULL);
+
+  if (connected) {
+    if (haveConfig) {
+      if (enabled) {
+        unsigned long now = millis();
+        if (now - lastSample > sampleInterval) {
+          logit(2,MD,f,"do Sample start",NULL);
+          lastSample = now;
+          sampleInputs();
+          logit(2,MD,f,"do Sample done",NULL);
+        }
+      } else {  // not enabled
+        logit(1,MD,f,"arduino not enabled",NULL);
+        delay(3000);
       }
-    } else {
-      logit(3,MD,f,"arduino not enabled",NULL);
-      delay(3000);
+    } else {    // config not received
+      snprintf(tStr, tStrSize, "Config not received: %d", configNotReceived);
+      logit(0,MD, f, tStr, NULL);
+      configNotReceived++;
+      delay(1000);
+      if (configNotReceived > 20) {
+        logit(0,MD, f,"Too many attempts waiting for config, rebooting arduino", NULL);
+        delay(500);
+        reset();
+      }
     }
-  } else {
-    snprintf(tStr, tStrSize, "Config not received: %d", configNotReceived);
-    logit(0,MD, f, tStr, NULL);
-    configNotReceived++;
-    delay(1000);
-    if (configNotReceived > 20) {
-      logit(0,MD, f,"Too many attempts, rebooting arduino", NULL);
+  } else {     // not connected to MQTT
+    mqttNotConnected++;
+    logit(1,MD,f,"arduino not connected",NULL);
+    delay(3000);
+    if (configNotReceived > 10) {
+      logit(0,MD, f,"Too many attempts connecting, rebooting arduino", NULL);
       delay(500);
       reset();
     }

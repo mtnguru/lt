@@ -12,6 +12,8 @@ import {
 //import { Resizable } from 're-resizable'
 
 import MsgList from './MsgList'
+
+import {ckTopic} from '../../utils/topics'
 import {mqttPublish, mqttRegisterTopicCB} from '../../utils/mqttReact'
 
 const { DateTime } = require('luxon');
@@ -46,7 +48,7 @@ const MsgPane = (props) => {
   const topicCBRef = useRef(topicCB)
 
   useEffect(() => {
-    mqttRegisterTopicCB(global.aaa.topics.register.msg, topicCBRef.current, {type: paneId })
+    mqttRegisterTopicCB(ckTopic("register","msg"), topicCBRef.current, {type: paneId })
   }, [paneId]);
 
   // Submit button pressed

@@ -12,22 +12,21 @@ const completeTopic = (topic,args) => {
       if (f === "0" && field === "PROJECTID") {
         if (args && args["projectId"]) {
           fields[0] = args["projectId"];
-        } else {
-          fields[0] = (global.aaa.projectId) ? global.aaa.projectId : "PROJECTID"
         }
       }
       if (f === "2" && field === "CLIENTID") {
         if (args && args["clientId"]) {
           fields[2] = args["clientId"];
-        } else {
-          fields[2] = (global.aaa.clientId) ? global.aaa.clientId : "CLIENTID"
         }
       }
       if (f === "3" && field === "USERID") {
         if (args && args["userId"]) {
           fields[3] = args["userId"];
-        } else {
-          fields[3] = (global.aaa.userId) ? global.aaa.userId : "USERID"
+        }
+      }
+      if (f === "4" && field === "TELEGRAFID") {
+        if (args && args["telegrafId"]) {
+          fields[4] = args["telegrafId"];
         }
       }
     }
@@ -61,8 +60,19 @@ const makeTopic = (projectId, func, clientId, userId, telegrafId) => {
   return topic
 }
 
+const ckTopic = (_type, _key) => {
+  if (global.aaa.topics[_type]) {
+    var topic = global.aaa.topics[_type][_key]
+    if (topic) {
+      return topic
+    }
+  }
+  console.log("ckTopic - topic not found in: global.aaa.topics." + _type + "." + _key)
+}
+
 module.exports = {
   completeTopic: completeTopic,
   completeTopics: completeTopics,
+  ckTopic: ckTopic,
   makeTopic: makeTopic,
 };

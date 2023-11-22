@@ -8,7 +8,7 @@ No, I'll know everything I need to identify a value
    projectId   RF
    instance    42
    metricId    LivingRoom_Desk_K_F
-   funcId
+   sourceId
      inp
      hum
      out
@@ -36,7 +36,7 @@ const path = require('path')
 require('dotenv').config();
 
 const mqttNode  = require('./utils/mqttNode')
-const Topics  = require('./utils/topics')
+const {ckTopic, completeTopics, completeTopic}  = require('./utils/topics')
 const metricValues = {}
 const {msg} = require("./utils/msg")
 const influx = require("./utils/influx")
@@ -45,6 +45,7 @@ const os = require('os')
 
 const seedrandom  = require('seedrandom')
 const clientId = "administrator"
+var sourceIds;
 const generator = seedrandom(Date.now())
 const mqttClientId = `${clientId}_${generator().toString(16).slice(3)}`
 
@@ -187,30 +188,27 @@ const addStatus = (out) => {
   }
 }
 
-const addMetricValues = (processId, metricId, funcId, values) => {
-  //   Process  Instance  MetricId  Func - inp, out, hum
-  if (!metricValues?.[processId]?.[metricId]?.[funcId]) {
+const addMetricValues = (processId, metricId, sourceId, values) => {
+  //   Process  Instance  MetricId  SourceIdunc - inp, out, hum
+  if (!metricValues?.[processId]?.[metricId]?.[sourceId]) {
     if (!(processId in metricValues)) {
-      metricValues[processId] = {[metricId]: {[funcId]: {}}}
+      metricValues[processId] = {[metricId]: {[sourceId]: {}}}
     } else if (!(metricId in metricValues[processId])) {
-      metricValues[processId][metricId] = {[funcId]: {}}
+      metricValues[processId][metricId] = {[sourceId]: {}}
 
-    } else if (!(funcId in metricValues[processId][metricId])) {
-      metricValues[processId][metricId][funcId] = {}
+    } else if (!(sourceId in metricValues[processId][metricId])) {
+      metricValues[processId][metricId][sourceId] = {}
     }
   }
 
   for (var key in values) {
-    metricValues[processId][metricId][funcId][key] = {
+    metricValues[processId][metricId][sourceId][key] = {
       val: values[key],
       date: Date.now(),
     }
   }
 }
 
-const checkMetricStatus = () => {
-
-}
 
 //  output to MQTT all values of a metric
 const publishMetricValues = (processId, metricId, clientId) => {
@@ -239,19 +237,20 @@ const publishMetricValues = (processId, metricId, clientId) => {
 
 const processMqttInput = (_topic, _payload) => {
   // Values array - Save by
-  //   Process
-  //     Instance
-  //       MetricId
-  //       Func - inp, out, hum
-  //         value
-  //         time received
-  var [processId,funcId,...rest] = _topic.split('/')
+  //   ProcessId - cb, oxy
+  //     MetricId
+  //       SourceId - inp, out, hum
+  //         val
+  //         datetime
+  var [processId,sourceId,...rest] = _topic.split('/')
   processId = processId.toLowerCase()
-  funcId = funcId.toLowerCase()
+  sourceId = sourceId.toLowerCase()
+
 
   var payload = _payload.toString()
   var flds = payload.split(' ')
   var values = {}
+
 
   // Extract metricId from tags
   var metricId
@@ -265,6 +264,8 @@ const processMqttInput = (_topic, _payload) => {
     }
   }
 
+  console.log('processMqttInput - payload - ' + payload)
+
   // Extract values into values array
   var ivalues = flds[1].split(',')
   for (var v = 0; v < ivalues.length; v++) {
@@ -273,75 +274,93 @@ const processMqttInput = (_topic, _payload) => {
   }
 
   // Add to metricValues array
-  addMetricValues(processId, metricId, funcId, values)
-  var status = checkMetricStatus()
+  addMetricValues(processId, metricId, sourceId, values)
+//var status = checkMetricStatus()
 
   return ['', null];
 }
 
-const getMetricValue = (args) => {
-  var value;
-  if (value = metricValues?.
-                [args.processId.toLowerCase()]?.
-                [args.metricId.toLowerCase()]?.
-                [args.funcId.toLowerCase()]?.
-                [args.valueId.toLowerCase()]) {
-    return value
+const getMetricValues = (processId, metricId, sourceId, valueId) => {
+  const f = 'administrator::getMetricValues'
+  var vp, vm, vs, vv;
+  var processId = (args.processId) ? args.processId.toLowerCase() : null
+  var metricId  = (args.metricId)  ? args.metricId.toLowerCase()  : null
+  var sourceID  = (args.sourceId)  ? args.sourceId.toLowerCase()  : null
+  var valueId   = (args.valueId)   ? args.valueId.toLowerCase()   : null
+  if (processId) {
+    if (!(vp = metricValues[processId])) {
+      msg(0,f, ERROR,"Cannot find processID - ", processId)
+      return null;
+    }
+    if (metricId) {
+      if (!(vm = metricValues[processId][metricId])) {
+        msg(0,f, ERROR,"Cannot find metricId - ", processId + ' ' + metricId)
+        return null;
+      }
+      if (sourceId) {
+        if (!(vs = metricValues[processId][metricId][sourceId])) {
+          msg(0,f, ERROR,"Cannot find sourceId - ", processId+ ' ' + metricId + ' ' + sourceId)
+          return null;
+        }
+        if (valueId) {
+          if (!(vv = metricValues[processId][metricId][sourceId][valueId])) {
+            msg(0,f, ERROR,"Cannot find valueId- ", processId+ ' ' + metricId + ' ' + sourceId + ' ' + valueId)
+            return null;
+          }
+          return vv
+        } else {
+          return vs
+        }
+      } else {
+        return vm
+      }
+    } else {
+      return vp
+    }
+  } else {
+    return metricValues
   }
-  return null;
 }
 
-const checkMetricState = (processId, metricId, funcId) => {
-}
 
 const processCmd = (_topic, payload) => {
-  var outTopic = ''
-  var out
+  var id = (payload.clientId) ? payload.clientId : payload.ip
+  var outTopic = global.aaa.topics.publish.rsp;
+  outTopic = outTopic.replace(/DCLIENTID/, id)
+
+  var out = JSON.parse(JSON.stringify(payload))
+  out.rsp = out.cmd
+  delete out.cmd
+
   if (clientId === global.aaa.clientId || clientId === 'all') {  // commands specifically for the server
     if (payload.cmd === 'setDebugLevel') {
       global.aaa.status.debugLevel = payload.debugLevel;
     // Request to reset administrator client
     } else if (payload.cmd === 'requestReset') {
-      outTopic = global.aaa.topics.publish.rsp
-      outTopic = outTopic.replace(/DCLIENTID/, global.aaa.clientId)
       out = resetServer();
     // Request for status
     } else if (payload.cmd === 'requestStatus') {
-      outTopic = global.aaa.topics.publish.rsp
-      outTopic = outTopic.replace(/DCLIENTID/, global.aaa.clientId)
       out = getStatus();
     } else if (payload.cmd === 'requestConfig') {
-      loadConfig();
-      var id = (payload.ip) ? payload.ip : payload.clientId
-      outTopic = global.aaa.topics.publish.rsp
-      outTopic = outTopic.replace(/DCLIENTID/, id)
-      out = findClient(id)
-      if (out === null) {
-        msg(0,WARNING,"Cannot find client:", id)
-      } else {
-        addStatus(out)
-        if (out.model == 'arduino') {
-          out = compressConfig(out);
-          compress = true
-        }
+      loadAdministratorConfig(); // Start with a fresh config every time
+      if (payload.type === 'hmi') {
+        out = loadHmiConfig(payload)
+      } else if (payload.type === 'mqtt') {
+        out = loadMqttConfig(payload)
+      } else {  // edge and older clients
+        out = loadEdgeConfig(payload)
       }
-    } else if (payload.cmd === 'getMetricValue') {
-      const value = getMetricValue(payload)
-      console.log (value);
+      if (out) {  // Add status for this client
+        addStatus(out)
+      }
+    } else if (payload.cmd === 'getMetricValues') {
+      out.values = getMetricValues(payload.processId, payload.metricId, payload.sourceId, payload.valueId)
     } else if (payload.cmd === 'requestJsonFile') {
       msg(2, f, DEBUG, "Read json file: ", filepath)
-      dclientId = (payload.ip) ? payload.ip : payload.clientId
-      outTopic = global.aaa.topics.publish.rsp
-      outTopic = outTopic.replace(/DCLIENTID/, dclientId)
-
       const filepath = `${process.env.ROOT_PATH}/${payload.filepath}`
       const data = fs.readFileSync(filepath);
       out = JSON.parse(data)
     } else if (payload.cmd === 'requestYmlFile') {
-      dclientId = (payload.ip) ? payload.ip : payload.clientId
-      outTopic = global.aaa.topics.publish.rsp
-      outTopic = outTopic.replace(/DCLIENTID/, dclientId)
-
       const filepath = `${process.env.ROOT_PATH}/${payload.filepath}`
       msg(2, f, DEBUG, "Read yml file: ", filepath)
       out = YAML.safeLoad(fs.readFileSync(filepath));
@@ -399,7 +418,7 @@ const processCB = (_topic, _payload) => {
   var outTopic;
   try {
     var compress = false
-    var [,funcId, clientId,,] = _topic.split('/')
+    var [,sourceId, clientId,,] = _topic.split('/')
 
     const inputStr = _payload.toString();
     msg(1,f,DEBUG, 'topic: ', _topic, '\n' + ' payload:', inputStr);
@@ -415,7 +434,7 @@ const processCB = (_topic, _payload) => {
         return;
       }
     }
-    msg(3,f,DEBUG, 'funcId', funcId, ' clientId', clientId);
+    msg(3,f,DEBUG, 'sourceId', sourceId, ' clientId', clientId);
 
     // If this is a cmd to the administrator
     if (global.aaa.topics.subscribe['cmd'] === _topic ||
@@ -424,7 +443,7 @@ const processCB = (_topic, _payload) => {
         [outTopic, out] = processCmd(_topic, input);
       }
     // If this is a response from one of the client Id's
-    } else if (_topic.indexOf(global.aaa.topics.subscribe.rsp.replace(/\/#/,'')) > -1) {
+    } else if (_topic.indexOf(ckTopic("subscribe","rsp").replace(/\/#/,'')) > -1) {
       if (input.rsp === 'requestStatus')  {
         global.aas.clients[clientId] = input
       } else if (input.rsp === 'setDebugLevel') {
@@ -433,7 +452,7 @@ const processCB = (_topic, _payload) => {
         global.aas.clients[clientId].enabled = input.enabled
       }
     // If this is inp, out, hum influx data then update values in the metricValues array
-    } else if (funcId === 'inp' || funcId === 'out' || funcId === 'hum') {
+    } else if (sourceId === 'inp' || sourceId === 'out' || sourceId === 'hum') {
       [outTopic, out] = processMqttInput(_topic,inputStr)
     }
     var short = global.aaa.topics.subscribe.rsp.replace(/\/#/,'')
@@ -441,9 +460,7 @@ const processCB = (_topic, _payload) => {
 
     if (out) {
       out.rsp = input.cmd;
-      if (!compress) {
-        out.date = currentDate()
-      }
+      out.date = currentDate()
       var outStr = JSON.stringify(out)
       msg(1,f, DEBUG,`call mqttNode.publish - topic: ${outTopic} length:${outStr.length}`)
       mqttNode.publish(outTopic, outStr);
@@ -463,62 +480,83 @@ const findProject = (projectId) => {
   }
 }
 
-const initMetrics = (projectId, instance, project) => {
-  // Read in all the metrics/*.yml files for this project
-  var dirPath = `${process.env.ROOT_PATH}/${adminId}/${projectId}/metrics`
-  var files = fs.readdirSync(dirPath);
-  project.metrics = {}
-  files.forEach(filename => {
-    if (path.extname(filename) == '.yml') {
-      var filepath = dirPath + '/' + filename;
-      var metrics = YAML.safeLoad(fs.readFileSync(filepath));
-      for (metric in metrics) {
-        project.metrics[metric] = metrics[metric]
-      }
-    }
-  });
-  for (var oMetricId in project.metrics) {
-    var metric = project.metrics[oMetricId]
-    var metricId = oMetricId.toLowerCase();
-    metric.name = oMetricId
-    metric.metricId = metricId
-    metric.projectId = projectId
-    var flds = metric.name.split('_')
-    metric.units = flds[flds.length - 1]
-    if (metricId != oMetricId) {
-      delete project.metrics[oMetricId]
-      project.metrics[metricId] = metric
-    }
 
-    // assign inp, out and hum to correct clients
-    var client
-    if (metric.inp) {
-      if (client = project.clients[metric.inp.clientId]) {
-        if (!client.inp) {
-          client.inp = {}
+const loadClientMetrics = (_client) => {
+  // for each projecgt
+  for (var projectId in global.aaa.projects) {
+    var project = global.aaa.projects[projectId]
+    // Read in all the metrics/*.yml files for this project
+    var dirPath = `${process.env.ROOT_PATH}/${adminId}/projects/${projectId}/metrics`
+    var files = fs.readdirSync(dirPath);
+
+    // for each file in this projects
+    files.forEach(filename => {
+      if (path.extname(filename) == '.yml') {
+        var filepath = dirPath + '/' + filename;
+        var metrics = YAML.safeLoad(fs.readFileSync(filepath));
+        for (orgMetricId in metrics) {
+          ``
+          // Change metric key to all small letters - save org name to metric.name
+          var metric = metrics[orgMetricId]
+          metric.name = orgMetricId
+          metric.metricId = orgMetricId.toLowerCase();  // Change key to lower case
+          var metricId = metric.metricId
+
+          metric.projectId = projectId                // add projectId to each metric
+          var flds = orgMetricId.split('_')
+          metric.units = flds[flds.length - 1]
+
+          var args = {
+            "clientId": _client.clientID,
+            "projectId": projectId,
+            "telegrafId": project.telegrafId,
+          }
+          if (metric.inp && metric.inp.clientId === _client.clientId) {
+            if (!_client.inp) _client.inp = {}
+            metric.inp.tags = influx.makeTagsFromMetricId(metric.name, "inp", projectId)
+            metric.inp.topic = completeTopic(_client.topics.publish.inp, args)
+            _client.inp[metricId] = metric
+          }
+
+          if (metric.out && metric.out.clientId === _client.clientId) {
+            if (!_client.out) _client.out = {}
+            metric.out.tags = influx.makeTagsFromMetricId(metric.name, "out", projectId)
+//          metric.out.topic = completeTopic(_client.topics.publish.out, args)
+            _client.out[metricId] = metric
+          }
+
+          if (metric.hum && metric.hum.clientId === _client.clientId) {
+            if (!_client.hum) _client.hum = {}
+            metric.hum.tags = influx.makeTagsFromMetricId(metric.name, "hum", projectId)
+            metric.hum.topic = completeTopic(_client.topics.publish.hum, args)
+            _client.hum[metricId] = metric
+          }
         }
-        client.inp[metricId] = metric
-        metric.inp.tags = influx.makeTagsFromMetricId(metric.name, "inp", projectId, instance)
       }
-    }
-    if (metric.out) {
-      if (client = project.clients[metric.out.clientId]) {
-        if (!client.out) client.out = {}
-        client.out[metricId] = metric
-        metric.out.tags = influx.makeTagsFromMetricId(metric.name, "out", projectId, instance)
-      }
-    }
-    if (metric.hum) {
-      if (client = project.clients[metric.hum.clientId]) {
-        if (!client.hum) client.hum = {}
-        client.hum[metricId] = metric
-        metric.hum.tags = influx.makeTagsFromMetricId(metric.name, "hum", projectId, instance)
-      }
-    }
-  } // for each metric in project
+    });
+  }
 }
 
-const initClients = (projectId, instance, project, funcIds) => {
+const readSourceIds = () => {
+  var ymlStr
+  var filepath
+  var sourceIds
+  try {
+    filepath = `${process.env.ROOT_PATH}/${adminId}/hmi/sourceIds.yml`
+    ymlStr = fs.readFileSync(filepath)
+    sourceIds = YAML.safeLoad(ymlStr)
+    for (var id in sourceIds) {
+      sourceIds[id].typeId = id
+    }
+
+  } catch(err) {
+    msg(0,f,ERROR,err,filepath);
+  }
+  return sourceIds
+}
+
+/*
+const initClients = (projectId, instance, project, sourceIds) => {
   // For each client create lookup lists by clientId and IP
   var c
   for (c in project.clients) {
@@ -527,47 +565,8 @@ const initClients = (projectId, instance, project, funcIds) => {
       continue;
     }
 
-    var filepath = `${process.env.ROOT_PATH}/${adminId}/${projectId}/clients/${c}.yml`
-    var ymlStr = fs.readFileSync(filepath)
-    var client = YAML.safeLoad(ymlStr)
-    project.clients[c] = client
-    client.clientId = c
-    client.projectId = projectId
-    client.instance = instance;
-
-    global.aaa.clients[c] = client;
-    if (client.ip) {
-      global.aaa.ips[client.ip] = client;
-    }
-
-    if (client.topics) {
-      if (project.topics && project.topics[client.topics]) {
-        var topics = project.topics[client.topics]
-        client.topics = {}
-        if (topics.subscribe) {
-          client.topics.subscribe = Topics.completeTopics(JSON.parse(JSON.stringify(topics.subscribe)), client);
-        }
-        if (topics.publish) {
-          client.topics.publish   = Topics.completeTopics(JSON.parse(JSON.stringify(topics.publish)), client);
-        }
-        if (topics.register) {
-          client.topics.register  = Topics.completeTopics(JSON.parse(JSON.stringify(topics.register)), client);
-        }
-      } else {
-        if (client.topics.subscribe) {
-          client.topics.subscribe = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.subscribe)), client);
-        }
-        if (client.topics.publish) {
-          client.topics.publish   = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.publish)), client);
-        }
-        if (client.topics.register) {
-          client.topics.register  = Topics.completeTopics(JSON.parse(JSON.stringify(client.topics.register)), client);
-        }
-      }
-    }
-
-    if (client.funcIds) {
-      client.funcIds = funcIds;
+    if (client.sourceIds) {
+      client.sourceIds = sourceIds;
     }
   }
 
@@ -596,74 +595,165 @@ const initClients = (projectId, instance, project, funcIds) => {
     } // if project.clients[c]
   } // for each client
 }
+*/
 
-const loadConfig = () => {
-  console.log('Read in administrator configuration')
+const loadProject = (projectId) => {
+  const f = "adminisgtrator::loadProject - "
+  try {
+    var ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${adminId}/projects/${projectId}/project.yml`)
+    return YAML.safeLoad(ymlStr)
+  } catch(err) {
+    msg(0,f,ERROR,"Error loading project.yml file: ", projectId, ' - ', err);
+  }
+}
 
+const loadAdministratorConfig = () => {
   var ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${adminId}/administrator.yml`)
-
   var conf = YAML.safeLoad(ymlStr)
   conf.status    = global.aaa.status
   conf.startTime = global.aaa.startTime
   global.aaa = conf
   global.aaa.ips = {}
   global.aaa.adminId = adminId
-  global.aaa.clients = {}
 
   global.aam = global.aaa.mqtt
   global.aam.mqttClientId = mqttClientId
 
 // Complete the administrator subscribe and publish topics
   if (global.aaa.topics.subscribe) {
-    global.aaa.topics.subscribe = Topics.completeTopics(global.aaa.topics.subscribe);
+    global.aaa.topics.subscribe = completeTopics(global.aaa.topics.subscribe,{
+      "clientId": "administrator",
+    });
   }
   if (global.aaa.topics.register) {
-    global.aaa.topics.register = Topics.completeTopics(global.aaa.topics.register);
+    global.aaa.topics.register = completeTopics(global.aaa.topics.register, {
+      "clientId": "administrator",
+    });
   }
   if (global.aaa.topics.publish) {
-    global.aaa.topics.publish = Topics.completeTopics(global.aaa.topics.publish);
+    global.aaa.topics.publish = completeTopics(global.aaa.topics.publish, {
+      "clientId": "administrator",
+    });
+
   }
-
-// For each project in administrator config
   for (var projectId in global.aaa.projects) {
-    if (global.aaa.projects[projectId] === 'enabled') {
-      var ymlStr
-      var filepath
-      var funcIds
-      try {
-        filepath = `${process.env.ROOT_PATH}/${adminId}/${projectId}/hmi/funcIds.yml`
-        ymlStr = fs.readFileSync(filepath)
-        funcIds = YAML.safeLoad(ymlStr)
-        for (var id in funcIds) {
-          funcIds[id].typeId = id
-        }
-
-      } catch(err) {
-        msg(0,f,ERROR,err,filepath);
-      }
-
-      try {
-        ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${adminId}/${projectId}/project.yml`)
-        var project = YAML.safeLoad(ymlStr)
-        initClients(projectId, project.instance, project, funcIds)
-        initMetrics(projectId, project.instance, project)
-        for (var c in project.clients) {
-          var client = project.clients[c]
-          if (client.metrics && client.metrics === 'project') {
-            client.metrics = project.metrics
-          }
-        }
-      } catch(err) {
-        msg(0,f,ERROR,err,filepath);
-      }
-
+    if (global.aaa.projects[projectId] === "enabled") {
+      global.aaa.projects[projectId] = loadProject(projectId)
     } else {
       delete global.aaa.projects[projectId]
     }
-  } // for each project
+  }
+
+  sourceIds = readSourceIds()
 }
 
-loadConfig();
+const loadClient = (_dir, _clientId, _projectId) => {
+  const f = 'administrator::loadClient'
+  var client;
+  try {
+    var filepath = `${process.env.ROOT_PATH}/${adminId}/${_dir}/${_clientId}.yml`
+    var ymlStr = fs.readFileSync(filepath)
+    client = YAML.safeLoad(ymlStr)
+    client.clientId = _clientId
+
+    global.aaa.clients[_clientId] = client;
+    if (client.ip) {
+      global.aaa.ips[client.ip] = client;
+    }
+
+    if (client.topicSet) {
+      client.topics = JSON.parse(JSON.stringify(global.aaa.topicSets[client.topicSet]))
+    }
+    var args = {
+      'clientId': client.clientId,
+      'userId': 'UNK',
+      'projectId': _projectId
+    }
+    if (client.topics.subscribe) {
+      client.topics.subscribe = completeTopics(JSON.parse(JSON.stringify(client.topics.subscribe)), args);
+    }
+    if (client.topics.publish) {
+      client.topics.publish   = completeTopics(JSON.parse(JSON.stringify(client.topics.publish)), args);
+    }
+    if (client.topics.register) {
+      client.topics.register  = completeTopics(JSON.parse(JSON.stringify(client.topics.register)), args);
+    }
+
+    if (client.sourceIds) {
+      client.sourceIds = sourceIds
+    }
+  } catch(err) {
+
+  }
+
+  return client
+}
+
+const findClientByIp = (_dir, _ip, _projectId) => {
+  const f = 'administrator::findClientByIp'
+  try {
+    for (var clientId in global.aaa.clients) {
+      if (clientId !== "all" && global.aaa.clients[clientId] === "enabled") {
+        var client = loadClient(_dir, clientId, _projectId)
+        if (client.ip === _ip) {
+          return client;
+        }
+      }
+    }
+  } catch(err) {
+    msg(0,f,ERROR,"Reading client file ", clientId, ' - ', err);
+  }
+}
+
+const loadEdgeConfig = (_payload) => {
+  console.log('Read in administrator configuration')
+
+  if (!_payload.clientId && !_payload.ip) {
+    msg(0,f,ERROR,"neither the clientId or ip is defined");
+    return
+  }
+  var client
+  if (_payload.ip) {
+    id = _payload.ip
+    client = findClientByIp("clients", _payload.ip, _payload.projectId)
+  } else {
+    id = _payload.clientId
+    client = loadClient("clients", _payload.clientId, _payload.projectId)
+  }
+  if (!client) {
+    msg(0, f, ERROR, "Client not found", id);
+    return;
+  }
+
+  loadClientMetrics(client)
+  return client
+}
+
+const loadMqttConfig = (_payload) => {
+  var client = loadClient("clients", _payload.clientId, _payload.projectId)
+  for (var clientId in client.clients) {
+    if (clientId !== "all") {
+      if (client.clients[clientId] !== "enabled") {
+        delete client.clients[clientId]
+        continue;
+      }
+      var dir = (clientId === "administrator") ? "." : "clients"
+      client.clients[clientId] = loadClient(dir, clientId, "UNK")
+      var nc = client.clients[clientId]
+      delete nc.topics
+      delete nc.clients
+
+    }
+  }
+  return client;
+}
+
+const loadHmiConfig = (_payload) => {
+  var client = loadClient("clients", _payload.clientId, _payload.projectId)
+  return client;
+}
+
+loadAdministratorConfig();
 
 console.log(f, 'Connect to mqtt server and initiate process callback')
 mqttNode.connect(connectCB, processCB);

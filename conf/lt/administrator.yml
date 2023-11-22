@@ -30,7 +30,37 @@ topics:
     msg: a/msg/CLIENTID
     hum: a/rsp/DCLIENTID/DUSERID
     all: a/cmd/all
+topicSets:
+  edge:
+    subscribe:
+      all:  a/cmd/all
+      cmd:  a/cmd/CLIENTID
+      rsp:  a/rsp/CLIENTID
+      out:  +/out/CLIENTID
+    publish:
+      rsp:  a/rsp/CLIENTID
+      inp:  PROJECTID/inp/CLIENTID/USERID/TELEGRAFID
+      cod:  a/cod/CLIENTID
+      msg:  a/msg/CLIENTID
 projects:
-  cb: enabled
-  fg: disabled
-  oxy: disabled
+  cb:  enabled
+  fg:  disabled
+  oxy: enabled
+clients:
+  arduino1   : disabled
+  arduino2   : enabled
+  arduino3   : enabled
+  arduino4   : enabled
+  arduino5   : enabled
+  arduino6   : enabled
+  arduino7   : enabled
+  arduino8   : disabled
+  arduino9   : disabled
+  arduino_gm : disabled
+  hmi-oxy    : enabled
+  hmi-sf     : disabled
+  hmi-cb     : enabled
+  hmi-mqtt   : enabled
+  drupal     : enabled
+  controller : enabled
+

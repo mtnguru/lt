@@ -24,5 +24,4 @@ function MsgList(props) {
   );
 }
 
-
 export default MsgList

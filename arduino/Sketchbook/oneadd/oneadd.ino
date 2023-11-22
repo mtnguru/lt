@@ -4,7 +4,8 @@
 OneWire oneWire(14); // Use the appropriate digital pin here (e.g., D2)
 
 // Replace this with the address of your DS18S20
-byte dsAddress[] = {40, 192, 156, 87, 4, 225, 61, 37};
+//byte dsAddress[] = {40, 192, 156, 87, 4, 225, 61, 37};
+byte dsAddress[] = {40, 17,212,87,4,225,61,1};
 
 void setup() {
   Serial.begin(115200);

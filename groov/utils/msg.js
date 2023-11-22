@@ -6,7 +6,7 @@ const setDebugLevel = (level) => {
   global.aaa.status.debugLevel = level;
 }
 
-const msg = (level, func, _funcId, ...snippets) => {
+const msg = (level, func, _sourceId, ...snippets) => {
   const f = "utils/msg.js"
   if ("status" in global.aaa && "debugLevel" in global.aaa.status) {
     if (level > global.aaa.status.debugLevel)
@@ -16,20 +16,20 @@ const msg = (level, func, _funcId, ...snippets) => {
     return;
   }
 
-  var funcId = msgE[_funcId]
-  if (_funcId === ERROR) {
-    funcId = '********** ERROR'
-  } else if (_funcId === ALARM) {
-    funcId = '---------- ALARM'
-  } else if (_funcId === WARNING) {
-    funcId = '!!!!!!!!!! WARNING'
+  var sourceId = msgE[_sourceId]
+  if (_sourceId === ERROR) {
+    sourceId = '********** ERROR'
+  } else if (_sourceId === ALARM) {
+    sourceId = '---------- ALARM'
+  } else if (_sourceId === WARNING) {
+    sourceId = '!!!!!!!!!! WARNING'
   }
 
   if (mqttNode.connected()) {
     let payload = {
       function: func,
       name: global.aaa.name,
-      funcId: msgE[_funcId],
+      sourceId: msgE[_sourceId],
       content: snippets.join(' '),
     }
 
@@ -39,9 +39,9 @@ const msg = (level, func, _funcId, ...snippets) => {
   }
 
   if (snippets.length > 0) {
-    console.log(funcId, func, ...snippets)
+    console.log(sourceId, func, ...snippets)
   } else {
-    console.log(funcId, func);
+    console.log(sourceId, func);
   }
 }
 

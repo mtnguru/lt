@@ -28,11 +28,11 @@ const ControlSlider = (props) => {
 
   const metricCB = (metric, topic, payload, tags, values) => {
     const f = "ControlMetric::metricCB"
-    const funcId = topic.split('/')[1]
+    const sourceId = topic.split('/')[1]
     const userId = topic.split('/')[3]
-    if (funcId === 'hum' && userId !== global.aaa.userId) {
+    if (sourceId === 'hum' && userId !== global.aaa.userId) {
       setValue(values.value)
-    } else if (funcId === 'out') {
+    } else if (sourceId === 'out') {
 //    setOutValue(parseFloat(values.value).toFixed(metric.decimals))
     }
     console.log(f, "enter ", topic)

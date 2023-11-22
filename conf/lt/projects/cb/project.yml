@@ -1,0 +1,13 @@
+name: Cabin in Red Feather Lakes
+telegrafId: cb_edge
+clients:
+  epiclc:     enabled
+  arduino2:   enabled
+  arduino3:   enabled
+  arduino4:   enabled
+  arduino5:   enabled
+  arduino6:   enabled
+  arduino7:   enabled
+  hmi:        enabled
+  controller: enabled
+  drupal:     disabled

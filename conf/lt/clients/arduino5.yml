@@ -1,0 +1,9 @@
+name: Arduino 5
+ip: 192.168.0.14
+model: arduino
+clientType: edge
+topicSet: edge
+statusDefault:
+  sampleInterval: 30000
+  enabled: 1
+  debugLevel: 0
