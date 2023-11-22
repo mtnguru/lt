@@ -26,18 +26,18 @@ const extractFromTags = (payload) => {
  * Given a metric name, create the Influx line protocol tags.
  * @param metric
  */
-const makeTagsFromMetricId = (_metricId, _funcId, _projectId) => {
+const makeTagsFromMetricId = (_metricId, _sourceId, _projectId) => {
   const flds = _metricId.split('_')
   const nf = flds.length
   const units = flds[nf-1]
   const metricId =               ',MetricId=' + _metricId
   const projectId =              ',ProjectId=' + _projectId
-  const funcId =                 ',FuncId=' + _funcId
-  const component =              ',Component=' + flds[0] : ''
+  const sourceId =               ',SourceId=' + _sourceId
+  const component =              ',Component=' + flds[0]
   const position =    (nf > 2) ? ',Position=' + flds[1] : ''
   const device =      (nf > 3) ? ',Device=' + flds[2] : ''
   const composition = (nf > 4) ? ',Composition=' + flds[3] : ''
-  return `${units}${metricId}${funcId}${projectId}${component}${device}${position}${composition}`
+  return `${units}${metricId}${sourceId}${projectId}${component}${device}${position}${composition}`
 }
 
 module.exports.makeTagsFromMetricId   = makeTagsFromMetricId

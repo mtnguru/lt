@@ -19,27 +19,27 @@ function MqttFilterFunc(props) {
     let ls;
     if (lsstr) { // if local storage already exists
       ls = JSON.parse(lsstr)
-      for (let type in global.aaa.funcIds) {  // copy selected values into global records
+      for (let type in global.aaa.sourceIds) {  // copy selected values into global records
         const selected = (ls[type]) ? ls[type].selected : true;
-        global.aaa.funcIds[type].selected = selected
+        global.aaa.sourceIds[type].selected = selected
       }
     } else {
       ls = {};
-      for (let type in global.aaa.funcIds) {
+      for (let type in global.aaa.sourceIds) {
         console.log(f,'initialize localStorage ', type)
         if (!ls[type]) ls[type] = {}
         ls[type].selected = true
-        global.aaa.funcIds[type].selected = true
+        global.aaa.sourceIds[type].selected = true
       }
       localStorage.setItem(lsKey, JSON.stringify(ls))
     }
-    setAllSelected(global.aaa.funcIds.all.selected)
+    setAllSelected(global.aaa.sourceIds.all.selected)
     console.log(f,'exit', ls)
   }, [])
 
   const onChangeH = event => {
     console.log('MqttFilterFunc::onChangeH',event.target.checked)
-    global.aaa.funcIds[event.target.id]['selected'] = event.target.checked
+    global.aaa.sourceIds[event.target.id]['selected'] = event.target.checked
 
     if (event.target.id === 'all') {
       setAllSelected(event.target.checked)
@@ -58,7 +58,7 @@ function MqttFilterFunc(props) {
     <Box className="mqtt-filter-func">
       <Heading as="h3">Function</Heading>
       <Box className={`select mqtt-func-bg ${allSelected ? "all-selected" : ""}`}>
-        <CheckboxList list={(global.aaa.funcIds) ? global.aaa.funcIds : {}} onChangeH={onChangeH} />
+        <CheckboxList list={(global.aaa.sourceIds) ? global.aaa.sourceIds : {}} onChangeH={onChangeH} />
       </Box>
     </Box>
   );

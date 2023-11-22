@@ -2,6 +2,7 @@ import mqtt from 'precompiled-mqtt';
 import {extractFromTags} from './influxr'
 import {mgDebug, mgWarning, mgError} from './mg'
 import {findMetric} from './metrics'
+import {ckTopic} from './topics'
 //import {msg} from "../../../../../apps/lt/administrator/utils/msg";
 import YAML from "yaml-parser";
 
@@ -30,15 +31,18 @@ const onConnectPromise = (connectCb, processCb) => {
       console.log(f,"connected ", mqttClient.connected)
       mqttUnsubscribe(global.aaa.topics.subscribe)
       mqttSubscribe(global.aaa.topics.subscribe)
-      connectCb()
       mqttClient.on('message', processCb)
+      connectCb()
       resolve('connected')
     })
   })
 }
 
 const mqttConnect = (connectCb, processCb) => {
-  topicsCB = {};
+//topicsCB = {};
+//if (mqttClient.connected) {
+//  // disconnect
+//}
   const f = 'mqttReact::mqttConnect'
   console.log(f, 'connect to mqtt url/ip', global.aam.url)
   mqttClient = mqtt.connect(global.aam.url, {
@@ -49,6 +53,7 @@ const mqttConnect = (connectCb, processCb) => {
     password: global.aam.password,
     reconnectPeriod: global.aam.reconnectPeriod,
     connectTimeout: global.aam.connectTimeout,
+    keepAlive: 50000
   });
   console.log(f, 'connected it up', mqttClient.connected)
 
@@ -76,9 +81,8 @@ const mqttConnected = () => {
 
 const mqttSubscribe = (topics) => {
   const f = "mqttReact::mqttSubscribe - "
-  console.log(f, "enter ")
   for (let name in topics) {
-    console.log(f, "topic: ", topics[name])
+    console.log(f, "subscribe topic: ", topics[name])
     mqttClient.subscribe(topics[name])
     global.aaa.status.mqttSubscribe++;
   }
@@ -86,9 +90,8 @@ const mqttSubscribe = (topics) => {
 
 const mqttUnsubscribe = (topics) => {
   const f = "mqttReact::mqttUnsubscribe - "
-  console.log(f, "enter ")
   for (let name in topics) {
-    console.log(f, "topic: ", topics[name])
+    console.log(f, "unsubscribe topic: ", topics[name])
     mqttClient.unsubscribe(topics[name]);
     global.aaa.status.mqttUnsubscribe++;
   }
@@ -106,6 +109,10 @@ const mqttPublish = (topic, payload) => {
 const mqttRegisterTopicCB = (_topic, cb, args) => {
   const f = "mqttReact::mqttRegisterTopicCB"
   // If necessary intialize new topic
+  if (!_topic) {
+    console.log(f, "Topic not defined")
+    return
+  }
   const topic = _topic.replace(/#/,'')
   mgDebug(2, f, "Register topic", topic)
   if (!topicsCB[topic]) {
@@ -191,13 +198,13 @@ const mqttRequestFile = (clientId, name, filepath, fileType, cb) => {
       inFile = JSON.parse(inPayload)
     }
     if (inFile.rsp === cmd) {
-      mqttUnregisterTopicCB(global.aaa.topics.register.rsp, onLoadCB)
+      mqttUnregisterTopicCB(ckTopic("register","rsp"), onLoadCB)
       cb(inTopic, inFile)
     }
   }
-  mqttRegisterTopicCB((global.aaa.topics.register.rsp) , onLoadCB)
+  mqttRegisterTopicCB((ckTopic("register","rsp")) , onLoadCB)
   let payload = `{"cmd": "${cmd}", "clientId": "${clientId}", "filepath": "${filepath}"}`
-  mqttPublish(global.aaa.topics.publish.adm, payload)
+  mqttPublish(ckTopic("publish","adm"), payload)
 }
 
 
@@ -220,43 +227,25 @@ const mqttProcessCB = (_topic, _payload) => {
         return;
       }
       const metricId = tags["MetricId"].toLowerCase()
-      const metric = findMetric(tags["MetricId"])
-      const funcId = tags["FuncId"]
-//    const projectId = tags["ProjectId"]
-      if (metric == null) {
-        mgError(0, f, "Could not find Metric: ", metricId)
-        return
+      var metric = findMetric(metricId)
+      if (!metric) {
+        metric = {
+          metricId,
+        }
+        global.aaa.metrics[metricId] = metric
       }
 
-      if (metric.cbs) {
-        switch (funcId) {
-          case 'inp':
-            if (!metric.inp) {
-              mgWarning(0, f, 'Metric does not have a inp metric', metric.metricId)
-              return
-            }
-            metric.inp.value = values.value
-//        metric.value = values.value
-            break;
-          case 'out':
-            if (!metric.out) {
-              mgWarning(0, f, 'Metric does not have a out metric', metric.metricId)
-              return
-            }
-            metric.out.value = values.value
-            break;
-          case 'hum':
-            if (!metric.hum) {
-              mgWarning(0, f, 'Metric does not have a hum metric', metric.metricId)
-              return
-            }
-            metric.hum.value = values.value
-            break;
-          default:
-            mgError(0, f, 'Unknown funcId ', funcId)
-            return;
+      const sourceId = tags["SourceId"]
+      var v = metric[sourceId]
+      if (!v) {
+        v = metric[sourceId] = {
+          val: -999,
+          date: Date.now()
         }
+      }
 
+      v.val = values.value
+      if (metric.cbs) {
         for (let cb of metric.cbs) {
           cb(metric, _topic, payloadStr, tags, values)
         }
@@ -271,10 +260,14 @@ const mqttProcessCB = (_topic, _payload) => {
     }
     console.log(f, "Look for topic", _topic)
     for (let topic in topicsCB) {
-      if (_topic.indexOf(topic) > -1) {
+//    var ind = _topic.indexOf(topic)
+//    console.log('index ' + ind)
+      if (topic === "all" || (_topic.indexOf(topic) === 0)) {
 //      console.log(f, "   Topic found", topicsCB[topic].length)
+
         // Execute the callbacks for this topic
         for (let rec of topicsCB[topic]) {
+          // Filter based on rec.args
           if (payload && rec.args) {
             var valid = true
             for (var field in rec.args) {
@@ -288,6 +281,7 @@ const mqttProcessCB = (_topic, _payload) => {
               }
             }
             if (valid) {
+              // Execute the callbacks
               try {
                 if (rec.cb.current) {
                   rec.cb.current(_topic,payload)
@@ -298,7 +292,8 @@ const mqttProcessCB = (_topic, _payload) => {
                 console.log(f, 'ERROR in cb w/args: ' + err)
               }
             }
-          } else {
+          } else { // no filter
+            // Execute the callbacks
             try {
               if (rec.cb.current) {
                 rec.cb.current(_topic,payloadStr)

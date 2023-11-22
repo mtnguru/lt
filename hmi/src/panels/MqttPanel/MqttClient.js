@@ -1,5 +1,6 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 //import '../../chakra.scss'
+import {ckTopic} from '../../utils/topics'
 import { mqttRegisterTopicCB } from '../../utils/mqttReact'
 
 import { Box, Select, Button, Tooltip } from '@chakra-ui/react'
@@ -19,7 +20,7 @@ function MqttClient (props) {
     (global.aaa.clients[clientId].status) ? global.aaa.clients[clientId].status.debugLevel : 0)
 
 
-  const rspCB = (_topic, _payload) => {
+  const rspCB = useCallback((_topic, _payload) => {
     if (_payload.clientId !== clientId) return;
     if (_payload.rsp === "setEnabled") {
       setEnabled(_payload.enabled)
@@ -33,29 +34,29 @@ function MqttClient (props) {
         return prevNumRunning + 1
       })
     }
-  }
+  }, [clientId])
 
-  const cmdCB = (_topic, _payload) => {
+  const cmdCB = useCallback((_topic, _payload) => {
     if (clientId === 'all') return;
     if (_payload.cmd === 'requestStatus' &&
         (_payload.clientId === 'all' || _payload.clientId === clientId)) {
       setRunning('stopped')   // Set status on all clients to 'stopped'
       setNumRunning(0)
     }
-  }
+  }, [clientId] )
 
 //const rspCBRef = useRef(rspCB)
 //const cmdCBRef = useRef(cmdCB)
 
   useEffect(() => {
     console.log("MqttClient::useEffect register callbacks " + clientId)
-    mqttRegisterTopicCB(global.aaa.topics.register.rsp, rspCB, { clientId: clientId });
-    mqttRegisterTopicCB(global.aaa.topics.register.cmd, cmdCB, { clientId: clientId });
-  }, [clientId])
+    mqttRegisterTopicCB(ckTopic("register","rsp"), rspCB, { clientId: clientId });
+    mqttRegisterTopicCB(ckTopic("register","cmd"), cmdCB, { clientId: clientId });
+  }, [clientId, rspCB, cmdCB])
 
   const onSelectH = (event) => {
     let topic = `a/cmd/${props.client.clientId}`
-    let payload = `{"cmd": "setDebugLevel", "clientId": "${clientId}", "debugLevel": "${event.target.value}"}`;
+    let payload = `{"cmd": "setDebugLevel", "clientId": "${clientId}", "debugLevel": ${event.target.value}}`;
     console.log('   send ', topic, payload)
     mqttPublish(topic, payload)
   }

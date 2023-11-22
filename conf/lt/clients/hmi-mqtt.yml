@@ -1,0 +1,36 @@
+name: LabTime HMI
+clientType: hmi
+userId: Bilbo
+format: yml
+clients:
+  all:
+    clientId: all
+    name: All
+  hmi-mqtt:       enabled
+  administrator:  enabled
+  controller:     disabled
+  drupal:         disabled
+  epiclc:         disabled
+  arduino2:       enabled
+  arduino3:       enabled
+  arduino4:       enabled
+  arduino5:       enabled
+  arduino6:       enabled
+  arduino7:       enabled
+topics:
+  subscribe:
+    adm: '#'
+  register:
+    cmd: a/cmd
+    all: all
+    rsp: a/rsp/CLIENTID
+  publish:
+    rsp: a/rsp/CLIENTID
+    adm: a/cmd/administrator
+    msg: PROJECTID/msg/CLIENTID
+    cod: PROJECTID/cod/CLIENTID
+    hum: PROJECTID/hum/CLIENTID
+metrics: project
+sourceIds: {}
+statusDefault:
+  debugLevel: 0

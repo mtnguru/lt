@@ -1,0 +1,216 @@
+{
+  "name": "LabTime HMI",
+  "clientType": "hmi",
+  "userId": "Bilbo",
+  "format": "yml",
+  "clients": {
+    "all": {
+      "clientId": "all",
+      "name": "All"
+    },
+    "hmi-cb": {
+      "name": "LabTime HMI",
+      "clientType": "hmi",
+      "userId": "Bilbo",
+      "format": "yml",
+      "clients": {
+        "all": {
+          "clientId": "all",
+          "name": "All"
+        },
+        "hmi-cb": "enabled",
+        "administrator": "enabled",
+        "controller": "disabled",
+        "drupal": "disabled",
+        "epiclc": "disabled",
+        "arduino2": "enabled",
+        "arduino3": "enabled",
+        "arduino4": "enabled",
+        "arduino5": "enabled",
+        "arduino6": "enabled",
+        "arduino7": "enabled"
+      },
+      "metrics": "project",
+      "sourceIds": {},
+      "statusDefault": {
+        "debugLevel": 0
+      },
+      "clientId": "hmi-cb"
+    },
+    "administrator": {
+      "clientId": "administrator",
+      "name": "Administrator",
+      "clientType": "administrator",
+      "userId": "Frodo",
+      "adminId": "AssignedAtRunTime",
+      "mqtt": {
+        "mqttClientId": "create-at-runtime",
+        "url": "http://labtime.org:1883",
+        "username": "data",
+        "password": "datawp",
+        "protocol": "MQTT",
+        "protocolVersion": 4,
+        "connectTimeout": 60000,
+        "reconnectPeriod": 120000,
+        "keepAlive": "5000,",
+        "port": 1883,
+        "websocket": 8081
+      },
+      "topicSets": {
+        "edge": {
+          "subscribe": {
+            "all": "a/cmd/all",
+            "cmd": "a/cmd/CLIENTID",
+            "rsp": "a/rsp/CLIENTID",
+            "out": "+/out/CLIENTID"
+          },
+          "publish": {
+            "rsp": "a/rsp/CLIENTID",
+            "inp": "PROJECTID/inp/CLIENTID/USERID/TELEGRAFID",
+            "cod": "a/cod/CLIENTID",
+            "msg": "a/msg/CLIENTID"
+          }
+        }
+      },
+      "projects": {
+        "cb": "enabled",
+        "fg": "disabled",
+        "oxy": "enabled"
+      },
+      "clients": {
+        "arduino1": "disabled",
+        "arduino2": "enabled",
+        "arduino3": "enabled",
+        "arduino4": "enabled",
+        "arduino5": "enabled",
+        "arduino6": "enabled",
+        "arduino7": "enabled",
+        "arduino8": "disabled",
+        "arduino9": "disabled",
+        "arduino_gm": "disabled",
+        "hmi-oxy": "enabled",
+        "hmi-sf": "enabled",
+        "hmi-cb": "enabled",
+        "hmi-mqtt": "enabled",
+        "drupal": "enabled",
+        "controller": "enabled"
+      }
+    },
+    "arduino2": {
+      "name": "Arduino 2",
+      "ip": "192.168.0.17",
+      "model": "arduino",
+      "clientType": "edge",
+      "topicSet": "edge",
+      "statusDefault": {
+        "sampleInterval": 30000,
+        "enabled": 1,
+        "debugLevel": 0
+      },
+      "clientId": "arduino2"
+    },
+    "arduino3": {
+      "name": "Arduino 3",
+      "ip": "192.168.0.15",
+      "model": "arduino",
+      "clientType": "edge",
+      "topicSet": "edge",
+      "statusDefault": {
+        "sampleInterval": 30000,
+        "enabled": 1,
+        "debugLevel": 0
+      },
+      "clientId": "arduino3"
+    },
+    "arduino4": {
+      "name": "Arduino 4",
+      "ip": "192.168.0.16",
+      "model": "arduino",
+      "clientType": "edge",
+      "topicSet": "edge",
+      "statusDefault": {
+        "sampleInterval": 30000,
+        "enabled": 1,
+        "debugLevel": 0
+      },
+      "clientId": "arduino4"
+    },
+    "arduino5": {
+      "name": "Arduino 5",
+      "ip": "192.168.0.14",
+      "model": "arduino",
+      "clientType": "edge",
+      "topicSet": "edge",
+      "statusDefault": {
+        "sampleInterval": 30000,
+        "enabled": 1,
+        "debugLevel": 0
+      },
+      "clientId": "arduino5"
+    },
+    "arduino6": {
+      "name": "Arduino6",
+      "ip": "192.168.0.18",
+      "model": "arduino",
+      "clientType": "edge",
+      "topicSet": "edge",
+      "statusDefault": {
+        "sampleInterval": 30000,
+        "enabled": 1,
+        "debugLevel": 0
+      },
+      "clientId": "arduino6"
+    },
+    "arduino7": {
+      "name": "Arduino7",
+      "ip": "192.168.0.22",
+      "model": "arduino",
+      "clientType": "edge",
+      "topicSet": "edge",
+      "statusDefault": {
+        "sampleInterval": 30000,
+        "enabled": 1,
+        "debugLevel": 0
+      },
+      "clientId": "arduino7"
+    }
+  },
+  "topics": {
+    "subscribe": {
+      "adm": "a/#",
+      "prj": "UNK/#"
+    },
+    "register": {
+      "adm": "a",
+      "cmd": "a/cmd",
+      "rsp": "a/rsp",
+      "inp": "UNK/inp",
+      "out": "UNK/out",
+      "hum": "UNK/hum",
+      "alm": "UNK/alm",
+      "cod": "UNK/cod",
+      "msg": "UNK/msg",
+      "act": "UNK/act",
+      "prj": "UNK"
+    },
+    "publish": {
+      "rsp": "a/rsp/hmi-mqtt",
+      "adm": "a/cmd/administrator",
+      "msg": "UNK/msg/hmi-mqtt",
+      "cod": "UNK/cod/hmi-mqtt",
+      "hum": "UNK/hum/hmi-mqtt"
+    }
+  },
+  "metrics": "project",
+  "sourceIds": {},
+  "statusDefault": {
+    "debugLevel": 0
+  },
+  "clientId": "hmi-mqtt",
+  "status": {
+    "debugLevel": 0
+  },
+  "rsp": "requestConfig",
+  "date": "12:52:22 - 973"
+}
+cb/inp/arduino7/Elon/cb_edge F,Metri

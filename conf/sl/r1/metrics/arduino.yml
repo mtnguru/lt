@@ -7,7 +7,7 @@ Outside_Bunkhouse_K_F:
   decimals: 2
   inp:
     clientId: arduino2
-    channelType: MAX6675
+    channelType: max6675
     channels: 2,4,5
 MiddleBedroom_Window_K_F:
   label: Grow room
@@ -16,7 +16,7 @@ MiddleBedroom_Window_K_F:
   decimals: 2
   inp:
     clientId: arduino3
-    channelType: MAX6675
+    channelType: max6675
     channels: 2,4,5
 Bathroom_Door_K_F:
   label: Bathroom
@@ -25,7 +25,7 @@ Bathroom_Door_K_F:
   decimals: 2
   inp:
     clientId: arduino4
-    channelType: MAX6675
+    channelType: max6675
     channels: 4,5,6
 LivingRoom_Desk_K_F:
   label: Living room desk
@@ -34,7 +34,7 @@ LivingRoom_Desk_K_F:
   decimals: 2
   inp:
     clientId: arduino5
-    channelType: MAX6675
+    channelType: max6675
     channels: 2,4,5
 
 ############################## Input development
@@ -47,7 +47,7 @@ arduino2_Onboard_LED_On:
   out:
     clientId: arduino2
     channelType: digital
-    channel: "16"
+    channel: 16
 arduino3_Onboard_LED_On:
   label: Arduino3 Onboard LED
   desc: Arduino3 Onboard LED - my desk
@@ -56,7 +56,7 @@ arduino3_Onboard_LED_On:
   out:
     clientId: arduino3
     channelType: digital
-    channel: "16"
+    channel: 16
 arduino4_Onboard_LED_On:
   label: Arduino4 Onboard LED
   desc: Arduino4 Onboard LED
@@ -65,7 +65,7 @@ arduino4_Onboard_LED_On:
   out:
     clientId: arduino4
     channelType: digital
-    channel: "16"
+    channel: 16
 arduino5_Onboard_LED_On:
   label: Arduino5 Onboard LED
   desc: Arduino5 Onboard LED
@@ -74,5 +74,5 @@ arduino5_Onboard_LED_On:
   out:
     clientId: arduino5
     channelType: digital
-    channel: "16"
+    channel: 16
 

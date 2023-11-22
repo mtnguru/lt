@@ -29,4 +29,17 @@
     font-weight: bold;
     margin: -20px 0 3px 10px;
   }
+
+  .mqtt-display {
+    display: inline;
+    width: 100%;
+    @media(min-width: $bp-md) {
+      width: calc(100% - 138px);
+    }
+    .mqtt-list {
+      height: calc(100vh - 146px);
+  //  max-height: 800px;
+      overflow-y: auto;
+    }
+  }
 }

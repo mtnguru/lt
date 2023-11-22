@@ -1,3 +1,96 @@
+Modify 
+
+
+
+What next?
+  Get the MQTT page working again
+  Get the oxy and cb pages working - fuck SAFIRE
+
+Look into MQTT jobs
+Rewire in the furnace
+Rewire the counter light
+  
+
+
+
+
+So what to do?
+I want the MQTT Monitor to
+  Show just one projects client
+  Show all projects clients
+  This page subscribes to everything
+  The MQTT monitor page doesn't need to know specifics about the clients and their inputs/outputs
+  I'm going to want a page that shows all projects
+
+The MQTT page doesn't need to know anything specific about the metrics
+It does need to know a little about the clients
+   client name
+   description
+
+administrator
+  Does the administrator client need to expand the clients?
+    each client needs to know their project
+  At this time it doesn't care about expanding metrics - in the future it might
+
+What to do?
+  Disable the client expansion for now
+  That or make a very short expansion
+  Make a new request - :w
+:w
+
+  
+  On some pages we want the description, but the values are ok
+  
+
+
+
+Move the MQTT stuff out of index into its own file
+MqttManager
+
+Properties -
+   Host
+   Username
+   Password
+   PageId
+
+Create a page which states - Connecting to MQTT
+   MqttManager - connectCB - Once the connection is established 
+     MqttManager - getConfig - Request page configuration
+       Requesting page configuration
+      Once the configuration has arrived - build the page 
+
+
+
+
+
+
+Make each page start the MQTT server.
+
+Either read in a file for each page,
+or pass them as properties
+I like the file idea better.
+
+Take the MQTT stuff out of the index file.
+
+Add the MQTT data to the global arguments
+Load the file, then connect
+First create the file
+
+
+
+
+Get the UI working - Search for 
+
+
+
+Get the code working on ESP32 to read one-wire temperature.
+   start administrator on saphira with new config
+   start arduino
+
+
+
+
+
 administrator
   Upon receipt of input values 
     save values - metricId, ProjectId, valueId
@@ -418,9 +511,9 @@ msg  mqttMsgPub[topicSize]       rf/msg/CLIENTID
 RegisterMetric CB - The type is embedded in the Influx string
 Use the metric and the type - every time
 Also use the projectId
-Register for a projectId, funcId, metricId - 
+Register for a projectId, sourceId, metricId - 
 
-*Change the name source to funcId
+*Change the name source to sourceId
 
 
 

@@ -63,8 +63,8 @@ const getConfig = () => {
 
   msg(2, f, DEBUG, 'enter ')
   const payloadStr = `{\"clientId\": \"${clientId}\", \"cmd\": \"requestConfig\"}`
-  mqttNode.publish(global.aaa.topics.publish.adm, payloadStr)
-  mqttNode.registerTopicCB(global.aaa.topics.subscribe.rsp, loadConfigCB)
+  mqttNode.publish(ckTopic("publish","adm"), payloadStr)
+  mqttNode.registerTopicCB(ckTopic("subscribe","rsp), loadConfigCB)
   msg(2, f,DEBUG,'exit')
 }
 

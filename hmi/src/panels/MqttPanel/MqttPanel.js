@@ -12,6 +12,7 @@ import MqttDisplayActions from './MqttDisplayActions';
 import MqttList from './MqttList';
 import {mqttRegisterTopicCB} from "../../utils/mqttReact";
 import {currentDate} from "../../utils/tools";
+import {ckTopic} from "../../utils/topics"
 
 import "./MqttPanel.scss";
 
@@ -44,11 +45,11 @@ const MqttPanel = (props) => {
 //  if (_topic.indexOf('a/cmd') > -1) return;
     try {
       const dateStr = currentDate()
-      const [project, funcId, clientId] = _topic.split('/')
+      const [project, sourceId, clientId] = _topic.split('/')
       let rnd = Math.random().toString(16).slice(3)
       let key = `${clientId}-${dateStr}-${rnd}`
       console.log("nitems ", nitems, ni);
-      let item = {key, date: dateStr, project, funcId, clientId, topic: _topic, payload: _payload, nitems: ni}
+      let item = {key, date: dateStr, project, sourceId, clientId, topic: _topic, payload: _payload, nitems: ni}
 
       setNItems((prevNItems) => {
         return ni = prevNItems + 1
@@ -78,8 +79,7 @@ const MqttPanel = (props) => {
 
   if (!registered) {
     registered = true;
-    mqttRegisterTopicCB(global.aaa.topics.subscribe.prj, topicCB)
-    mqttRegisterTopicCB(global.aaa.topics.subscribe.adm, topicCB)
+    mqttRegisterTopicCB(ckTopic("register","all"), topicCB)
   }
 
   /**
@@ -88,16 +88,16 @@ const MqttPanel = (props) => {
    * @returns {boolean}
    */
   const validMsg = (item) => {
-    const [,funcId,clientId] = item.topic.split('/')
+    const [,sourceId,clientId] = item.topic.split('/')
     if (global.aaa.clients.all.selected) {
     } else {
       if (global.aaa.clients[clientId] && !global.aaa.clients[clientId].selected) {
         return false;
       }
     }
-    if (global.aaa.funcIds.all.selected) {
+    if (global.aaa.sourceIds.all.selected) {
     } else {
-      if (global.aaa.funcIds[funcId] && !global.aaa.funcIds[funcId].selected) {
+      if (global.aaa.sourceIds[sourceId] && !global.aaa.sourceIds[sourceId].selected) {
         return false;
       }
     }

@@ -140,6 +140,7 @@ const registerMetricCB = (metricId, cb, func) => {
       metric.cbs = [cb]
     }
   } catch(err){
+    console.log(f, 'ERROR: Cannot register metric ' + id + '  '  + err)
     mgError(1, f,'Cannot register metric ', id, func);
   }
 }
@@ -155,7 +156,7 @@ const registerMetricCB = (metricId, cb, func) => {
  */
 const processInflux = (topic, payloadStr) => {
   const f = "mqttNode::processInflux"
-  const funcId = topic.split("/")[2]
+  const sourceId = topic.split("/")[2]
   const {tags, values} = extractFromTags(payloadStr)
   if (tags["Metric"]) {
     const metricId = tags["Metric"]
@@ -165,32 +166,32 @@ const processInflux = (topic, payloadStr) => {
     }
 //  console.log(f, 'Metric found ', metricId)
 
-    switch (funcId) {
-      case 'input':
-        if (!metric.input) {
-          msg(0,f,WARNING, 'Metric does not have a input metric',metric.metricId)
+    switch (sourceId) {
+      case 'inp':
+        if (!metric.inp) {
+          msg(0,f,WARNING,  'Metric does not have a inp metric',metric.metricId)
         } else {
-          metric.input.value = values.value
+          metric.inp.value = values.value
         }
         metric.value = values.value
         break;
-      case 'output':
-        if (!metric.output) {
-          msg(0,f, WARNING, 'Metric does not have a output metric',metric.metricId)
+      case 'out':
+        if (!metric.out) {
+          msg(0,f, WARNING, 'Metric does not have a out metric',metric.metricId)
         } else {
-          metric.output.value = values.value
+          metric.out.value = values.value
         }
         metric.value = values.value
         break;
       case 'hum':
         if (!metric.hum) {
-          msg(0,f, WARNING, 'Metric does not have a user metric',metric.metricId)
+          msg(0,f, WARNING, 'Metric does not have a hum metric',metric.metricId)
         } else {
           metric.hum.value = values.value
         }
         break;
       default:
-        msg(0,f,ERROR, 'Unknown tags.funcId ', tags)
+        msg(0,f,ERROR, 'Unknown tags.sourceId ', tags)
         return;
     }
     if (!metric.cbs) {
@@ -225,8 +226,8 @@ const processCB = (_topic, _payload) => {
       }
     }
   } catch (err) {
+    console.log(f, 'ERROR: Error processing ' + _topic + '  '  + err)
     msg(0,f, ERROR, "Error processing:", _topic, "Error", err);
-    console.log(f, 'ERROR: ' + err)
   }
 }
 

@@ -1,0 +1,45 @@
+#############  Epic PID
+
+Epiclc_PID_RTD_C:
+  label: PID Temperature
+  desc: PID demo RTD temperature sensor
+  value: 1
+  decimals: 2
+  inp:
+    clientId: epiclc
+    channelType: analog
+    module: 2
+    channel: 0
+
+#############  Epic Backpanel
+
+Epiclc_Backpanel_LED_Red_On:
+  label: EPIC Red LED
+  desc: epiclc Backpanel Red LED
+  value: 0
+  decimals: 0
+  out:
+    clientId: epiclc
+    channelType: digital
+    module: 1
+    channel: 7
+Epiclc_Backpanel_LED_Green_On:
+  label: EPIC Green LED
+  desc: epiclc Backpanel Green LED
+  value: 0
+  decimals: 0
+  out:
+    clientId: epiclc
+    channelType: digital
+    module: 1
+    channel: 8
+Epiclc_Backpanel_LED_Blue_On:
+  label: EPIC Blue LED
+  desc: epiclc Backpanel Blue LED
+  value: 0
+  decimals: 0
+  out:
+    clientId: epiclc
+    channelType: digital
+    module: 1
+    channel: 9

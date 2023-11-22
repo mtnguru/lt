@@ -2,11 +2,12 @@ import mqtt from 'precompiled-mqtt';
 import {extractFromTags} from './influxr'
 import {mgDebug, mgWarning, mgError} from './mg'
 import {findMetric} from './metrics'
+import {ckTopic} from './topics'
 //import {msg} from "../../../../../apps/lt/administrator/utils/msg";
 import YAML from "yaml-parser";
 
-let mqttClient;
-let topicsCB = {}
+var mqttClient;
+var topicsCB = {}
 
 /**
  * sleep() - synchronous sleep function
@@ -30,15 +31,18 @@ const onConnectPromise = (connectCb, processCb) => {
       console.log(f,"connected ", mqttClient.connected)
       mqttUnsubscribe(global.aaa.topics.subscribe)
       mqttSubscribe(global.aaa.topics.subscribe)
-      connectCb()
       mqttClient.on('message', processCb)
+      connectCb()
       resolve('connected')
     })
   })
 }
 
 const mqttConnect = (connectCb, processCb) => {
-  topicsCB = {};
+//topicsCB = {};
+//if (mqttClient.connected) {
+//  // disconnect
+//}
   const f = 'mqttReact::mqttConnect'
   console.log(f, 'connect to mqtt url/ip', global.aam.url)
   mqttClient = mqtt.connect(global.aam.url, {
@@ -49,6 +53,7 @@ const mqttConnect = (connectCb, processCb) => {
     password: global.aam.password,
     reconnectPeriod: global.aam.reconnectPeriod,
     connectTimeout: global.aam.connectTimeout,
+    keepAlive: 50000
   });
   console.log(f, 'connected it up', mqttClient.connected)
 
@@ -76,9 +81,8 @@ const mqttConnected = () => {
 
 const mqttSubscribe = (topics) => {
   const f = "mqttReact::mqttSubscribe - "
-  console.log(f, "enter ")
   for (let name in topics) {
-    console.log(f, "topic: ", topics[name])
+    console.log(f, "subscribe topic: ", topics[name])
     mqttClient.subscribe(topics[name])
     global.aaa.status.mqttSubscribe++;
   }
@@ -86,9 +90,8 @@ const mqttSubscribe = (topics) => {
 
 const mqttUnsubscribe = (topics) => {
   const f = "mqttReact::mqttUnsubscribe - "
-  console.log(f, "enter ")
   for (let name in topics) {
-    console.log(f, "topic: ", topics[name])
+    console.log(f, "unsubscribe topic: ", topics[name])
     mqttClient.unsubscribe(topics[name]);
     global.aaa.status.mqttUnsubscribe++;
   }
@@ -106,16 +109,32 @@ const mqttPublish = (topic, payload) => {
 const mqttRegisterTopicCB = (_topic, cb, args) => {
   const f = "mqttReact::mqttRegisterTopicCB"
   // If necessary intialize new topic
+  if (!_topic) {
+    console.log(f, "Topic not defined")
+    return
+  }
   const topic = _topic.replace(/#/,'')
   mgDebug(2, f, "Register topic", topic)
   if (!topicsCB[topic]) {
     console.log(f, "Initialize topic", topic)
     topicsCB[topic] = [];
   }
-  for (let rcb in topicsCB[topic]) {
-    if (rcb === cb) {
-      console.log(f, "Already added", topic)
-      return;
+  for (let t in topicsCB[topic]) {
+    var tcb = topicsCB[topic][t]
+    if (tcb.cb === cb) {
+      var matched = true;
+      for (var a in tcb.args) {
+        for (var a2 in args) {
+          if (a !== a2) {
+            matched = false;
+            continue;
+          }
+        }
+      }
+      if (matched) {
+        console.log(f, "Already added", topic)
+        return;
+      }
     }
   }
   console.log(f, "add topic", topic)
@@ -154,7 +173,7 @@ const mqttRegisterMetricCB = (_metricId, cb) => {
   }
   if (metric.cbs) {
     if (metric.cbs.includes(cb)) {
-      mgWarning.log(1, f, "already registered ", metricId)
+      mgWarning(1, f, "already registered ", metricId)
     } else {
       metric.cbs.push(cb)
     }
@@ -179,13 +198,13 @@ const mqttRequestFile = (clientId, name, filepath, fileType, cb) => {
       inFile = JSON.parse(inPayload)
     }
     if (inFile.rsp === cmd) {
-      mqttUnregisterTopicCB(global.aaa.topics.register.rsp, onLoadCB)
+      mqttUnregisterTopicCB(ckTopic("register","rsp"), onLoadCB)
       cb(inTopic, inFile)
     }
   }
-  mqttRegisterTopicCB((global.aaa.topics.register.rsp) , onLoadCB)
+  mqttRegisterTopicCB((ckTopic("register","rsp")) , onLoadCB)
   let payload = `{"cmd": "${cmd}", "clientId": "${clientId}", "filepath": "${filepath}"}`
-  mqttPublish(global.aaa.topics.publish.adm, payload)
+  mqttPublish(ckTopic("publish","adm"), payload)
 }
 
 
@@ -195,9 +214,12 @@ const mqttProcessCB = (_topic, _payload) => {
   console.log(f, 'enter ', _topic, payloadStr)
 
   try {
-    // If this is a metricCB - influx line buf - call metric callbacks
     const fields = _topic.split("/")
-    const func = fields[2]
+    const func = fields[1]
+
+    // Metric Callbacks
+    // If inp, out, hum
+
     if (func === 'inp' || func === 'out' || func === 'hum') {
       const {tags, values} = extractFromTags(payloadStr)
       if (!tags["MetricId"]) {
@@ -205,48 +227,32 @@ const mqttProcessCB = (_topic, _payload) => {
         return;
       }
       const metricId = tags["MetricId"].toLowerCase()
-      const metric = findMetric(tags["MetricId"])
-      const funcId = tags["FuncId"]
-//    const projectId = tags["ProjectId"]
-      if (metric == null) {
-        mgError(0, f, "Could not find Metric: ", metricId)
-        return
+      var metric = findMetric(metricId)
+      if (!metric) {
+        metric = {
+          metricId,
+        }
+        global.aaa.metrics[metricId] = metric
       }
 
-      if (metric.cbs) {
-        switch (funcId) {
-          case 'inp':
-            if (!metric.input) {
-              mgWarning(0, f, 'Metric does not have a input', metric.metricId)
-              return
-            }
-            metric.input.value = values.value
-//        metric.value = values.value
-            break;
-          case 'out':
-            if (!metric.output) {
-              mgWarning(0, f, 'Metric does not have a output', metric.metricId)
-              return
-            }
-            metric.output.value = values.value
-            break;
-          case 'hum':
-            if (!metric.user) {
-              mgWarning(0, f, 'Metric does not have a user', metric.metricId)
-              return
-            }
-            metric.hum.value = values.value
-            break;
-          default:
-            mgError(0, f, 'Unknown funcId ', funcId)
-            return;
+      const sourceId = tags["SourceId"]
+      var v = metric[sourceId]
+      if (!v) {
+        v = metric[sourceId] = {
+          val: -999,
+          date: Date.now()
         }
+      }
 
+      v.val = values.value
+      if (metric.cbs) {
         for (let cb of metric.cbs) {
           cb(metric, _topic, payloadStr, tags, values)
         }
       }
     }
+
+    // Topic Callbacks
 
     var payload;
     if (payloadStr[0] === '{') {
@@ -254,27 +260,46 @@ const mqttProcessCB = (_topic, _payload) => {
     }
     console.log(f, "Look for topic", _topic)
     for (let topic in topicsCB) {
-      if (_topic.indexOf(topic) > -1) {
+//    var ind = _topic.indexOf(topic)
+//    console.log('index ' + ind)
+      if (topic === "all" || (_topic.indexOf(topic) === 0)) {
 //      console.log(f, "   Topic found", topicsCB[topic].length)
+
         // Execute the callbacks for this topic
         for (let rec of topicsCB[topic]) {
+          // Filter based on rec.args
           if (payload && rec.args) {
             var valid = true
             for (var field in rec.args) {
-              if (rec.args[field] && rec.args[field] !== payload[field]) {
-                valid = false
+              if (payload[field]) {
+                if (payload[field] === "all") {
+                  continue;
+                }
+                if (rec.args[field] !== payload[field]) {
+                  valid = false
+                }
               }
             }
             if (valid) {
+              // Execute the callbacks
               try {
-                rec.cb(_topic,payload)
+                if (rec.cb.current) {
+                  rec.cb.current(_topic,payload)
+                } else {
+                  rec.cb(_topic,payload)
+                }
               } catch(err) {
                 console.log(f, 'ERROR in cb w/args: ' + err)
               }
             }
-          } else {
+          } else { // no filter
+            // Execute the callbacks
             try {
-              rec.cb(_topic,payloadStr)
+              if (rec.cb.current) {
+                rec.cb.current(_topic,payloadStr)
+              } else {
+                rec.cb(_topic,payloadStr)
+              }
             } catch(err) {
               console.log(f, 'ERROR in cb: ' + err)
             }

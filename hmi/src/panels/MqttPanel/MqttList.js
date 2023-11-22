@@ -5,7 +5,8 @@ import {
 
 import { mqttRegisterTopicCB } from '../../utils/mqttReact'
 import MqttItem from './MqttItem'
-//import './MqttList.scss';
+import {ckTopic} from '../../utils/topics'
+import './MqttList.scss';
 
 function MqttList(props) {
   // if list does not exist - set list to an empty array
@@ -16,7 +17,7 @@ function MqttList(props) {
   }
 
   useEffect(() => {
-    mqttRegisterTopicCB(global.aaa.topics.register.msg, topicCB, {})
+    mqttRegisterTopicCB(ckTopic("register","msg"), topicCB, {})
     //Runs only on the first render
   }, []);
 

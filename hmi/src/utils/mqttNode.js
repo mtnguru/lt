@@ -156,7 +156,7 @@ const registerMetricCB = (metricId, cb, func) => {
  */
 const processInflux = (topic, payloadStr) => {
   const f = "mqttNode::processInflux"
-  const funcId = topic.split("/")[2]
+  const sourceId = topic.split("/")[2]
   const {tags, values} = extractFromTags(payloadStr)
   if (tags["Metric"]) {
     const metricId = tags["Metric"]
@@ -166,7 +166,7 @@ const processInflux = (topic, payloadStr) => {
     }
 //  console.log(f, 'Metric found ', metricId)
 
-    switch (funcId) {
+    switch (sourceId) {
       case 'inp':
         if (!metric.inp) {
           msg(0,f,WARNING,  'Metric does not have a inp metric',metric.metricId)
@@ -191,7 +191,7 @@ const processInflux = (topic, payloadStr) => {
         }
         break;
       default:
-        msg(0,f,ERROR, 'Unknown tags.funcId ', tags)
+        msg(0,f,ERROR, 'Unknown tags.sourceId ', tags)
         return;
     }
     if (!metric.cbs) {

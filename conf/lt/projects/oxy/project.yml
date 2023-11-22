@@ -1,0 +1,8 @@
+name: Swiss Oxyhydrogen Energy
+telegrafId: oxy_edge
+clients:
+  arduino_gm:  enabled
+  arduino5:    disabled
+  hmi:         enabled
+  controller:  enabled
+  drupal:      enabled

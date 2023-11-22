@@ -14,7 +14,7 @@
   .topic {
     color: $topic-fg-color;
     margin-top: 4px;
-    margin-right: 10px;
+    margin-right: 8px;
     line-height: 1;
     font-size: 80%;
     display: inline-block;
@@ -55,7 +55,7 @@
     }
     font-weight: bold;
     text-align: right;
-    margin-right: 10px;
+    margin-right: 8px;
   }
   .type {
     display: inline-block;
@@ -63,7 +63,7 @@
     font-size: 100%;
     padding: 3px 8px 2px;
     border-radius: 5px;
-    margin-right: 8px;
+    margin-left: 8px;
     &.error {
       background-color: red;
     }
