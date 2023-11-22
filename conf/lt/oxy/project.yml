@@ -17,6 +17,6 @@ topics:
 clients:
   arduino_gm:  enabled
   arduino5:    disabled
-  hmi:         enabled
+  hmi-oxy:     enabled
   controller:  enabled
   drupal:      enabled

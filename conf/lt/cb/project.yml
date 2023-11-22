@@ -21,6 +21,6 @@ clients:
   arduino5:   enabled
   arduino6:   enabled
   arduino7:   enabled
-  hmi:        enabled
+  hmi-cb:     enabled
   controller: enabled
   drupal:     disabled
