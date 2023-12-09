@@ -39,9 +39,9 @@ topicSets:
       out:  +/out/CLIENTID
     publish:
       rsp:  a/rsp/CLIENTID
-      inp:  PROJECTID/inp/CLIENTID/USERID/TELEGRAFID
+      inp:  PROJECTID/inp/CLIENTID/USERID/EDGEID
       cod:  a/cod/CLIENTID
-      msg:  a/msg/CLIENTID
+      msg:  a/msg/CLIENTID/UNK/MSGID
 projects:
   cb:  enabled
   fg:  disabled

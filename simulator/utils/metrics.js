@@ -5,8 +5,8 @@
 const findMetric = (_metricId) => {
 //const f = "metrics::findMetric"
   try {
-    var metricId = metricId.toLowerCase()
-    let metric = global.aaa.metrics[metricId.toLowerCase()]
+    const metricId = _metricId.toLowerCase()
+    const metric = global.aaa.metrics[metricId]
     if (metric)  {
       return metric;
     }

@@ -17,7 +17,6 @@
     margin-right: 8px;
     line-height: 1;
     font-size: 80%;
-    display: inline-block;
     display: none;
     overflow: hidden;
     @media(min-width: $bp-sm) {
@@ -80,6 +79,8 @@
     margin-left: 5px;
   }
   .card.pretty {
+    max-height: 150px;
+    overflow-y: hidden;
     .short {
       display: block;
       @media(min-width: $bp-md) {

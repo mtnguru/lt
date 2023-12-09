@@ -16,10 +16,12 @@ const mg = (level, f, _sourceId, _type, ...snippets) => {
     msg: snippets.join(' '),
   }
 
-  const topic = global.aaa.topics.publish[_sourceId]
-  const jpayload = JSON.stringify(payload);
   if (mqttConnected()) {
-    mqttPublish(topic, jpayload);
+    const topic = global.aaa.topics.publish[_sourceId]
+    if (topic) {
+      const jpayload = JSON.stringify(payload);
+      mqttPublish(topic, jpayload);
+    }
   }
 
   if (type === 'error') {

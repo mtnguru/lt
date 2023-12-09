@@ -1,5 +1,6 @@
 name: Swiss Oxyhydrogen Energy
-telegrafId: oxy_edge
+edgeId: oxy_edge
+msgId: oxy_msg
 clients:
   arduino_gm:  enabled
   arduino5:    disabled

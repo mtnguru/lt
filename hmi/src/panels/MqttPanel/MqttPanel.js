@@ -48,7 +48,6 @@ const MqttPanel = (props) => {
       const [project, sourceId, clientId] = _topic.split('/')
       let rnd = Math.random().toString(16).slice(3)
       let key = `${clientId}-${dateStr}-${rnd}`
-      console.log("nitems ", nitems, ni);
       let item = {key, date: dateStr, project, sourceId, clientId, topic: _topic, payload: _payload, nitems: ni}
 
       setNItems((prevNItems) => {
@@ -74,7 +73,6 @@ const MqttPanel = (props) => {
     } catch(err) {
       console.log("Error in MqttPanel::topicCB " + err)
     }
-//    width: 135px;
   }
 
   if (!registered) {
@@ -118,7 +116,6 @@ const MqttPanel = (props) => {
   const onFilterClientChangeH = event => {
     console.log('======================== onFilterClientChangedH',event.target.id)
     applyFilters(list)
-
   }
 
   return (

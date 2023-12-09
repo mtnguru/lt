@@ -10,6 +10,7 @@ function MqttPage() {
       username="data"
       password="datawp"
       clientId="hmi-mqtt"
+      type="mqtt"
       pageId="hmi">
 
 

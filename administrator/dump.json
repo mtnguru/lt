@@ -1,0 +1,171 @@
+{
+  "name": "LabTime HMI",
+  "clientType": "hmi",
+  "userId": "Bilbo",
+  "format": "yml",
+  "clients": {
+    "all": {
+      "clientId": "all",
+      "name": "All"
+    },
+    "hmi-mqtt": {
+      "name": "LabTime HMI",
+      "clientType": "hmi",
+      "userId": "Bilbo",
+      "format": "yml",
+      "metrics": "project",
+      "sourceIds": {},
+      "statusDefault": {
+        "debugLevel": 0
+      },
+      "clientId": "hmi-mqtt"
+    },
+    "administrator": {
+      "clientId": "administrator",
+      "name": "Administrator",
+      "clientType": "administrator",
+      "userId": "Frodo",
+      "adminId": "AssignedAtRunTime",
+      "mqtt": {
+        "mqttClientId": "create-at-runtime",
+        "url": "http://labtime.org:1883",
+        "username": "data",
+        "password": "datawp",
+        "protocol": "MQTT",
+        "protocolVersion": 4,
+        "connectTimeout": 60000,
+        "reconnectPeriod": 120000,
+        "keepAlive": "5000,",
+        "port": 1883,
+        "websocket": 8081
+      },
+      "topicSets": {
+        "edge": {
+          "subscribe": {
+            "all": "a/cmd/all",
+            "cmd": "a/cmd/CLIENTID",
+            "rsp": "a/rsp/CLIENTID",
+            "out": "+/out/CLIENTID"
+          },
+          "publish": {
+            "rsp": "a/rsp/CLIENTID",
+            "inp": "PROJECTID/inp/CLIENTID/USERID/EDGEID",
+            "cod": "a/cod/CLIENTID",
+            "msg": "a/msg/CLIENTID/UNK/MSGID"
+          }
+        }
+      },
+      "projects": {
+        "cb": "enabled",
+        "fg": "disabled",
+        "oxy": "enabled"
+      }
+    },
+    "arduino2": {
+      "name": "Arduino 2",
+      "ip": "192.168.0.17",
+      "model": "arduino",
+      "clientType": "edge",
+      "topicSet": "edge",
+      "statusDefault": {
+        "sampleInterval": 30000,
+        "enabled": 1,
+        "debugLevel": 0
+      },
+      "clientId": "arduino2"
+    },
+    "arduino3": {
+      "name": "Arduino 3",
+      "ip": "192.168.0.15",
+      "model": "arduino",
+      "clientType": "edge",
+      "topicSet": "edge",
+      "statusDefault": {
+        "sampleInterval": 30000,
+        "enabled": 1,
+        "debugLevel": 0
+      },
+      "clientId": "arduino3"
+    },
+    "arduino4": {
+      "name": "Arduino 4",
+      "ip": "192.168.0.16",
+      "model": "arduino",
+      "clientType": "edge",
+      "topicSet": "edge",
+      "statusDefault": {
+        "sampleInterval": 30000,
+        "enabled": 1,
+        "debugLevel": 0
+      },
+      "clientId": "arduino4"
+    },
+    "arduino5": {
+      "name": "Arduino 5",
+      "ip": "192.168.0.14",
+      "model": "arduino",
+      "clientType": "edge",
+      "topicSet": "edge",
+      "statusDefault": {
+        "sampleInterval": 30000,
+        "enabled": 1,
+        "debugLevel": 0
+      },
+      "clientId": "arduino5"
+    },
+    "arduino6": {
+      "name": "Arduino6",
+      "ip": "192.168.0.18",
+      "model": "arduino",
+      "clientType": "edge",
+      "topicSet": "edge",
+      "statusDefault": {
+        "sampleInterval": 30000,
+        "enabled": 1,
+        "debugLevel": 0
+      },
+      "clientId": "arduino6"
+    },
+    "arduino7": {
+      "name": "Arduino7",
+      "ip": "192.168.0.22",
+      "model": "arduino",
+      "clientType": "edge",
+      "topicSet": "edge",
+      "statusDefault": {
+        "sampleInterval": 30000,
+        "enabled": 1,
+        "debugLevel": 0
+      },
+      "clientId": "arduino7"
+    }
+  },
+  "topics": {
+    "subscribe": {
+      "adm": "#"
+    },
+    "register": {
+      "cmd": "a/cmd",
+      "all": "all",
+      "rsp": "a/rsp"
+    },
+    "publish": {
+      "rsp": "a/rsp/CLIENTID",
+      "adm": "a/cmd/administrator",
+      "msg": "PROJECTID/msg/CLIENTID",
+      "cod": "PROJECTID/cod/CLIENTID",
+      "hum": "PROJECTID/hum/CLIENTID"
+    }
+  },
+  "metrics": "project",
+  "sourceIds": {},
+  "statusDefault": {
+    "debugLevel": 0
+  },
+  "clientId": "hmi-mqtt",
+  "status": {
+    "debugLevel": 0
+  },
+  "rsp": "requestConfig",
+  "date": "6:18:21 - 088"
+}

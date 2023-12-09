@@ -52,16 +52,16 @@ const ControlSlider = (props) => {
   }
 
 
-const onChangeH = (_value) => {
-
-  const f = "ControlSliderPanel::onChange"
-    console.log('onChange', _value);
+  const onChangeH = (_value) => {
+    const f = "ControlSliderPanel::onChange"
+    if (!global.aaa.topics.publish.hum) return;
+    console.log(f,'onChange', _value);
     if (!metric) {
       mgError(0, f, "Metric not found: ")
       return;
     }
     setValue(parseFloat(_value).toFixed(metric.decimals))
-    const topic = global.aaa.topics.publish['hum'].replace('DUSERID', global.aaa.userId);
+    const topic = metric.hum.topic.replace('DUSERID', global.aaa.userId);
 
     let payload = `${metric.hum.tags} value=${parseFloat(_value).toFixed(metric.decimals)}`
     mqttPublish(topic, payload)

@@ -29,12 +29,13 @@ function MqttManager (props) {
 //  const f = "index:processCB"
     var out
     var topic = global.aaa.topics.publish.rsp
-    if (_payload.clientId === global.aaa.clientId || _payload.clientId === 'all') {
-      if (_payload.cmd === 'requestStatus') {
+    var payload = JSON.parse(_payload)
+    if (payload.clientId === global.aaa.clientId || payload.clientId === 'all') {
+      if (payload.cmd === 'requestStatus') {
         out = JSON.stringify(publishStatus())
       }
-      if (_payload.cmd === 'setDebugLevel') {
-        global.aaa.status.debugLevel = _payload.debugLevel
+      if (payload.cmd === 'setDebugLevel') {
+        global.aaa.status.debugLevel = payload.debugLevel
         out = JSON.stringify({
           rsp: 'setDebugLevel',
           clientId: global.aaa.clientId,
@@ -49,17 +50,22 @@ function MqttManager (props) {
 
   const loadConfigCB = useCallback((_topic, _payload) => {
     const f = "index::loadConfigCB - "
-    mgDebug(1,f, 'loadConfigCB - enter')
+//  mgDebug(0,f, 'enter ',_payload.cmd, _topic)
 
-    console.log(f,'enter', _topic)
+    // Ignore all responses that aren't requestConfig and this clientId
+    if (_payload.rsp !== "requestConfig") return
+    if (_payload.clientId !== global.aaa.clientId) return
 
-    if (haveConfig) return;  // Ensure configuration is loaded once.
+    if (haveConfig) {
+      console.log(f + ' haveConfig --- exit')
+      return;  // Ensure configuration is loaded once.
+    }
     setHaveConfig(true);
 
     mqttUnsubscribe(global.aaa.topics.subscribe);
-    mqttUnregisterTopicCB(ckTopic("register","rsp"), loadConfigCB,{})
+//  mqttUnregisterTopicCB(ckTopic("register","rsp"), loadConfigCB,{})
 
-    mgDebug(0,f, 'loadConfigCB - try')
+    mgDebug(0,f, 'try')
 
     try {
       // Replace global.aaa object with new configuration
@@ -71,7 +77,7 @@ function MqttManager (props) {
       }
       global.aaa = _payload
 
-      mgDebug(0,f, 'call mqttSubscribe')
+      mgDebug(0,f, 'call mqttSubscribe ', _topic)
       mqttSubscribe(global.aaa.topics.subscribe, )
       mqttRegisterTopicCB(ckTopic("register","cmd"),cmdCB)
 
@@ -104,13 +110,14 @@ function MqttManager (props) {
     const f = "MqttManager::connectCB - "
     mgDebug(0,f, 'MqttManager::connectCB - enter')
 
+    if (connected) return;
+
     setConnected(true)
 
-//  mqttSubscribe(global.aaa.topics.subscribe)
     mqttRegisterTopicCB(ckTopic("register","rsp"), loadConfigCB,{})
 
     // Request Config
-    const payloadStr = `{"cmd": "requestConfig", "type": "mqtt", "clientId": "${global.aaa.clientId}", "projectId": "${props.projectId || "UNK"}"}`
+    const payloadStr = `{"cmd": "requestConfig", "type": "${props.type}", "clientId": "${global.aaa.clientId}", "projectId": "${props.projectId || "UNK"}"}`
     mqttPublish(ckTopic("publish","adm"), payloadStr)
   }, [props.projectId, loadConfigCB])
 
@@ -143,9 +150,10 @@ function MqttManager (props) {
       keepAlive: 50000,
     }
     mqttConnect(connectCB, mqttProcessCB);
-  }, [props, connectCB])
+//}, [props, connectCB])
+  }, [])
 
-  const publishStatus = () => {
+const publishStatus = () => {
     var timeDiff = parseInt((Date.now() - global.aaa.startTime) / 1000)
     var seconds = Math.round(timeDiff % 60)
     timeDiff = Math.floor(timeDiff / 60)

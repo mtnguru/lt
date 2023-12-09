@@ -53,7 +53,7 @@ const mqttConnect = (connectCb, processCb) => {
     password: global.aam.password,
     reconnectPeriod: global.aam.reconnectPeriod,
     connectTimeout: global.aam.connectTimeout,
-    keepAlive: 50000
+    keepAlive: 300
   });
   console.log(f, 'connected it up', mqttClient.connected)
 
@@ -97,12 +97,13 @@ const mqttUnsubscribe = (topics) => {
   }
 }
 
-const mqttPublish = (topic, payload) => {
+const mqttPublish = (_topic, _payload) => {
   const f = "mqttReact::mqttPublish"
+  if (!_topic || !_payload) return;
   if (!mqttClient.connected) {
     console.log(f, "ERROR: mqtt not connected")
   }
-  const res = mqttClient.publish(topic, payload)
+  const res = mqttClient.publish(_topic, _payload)
   return res
 }
 
@@ -165,15 +166,15 @@ const mqttRegisterMetricCB = (_metricId, cb) => {
   const f = "mqttReact::mqttRegisterMetricCB"
   console.log(f, 'enter')
   // If necessary intialize new metric
-  const metricId = _metricId.toLowerCase()
+  var metricId = _metricId.toLowerCase()
   const metric = global.aaa.metrics[metricId]
   if (!metric) {
-    mgError(0, f,'Cannot find metric ', metricId);
+    mgError(0, f,'Cannot find metric ', _metricId);
     return
   }
   if (metric.cbs) {
     if (metric.cbs.includes(cb)) {
-      mgWarning(1, f, "already registered ", metricId)
+      mgWarning(1, f, "already registered ", _metricId)
     } else {
       metric.cbs.push(cb)
     }
@@ -227,7 +228,7 @@ const mqttProcessCB = (_topic, _payload) => {
         return;
       }
       const metricId = tags["MetricId"].toLowerCase()
-      var metric = findMetric(metricId)
+      var metric = findMetric(tags["MetricId"])
       if (!metric) {
         metric = {
           metricId,
@@ -258,7 +259,6 @@ const mqttProcessCB = (_topic, _payload) => {
     if (payloadStr[0] === '{') {
       payload = JSON.parse(payloadStr);
     }
-    console.log(f, "Look for topic", _topic)
     for (let topic in topicsCB) {
 //    var ind = _topic.indexOf(topic)
 //    console.log('index ' + ind)

@@ -1,2 +1,3 @@
 name: Finance Game
-telegrafId: fg_edge
+edgeId: fg_edge
+msgId: fg_msg
