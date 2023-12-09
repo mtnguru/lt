@@ -1,38 +1,45 @@
 // topics.js
 //   functions to build, complete, and modify topics
 
-const completeTopic = (topic,args) => {
+const completeTopic = (_topic,_args) => {
   // Parse into fields
-  var fields = topic.split('/');
-  // console.log('topic ' + topic);
+  var fields = _topic.split('/');
+  // console.log('topic ' + _topic);
   // console.log('fields ' + fields);
   for (let f in fields) {
     var field = fields[f];
     if (field[0] <= 'Z') {  // if name is ALL CAPS
       if (f === "0" && field === "PROJECTID") {
-        if (args && args["projectId"]) {
-          fields[0] = args["projectId"];
+        if (_args && _args["projectId"]) {
+          fields[0] = _args["projectId"];
         }
       }
       if (f === "2" && field === "CLIENTID") {
-        if (args && args["clientId"]) {
-          fields[2] = args["clientId"];
+        if (_args && _args["clientId"]) {
+          fields[2] = _args["clientId"];
         }
       }
       if (f === "3" && field === "USERID") {
-        if (args && args["userId"]) {
-          fields[3] = args["userId"];
+        if (_args && _args["userId"]) {
+          fields[3] = _args["userId"];
         }
       }
-      if (f === "4" && field === "TELEGRAFID") {
-        if (args && args["telegrafId"]) {
-          fields[4] = args["telegrafId"];
+      if (f === "4") {
+        if (field === "EDGEID") {
+          if (_args && _args["edgeId"]) {
+            fields[4] = _args["edgeId"];
+          }
+        }
+        if (field === "MESSAGEID") {
+          if (_args && _args["msgId"]) {
+            fields[4] = _args["msgId"];
+          }
         }
       }
     }
   }
   var ntopic = fields.join('/');
-  // console.log ('topic ' + topic)
+  // console.log ('topic ' + _topic)
   // console.log ('ntopic ' + ntopic)
   return ntopic;
 }

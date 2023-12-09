@@ -23,7 +23,7 @@ topics:
   register:
     cmd: a/cmd
     all: all
-    rsp: a/rsp/CLIENTID
+    rsp: a/rsp
   publish:
     rsp: a/rsp/CLIENTID
     adm: a/cmd/administrator

@@ -35,9 +35,9 @@ topics:
   publish:
     rsp: a/rsp/CLIENTID
     adm: a/cmd/administrator
-    msg: PROJECTID/msg/CLIENTID
+    msg: PROJECTID/msg/CLIENTID/DUSERID/MESSAGEID
     cod: PROJECTID/cod/CLIENTID
-    hum: PROJECTID/hum/CLIENTID
+    hum: PROJECTID/hum/CLIENTID/DUSERID/EDGEID
 metrics: project
 sourceIds: {}
 statusDefault:

@@ -18,6 +18,7 @@ function CabinPage() {
       username="data"
       password="datawp"
       projectId="cb"
+      type="hmi"
       pageId="cb">
       <Box className="page cabin-page">
         <header>

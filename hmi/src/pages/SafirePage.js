@@ -16,6 +16,7 @@ function SafirePage() {
       username="mqtt"
       password="mqttsl"
       projectId="sl"
+      type="hmi"
       pageId="sl">
 
       <Flex w="100%" className="page safire-page flex">

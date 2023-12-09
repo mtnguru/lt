@@ -1,5 +1,6 @@
 name: Cabin in Red Feather Lakes
-telegrafId: cb_edge
+edgeId: cb_edge
+msgId: cb_msg
 clients:
   epiclc:     enabled
   arduino2:   enabled

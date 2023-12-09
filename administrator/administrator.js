@@ -327,45 +327,47 @@ const processCmd = (_topic, payload) => {
   var id = (payload.clientId) ? payload.clientId : payload.ip
   var outTopic = global.aaa.topics.publish.rsp;
   outTopic = outTopic.replace(/DCLIENTID/, id)
-
   var out = JSON.parse(JSON.stringify(payload))
   out.rsp = out.cmd
   delete out.cmd
 
-  if (clientId === global.aaa.clientId || clientId === 'all') {  // commands specifically for the server
-    if (payload.cmd === 'setDebugLevel') {
-      global.aaa.status.debugLevel = payload.debugLevel;
-    // Request to reset administrator client
-    } else if (payload.cmd === 'requestReset') {
-      out = resetServer();
-    // Request for status
-    } else if (payload.cmd === 'requestStatus') {
-      out = getStatus();
-    } else if (payload.cmd === 'requestConfig') {
-      loadAdministratorConfig(); // Start with a fresh config every time
-      if (payload.type === 'hmi') {
-        out = loadHmiConfig(payload)
-      } else if (payload.type === 'mqtt') {
-        out = loadMqttConfig(payload)
-      } else {  // edge and older clients
-        out = loadEdgeConfig(payload)
+  try {
+    if (clientId === global.aaa.clientId || clientId === 'all') {  // commands specifically for the server
+      if (payload.cmd === 'setDebugLevel') {
+        global.aaa.status.debugLevel = payload.debugLevel;
+      } else if (payload.cmd === 'requestReset') {
+        out = resetServer();
+      } else if (payload.cmd === 'requestStatus') {
+        out = getStatus();
+      } else if (payload.cmd === 'requestConfig') {
+        loadAdministratorConfig(); // Start with a fresh config every time
+        if (payload.type === 'hmi') {
+          out = loadHmiConfig(payload)
+        } else if (payload.type === 'mqtt') {
+          out = loadMqttConfig(payload)
+        } else {  // edge and older clients
+          out = loadEdgeConfig(payload)
+        }
+        if (out) {  // Add status for this client
+          addStatus(out)
+        }
+      } else if (payload.cmd === 'getMetricValues') {
+        out.values = getMetricValues(payload.processId, payload.metricId, payload.sourceId, payload.valueId)
+      } else if (payload.cmd === 'requestJsonFile') {
+        msg(2, f, DEBUG, "Read json file: ", filepath)
+        const filepath = `${process.env.ROOT_PATH}/${payload.filepath}`
+        const data = fs.readFileSync(filepath);
+        out = JSON.parse(data)
+      } else if (payload.cmd === 'requestYmlFile') {
+        const filepath = `${process.env.ROOT_PATH}/${payload.filepath}`
+        msg(2, f, DEBUG, "Read yml file: ", filepath)
+        out = YAML.safeLoad(fs.readFileSync(filepath));
       }
-      if (out) {  // Add status for this client
-        addStatus(out)
-      }
-    } else if (payload.cmd === 'getMetricValues') {
-      out.values = getMetricValues(payload.processId, payload.metricId, payload.sourceId, payload.valueId)
-    } else if (payload.cmd === 'requestJsonFile') {
-      msg(2, f, DEBUG, "Read json file: ", filepath)
-      const filepath = `${process.env.ROOT_PATH}/${payload.filepath}`
-      const data = fs.readFileSync(filepath);
-      out = JSON.parse(data)
-    } else if (payload.cmd === 'requestYmlFile') {
-      const filepath = `${process.env.ROOT_PATH}/${payload.filepath}`
-      msg(2, f, DEBUG, "Read yml file: ", filepath)
-      out = YAML.safeLoad(fs.readFileSync(filepath));
     }
+  } catch(err) {
+    msg(0,f,ERROR, 'Error processing Cmd -- ',err)
   }
+
   return [outTopic, out]
 }
 
@@ -480,18 +482,84 @@ const findProject = (projectId) => {
   }
 }
 
+const loadProjectMetrics = (_projectId, _client) => {
+  var projectMetrics = {};
+  const f = "adminisgtrator::loadProjectMetrics - "
+  var project = global.aaa.projects[_projectId]
+
+  try {
+    // Read in all the metrics/*.yml files for this project
+    var dirPath = `${process.env.ROOT_PATH}/${adminId}/projects/${_projectId}/metrics`
+    var files = fs.readdirSync(dirPath);
+
+    // forEach file in CONF/ADMINID/PROJECTID/metrics with suffix .yml
+    files.forEach(filename => {
+      if (path.extname(filename) === '.yml') {
+        var filepath = dirPath + '/' + filename;
+        var fMetrics = YAML.safeLoad(fs.readFileSync(filepath));
+        for (var id in fMetrics) {
+          var fMetric = fMetrics[id]
+          var metricId = id.toLowerCase();  // Change key to lower case
+          if (projectMetrics[metricId]) {
+            metric = projectMetrics[metricId]
+            if (fMetric.lowerAlarm) { metric.lowerAlarm = fMetric.lowerAlarm }
+            if (fMetric.upperAlarm) { metric.upperAlarm = fMetric.upperAlarm }
+            if (fMetric.low)        { metric.low  = fMetric.low }
+            if (fMetric.high)       { metric.high = fMetric.high }
+            if (fMetric.inp)        { metric.inp  = fMetric.inp }
+            if (fMetric.out)        { metric.inp  = fMetric.out }
+            if (fMetric.hum)        { metric.inp  = fMetric.hum }
+          } else {
+            projectMetrics[metricId] = metric = fMetrics[id]
+            metric.name = id
+            metric.projectId = _projectId                // add projectId to each metric
+            var flds = id.split('_')
+            metric.units = flds[flds.length - 1]
+          }
+        }
+      }
+    });
+
+    var args = {
+      "projectId": _projectId,
+      "msgId": project.msgId,
+      "edgeId": project.edgeId,
+    }
+    for (var id in projectMetrics) {
+      var metric = projectMetrics[id]
+      if (metric.inp) {
+        metric.inp.tags = influx.makeTagsFromMetricId(metric.name, "inp", _projectId)
+        metric.inp.topic = completeTopic(_client.topics.publish.inp, args)
+      }
+
+      if (metric.out) {
+        metric.out.tags = influx.makeTagsFromMetricId(metric.name, "out", _projectId)
+//      metric.out.topic = completeTopic(global.aaa.topics.publish.out, args)
+      }
+
+      if (metric.hum) {
+        metric.hum.tags = influx.makeTagsFromMetricId(metric.name, "hum", _projectId)
+        metric.hum.topic = completeTopic(_client.topics.publish.hum, args)
+      }
+    }
+  } catch(err) {
+    msg(0,f, ERROR, err)
+  }
+  return projectMetrics;
+}
+
 
 const loadClientMetrics = (_client) => {
-  // for each projecgt
+  // for each projectId
   for (var projectId in global.aaa.projects) {
     var project = global.aaa.projects[projectId]
     // Read in all the metrics/*.yml files for this project
     var dirPath = `${process.env.ROOT_PATH}/${adminId}/projects/${projectId}/metrics`
     var files = fs.readdirSync(dirPath);
 
-    // for each file in this projects
+    // forEach file in CONF/ADMINID/PROJECTID/metrics with suffix .yml
     files.forEach(filename => {
-      if (path.extname(filename) == '.yml') {
+      if (path.extname(filename) === '.yml') {
         var filepath = dirPath + '/' + filename;
         var metrics = YAML.safeLoad(fs.readFileSync(filepath));
         for (orgMetricId in metrics) {
@@ -506,9 +574,12 @@ const loadClientMetrics = (_client) => {
           var flds = orgMetricId.split('_')
           metric.units = flds[flds.length - 1]
 
+          var project = global.aaa.projects[projectId]
           var args = {
-            "clientId": _client.clientID,
+            "clientId": _client.clientId,
             "projectId": projectId,
+            "edgeId": project.edgeId,
+            "messageId": project.messageId,
             "telegrafId": project.telegrafId,
           }
           if (metric.inp && metric.inp.clientId === _client.clientId) {
@@ -648,7 +719,7 @@ const loadAdministratorConfig = () => {
 }
 
 const loadClient = (_dir, _clientId, _projectId) => {
-  const f = 'administrator::loadClient'
+  const f = 'administrator::loadClient - '
   var client;
   try {
     var filepath = `${process.env.ROOT_PATH}/${adminId}/${_dir}/${_clientId}.yml`
@@ -690,7 +761,7 @@ const loadClient = (_dir, _clientId, _projectId) => {
 }
 
 const findClientByIp = (_dir, _ip, _projectId) => {
-  const f = 'administrator::findClientByIp'
+  const f = 'administrator::findClientByIp - '
   try {
     for (var clientId in global.aaa.clients) {
       if (clientId !== "all" && global.aaa.clients[clientId] === "enabled") {
@@ -749,8 +820,14 @@ const loadMqttConfig = (_payload) => {
 }
 
 const loadHmiConfig = (_payload) => {
-  var client = loadClient("clients", _payload.clientId, _payload.projectId)
-  return client;
+  const f = 'administrator::loadHmiConfig - '
+  try {
+    var client = loadClient("clients", _payload.clientId, _payload.projectId)
+    client.metrics = loadProjectMetrics(_payload.projectId, client)
+    return client;
+  } catch(err) {
+    msg(0,f,ERROR, 'Error loading config',err)
+  }
 }
 
 loadAdministratorConfig();

@@ -15,6 +15,7 @@ function OxyPage() {
       url="labtime.org"
       username="data"
       password="datawp"
+      type="hmi"
       projectId="oxy"
       clientId="hmi-oxy"
       pageId="oxy">
