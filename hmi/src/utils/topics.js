@@ -2,55 +2,78 @@
 //   functions to build, complete, and modify topics
 
 const completeTopic = (_topic,_args) => {
-  // Parse into fields
+  if (_topic === undefined) {
+    console.log('completeTopic ' + _topic)
+  }
   var fields = _topic.split('/');
   // console.log('topic ' + _topic);
   // console.log('fields ' + fields);
   for (let f in fields) {
     var field = fields[f];
     if (field[0] <= 'Z') {  // if name is ALL CAPS
-      if (f === "0" && field === "PROJECTID") {
-        if (_args && _args["projectId"]) {
-          fields[0] = _args["projectId"];
-        }
-      }
-      if (f === "2" && field === "CLIENTID") {
-        if (_args && _args["clientId"]) {
-          fields[2] = _args["clientId"];
-        }
-      }
-      if (f === "3" && field === "USERID") {
-        if (_args && _args["userId"]) {
-          fields[3] = _args["userId"];
-        }
-      }
-      if (f === "4") {
-        if (field === "EDGEID") {
-          if (_args && _args["edgeId"]) {
-            fields[4] = _args["edgeId"];
+      switch (f) {
+        case "0":
+          if (field === "PROJECTID") {
+            if (_args && _args["projectId"]) {
+              fields[0] = _args["projectId"];
+            }
           }
-        }
-        if (field === "MESSAGEID") {
-          if (_args && _args["msgId"]) {
-            fields[4] = _args["msgId"];
+          break;
+      //case "1" // do nothing
+        case "2":
+          if (field === "CLIENTID") {
+            if (_args && _args["clientId"]) {
+              fields[2] = _args["clientId"];
+            }
           }
+          break;
+        case "3":
+          if (field === "USERID") {
+            if (_args && _args["userId"]) {
+              fields[3] = _args["userId"];
+            }
+          }
+          break;
+        case "4":
+          if (field === "EDGEID") {
+            if (_args && _args["edgeId"]) {
+              fields[4] = _args["edgeId"];
+            }
+          }
+          if (field === "MSGID") {
+            if (_args && _args["msgId"]) {
+              fields[4] = _args["msgId"];
+            }
+          }
+          break;
         }
-      }
     }
   }
-  var ntopic = fields.join('/');
-  // console.log ('topic ' + _topic)
-  // console.log ('ntopic ' + ntopic)
-  return ntopic;
+  // console.log ('topic before ' + _topic)
+  _topic = fields.join('/');
+  // console.log ('topic after  ' + _topic)
+  return _topic;
+}
+
+const completeAllTopics = (_topics, args) => {
+  var topics = JSON.parse(JSON.stringify(_topics))
+  if (topics.subscribe) {
+    topics.subscribe = completeTopics(topics.subscribe, args)
+  }
+  if (topics.register) {
+    topics.register = completeTopics(topics.register, args)
+  }
+  if (topics.publish) {
+    topics.publish = completeTopics(topics.publish, args)
+  }
+  return topics;
 }
 
 const completeTopics = (_topics, args) => {
-  var topics = {}
   for (let name in _topics) {
-    var ntopic = completeTopic(_topics[name], args);
-    topics[name] = ntopic
+    _topics[name] = completeTopic(_topics[name], args);
   }
-  return topics;
+  return _topics;
 }
 
 const makeTopic = (projectId, func, clientId, userId, telegrafId) => {
@@ -80,6 +103,7 @@ const ckTopic = (_type, _key) => {
 module.exports = {
   completeTopic: completeTopic,
   completeTopics: completeTopics,
+  completeAllTopics: completeAllTopics,
   ckTopic: ckTopic,
   makeTopic: makeTopic,
 };

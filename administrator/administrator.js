@@ -36,7 +36,7 @@ const path = require('path')
 require('dotenv').config();
 
 const mqttNode  = require('./utils/mqttNode')
-const {ckTopic, completeTopics, completeTopic}  = require('./utils/topics')
+const {ckTopic, completeAllTopics, completeTopic}  = require('./utils/topics')
 const metricValues = {}
 const {msg} = require("./utils/msg")
 const influx = require("./utils/influx")
@@ -188,26 +188,33 @@ const addStatus = (out) => {
   }
 }
 
-const addMetricValues = (processId, metricId, sourceId, values) => {
-  //   Process  Instance  MetricId  SourceIdunc - inp, out, hum
+const addMetricValues = (processId, metricId, sourceId, values, userId) => {
+  //   Process  Instance  MetricId  SourceIdunc - inp, out, hum, upper, lower, high, low
   if (!metricValues?.[processId]?.[metricId]?.[sourceId]) {
     if (!(processId in metricValues)) {
       metricValues[processId] = {[metricId]: {[sourceId]: {}}}
     } else if (!(metricId in metricValues[processId])) {
       metricValues[processId][metricId] = {[sourceId]: {}}
-
     } else if (!(sourceId in metricValues[processId][metricId])) {
       metricValues[processId][metricId][sourceId] = {}
     }
   }
-
   for (var key in values) {
     metricValues[processId][metricId][sourceId][key] = {
       val: values[key],
       date: Date.now(),
+      userId: userId,
     }
   }
 }
+
+const checkMetricStatus = (_processId, _metricId) => {
+  var metric = metricValues?.[_processId]?.[_metricId]
+  if (metric) {
+    // check values
+  }
+}
+
 
 
 //  output to MQTT all values of a metric
@@ -242,15 +249,14 @@ const processMqttInput = (_topic, _payload) => {
   //       SourceId - inp, out, hum
   //         val
   //         datetime
-  var [processId,sourceId,...rest] = _topic.split('/')
+  var [processId,sourceId,clientId,userId,edgeId] = _topic.split('/')
   processId = processId.toLowerCase()
   sourceId = sourceId.toLowerCase()
-
+  userId = userId.toLowerCase()
 
   var payload = _payload.toString()
   var flds = payload.split(' ')
   var values = {}
-
 
   // Extract metricId from tags
   var metricId
@@ -274,8 +280,8 @@ const processMqttInput = (_topic, _payload) => {
   }
 
   // Add to metricValues array
-  addMetricValues(processId, metricId, sourceId, values)
-//var status = checkMetricStatus()
+  addMetricValues(processId, metricId, sourceId, values, userId)
+  var status = checkMetricStatus(processId, metricId)
 
   return ['', null];
 }
@@ -323,43 +329,43 @@ const getMetricValues = (processId, metricId, sourceId, valueId) => {
 }
 
 
-const processCmd = (_topic, payload) => {
-  var id = (payload.clientId) ? payload.clientId : payload.ip
+const processCmd = (_topic, _payload) => {
+  var id = (_payload.clientId) ? _payload.clientId : _payload.ip
   var outTopic = global.aaa.topics.publish.rsp;
   outTopic = outTopic.replace(/DCLIENTID/, id)
-  var out = JSON.parse(JSON.stringify(payload))
+  var out = JSON.parse(JSON.stringify(_payload))
   out.rsp = out.cmd
   delete out.cmd
 
   try {
     if (clientId === global.aaa.clientId || clientId === 'all') {  // commands specifically for the server
-      if (payload.cmd === 'setDebugLevel') {
-        global.aaa.status.debugLevel = payload.debugLevel;
-      } else if (payload.cmd === 'requestReset') {
+      if (_payload.cmd === 'setDebugLevel') {
+        global.aaa.status.debugLevel = _payload.debugLevel;
+      } else if (_payload.cmd === 'requestReset') {
         out = resetServer();
-      } else if (payload.cmd === 'requestStatus') {
+      } else if (_payload.cmd === 'requestStatus') {
         out = getStatus();
-      } else if (payload.cmd === 'requestConfig') {
+      } else if (_payload.cmd === 'requestConfig') {
         loadAdministratorConfig(); // Start with a fresh config every time
-        if (payload.type === 'hmi') {
-          out = loadHmiConfig(payload)
-        } else if (payload.type === 'mqtt') {
-          out = loadMqttConfig(payload)
+        if (_payload.type === 'hmi') {
+          out = loadHmiConfig(_payload)
+        } else if (_payload.type === 'mqtt') {
+          out = loadMqttConfig(_payload)
         } else {  // edge and older clients
-          out = loadEdgeConfig(payload)
+          out = loadEdgeConfig(_payload)
         }
         if (out) {  // Add status for this client
           addStatus(out)
         }
-      } else if (payload.cmd === 'getMetricValues') {
-        out.values = getMetricValues(payload.processId, payload.metricId, payload.sourceId, payload.valueId)
-      } else if (payload.cmd === 'requestJsonFile') {
+      } else if (_payload.cmd === 'getMetricValues') {
+        out.values = getMetricValues(_payload.processId, _payload.metricId, _payload.sourceId, _payload.valueId)
+      } else if (_payload.cmd === 'requestJsonFile') {
         msg(2, f, DEBUG, "Read json file: ", filepath)
-        const filepath = `${process.env.ROOT_PATH}/${payload.filepath}`
+        const filepath = `${process.env.ROOT_PATH}/${_payload.filepath}`
         const data = fs.readFileSync(filepath);
         out = JSON.parse(data)
-      } else if (payload.cmd === 'requestYmlFile') {
-        const filepath = `${process.env.ROOT_PATH}/${payload.filepath}`
+      } else if (_payload.cmd === 'requestYmlFile') {
+        const filepath = `${process.env.ROOT_PATH}/${_payload.filepath}`
         msg(2, f, DEBUG, "Read yml file: ", filepath)
         out = YAML.safeLoad(fs.readFileSync(filepath));
       }
@@ -367,7 +373,6 @@ const processCmd = (_topic, payload) => {
   } catch(err) {
     msg(0,f,ERROR, 'Error processing Cmd -- ',err)
   }
-
   return [outTopic, out]
 }
 
@@ -454,13 +459,20 @@ const processCB = (_topic, _payload) => {
         global.aas.clients[clientId].enabled = input.enabled
       }
     // If this is inp, out, hum influx data then update values in the metricValues array
-    } else if (sourceId === 'inp' || sourceId === 'out' || sourceId === 'hum') {
+    } else if (sourceId === 'inp' ||
+               sourceId === 'out' ||
+               sourceId === 'hum' ||
+               sourceId === 'upper' ||
+               sourceId === 'lower' ||
+               sourceId === 'high' ||
+               sourceId === 'low') {
       [outTopic, out] = processMqttInput(_topic,inputStr)
     }
     var short = global.aaa.topics.subscribe.rsp.replace(/\/#/,'')
     var ind = _topic.indexOf(short)
 
     if (out) {
+      out.mqttClientId = input.mqttClientId || 'UNK'
       out.rsp = input.cmd;
       out.date = currentDate()
       var outStr = JSON.stringify(out)
@@ -525,21 +537,15 @@ const loadProjectMetrics = (_projectId, _client) => {
       "msgId": project.msgId,
       "edgeId": project.edgeId,
     }
+    const sourceIds = ["inp", "out", "hum", "upper", "lower", "high", "low"]
+
     for (var id in projectMetrics) {
       var metric = projectMetrics[id]
-      if (metric.inp) {
-        metric.inp.tags = influx.makeTagsFromMetricId(metric.name, "inp", _projectId)
-        metric.inp.topic = completeTopic(_client.topics.publish.inp, args)
-      }
-
-      if (metric.out) {
-        metric.out.tags = influx.makeTagsFromMetricId(metric.name, "out", _projectId)
-//      metric.out.topic = completeTopic(global.aaa.topics.publish.out, args)
-      }
-
-      if (metric.hum) {
-        metric.hum.tags = influx.makeTagsFromMetricId(metric.name, "hum", _projectId)
-        metric.hum.topic = completeTopic(_client.topics.publish.hum, args)
+      for (sourceId of sourceIds) {
+        if (metric[sourceId]) {
+          metric[sourceId].tags = influx.makeTagsFromMetricId(metric.name, sourceId, _projectId)
+          metric[sourceId].topic = completeTopic(_client.topics.publish[sourceId], args)
+        }
       }
     }
   } catch(err) {
@@ -582,25 +588,17 @@ const loadClientMetrics = (_client) => {
             "messageId": project.messageId,
             "telegrafId": project.telegrafId,
           }
-          if (metric.inp && metric.inp.clientId === _client.clientId) {
-            if (!_client.inp) _client.inp = {}
-            metric.inp.tags = influx.makeTagsFromMetricId(metric.name, "inp", projectId)
-            metric.inp.topic = completeTopic(_client.topics.publish.inp, args)
-            _client.inp[metricId] = metric
-          }
+          const sourceIds = ["inp", "out", "hum", "upper", "lower", "high", "low"]
 
-          if (metric.out && metric.out.clientId === _client.clientId) {
-            if (!_client.out) _client.out = {}
-            metric.out.tags = influx.makeTagsFromMetricId(metric.name, "out", projectId)
-//          metric.out.topic = completeTopic(_client.topics.publish.out, args)
-            _client.out[metricId] = metric
-          }
-
-          if (metric.hum && metric.hum.clientId === _client.clientId) {
-            if (!_client.hum) _client.hum = {}
-            metric.hum.tags = influx.makeTagsFromMetricId(metric.name, "hum", projectId)
-            metric.hum.topic = completeTopic(_client.topics.publish.hum, args)
-            _client.hum[metricId] = metric
+          for (sourceId of sourceIds) {
+            if (_client.topics.publish[sourceId] && metric[sourceId]) {
+              if (metric[sourceId] && metric[sourceId].clientId === _client.clientId) {
+                metric[sourceId].tags = influx.makeTagsFromMetricId(metric.name, "inp", projectId)
+                metric[sourceId].topic = completeTopic(_client.topics.publish[sourceId], args)
+                if (!_client[sourceId]) _client[sourceId] = {}
+                _client[sourceId][metricId] = metric
+              }
+            }
           }
         }
       }
@@ -691,22 +689,9 @@ const loadAdministratorConfig = () => {
   global.aam.mqttClientId = mqttClientId
 
 // Complete the administrator subscribe and publish topics
-  if (global.aaa.topics.subscribe) {
-    global.aaa.topics.subscribe = completeTopics(global.aaa.topics.subscribe,{
-      "clientId": "administrator",
-    });
-  }
-  if (global.aaa.topics.register) {
-    global.aaa.topics.register = completeTopics(global.aaa.topics.register, {
-      "clientId": "administrator",
-    });
-  }
-  if (global.aaa.topics.publish) {
-    global.aaa.topics.publish = completeTopics(global.aaa.topics.publish, {
-      "clientId": "administrator",
-    });
+  global.aaa.topics = completeAllTopics(global.aaa.topics,{ clientId: "administrator" })
 
-  }
+  // load each project - delete disabled ones
   for (var projectId in global.aaa.projects) {
     if (global.aaa.projects[projectId] === "enabled") {
       global.aaa.projects[projectId] = loadProject(projectId)
@@ -735,28 +720,25 @@ const loadClient = (_dir, _clientId, _projectId) => {
     if (client.topicSet) {
       client.topics = JSON.parse(JSON.stringify(global.aaa.topicSets[client.topicSet]))
     }
+    var project = global.aaa.projects[_projectId]
+    if (!project) {
+      project = {}
+    }
     var args = {
       'clientId': client.clientId,
-      'userId': 'UNK',
-      'projectId': _projectId
+      'userId': client.userId || 'EDGE',
+      'projectId': _projectId,
+      'msgId': project.msgId,
+      'edgeId': project.edgeId
     }
-    if (client.topics.subscribe) {
-      client.topics.subscribe = completeTopics(JSON.parse(JSON.stringify(client.topics.subscribe)), args);
-    }
-    if (client.topics.publish) {
-      client.topics.publish   = completeTopics(JSON.parse(JSON.stringify(client.topics.publish)), args);
-    }
-    if (client.topics.register) {
-      client.topics.register  = completeTopics(JSON.parse(JSON.stringify(client.topics.register)), args);
-    }
+    client.topics = completeAllTopics(JSON.parse(JSON.stringify(client.topics)), args);
 
     if (client.sourceIds) {
       client.sourceIds = sourceIds
     }
   } catch(err) {
-
+    msg(0,f,ERROR,"Error loading client ", _clientId, ' - ', err);
   }
-
   return client
 }
 
