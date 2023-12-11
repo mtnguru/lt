@@ -54,7 +54,8 @@ function MqttManager (props) {
 
     // Ignore all responses that aren't requestConfig and this clientId
     if (_payload.rsp !== "requestConfig") return
-    if (_payload.clientId !== global.aaa.clientId) return
+    if (_payload.mqttClientId !== global.aaa.mqttClientId) return;
+//  if (_payload.clientId !== global.aaa.clientId) return
 
     if (haveConfig) {
       console.log(f + ' haveConfig --- exit')
@@ -117,7 +118,7 @@ function MqttManager (props) {
     mqttRegisterTopicCB(ckTopic("register","rsp"), loadConfigCB,{})
 
     // Request Config
-    const payloadStr = `{"cmd": "requestConfig", "type": "${props.type}", "clientId": "${global.aaa.clientId}", "projectId": "${props.projectId || "UNK"}"}`
+    const payloadStr = `{"cmd": "requestConfig", "mqttClientId": "${global.aaa.mqttClientId}", "type": "${props.type}", "clientId": "${global.aaa.clientId}", "projectId": "${props.projectId || "UNK"}"}`
     mqttPublish(ckTopic("publish","adm"), payloadStr)
   }, [props.projectId, loadConfigCB])
 

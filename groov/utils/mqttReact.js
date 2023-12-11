@@ -221,7 +221,13 @@ const mqttProcessCB = (_topic, _payload) => {
     // Metric Callbacks
     // If inp, out, hum
 
-    if (func === 'inp' || func === 'out' || func === 'hum') {
+    if (func === 'inp' ||
+        func === 'out' ||
+        func === 'hum' ||
+        func === 'upper' ||
+        func === 'lower' ||
+        func === 'high' ||
+        func === 'low') {
       const {tags, values} = extractFromTags(payloadStr)
       if (!tags["MetricId"]) {
         mgError(0, f, "Could not find Metric field in influx string");

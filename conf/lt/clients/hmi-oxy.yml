@@ -35,10 +35,39 @@ topics:
   publish:
     rsp: a/rsp/CLIENTID
     adm: a/cmd/administrator
-    msg: PROJECTID/msg/CLIENTID/DUSERID/MESSAGEID
+    msg: PROJECTID/msg/CLIENTID/DUSERID/MSGID
     cod: PROJECTID/cod/CLIENTID
     hum: PROJECTID/hum/CLIENTID/DUSERID/EDGEID
+    out: PROJECTID/out/CLIENTID
+    upper: PROJECTID/upper/CLIENTID/DUSERID/EDGEID
+    lower: PROJECTID/lower/CLIENTID/DUSERID/EDGEID
+    low: PROJECTID/low/CLIENTID/DUSERID/EDGEID
+    high: PROJECTID/high/CLIENTID/DUSERID/EDGEID
 metrics: project
 sourceIds: {}
 statusDefault:
   debugLevel: 0
+page:
+  title: Swiss Oxyhydrogen Energy
+  id: hmi-oxy
+  mqtt:
+    url: labtime.org
+    username: data
+    password: datawp
+    type: hmi
+    projectId: oxy
+    clientId: hmi-oxy
+  class: page oxy-page flex
+  children:
+    container:
+      type: container
+      class: left-col
+      children:
+        ControlOxyPanel:
+        ControlImagePanel:
+    MsgPanel:
+      class: right-col
+      children: 
+        Notes:
+        Chat:
+        Notifications: 

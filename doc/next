@@ -1,3 +1,50 @@
+Now what _ you wanted to create the user interface code
+Get config from administrator
+Implement a rangeSlider
+
+Implement alarm messages
+Implement range messages
+Implement stale messages
+
+inp
+out
+hum
+upper
+lower
+high
+low
+   
+status
+  enabled
+  disabled
+  upper lower
+  high low
+
+upon receipt of new data or setpoint - upper, lower, high, low
+  check for status change
+  if change send out a message
+
+every minute - run through every metric
+  for each process
+    for each metric
+      check for staleness
+        send out message if stale
+      
+
+      
+stale - inp, out, hum - does not apply to -- upper lower high low
+  ok
+  late   1 minutes old - inp
+  stale  2 minutes old - inp
+stale
+    
+  
+
+
+
+
+
+
 What to do right now. 
 Demo this for Slobodan today
 Upload to labtime.org

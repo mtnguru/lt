@@ -79,10 +79,18 @@
     margin-left: 5px;
   }
   .card.pretty {
-    max-height: 150px;
+    .payload {
+      display: none;
+    }
+    &.expand {
+     .payload {
+       display: block;
+     }
+    }
     overflow-y: hidden;
     .short {
       display: block;
+      margin-top: 2px;
       @media(min-width: $bp-md) {
         display: inline-block;
       }

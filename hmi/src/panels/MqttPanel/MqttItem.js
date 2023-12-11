@@ -25,6 +25,7 @@ const MqttItem = (props) => {
   const [short, setShort] = useState('')
   const [author, setAuthor] = useState('')
   const [type, setType] = useState('')
+  const [expand, setExpand] = useState('')
 
   // Format the payload - Raw, JSON, Pretty
   useEffect(() => {
@@ -58,50 +59,64 @@ const MqttItem = (props) => {
             if (payload.content) {
               short = `???: ${payload["function"]} - ${payload.content}`
             } else if (props.item.sourceId === 'out') {
-              short = `out: ${payload.value} - ${payload.metric}`
+              short = `out ${payload.value} - ${payload.metric}`
             } else if (props.item.sourceId === 'inp') {
-              short = `${payload.value} - ${payload.metric}`
+              short = `inp ${payload.value} - ${payload.metric}`
             } else if (props.item.sourceId === 'cmd') {
               switch (payload.cmd) {
                 case 'setEnabled':
-                  short = `${payload.cmd} - ${payload.enabled}`
+                  short = `cmd ${payload.cmd} - ${payload.enabled}`
                   break
                 case 'setDebugLevel':
-                  short = `${payload.cmd} - ${payload.debugLevel}`
+                  short = `cmd ${payload.cmd} - ${payload.debugLevel}`
                   break
                 case 'setSampleInterval':
-                  short = `${payload.cmd} - ${payload.sampleInterval}`
+                  short = `cmd ${payload.cmd} - ${payload.sampleInterval}`
                   break
                 case 'requestConfig':
-                  short = `${payload.cmd} - ` + payload.clientID ? payload.clientId : payload.ip
+                  var id = (payload.clientId) ? payload.clientId : (payload.ip) ? payload.ip : "None"
+                  short = `cmd ${payload.cmd} -- ` + id
+                  break
+                case 'requestStatus':
+                  short = `cmd ${payload.cmd} -- ` + payload.clientId
                   break
                 default:
-                  short = `${payload.cmd}`
+                  short = `cmd ${payload.cmd}`
                   break
               }
             } else if (props.item.sourceId === 'rsp') {
               switch (payload.rsp) {
                 case 'setEnabled':
-                  short = `${payload.rsp} - ${payload.enabled}`
+                  short = `rsp ${payload.rsp} - ${payload.enabled}`
                   break
                 case 'setDebugLevel':
-                  short = `${payload.rsp} - ${payload.debugLevel}`
+                  short = `rsp ${payload.rsp} - ${payload.debugLevel}`
                   break
                 case 'setSampleInterval':
-                  short = `${payload.rsp} - ${payload.sampleInterval}`
+                  short = `rsp ${payload.rsp} - ${payload.sampleInterval}`
+                  break
+                case 'requestConfig':
+                  short = `rsp ${payload.rsp} -- ` + payload.clientId
+                  break
+                case 'requestStatus':
+                  short = `rsp ${payload.rsp} - ` + payload.clientId
                   break
                 default:
+                  short = `rsp ${payload.rsp} - ` + payload.clientId
                   payloadStr = makeJsonPretty(payloadStr)
                   break
               }
             } else if (props.item.sourceId === 'cod') {
-              short = `${payload["function"]}\n${payload.msg}` ;
+              short = `cod ${payload["function"]} ${payload.msg}` ;
               setType(payload.type)
             } else if (props.item.sourceId === 'msg') {
+              short = 'msg'
               if (payload.author) {
                 setAuthor(payload.author)
+                short = ` ${short} ${payload.author}`
               }
               payloadStr = payload.msg
+              short = ` ${short} ${payload.msg}`
               setType(payload.type)
             } else {
               payloadStr = makeJsonPretty(payloadStr)
@@ -111,28 +126,35 @@ const MqttItem = (props) => {
 
           if (props.item.sourceId === 'inp' ||
               props.item.sourceId === 'hum' ||
-              props.item.sourceId === 'out') {
+              props.item.sourceId === 'out' ||
+              props.item.sourceId === 'upper' ||
+              props.item.sourceId === 'lower' ||
+              props.item.sourceId === 'high' ||
+              props.item.sourceId === 'low') {
             var {tags, values} = extractFromTags(props.item.payload)
             var val = `${values["value"]}`
             var len = val.length;
             for (var i = 0; i < 7-len; i++) val += ' '
-            short = `${val} ${tags["MetricId"]}`
+            short = `${props.item.sourceId} ${val} ${tags["MetricId"]}`
           }
         }
       }
     }
+    setPayloadOut(payloadStr)
     if (short) {
       setShort(short);
-      setPayloadOut('')
     } else {
       setShort('')
-      setPayloadOut(payloadStr)
     }
-  }, [props.item.topic, props.item.action, props.item.sourceId, props.item.payload, props.pretty])
+  }, [expand, props.item.topic, props.item.action, props.item.sourceId, props.item.payload, props.pretty])
+
+  const onClickH = (event) => {
+    setExpand((expand === 'expand') ? '' : "expand")
+  }
 
   return (
     <div className='mqtt-item'>
-      <Box className={`card ${props.pretty} ${props.item.sourceId}`}>
+      <Box className={`card ${props.pretty} ${expand} ${props.item.sourceId}`}>
         <div className='right'>
           <span className='topic'>{props.item.topic}</span>
           <span className='date'>{props.item.date}</span>
@@ -142,7 +164,7 @@ const MqttItem = (props) => {
           <span className={`clientId ${props.item.clientId}`}>{props.item.clientId}</span>
           {type   && <span className={`type ${type}`}>{type}</span>}
           {author && <span className='author'>{author}</span>}
-          {short  && <span className='short'><pre>{short}</pre></span>}
+          {short  && <span className={`short`}><button onClick={onClickH}><pre>{short}</pre></button></span>}
         </div>
         <pre className='payload'>
           {payloadOut}

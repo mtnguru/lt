@@ -25,6 +25,10 @@ topics:
     inp: +/inp/#
     out: +/out/#
     hum: +/hum/#
+    upper: +/upper/#
+    lower: +/lower/#
+    high: +/high/#
+    low: +/low/#
   publish:
     rsp: a/rsp/DCLIENTID
     msg: a/msg/CLIENTID
@@ -41,7 +45,7 @@ topicSets:
       rsp:  a/rsp/CLIENTID
       inp:  PROJECTID/inp/CLIENTID/USERID/EDGEID
       cod:  a/cod/CLIENTID
-      msg:  a/msg/CLIENTID/UNK/MSGID
+      msg:  a/msg/CLIENTID/USERID/MSGID
 projects:
   cb:  enabled
   fg:  disabled
@@ -63,4 +67,3 @@ clients:
   hmi-mqtt   : enabled
   drupal     : enabled
   controller : enabled
-

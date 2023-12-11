@@ -33,7 +33,7 @@ function MqttFilterFunc(props) {
       }
       localStorage.setItem(lsKey, JSON.stringify(ls))
     }
-    setAllSelected(global.aaa.sourceIds.all.selected)
+      setAllSelected(global.aaa.sourceIds.all.selected)
     console.log(f,'exit', ls)
   }, [])
 
