@@ -1,3 +1,71 @@
+   
+Each environment - app or dev
+   use different mosquitto brokers - different ports
+   use different administrators
+   hmi uses two different domains - app.labtime.org and dev.latbime.org
+     uses different code directories - /apps/lt  /apps/lt.dev 
+
+   administrator-dev
+   administrator-app
+   hmi-oxy-dev
+   hmi-oxy-app
+   hmi-mqtt-dev
+   hmi-mqtt-app
+   resetRequest - must use the c
+
+   arduino5-dev   name comes from the administrator
+   arduino6-app
+
+   How do I make a production/app and development environment
+     Administrators need to be separate
+     Change all topics to the administrator Id - lt or sl
+       Moving an arduino between production and development requires downloading code
+     Then I can start multiple administrators on the same server
+       Each client must know it's administrator in advance - unless there is a broadcast 
+       Initial request for config tells the client its administrator
+         AdminId
+     Initial request for mommy is a/cmd/administrator - response is a/rsp/DCLIENTID
+       Both administrators check to see if it's their client 
+       Both can respond whether they found the client
+
+       Two administrators cannot have clients with the same name
+       Response tells the client it's adminId from then on respond with that
+         lt-prod/cmd/arduino  requestStatus - clientId
+         lt-dev/cmd/
+         
+         requestReset
+         requestConfig
+         setEnabled
+         setDebugLevel
+         getMetricValue
+         
+   Enable ability for mosquitto to restart and remember connections
+      Already enabled - then why does the administrator and hmi's get disconnected
+      Goto level QOS=2
+   Use port 8883 - certificate
+      First get administrator working
+      arduinos, then HMI
+   Create some sensors - voltage? current? 
+
+   
+Make a temperature probe with one-wire sensors
+   Outside under the porch  
+   Outside under the eaves of the porch
+   Inside the crawl space
+   Inside the furnace burner space?  - Why not?
+   Floor by desk
+   4' High by desk
+   Ceiling
+   Ceiling Apex 
+
+
+First make the one for the interior
+Figure out how to easily disconnect it from Arduino
+Use the board and connector or use phone jacks - can I get female jack - use RJ45 jack?  I have plenty
+   
+
+
+
 Now what _ you wanted to create the user interface code
 Get config from administrator
 Implement a rangeSlider

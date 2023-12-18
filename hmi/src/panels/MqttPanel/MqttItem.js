@@ -162,13 +162,17 @@ const MqttItem = (props) => {
         </div>
         <div className={`left mqtt-clientId-bg`}>
           <span className={`clientId ${props.item.clientId}`}>{props.item.clientId}</span>
-          {type   && <span className={`type ${type}`}>{type}</span>}
-          {author && <span className='author'>{author}</span>}
-          {short  && <span className={`short`}><button onClick={onClickH}><pre>{short}</pre></button></span>}
+          <button onClick={onClickH}>
+            {type   && <span className={`type ${type}`}>{type}</span>}
+            {author && <span className='author'>{author}</span>}
+            {short  && <span className={`short`}><pre>{short}</pre></span>}
+          </button>
         </div>
         <pre className='payload'>
-          {payloadOut}
-        </pre>
+            <button onClick={onClickH}>
+              {payloadOut}
+            </button>
+          </pre>
       </Box>
     </div>
   )

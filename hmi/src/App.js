@@ -11,6 +11,7 @@ import MqttPage from    './pages/MqttPage'
 
 import MainNavigation from './components/layout/MainNavigation'
 import Footer from './panels/Footer/Footer'
+import './App.scss'
 
 function App() {
   const f = "App:App - ";

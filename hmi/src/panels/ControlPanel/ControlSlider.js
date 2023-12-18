@@ -25,13 +25,19 @@ const ControlSlider = (props) => {
 
   const [metric, setMetric] = useState(findMetric(metricId));
   const [value, setValue] = useState(metric?.[sourceId]?.default || 0)
+  const [changing, setChanging] = useState(false)
 //const [outValue, setOutValue] = useState(0)
 
   const metricCB = (metric, topic, payload, tags, values) => {
     const f = "ControlMetric::metricCB"
     const msgSourceId = topic.split('/')[1]
-    const userId = topic.split('/')[3]
-    if (msgSourceId === sourceId && userId !== global.aaa.userId) {
+//  const userId = topic.split('/')[3]
+//  if (msgSourceId === sourceId && userId !== global.aaa.userId) {
+    if (changing) {
+      setChanging(false)
+      return
+    }
+    if (msgSourceId === sourceId) {
       setValue(values.value)
     } else if (msgSourceId === 'out') {
 //    setOutValue(parseFloat(values.value).toFixed(metric.decimals))
@@ -64,12 +70,13 @@ const ControlSlider = (props) => {
     const topic = metric[sourceId].topic.replace('DUSERID', global.aaa.userId);
 
     let payload = `${metric[sourceId].tags} value=${parseFloat(_value).toFixed(metric.decimals)}`
+    setChanging(true)
     mqttPublish(topic, payload)
   }
 
   return (
     <Box>
-      {props.title && <div className="title">{props.title}</div>}
+      {props.title && <h4 className="title">{props.title}</h4>}
       <Flex w="full">
         <NumberInput
           min={metric[sourceId].min}
@@ -78,7 +85,7 @@ const ControlSlider = (props) => {
           w="5em"
           h="30px"
           size="sm"
-          mr='2rem'
+          mr='1rem'
           value={value}
           onChange={onChangeH}
         >
