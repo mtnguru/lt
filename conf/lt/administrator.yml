@@ -30,7 +30,7 @@ topics:
     high: +/high/#
     low: +/low/#
   publish:
-    rsp: a/rsp/administrator
+    rsp: a/rsp/DCLIENTID
     msg: a/msg/CLIENTID
     hum: a/rsp/DCLIENTID/DUSERID
     all: a/cmd/all
