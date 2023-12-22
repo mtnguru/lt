@@ -18,6 +18,22 @@ out:
   name: Output
   num: 11
   enabled: true
+low:
+  name: Low Range
+  num: 11
+  enabled: true
+high:
+  name: High Range
+  num: 11
+  enabled: true
+lower:
+  name: Lower Alarm
+  num: 11
+  enabled: true
+upper:
+  name: Upper Alarm
+  num: 11
+  enabled: true
 msg:
   name: Messages
   num: 8

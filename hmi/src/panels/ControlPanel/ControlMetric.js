@@ -38,7 +38,6 @@ const ControlMetric = (props) => {
 //  setMetric(findMetric(metricId))
     mqttRegisterMetricCB(metricId, metricCB)
   }, [metricId])
-
   return (
     <Flex mb={1}>
       <Text as="h3" mt={-1} w={28} pt={0} pw={4} fontWeight="bold" fontSize="120%">{props.label}</Text>

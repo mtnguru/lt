@@ -100,10 +100,10 @@ $metric-fg-color: #ccff33;
   .arduino7      { background-color: #90b; }
   .arduino_gm    { background-color: #081; }
   .hmi           { background-color: #941; }
-  .hmi-oxy       { background-color: #941; }
-  .hmi-mqtt      { background-color: #941; }
-  .hmi-cb        { background-color: #941; }
-  .hmi-sf        { background-color: #941; }
+  .hmi-mqtt      { background-color: #951; }
+  .hmi-cb        { background-color: #962; }
+  .hmi-oxy       { background-color: #973; }
+  .hmi-sl        { background-color: #984; }
   .administrator { background-color: #640; }
   .controller    { background-color: #820; }
   .drupal        { background-color: #a71; }
@@ -111,17 +111,21 @@ $metric-fg-color: #ccff33;
 
 .mqtt-func-bg {
   // MQTT Message function
-  .Activity, .act    { background-color: #421; }
-  .Alarm,    .alm    { background-color: #c32; }
-  .Input,    .inp    { background-color: #239; }
-  .Output,   .out    { background-color: #45a; }
-  .Human,    .hum    { background-color: #a63; }
-  .Command,  .cmd    { background-color: #305; }
-  .Response, .rsp    { background-color: #537; }
-  .Get,      .get    { background-color: #030; }
-  .Send,     .snd    { background-color: #383; }
-  .Code,     .cod    { background-color: #222; }
-  .Message,  .msg    { background-color: #078; }
+  .Activity,  .act    { background-color: #421; }
+  .Alarm,     .alm    { background-color: #c32; }
+  .Input,     .inp    { background-color: #239; }
+  .Output,    .out    { background-color: #45a; }
+  .Human,     .hum    { background-color: #952; }
+  .LowerRange,.low    { background-color: #406; }
+  .HighRange, .high   { background-color: #609; }
+  .LowerAlarm,.lower  { background-color: #920 }
+  .UpperAlarm,.upper  { background-color: #a11; }
+  .Command,   .cmd    { background-color: #305; }
+  .Response,  .rsp    { background-color: #537; }
+  .Get,       .get    { background-color: #030; }
+  .Send,      .snd    { background-color: #383; }
+  .Code,      .cod    { background-color: #222; }
+  .Message,   .msg    { background-color: #078; }
 
   // Code sub categories
   .Debug             { background-color: #72c; }

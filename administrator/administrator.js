@@ -344,6 +344,8 @@ const processCmd = (_topic, _payload) => {
       } else if (_payload.cmd === 'requestReset') {
         out = resetServer();
       } else if (_payload.cmd === 'requestStatus') {
+        outTopic = global.aaa.topics.publish.rsp;
+        outTopic = outTopic.replace(/DCLIENTID/, global.aaa.clientId)
         out = getStatus();
       } else if (_payload.cmd === 'requestConfig') {
         loadAdministratorConfig(); // Start with a fresh config every time
@@ -783,22 +785,29 @@ const loadEdgeConfig = (_payload) => {
 }
 
 const loadMqttConfig = (_payload) => {
-  var client = loadClient("clients", _payload.clientId, _payload.projectId)
-  for (var clientId in client.clients) {
-    if (clientId !== "all") {
-      if (client.clients[clientId] !== "enabled") {
-        delete client.clients[clientId]
-        continue;
+  try {
+    var client = loadClient("clients", _payload.clientId, _payload.projectId)
+    for (var clientId in client.clients) {
+      if (clientId !== "all") {
+        if (client.clients[clientId] !== "enabled") {
+          delete client.clients[clientId]
+          continue;
+        }
+        var dir = (clientId === "administrator") ? "." : "clients"
+        client.clients[clientId] = loadClient(dir, clientId, "UNK")
+        var nc = client.clients[clientId]
+        if (!nc) {
+          msg(0,f,ERROR, `Client not found ${clientId}`)
+          continue;
+        }
+        delete nc.topics
+        delete nc.clients
       }
-      var dir = (clientId === "administrator") ? "." : "clients"
-      client.clients[clientId] = loadClient(dir, clientId, "UNK")
-      var nc = client.clients[clientId]
-      delete nc.topics
-      delete nc.clients
-
     }
+    return client;
+  } catch(err) {
+    msg(0,f,ERROR, 'Error loading MQTT config',err)
   }
-  return client;
 }
 
 const loadHmiConfig = (_payload) => {

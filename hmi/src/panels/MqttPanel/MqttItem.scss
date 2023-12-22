@@ -71,6 +71,10 @@
   .card {
     border-radius: 5px;
   }
+  button {
+    text-align: left;
+  }
+
   .payload {
     margin: 4px 0 0 5px;
     overflow: hidden;
@@ -79,6 +83,7 @@
   .short {
     margin-left: 5px;
   }
+
   .card.pretty {
     .payload {
       display: none;
@@ -100,7 +105,7 @@
     .payload {
       margin-top: 0;
       @media(min-width: $bp-md) {
-        margin: 0px;
+//      margin: 0px;
       }
     }
     .left {

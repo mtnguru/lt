@@ -12,19 +12,20 @@ import './SafirePage.scss'
 function SafirePage() {
   return (
     <MqttManager
-      url="192.168.202.108"
-      username="mqtt"
-      password="mqttsl"
-      projectId="sl"
+      url="labtime.org"
+      username="data"
+      password="datawp"
       type="hmi"
+      projectId="sl"
+      clientId="hmi-oxy"
       pageId="sl">
 
       <Flex w="100%" className="page safire-page flex">
         <Container className="left-col">
-        <ControlSafirePanel   panelId="R1" />
+          <ControlSafirePanel   panelId="R1" />
           {/*<ControlImagePanel    panelId="image_cabin" />*/}
         </Container>
-        <MsgPanel  classC="right-col" panelId="msg_chat" />
+        <MsgPanel  classC="right-col" />
       </Flex>
     </MqttManager>
   )

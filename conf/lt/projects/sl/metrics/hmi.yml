@@ -1,0 +1,105 @@
+############################## Input development
+
+Ch_NA_Human_PSI:
+  label: Pressure
+  desc: Chamber Pressure
+  value: 1
+  decimals: 0
+  hum:
+    clientId: hmi-sl
+    channelType: number
+    default: 10
+    min: 0
+    max: 200
+    step: 1
+PS_NA_Pico_V:
+  label: PS Voltage
+  desc: Power Supply Voltage - Picoscope
+  value: 0
+  decimals: 0
+  inp:
+    clientId: hmi-sl
+    channelType: slider
+    default: 150
+    min: 0
+    max: 120
+    step: .1
+  out: {}
+PS_NA_Pico_A:
+  label: PS Amps
+  desc: Power Supply Amps - Picoscope
+  value: 0
+  decimals: 0
+  inp:
+    clientId: hmi-sl
+    channelType: slider
+    default: 40
+    min: 0
+    max: 10
+    step: .1
+  out: {}
+PS_NA_DataQ_V:
+  label: PS Voltage
+  desc: Power Supply Voltage - DataQ
+  value: 0
+  decimals: 0
+  inp:
+    clientId: hmi-sl
+    channelType: slider
+    default: 150
+    min: 0
+    max: 120
+    step: .1
+  out: {}
+PS_NA_DataQ_A:
+  label: PS Amps
+  desc: Power Supply Amps - DataQ
+  value: 0
+  decimals: 0
+  inp:
+    clientId: hmi-sl
+    channelType: slider
+    default: 40
+    min: 0
+    max: 10
+    step: .1
+  out: {}
+Ch_Internal_K_C:
+  label: Internal
+  desc: Chamber internal temperature
+  value: 0
+  decimals: 0
+  hum:
+    clientId: hmi-sl
+    channelType: slider
+    default: 1200
+    min: 0
+    max: 1000
+    step: .1
+  out: {}
+Ch_External_K_C:
+  label: External
+  desc: Chamber external temperature
+  value: 0
+  decimals: 0
+  hum:
+    clientId: hmi-sl
+    channelType: slider
+    default: 1200
+    min: 0
+    max: 1000
+    step: .1
+  out: {}
+Ch_Ambient_K_C:
+  label: Ambient
+  desc: Chamber ambient temperature
+  value: 0
+  decimals: 0
+  hum:
+    clientId: hmi-sl
+    channelType: slider
+    default: 1200
+    min: 0
+    max: 1000
+    step: .1
+  out: {}

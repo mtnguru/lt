@@ -24,7 +24,7 @@ function OxyPage() {
           <ControlOxyPanel   panelId="EZ1" />
           {/*<ControlImagePanel    panelId="image_cabin" />*/}
         </Container>
-        <MsgPanel  classC="right-col" panelId="msg_chat" />
+        <MsgPanel  classC="right-col" />
       </Flex>
     </MqttManager>
   )
