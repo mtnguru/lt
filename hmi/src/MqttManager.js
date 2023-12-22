@@ -66,7 +66,7 @@ function MqttManager (props) {
     mqttUnsubscribe(global.aaa.topics.subscribe);
 //  mqttUnregisterTopicCB(ckTopic("register","rsp"), loadConfigCB,{})
 
-    mgDebug(0,f, 'try')
+    mgDebug(1,f, 'try')
 
     try {
       // Replace global.aaa object with new configuration

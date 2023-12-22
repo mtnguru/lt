@@ -1,4 +1,4 @@
-name: LabTime HMI
+name: HMI - Cabin
 clientType: hmi
 userId: Bilbo
 format: yml

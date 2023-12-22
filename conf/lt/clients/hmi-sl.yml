@@ -1,4 +1,4 @@
-name: LabTime HMI
+name: HMI - SAFIRE
 clientType: hmi
 userId: Bilbo
 format: yml
@@ -6,17 +6,17 @@ clients:
   all:
     clientId: all
     name: All
-  hmi-cb:         enabled
+  hmi-sl:         enabled
   administrator:  enabled
-  controller:     disabled
-  drupal:         disabled
-  epiclc:         disabled
-  arduino2:       enabled
-  arduino3:       enabled
-  arduino4:       enabled
-  arduino5:       enabled
-  arduino6:       enabled
-  arduino7:       enabled
+# controller:     disabled
+# drupal:         disabled
+# epiclc:         disabled
+# arduino2:       enabled
+# arduino3:       enabled
+# arduino4:       enabled
+# arduino5:       enabled
+# arduino6:       enabled
+# arduino7:       enabled
 topics:
   subscribe:
     adm: '#'

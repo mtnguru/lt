@@ -50,6 +50,7 @@ projects:
   cb:  enabled
   fg:  disabled
   oxy: enabled
+  sl:  enabled
 clients:
   arduino1   : disabled
   arduino2   : enabled

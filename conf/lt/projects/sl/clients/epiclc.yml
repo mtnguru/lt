@@ -1,0 +1,17 @@
+name: EpicLC
+ip: 172.16.45.3
+url: https://epiclc
+model: epic
+clientType: edge
+topics: edge
+headers:
+  apiKey: mnMmq5awnB3DwMsmwFFVToYTqeHtJ8Xf
+  Content-Type: application/json; charset utf-8;
+  _rejectUnauthorized: false
+statusDefault:
+  sampleInterval: 10000
+  enabled: 1
+  debugLevel: 0
+  mqttConnected: 0
+  mqttSubscribe: 0
+  mqttUnsubscribe: 0

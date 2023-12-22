@@ -33,7 +33,7 @@ function MqttFilterFunc(props) {
       }
       localStorage.setItem(lsKey, JSON.stringify(ls))
     }
-      setAllSelected(global.aaa.sourceIds.all.selected)
+    setAllSelected(global.aaa.sourceIds.all.selected)
     console.log(f,'exit', ls)
   }, [])
 
@@ -56,7 +56,7 @@ function MqttFilterFunc(props) {
 
   return (
     <Box className="mqtt-filter-func">
-      <Heading as="h3">Function</Heading>
+      <Heading as="h3">Source</Heading>
       <Box className={`select mqtt-func-bg ${allSelected ? "all-selected" : ""}`}>
         <CheckboxList list={(global.aaa.sourceIds) ? global.aaa.sourceIds : {}} onChangeH={onChangeH} />
       </Box>

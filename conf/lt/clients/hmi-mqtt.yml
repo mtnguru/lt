@@ -1,4 +1,4 @@
-name: LabTime HMI
+name: HMI - MQTT
 clientType: hmi
 userId: Bilbo
 format: yml
@@ -7,6 +7,9 @@ clients:
     clientId: all
     name: All
   hmi-mqtt:       enabled
+  hmi-cb:         enabled
+  hmi-oxy:        enabled
+  hmi-sl:         enabled
   administrator:  enabled
   controller:     disabled
   drupal:         disabled

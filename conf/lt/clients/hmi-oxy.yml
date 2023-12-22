@@ -1,4 +1,4 @@
-name: LabTime HMI
+name: HMI - Oxy
 clientType: hmi
 userId: Bilbo
 format: yml
@@ -6,7 +6,7 @@ clients:
   all:
     clientId: all
     name: All
-  hmi-cb:         enabled
+  hmi-oxy:        enabled
   administrator:  enabled
   controller:     disabled
   drupal:         disabled

@@ -8,8 +8,8 @@ import "./MsgPanel.scss";
 const MsgPanel = (props) => {
   return (
     <Accordion defaultIndex={[0]} id='msg-panel' className={props.classC} allowMultiple>
-      <MsgPane paneId="Chat"></MsgPane>
       <MsgPane paneId="Notes"></MsgPane>
+      <MsgPane paneId="Chat"></MsgPane>
       <MsgPane paneId="Notifications"></MsgPane>
     </Accordion>
   )
