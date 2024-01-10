@@ -1,6 +1,6 @@
 import mqtt from 'precompiled-mqtt';
 import {extractFromTags} from './influxr'
-import {mgDebug, mgWarning, mgError} from './mg'
+import {mgNotify, mgDebug, mgWarning, mgError} from './mg'
 import {findMetric} from './metrics'
 import {ckTopic} from './topics'
 //import {msg} from "../../../../../apps/lt/administrator/utils/msg";
@@ -23,6 +23,84 @@ function sleep(milliseconds) {
 }
 */
 
+const connectPromise = (connectCB, messageCB) => {
+  const f = 'mqttNode:connectPromise'
+  const mc = global.aam;
+//topicsCB = {};
+
+  return new Promise((resolve, reject) => {
+    mqttClient = mqtt.connect((mc.ip) ? mc.ip : mc.url, {
+      clientId: mc.mqttClientId,
+//    clean: true,
+      protocol: mc.protocol,
+      protocolVersion: mc.protocolVersion,
+      username: mc.username,
+      password: mc.password,
+      reconnectPeriod: mc.reconnectPeriod,
+      connectTimeout: mc.connectTimeout,
+    });
+
+    mgNotify(1, f, "Connect to MQTT broker " + mc.url)
+    mqttClient.on('connect', (event) => {
+      mgNotify(1, f, "Connected" + mc.url)
+      global.aaa.status.mqttConnected++;
+      connectCB();
+
+      mqttClient.on('message', (inTopic, payloadRaw) => {
+        mgNotify(1, f, "Message received " + inTopic)
+        messageCB(inTopic, payloadRaw)
+      })
+      resolve('connected')
+    })
+
+    mqttClient.on('reconnect', (msg) => {
+      mqttUnsubscribe(global.aaa.topics.subscribe);
+      mgNotify(1, f, "MQTT Reconnect " + msg)
+    });
+
+    mqttClient.on('offline', (msg) => {
+      mgWarning(1, f, "MQTT offline " + msg)
+    });
+
+    mqttClient.on('end', (msg) => {
+      mgWarning(1, f, "MQTT end " + msg)
+    });
+
+
+    mqttClient.on('close', (msg) => {
+      mgNotify(1, f, "MQTT close " + msg)
+      setTimeout(() => {
+        mqttClient.reconnect();
+      }, 1000); // Wait for 1 second before trying to reconnect
+    });
+
+    mqttClient.on('error', (msg) => {
+      mgError(1, f, "MQTT error " + msg)
+      mqttClient.end();
+      reject(msg);
+    });
+  })
+}
+
+/**
+ * mqttConnect - connect to the MQTT broker, set callback, subscribe to topics
+ * @param cb
+ */
+const mqttConnect = (connectCB, messageCB) => {
+  const f = 'mqttNode:connectPromise'
+  connectPromise(connectCB, messageCB)
+    .then((status) => {
+      mgDebug(2, f, "MqttClientConnected")
+    })
+    .catch((error) => {
+      mgError(0, f, "MQTT client NOT connected",error)
+    })
+  mgDebug(2, f, "exit")
+}
+
+
+
+/*
 const onConnectPromise = (connectCb, processCb) => {
   const f = "mqttReact::onConnectPromise"
   return new Promise((resolve, reject) => {
@@ -47,7 +125,7 @@ const mqttConnect = (connectCb, processCb) => {
   console.log(f, 'connect to mqtt url/ip', global.aam.url)
   mqttClient = mqtt.connect(global.aam.url, {
     clientId: global.aam.mqttClientId,
-    clean: true,
+//  clean: true,
     protocol: global.aam.protocol,
     username: global.aam.username,
     password: global.aam.password,
@@ -65,15 +143,9 @@ const mqttConnect = (connectCb, processCb) => {
   onConnectPromise(connectCb, processCb)
   console.log(f,'we\'re on')
 
-  /*
-  mqttSubscribe(global.aaa.topics.subscribe, () => {
-    console.log(f, 'subscribed', global.aaa.topics.subscribe)
-  })
-
-  mqttClient.on('message', cb);
-  */
   console.log(f,'exit')
 }
+ */
 
 const mqttConnected = () => {
   return (mqttClient && mqttClient.connected)
@@ -82,8 +154,14 @@ const mqttConnected = () => {
 const mqttSubscribe = (topics) => {
   const f = "mqttReact::mqttSubscribe - "
   for (let name in topics) {
-    console.log(f, "subscribe topic: ", topics[name])
-    mqttClient.subscribe(topics[name])
+    var topic = topics[name]
+    mqttClient.subscribe(topic, function (err) {
+      if (!err) {
+        mgNotify(1,f,'Subscribed:',topic);
+      } else {
+        mgError(1,f,'Subscribe failed:',topic);
+      }
+    });
     global.aaa.status.mqttSubscribe++;
   }
 }
@@ -91,8 +169,14 @@ const mqttSubscribe = (topics) => {
 const mqttUnsubscribe = (topics) => {
   const f = "mqttReact::mqttUnsubscribe - "
   for (let name in topics) {
-    console.log(f, "unsubscribe topic: ", topics[name])
-    mqttClient.unsubscribe(topics[name]);
+    var topic = topics[name]
+    mqttClient.unsubscribe(topic, function (err) {
+      if (!err) {
+        mgNotify(1,f,`Unsubscribed: ${topic}`);
+      } else {
+        mgError(1,f,`Unsubscribed failed: ${topic}`);
+      }
+    });
     global.aaa.status.mqttUnsubscribe++;
   }
 }

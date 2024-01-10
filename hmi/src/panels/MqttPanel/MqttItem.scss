@@ -20,6 +20,8 @@
     font-size: 80%;
     display: none;
     overflow: hidden;
+    height: 1em;
+    white-space: nowrap;
     @media(min-width: $bp-sm) {
       display: inline-block;
       font-size: 80%;
@@ -60,16 +62,25 @@
   .type {
     display: inline-block;
     vertical-align: top;
+    text-align: center;
     font-size: 100%;
+    width: 60px;
     padding: 3px 8px 2px;
     border-radius: 5px;
-    margin-left: 8px;
+    margin-left: 6px;
+    margin-right: 6px;
     &.error {
       background-color: red;
     }
   }
   .card {
     border-radius: 5px;
+    .payload {
+      margin: 0 0 0 16px;
+      @media(min-width: $bp-md) {
+        //      margin: 0px;
+      }
+    }
   }
   button {
     text-align: left;
@@ -101,12 +112,6 @@
         display: inline-block;
       }
       letter-spacing: -.02rem;
-    }
-    .payload {
-      margin-top: 0;
-      @media(min-width: $bp-md) {
-//      margin: 0px;
-      }
     }
     .left {
       pre {

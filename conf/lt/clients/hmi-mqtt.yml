@@ -27,6 +27,7 @@ topics:
     cmd: a/cmd
     all: all
     rsp: a/rsp
+    msg: a/msg
   publish:
     rsp: a/rsp/CLIENTID
     adm: a/cmd/administrator

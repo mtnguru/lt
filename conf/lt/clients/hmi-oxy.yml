@@ -2,6 +2,7 @@ name: HMI - Oxy
 clientType: hmi
 userId: Bilbo
 format: yml
+processId: oxy
 clients:
   all:
     clientId: all
@@ -50,13 +51,6 @@ statusDefault:
 page:
   title: Swiss Oxyhydrogen Energy
   id: hmi-oxy
-  mqtt:
-    url: labtime.org
-    username: data
-    password: datawp
-    type: hmi
-    projectId: oxy
-    clientId: hmi-oxy
   class: page oxy-page flex
   children:
     container:
@@ -67,7 +61,7 @@ page:
         ControlImagePanel:
     MsgPanel:
       class: right-col
-      children: 
+      children:
         Notes:
         Chat:
-        Notifications: 
+        Notifications:

@@ -4,17 +4,18 @@ import React, {useState} from 'react';
 import {
   Box,
   Flex,
+  Button,
   Container } from '@chakra-ui/react'
 
 import MqttFilterFunc from './MqttFilterFunc';
 import MqttFilterClient from './MqttFilterClient';
-import MqttDisplayActions from './MqttDisplayActions';
 import MqttList from './MqttList';
 import {mqttRegisterTopicCB} from "../../utils/mqttReact";
 import {currentDate} from "../../utils/tools";
 import {ckTopic} from "../../utils/topics"
 
 import "./MqttPanel.scss";
+import SelectPretty from "../../components/ui/SelectPretty";
 
 let registered = false;
 
@@ -24,10 +25,12 @@ const MqttPanel = (props) => {
   const [filteredList, setFilteredList] = useState([])
   const [nitems, setNItems] = useState(0);
   const [pretty, setPretty] = useState("pretty")
+  const [showClients, setShowClients] = useState(false)
+  const [showSource, setShowSource] = useState(false)
   let ni = 0
 
   const onClearList = (event) => {
-    console.log('Clear List button pressed', event.target.value)
+    console.log('Clear List button pressed', event.target.value, nitems)
     setList(() => {
       ni = 0
       setNItems(() => {return 0})
@@ -118,15 +121,33 @@ const MqttPanel = (props) => {
     applyFilters(list)
   }
 
+  const onSourceFilterH = event => {
+    console.log('======================== onFilterClientChangedH',event.target.id)
+    setShowSource(!showSource)
+  }
+
+  const onClientFilterH = event => {
+    console.log('======================== onFilterClientChangedH',event.target.id)
+    setShowClients(!showClients)
+  }
+
   return (
     <div className="panel mqtt-panel">
       <Flex className="content">
-        <Container className='filters' w="170px">
-          <MqttFilterClient onChangeH={onFilterClientChangeH} />
-          <MqttFilterFunc onChangeH={onFilterFuncChangeH} />
-        </Container>
+        {showClients && <MqttFilterClient onChangeH={onFilterClientChangeH} />}
+        {showSource  && <MqttFilterFunc onChangeH={onFilterFuncChangeH} />}
         <Box className="mqtt-display" flexGrow={1}>
-          <MqttDisplayActions actions={{onClearList, onPretty}} pretty={pretty}></MqttDisplayActions>
+          <div className="mqtt-display-actions">
+            <div className="buttons">
+              <span className="filter-buttons">
+                <span className="filters-label">Filters</span>
+                <Button className="show-source-filter" size="sm" variant="solid" colorScheme="purple" onClick={onSourceFilterH}>Source</Button>
+                <Button className="show-clients-filter" size="sm" variant="solid" colorScheme="purple" onClick={onClientFilterH}>Clients</Button>
+              </span>
+              <SelectPretty onChangeH={onPretty} />
+              <Button type="push" className="clear" size="sm" variant="solid" colorScheme="yellow" onClick={onClearList}>Clear</Button>
+            </div>
+          </div>
           <MqttList className="mqtt-clientId-bg" pretty={pretty} list={filteredList}></MqttList>
         </Box>
       </Flex>

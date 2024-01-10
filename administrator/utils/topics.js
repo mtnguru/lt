@@ -4,6 +4,7 @@
 const completeTopic = (_topic,_args) => {
   if (_topic === undefined) {
     console.log('completeTopic ' + _topic)
+    return;
   }
   var fields = _topic.split('/');
   // console.log('topic ' + _topic);
@@ -46,7 +47,9 @@ const completeTopic = (_topic,_args) => {
             }
           }
           break;
-        }
+        default:
+          break;
+      }
     }
   }
   // console.log ('topic before ' + _topic)
