@@ -65,16 +65,26 @@ arduino6_tst_OW_F:
     channelType: onewire_f
     channel: 14
     deviceId: [0x28,0xC0,0x9C,0x57,0x4,0xE1,0x3D,0x25]
-arduino7_tst_OW_F:
-  label: Arduino7 test - Onewire
-  desc: Arduino7 test - Onewire
+arduino7_tst2_OW_F:
+  label: Arduino7 test 2 - Onewire
+  desc: Arduino7 test 2 - Onewire
   value: 0
   decimals: 2
   inp:
     clientId: arduino7
     channelType: onewire_f
     channel: 14 
-#   deviceId: [0x28,0x11,0xd4,0x57,0x4,0xe1,0x3d,0x1]
+    deviceId: [40,160,31,87,4,225,61,99]
+arduino7_tst_OW_F:
+  label: Arduino7 test 1 - Onewire
+  desc: Arduino7 test 1 - Onewire
+  value: 0
+  decimals: 2
+  inp:
+    clientId: arduino7
+    channelType: onewire_f
+    channel: 14 
+#   deviceId: [40,200,178,168,1,0,0,242]   
     deviceId: [40,17,212,87,4,225,61,1]
 
 ############################## Input development

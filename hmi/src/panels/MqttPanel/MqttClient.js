@@ -107,37 +107,33 @@ function MqttClient (props) {
 
   return (
     <Box className={`client ${props.client.clientId}`} key={`${props.client.id}`}>
-      <div className="row1">
-        <input id={props.id} type='checkbox' name={props.client.id} onChange={props.onChangeH} checked={props.client.selected ? "checked" : ""} />
-        <label htmlFor={props.client.clientId}>{props.client.name}</label>
-      </div>
-      <div className="row2">
-        {props.id !== 'administrator' && props.id !== 'drupal' && props.id !== 'hmi' && props.id !== 'project' && props.id !== "controller" &&
-          <Tooltip label="Enable" bg="white" p="10px" placement="bottom">
-            <Button variant="client" className={`small enabled ${enabled ? "true" : "false"}`} onClick={onClickH}>E</Button>
-          </Tooltip>
-        }
-        <Tooltip label="Request status" bg="white" p="10px" placement="bottom">
-          <Button variant="client" className={`small status ${running}`}   onClick={onClickH}>{numRunning}</Button>
+      <input id={props.id} type='checkbox' name={props.client.id} onChange={props.onChangeH} checked={props.client.selected ? "checked" : ""} />
+      <span className='clientName' htmlFor={props.client.clientId}>{props.client.name}</span>
+      {props.id !== 'administrator' && props.id !== 'drupal' && props.id.indexOf('hmi') < 0  && props.id !== 'project' && props.id !== "controller" &&
+        <Tooltip label="Enable" bg="white" p="10px" placement="bottom">
+          <Button variant="client" className={`small enabled ${enabled ? "true" : "false"}`} onClick={onClickH}>E</Button>
         </Tooltip>
-        {props.id !== 'all' &&
-          <Tooltip label="Reset client" bg="white" p="10px" placement="bottom">
-            <Button variant="client" className="small reset"    onClick={onClickH}>R</Button>
+      }
+      <Tooltip label="Request status" bg="white" p="10px" placement="bottom">
+        <Button variant="client" className={`small status ${running}`}   onClick={onClickH}>{numRunning}</Button>
+      </Tooltip>
+      {props.id !== 'all' &&
+        <Tooltip label="Reset client" bg="white" p="10px" placement="bottom">
+          <Button variant="client" className="small reset"    onClick={onClickH}>R</Button>
+        </Tooltip>
+      }
+      {props.id !== 'all' &&
+        <Box className="debug-level-wrapper">
+          <Tooltip label="Set Debug Level" bg="white" p="10px" placement="bottom">
+            <Select variant="client" className="small debug-level" value={debugLevel} onChange={onSelectH}>
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </Select>
           </Tooltip>
-        }
-        {props.id !== 'all' &&
-          <Box className="debug-level-wrapper">
-            <Tooltip label="Set Debug Level" bg="white" p="10px" placement="bottom">
-              <Select variant="client" className="small debug-level" value={debugLevel} onChange={onSelectH}>
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-              </Select>
-            </Tooltip>
-          </Box>
-        }
-      </div>
+        </Box>
+      }
     </Box> )
 }
 export default MqttClient;

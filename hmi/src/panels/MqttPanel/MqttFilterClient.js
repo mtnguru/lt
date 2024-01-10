@@ -63,7 +63,7 @@ function MqttFilterClient(props) {
   }
 
   return (
-    <Container className={`mqtt-filter-client ${(settingsBtn) ? "showSettings" : '' }`}>
+    <Container className={`mqtt-filter-client filters ${(settingsBtn) ? "showSettings" : '' }`}>
       <Box>
         <IconButton variant="small" className="settings small" onClick={onClickH} aria-label='Display MqttClient Actions' icon={<SettingsIcon />}></IconButton>
         <Heading as="h3">MqttClient</Heading>

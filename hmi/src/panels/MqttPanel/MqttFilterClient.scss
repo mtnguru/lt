@@ -11,8 +11,9 @@
   }
 
   .client-list {
-    padding: 6px;
+    padding: 0 0;
     .all {
+      padding-top: 10px;
       padding-bottom: 10px;
     }
   }
@@ -23,14 +24,6 @@
     &.all-selected {
       background: lighten($bg1-color, 10%);
     }
-  }
-
-  .row2 {
-    display: none;
-  }
-
-  &.showSettings .row2 {
-    display: block;
   }
 
   .settings {
@@ -48,6 +41,10 @@
     &:hover {
       opacity: 1;
     }
+  }
+
+  .administrator {
+
   }
 
   input:checked {

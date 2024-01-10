@@ -14,7 +14,8 @@ import {mqttConnect,
         mqttSubscribe,
         mqttUnsubscribe,
         mqttRegisterTopicCB,
-        mqttUnregisterTopicCB} from './utils/mqttReact.js';
+//      mqttUnregisterTopicCB
+       } from './utils/mqttReact.js';
 
 import "./MqttManager.scss"
 
@@ -109,21 +110,20 @@ function MqttManager (props) {
 
   const connectCB = useCallback(() => {
     const f = "MqttManager::connectCB - "
-    mgDebug(0,f, 'MqttManager::connectCB - enter')
-
+    mgDebug(0,f, 'enter')
     if (connected) return;
 
     setConnected(true)
-
+    mqttSubscribe(global.aaa.topics.subscribe);
     mqttRegisterTopicCB(ckTopic("register","rsp"), loadConfigCB,{})
 
     // Request Config
     const payloadStr = `{"cmd": "requestConfig", "mqttClientId": "${global.aaa.mqttClientId}", "type": "${props.type}", "clientId": "${global.aaa.clientId}", "projectId": "${props.projectId || "UNK"}"}`
     mqttPublish(ckTopic("publish","adm"), payloadStr)
-  }, [props.projectId, loadConfigCB])
+  }, [props.projectId, props.type, connected, loadConfigCB])
 
-  useEffect(() => {
-    const mqttClientId = `${global.aaa.clientId}_${generator().toString(16).slice(3,7)}`
+useEffect(() => {
+//  const mqttClientId = `${global.aaa.clientId}_${generator().toString(16).slice(3,7)}`
 
     global.aaa.clientId = props.clientId
     global.aaa.topics = {
@@ -143,7 +143,8 @@ function MqttManager (props) {
       url: `mqtt://${props.url}:8081`,
       username: props.username,
       password: props.password,
-      mqttClientId: mqttClientId,
+//    mqttClientId: mqttClientId,
+      mqttClientId: global.aaa.mqttClientId,
       protocol: 'MQTT',
       protocolVersion: 4,
       connectTimeout: 60000,
@@ -151,7 +152,7 @@ function MqttManager (props) {
       keepAlive: 50000,
     }
     mqttConnect(connectCB, mqttProcessCB);
-//}, [props, connectCB])
+//}, [props,connectCB])
   }, [])
 
 const publishStatus = () => {
@@ -174,7 +175,7 @@ const publishStatus = () => {
       rsp: "requestStatus",
       clientId: global.aaa.clientId,
       userId: global.aaa.userId,
-      mqttClientId: global.aam.mqttClientId,
+      mqttClientId: global.aaa.mqttClientId,
       mqttConnected: global.aaa.status.mqttConnected,
       mqttSubscribe: global.aaa.status.mqttSubscribe,
       mqttUnsubscribe: global.aaa.status.mqttUnsubscribe,
@@ -182,8 +183,6 @@ const publishStatus = () => {
       uptime: uptime,
     }
   }
-
-
 
   return (
     <div>

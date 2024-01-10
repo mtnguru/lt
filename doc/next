@@ -1,3 +1,27 @@
+What now?
+administrator
+   getMetric
+   popit up over the label
+   
+save the status in 
+   // The administrator has to know all metrics
+   read in all project metrics
+   save in global.aaa.projects/PROJECTID/metrics
+   for all metrics
+     Save as a separate array - easier to load
+        load all of v for each metric - copy over old metrics on reload
+     global.aaa.projects
+     Add the current v from where? global.aaa.projects_last/
+     global.aaa.projects_last = global.aaa.projects
+     global.
+        .v 
+       
+   // PROJECTID/METRICID
+   //   
+   global.aaa.metrics
+
+
+
    
 Each environment - app or dev
    use different mosquitto brokers - different ports

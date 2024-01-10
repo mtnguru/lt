@@ -28,7 +28,7 @@ $button-bg-color: #445588;
 $button-bd-color: #556699;
 $button-bd2-color: #334477;
 $button-green-color: #00aa00;
-$button-red-color: #dd2200;
+$button-red-color: #cc2222;
 $button-grey-color: #444444;
 $button-bd-width: 2px;
 $button-bd-radius: 5px;
@@ -90,12 +90,12 @@ $metric-fg-color: #ccff33;
 .mqtt-clientId-bg {
   // MQTT message client
   .all           { background-color: #1a1a1a; }
-  .rio1          { background-color: #22b; }
+  .rio1          { background-color: #608; }
   .epiclc        { background-color: #529; }
   .arduino2      { background-color: #184; }
   .arduino3      { background-color: #052; }
   .arduino4      { background-color: #15f; }
-  .arduino5      { background-color: #608; }
+  .arduino5      { background-color: #22b; }
   .arduino6      { background-color: #b60; }
   .arduino7      { background-color: #90b; }
   .arduino_gm    { background-color: #081; }
@@ -104,7 +104,7 @@ $metric-fg-color: #ccff33;
   .hmi-cb        { background-color: #962; }
   .hmi-oxy       { background-color: #973; }
   .hmi-sl        { background-color: #984; }
-  .administrator { background-color: #640; }
+  .administrator { background-color: #520; }
   .controller    { background-color: #820; }
   .drupal        { background-color: #a71; }
 }
@@ -132,11 +132,12 @@ $metric-fg-color: #ccff33;
   .Error             { background-color: #b00; }
 
   // Message sub categories
-  .Notes             { background-color: #0bb; }
-  .Notifications     { background-color: #33f; }
-  .Chat              { background-color: #1a1; }
+  .Notes             { background-color: #0cc; }
+  .Notifications     { background-color: #00f; }
+  .Chat              { background-color: #0c0; }
   .Questions         { background-color: #72c; }
   .Warning           { background-color: #d70; }
+  .System            { background-color: #a0f; }
 }
 
 /*

@@ -11,6 +11,7 @@ import {findMetric} from "../../utils/metrics"
 
 const ControlButton = (props) => {
   const [btnState, setBtnState] = useState(false)
+
   const clickH = (event) => {
     const f = "ControllButton::clickH"
     mgDebug(1, f,'Button pressed',event.target.id)

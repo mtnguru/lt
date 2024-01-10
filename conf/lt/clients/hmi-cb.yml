@@ -1,4 +1,5 @@
 name: HMI - Cabin
+projectId: cb
 clientType: hmi
 userId: Bilbo
 format: yml
@@ -40,5 +41,34 @@ topics:
     hum: PROJECTID/hum/CLIENTID
 metrics: project
 sourceIds: {}
+page:
+  title: Cabin Weather
+  id: hmi-cb
+  class: page cb-page flex
+  children:
+    container:
+      type: container
+      class: left-col
+      children:
+        ControlPanel:
+          - type: metric
+            metricId: Bathroom_door_K_F 
+          - type: metric
+            metricId: MiddleBedroom_Window_K_F 
+          - type: metric
+            metricId: LivingRoom_Desk_K_F 
+          - type: metric
+            metricId: Outside_Bunkhouse_K_F 
+          - type: metric
+            metricId: arduino6_tst_OW_F 
+          - type: metric
+            metricId: arduino7_tst_OW_F 
+        ControlImagePanel:
+    MsgPanel:
+      class: right-col
+      children: 
+        Notes:
+        Chat:
+        Notifications: 
 statusDefault:
   debugLevel: 0

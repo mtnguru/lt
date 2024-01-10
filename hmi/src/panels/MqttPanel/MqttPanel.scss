@@ -7,14 +7,6 @@
     margin-bottom: 5px;
   }
   .filters {
-    padding: 0 0 10px 10px;
-    font-size:90%;
-    display: none;
-    width: 150px;
-    margin-right: 12px;
-    @media(min-width: $bp-md) {
-      display: block;
-    }
   }
   .mqtt-display {
 //  width: calc(100% - 170px);
@@ -32,15 +24,65 @@
   }
 
   .mqtt-display {
-    display: inline;
-    width: 100%;
-    @media(min-width: $bp-md) {
-      width: calc(100% - 138px);
-    }
+    display: inline-block;
     .mqtt-list {
       height: calc(100vh - 146px);
   //  max-height: 800px;
       overflow-y: auto;
+    }
+  }
+
+  .filter-buttons {
+    display: inline-block;
+    background: #333;
+    margin-right: 30px;
+    height: 50px;
+    padding: 10px;
+    border-radius: 5px;
+    .filters-label {
+      font-size: 110%;
+    }
+    .show-source-filter {
+      margin-left: 10px;
+    }
+    .show-clients-filter {
+      margin-left: 10px;
+    }
+  }
+  .clear {
+    margin: 0 30px;
+  }
+  .filters {
+    background: #333;
+    border-radius: 5px;
+    border: #64d solid 4px;
+    position: fixed;
+    top: 120px;
+    padding: 0 10px;
+    h3 {
+      margin: 8px 0;
+    }
+    &.mqtt-filter-client {
+      right: 20px;
+      width: 300px;
+      padding-bottom: 10px;
+    }
+    &.mqtt-filter-func {
+      left: 20px;
+      width: 180px;
+    }
+  }
+}
+
+
+.mqtt-display-actions {
+  display: inline-block;
+  width: 100%;
+  .buttons {
+    float: right;
+    margin-top: 15px;
+    .button {
+      width: 100px;
     }
   }
 }

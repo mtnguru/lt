@@ -13,6 +13,7 @@
     "framer-motion": "^10.12.4",
     "from": "^0.1.7",
     "fs": "^0.0.1-security",
+    "js-yaml": "^4.1.0",
     "luxon": "^3.4.3",
     "mqtt": "^4.3.7",
     "precompiled-mqtt": "^4.3.13",

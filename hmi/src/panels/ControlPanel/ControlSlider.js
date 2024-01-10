@@ -1,5 +1,5 @@
 // File: ControlSlider.js
-import React, {useState, useEffect} from 'react';
+import React, {useCallback, useState, useEffect} from 'react';
 
 import {NumberInput,
         NumberInputField,
@@ -25,17 +25,13 @@ const ControlSlider = (props) => {
 
   const [metric, setMetric] = useState(findMetric(metricId));
   const [value, setValue] = useState(metric?.[sourceId]?.default || 0)
-  const [changing, setChanging] = useState(false)
 //const [outValue, setOutValue] = useState(0)
 
-  const metricCB = (metric, topic, payload, tags, values) => {
+  const metricCB = useCallback((metric, topic, payload, tags, values) => {
     const f = "ControlMetric::metricCB"
-    const msgSourceId = topic.split('/')[1]
-//  const userId = topic.split('/')[3]
-//  if (msgSourceId === sourceId && userId !== global.aaa.userId) {
-    if (changing) {
-      setChanging(false)
-      return
+    const [,msgSourceId,,userId] = topic.split('/')
+    if (userId === `${global.aaa.userId}-${global.aaa.mqttClientId}`) {
+      return;
     }
     if (msgSourceId === sourceId) {
       setValue(values.value)
@@ -43,12 +39,12 @@ const ControlSlider = (props) => {
 //    setOutValue(parseFloat(values.value).toFixed(metric.decimals))
     }
     console.log(f, "enter ", topic)
-  }
+  }, [sourceId])
 
   useEffect(() => {
     setMetric(findMetric(metricId))
     mqttRegisterMetricCB(metricId, metricCB)
-  }, [metricId])
+  }, [metricId, metricCB])
 
   const onKeyH = (e) => {
     if (e.key === "ArrowRight") {
@@ -67,10 +63,9 @@ const ControlSlider = (props) => {
       return;
     }
     setValue(parseFloat(_value).toFixed(metric.decimals))
-    const topic = metric[sourceId].topic.replace('DUSERID', global.aaa.userId);
+    const topic = metric[sourceId].topic.replace('DUSERID', `${global.aaa.userId}-${global.aaa.mqttClientId}`);
 
     let payload = `${metric[sourceId].tags} value=${parseFloat(_value).toFixed(metric.decimals)}`
-    setChanging(true)
     mqttPublish(topic, payload)
   }
 
