@@ -6,6 +6,9 @@ const completeTopic = (_topic,_args) => {
     console.log('completeTopic ' + _topic)
     return;
   }
+  if (_topic === undefined) {
+    return;
+  }
   var fields = _topic.split('/');
   // console.log('topic ' + _topic);
   // console.log('fields ' + fields);

@@ -18,9 +18,9 @@ mqtt:  # Each client must have it's own mqtt config
 
   protocol: 'MQTT'
   protocolVersion: 4
-  connectTimeout: 60000
-  reconnectPeriod: 120000
-  keepAlive: 5000,
+  connectTimeout: 10000
+  reconnectPeriod: 10000
+  keepAlive: 60
   port: 1883
   websocket: 8081
 topics:

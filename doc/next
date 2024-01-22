@@ -1,6 +1,72 @@
 What now?
+  you are now setting the default value
+  make controlSlider use it
+  make controlMetric use it
+
+
+
 administrator
-   getMetric
+  Change how it subscribes 
+    Subscribe once - mqttConnected === 1
+  Test unsubscribe - create a command to unsubscribe and resubscribe
+    resubscribe won't work, it won't receive the message.
+ *Check if already connected and don't resubscribe
+  Use shared memory to save .v array
+    How do I know how big to make it?  Will it grow?
+ *Set a default value - 
+ *  if there is a value in V array
+ *    use that - initialize v in administrator
+ *    use the user.
+ *  else if there is a default value - use that.
+ *    default
+ *  else 
+ *    0 if it's anything hum, inp, out
+
+  Upon receipt of hum, inp, out, high, low, upper, lower
+    A metric has a valueState and staleState 
+      hum, inp, out each have a valueState and staleState
+    valueState
+      none:              grey
+      ok:                green
+      alarm upper lower: red - blue
+      range high low:    purple -   
+    alarm - none, upper, lower
+    range - none, high, low
+    Check hum, inp, out - 
+      against high, low first -  
+      then compare against upper, lower
+    When valueState changes publish a message
+    if staleState !== ok or none 
+      set it to ok and send a message
+
+  Every minute check all metrics in V array
+    set staleState
+      none:  grey   // initial value
+      fresh: green  // less than stale
+      stale: yellow // > stale
+      dead:  red    // > stale * 10
+    Add to metrics file staleness values in seconds
+      if stale === 0 then ignore
+      if staleTime > stale then
+         set stale to stale
+      if staletime > stale * 10
+         set stale to deadness value then assume 60 seconds
+    When staleState changes publish a message
+    
+    
+    if inp, hum, then 
+      check the age of the value
+      
+    if high, low then
+      check against high, low
+    else
+      
+
+     
+
+What now?
+administrator
+*  getMetric
    popit up over the label
    
 save the status in 

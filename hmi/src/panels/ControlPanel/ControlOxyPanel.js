@@ -39,24 +39,24 @@ const ControlOxyPanel = (props) => {
       <Heading as="h2" mt={2} mb={8} fontSize="130%" color="titleFg">Swiss Oxyhydrogen Energy</Heading>
       <Box className="controls" >
         <Box className="control-bar gas-flow"       mb={10}>
-          <ControlMetric                     processId={global.aaa.processId} sourceId="hum"   metricId="Ez_NA_SmartTrack_slpm" label="HHO Flow" cname=""></ControlMetric>
-          <ControlSlider title="Value"       processId={global.aaa.processId} sourceId="hum"   metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
-          <ControlSlider title="Upper Alarm" processId={global.aaa.processId} sourceId="upper" metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
-          <ControlSlider title="Lower Alarm" processId={global.aaa.processId} sourceId="lower" metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
-          <ControlSlider title="Upper Range" processId={global.aaa.processId} sourceId="high"  metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
-          <ControlSlider title="Lower Range" processId={global.aaa.processId} sourceId="low"   metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
+          <ControlMetric                     projectId={global.aaa.projectId} sourceId="hum"   metricId="Ez_NA_SmartTrack_slpm" label="HHO Flow" cname=""></ControlMetric>
+          <ControlSlider title="Value"       projectId={global.aaa.projectId} sourceId="hum"   metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
+          <ControlSlider title="Upper Alarm" projectId={global.aaa.projectId} sourceId="upper" metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
+          <ControlSlider title="Lower Alarm" projectId={global.aaa.projectId} sourceId="lower" metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
+          <ControlSlider title="Upper Range" projectId={global.aaa.projectId} sourceId="high"  metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
+          <ControlSlider title="Lower Range" projectId={global.aaa.projectId} sourceId="low"   metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
         </Box>
         <Box className="control-bar voltage"        mb={10}>
-          <ControlMetric processId={global.aaa.processId} sourceId="hum" metricId="PS_NA_Human_V" label="PS Volts" cname=""></ControlMetric>
-          <ControlSlider processId={global.aaa.processId} sourceId="hum" metricId="PS_NA_Human_V" onChange={onChange} />
+          <ControlMetric projectId={global.aaa.projectId} sourceId="hum" metricId="PS_NA_Human_V" label="PS Volts" cname=""></ControlMetric>
+          <ControlSlider projectId={global.aaa.projectId} sourceId="hum" metricId="PS_NA_Human_V" onChange={onChange} />
         </Box>
         <Box className="control-bar amps"           mb={10}>
-          <ControlMetric processId={global.aaa.processId} sourceId="hum" metricId="PS_NA_Human_A" label="PS Amps" cname=""></ControlMetric>
-          <ControlSlider processId={global.aaa.processId} sourceId="hum" metricId="PS_NA_Human_A" onChange={onChange} />
+          <ControlMetric projectId={global.aaa.projectId} sourceId="hum" metricId="PS_NA_Human_A" label="PS Amps" cname=""></ControlMetric>
+          <ControlSlider projectId={global.aaa.projectId} sourceId="hum" metricId="PS_NA_Human_A" onChange={onChange} />
         </Box>
         <Box className="control-bar ez-temperature" mb={10}>
-          <ControlMetric processId={global.aaa.processId} sourceId="hum" metricId="Ez_NA_Mtr_C" label="Ez Temp" cname=""></ControlMetric>
-          <ControlSlider processId={global.aaa.processId} sourceId="hum" metricId="Ez_NA_Mtr_C" onChange={onChange} />
+          <ControlMetric projectId={global.aaa.projectId} sourceId="hum" metricId="Ez_NA_Mtr_C" label="Ez Temp" cname=""></ControlMetric>
+          <ControlSlider projectId={global.aaa.projectId} sourceId="hum" metricId="Ez_NA_Mtr_C" onChange={onChange} />
         </Box>
       </Box>
     </Box>

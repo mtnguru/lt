@@ -16,8 +16,8 @@ const connect = (device, topics, connectCB, messageCB) => {
       clean: true,
       username: process.env.MQTT_USER,
       password: process.env.MQTT_PASSWORD,
-      reconnectPeriod: 1000,
-      connectTimeout: 4000,
+      reconnectPeriod: 5000,
+      connectTimeout: 5000,
     };
 //console.log(f,'url: ',url,'  opt: ',opt)
   // client = mqtt.connect(url,opt)

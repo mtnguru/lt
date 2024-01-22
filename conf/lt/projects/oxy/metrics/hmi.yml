@@ -68,7 +68,7 @@ Ez_NA_SmartTrack_slpm:
   high:
     clientId: hmi-oxy
     channelType: slider
-    default: 8
+    default: 12
     min: 5
     max: 20
     step: .1

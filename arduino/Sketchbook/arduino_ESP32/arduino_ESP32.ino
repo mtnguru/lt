@@ -524,7 +524,7 @@ void setConfig(const char *topic,
   debugLevel = (int)jsonDoc["status"]["debugLevel"];
   haveConfig = true;   // Enables logit messages to be printed
 
-  ///////////// Unsubscribe to response messages
+  ///////////// Unsubscribe to initial response messages
   res = mqttClient.unsubscribe(mqttRspSub);
 
   ///////////// Subscribe MQTT topics
@@ -566,7 +566,7 @@ void setConfig(const char *topic,
         int thermoCS  = (int)metric["inp"]["thermoCS"];
         int thermoCLK = (int)metric["inp"]["thermoCLK"];
         inputA[inputN].max6675P = new MAX6675(thermoCLK, thermoCS, thermoDO);
-      } else if (strcmp(channelType,"onewire_c") == 0) {   // OneWire DS1820S C
+      } else if (strcmp(channelType,"onewire_c") == 0) {   // OneWire DS18B20S C
         logit(1,MD,f,"Set channelType as onewire_c ",NULL);
         inputA[inputN].channelType  = IN_ONEWIRE_C;
         JSONVar deviceId = metric["input"]["deviceId"];
@@ -574,7 +574,7 @@ void setConfig(const char *topic,
           inputA[inputN].deviceId[i] = (int)deviceId[i];
         }
         startOneWire();
-      } else if (strcmp(channelType,"onewire_f") == 0) {   // OneWire DS1820S F
+      } else if (strcmp(channelType,"onewire_f") == 0) {   // OneWire DS18B20S F
         logit(1,MD,f,"Set channelType as onewire_f ",NULL);
         inputA[inputN].channelType  = IN_ONEWIRE_F;
         JSONVar deviceId = metric["inp"]["deviceId"];
@@ -809,10 +809,15 @@ void setup() {
   wifiInit();
 
   logit(1,MD,f,"Init MQTT server",mqttIp);
-  mqttClient.setKeepAlive(300);
-  mqttClient.setBufferSize(payloadSize);
   mqttClient.setServer(mqttIp, mqttPort);
+  mqttClient.setKeepAlive(15);
+//mqttClient.setCleanSession(false);
+//mqttClient.setReconnectPeriod(5000);
+  mqttClient.setBufferSize(payloadSize);
   mqttClient.setCallback(mqttCB);
+  mqttClient.setSocketTimeout(5000);
+
+  Serial.println((String)"setup - call mqttConnect");
   mqttConnect();
 
   mqttClient.loop();
@@ -839,8 +844,10 @@ void loop() {
 
   if (!(mqttClient.connected())) {
     logit(1,MD,f,"mqtt not connected()",NULL);
+
+    Serial.println((String)"loop - call mqttConnect");
     mqttConnect();
-//  subscribeTopics();
+    subscribeTopics();
   }
 
   mqttClient.loop();

@@ -1,5 +1,17 @@
 ######################### arduinos ###################
 
+arduino1_dev_OW_F:
+  label: Arduino1 development
+  desc: Arduino1 development
+  value: 0
+  decimals: 2
+  inp:
+    clientId: arduino1
+    channelType: onewire_f
+    channel: 14 
+    deviceId: [40,200,178,168,1,0,0,242]
+#   deviceId: [40,241,148,168,1,0,0,237]
+#   deviceId: [40,161,154,168,1,0,0,97]
 Outside_Bunkhouse_K_F:
   label: Bunkhouse Outside
   desc: Bunkhouse outside - K thermocouple
@@ -56,8 +68,8 @@ LivingRoom_Desk_K_F:
 #    thermoCS:  17
 #    thermoCLK: 16
 arduino6_tst_OW_F:
-  label: Arduino7 test - Onewire
-  desc: Arduino7 test - Onewire
+  label: Arduino6 test - Onewire
+  desc: Arduino6 test - Onewire
   value: 0
   decimals: 2
   inp:

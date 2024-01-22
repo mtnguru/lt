@@ -2,7 +2,7 @@ name: HMI - Oxy
 clientType: hmi
 userId: Bilbo
 format: yml
-processId: oxy
+projectId: oxy
 clients:
   all:
     clientId: all
@@ -42,8 +42,8 @@ topics:
     out: PROJECTID/out/CLIENTID
     upper: PROJECTID/upper/CLIENTID/DUSERID/EDGEID
     lower: PROJECTID/lower/CLIENTID/DUSERID/EDGEID
-    low: PROJECTID/low/CLIENTID/DUSERID/EDGEID
     high: PROJECTID/high/CLIENTID/DUSERID/EDGEID
+    low: PROJECTID/low/CLIENTID/DUSERID/EDGEID
 metrics: project
 sourceIds: {}
 statusDefault:

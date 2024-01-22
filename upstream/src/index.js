@@ -20,9 +20,9 @@ global.aaa = {
     //  url: 'mqtt://172.16.45.7:8081',
     username: 'data',
     password: 'datawp',
-    connectTimeout: 10000,
-    reconnectPeriod: 120000,
-    keepAlive: 5000,
+    connectTimeout: 5000,
+    reconnectPeriod: 5000,
+    keepAlive: 60,
   },
   subscribeTopics: {
     admin: `a/rsp/${clientid}`

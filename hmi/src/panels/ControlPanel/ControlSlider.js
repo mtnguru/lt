@@ -13,19 +13,19 @@ import {NumberInput,
         Text,
         Box,
         Flex} from "@chakra-ui/react";
-//import './ControlSlider.scss'
 import {mqttPublish, mqttRegisterMetricCB} from '../../utils/mqttReact'
 import {findMetric} from '../../utils/metrics'
 import {mgError} from "../../utils/mg";
 
 const ControlSlider = (props) => {
 
-  const metricId = props.metricId
+  const metricId = props.metricId.toLowerCase()
+  const projectId = props.projectId.toLowerCase
   const sourceId = props.sourceId || 'UNK'
 
   const [metric, setMetric] = useState(findMetric(metricId));
-  const [value, setValue] = useState(metric?.[sourceId]?.default || 0)
-//const [outValue, setOutValue] = useState(0)
+  const v = metric?.v?.[sourceId]?.["value"]?.v
+  const [value, setValue] = useState(v);
 
   const metricCB = useCallback((metric, topic, payload, tags, values) => {
     const f = "ControlMetric::metricCB"

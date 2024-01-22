@@ -15,7 +15,7 @@
     "fs": "^0.0.1-security",
     "js-yaml": "^4.1.0",
     "luxon": "^3.4.3",
-    "mqtt": "^4.3.7",
+    "mqtt": "^4.3.8",
     "precompiled-mqtt": "^4.3.13",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",

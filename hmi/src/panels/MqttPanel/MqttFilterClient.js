@@ -2,9 +2,8 @@ import React, {useEffect, useState} from 'react'
 
 import { Box,
          Heading,
-         Container,
-         IconButton } from '@chakra-ui/react'
-import { SettingsIcon } from '@chakra-ui/icons'
+       } from '@chakra-ui/react'
+//import { SettingsIcon } from '@chakra-ui/icons'
 
 import "./MqttFilterClient.scss";
 //import "../../chakra.scss";
@@ -15,7 +14,6 @@ const lsKey = "cnFilterClient"
 function MqttFilterClient(props) {
 
   const [allSelected, setAllSelected] = useState(true)
-  const [settingsBtn, setSettingsBtn] = useState(false)
 
   useEffect(() => {
     const f = "MqttFilterClient::useEffect"
@@ -38,7 +36,8 @@ function MqttFilterClient(props) {
       localStorage.setItem(lsKey, JSON.stringify(ls))
     }
     setAllSelected(global.aaa.clients.all.selected)
-    console.log(f,'exit', ls)
+    console.log(f, 'exit', ls)
+//}, [global.aaa.mqttConnected])
   }, [])
 
   const onChangeH = event => {
@@ -58,20 +57,15 @@ function MqttFilterClient(props) {
     props.onChangeH(event);
   }
 
-  const onClickH = event => {
-    setSettingsBtn(!settingsBtn)
-  }
-
   return (
-    <Container className={`mqtt-filter-client filters ${(settingsBtn) ? "showSettings" : '' }`}>
-      <Box>
-        <IconButton variant="small" className="settings small" onClick={onClickH} aria-label='Display MqttClient Actions' icon={<SettingsIcon />}></IconButton>
-        <Heading as="h3">MqttClient</Heading>
-      </Box>
-      <Box className={`clients mqtt-clientId-bg ${allSelected ? "all-selected" : ""}`}>
+    <Box className="mqtt-filter-client filters">
+      <div>
+        <Heading as="h3">Client</Heading>
+      </div>
+      <Box className={`select mqtt-clientId-bg ${allSelected ? "all-selected" : ""}`}>
         <MqttClientList list={(global.aaa.clients) ? global.aaa.clients : {}} onChangeH={onChangeH} />
       </Box>
-    </Container>
+    </Box>
   );
 }
 

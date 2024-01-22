@@ -4,7 +4,7 @@
 
 require('./msgE')
 const {msg, msgn, setDebugLevel} = require('../utils/msg.js')
-const mqtt=require('mqtt');
+const mqtt = require('mqtt');
 const {extractFromTags} = require('./influx')
 const {findMetric} = require('./metrics')
 // require('dotenv').config();
@@ -18,56 +18,64 @@ const connectPromise = (connectCB, messageCB) => {
   topicsCB = {};
 
   return new Promise((resolve, reject) => {
+    msg(1, f, NOTIFY, 'Execute connect to MQTT broker ' + mc.url)
     mqttClient = mqtt.connect((mc.ip) ? mc.ip : mc.url, {
       clientId: mc.mqttClientId,
-//    clean: true,
       protocol: mc.protocol,
       protocolVersion: mc.protocolVersion,
       username: mc.username,
       password: mc.password,
       reconnectPeriod: mc.reconnectPeriod,
       connectTimeout: mc.connectTimeout,
+      keepAlive: mc.keepAlive,
     });
 
-    msg(1, f, NOTIFY, 'Connect to MQTT broker ' + mc.url)
     mqttClient.on('connect', (event) => {
       msg(1, f, NOTIFY, 'Connected to MQTT broker ' + mc.url)
       global.aaa.status.mqttConnected++;
-      subscribe(global.aaa.topics.subscribe);
+      if (global.aaa.status.mqttConnected === 1) {
+        subscribe(global.aaa.topics.subscribe);
+      }
       connectCB();
-
-      mqttClient.on('message', (inTopic, payloadRaw) => {
-        msg(3, f, NOTIFY, 'MQTT message received ', inTopic)
-        messageCB(inTopic, payloadRaw)
-      })
       resolve('connected')
     })
 
+    mqttClient.on('message', (inTopic, payloadRaw) => {
+      msg(3, f, NOTIFY, 'MQTT message received ', inTopic)
+      messageCB(inTopic, payloadRaw)
+    })
+
     mqttClient.on('reconnect', (msg) => {
-      unsubscribe(global.aaa.topics.subscribe);
-      console.log('on mqtt reconnect:', msg);
+//    unsubscribe(global.aaa.topics.subscribe);
+      console.error('on mqtt reconnect -', msg);
     });
 
     mqttClient.on('offline', (msg) => {
-      console.log('on mqtt offline:', msg);
+      console.error('on mqtt offline -', msg);
     });
 
     mqttClient.on('end', (msg) => {
-      console.log('on mqtt end:', msg);
+      console.log('on mqtt end -', msg);
     });
 
     mqttClient.on('close', (msg) => {
-      console.log('on mqtt close:', msg);
+      console.log('on mqtt close -', msg);
       setTimeout(() => {
         mqttClient.reconnect();
       }, 1000); // Wait for 1 second before trying to reconnect
     });
 
     mqttClient.on('error', (err) => {
-      console.log('Connection error:', err);
+      console.log('Connection error -', err);
       mqttClient.end();
       reject(err);
     });
+
+    process.on('SIGINT', (msg) => {
+      console.log('SIGINT received -', msg);
+      mqttClient.end();
+      process.exit();
+    })
   })
 }
 
@@ -76,13 +84,13 @@ const connectPromise = (connectCB, messageCB) => {
  * @param cb
  */
 const connect = (connectCB, messageCB) => {
-  const f = 'mqttNode:connectPromise'
+  const f = 'mqttNode:connect'
   connectPromise(connectCB, messageCB)
     .then((status) => {
-      console.log('MQTT client connected');
+      console.log('MQTT client -', status);
     })
     .catch((error) => {
-      console.error('MQTT client not connected' + error);
+      console.error('MQTT client NOT connected -',error);
     })
   msg(1,f,NOTIFY,'exit')
 }
@@ -137,18 +145,14 @@ const publish = (topic, payload) => {
 const registerTopicCB = (topic, cb) => {
   const f = "mqttNode::registerTopicCB"
   // If necessary intialize new topic
-//console.log(f, "Register topic", topic)
   if (!topicsCB[topic]) {
-//  console.log(f, "Initialize topic", topic)
     topicsCB[topic] = [];
   }
   for (let rcb in topicsCB[topic]) {
     if (rcb === cb) {
-//    console.log(f, "Already added", topic)
       return;
     }
   }
-//console.log(f, "add topic", topic)
   topicsCB[topic].push(cb);
 }
 
@@ -169,12 +173,12 @@ const registerMetricCB = (metricId, cb, func) => {
       case 'hum': metric = global.aaa.hum[id]; break;
     }
     if (!metric) {
-      mgError(1, f,'Cannot find metric ', id);
+      msg(1,f,ERROR,'Cannot find metric ', id);
       return
     }
     if (metric.cbs) {
       if (metric.cbs.includes(cb)) {
-        mgWarning.log(1, f, "already registered ", id)
+        msg(1,f,WARNING, "already registered ", id)
       } else {
         metric.cbs.push(cb)
       }
@@ -182,8 +186,7 @@ const registerMetricCB = (metricId, cb, func) => {
       metric.cbs = [cb]
     }
   } catch(err){
-    console.log(f, 'ERROR: Cannot register metric ' + id + '  '  + err)
-    mgError(1, f,'Cannot register metric ', id, func);
+    msg(0,f,ERROR, "Cannot register metric",metricId);
   }
 }
 
@@ -211,7 +214,7 @@ const processInflux = (topic, payloadStr) => {
     switch (sourceId) {
       case 'inp':
         if (!metric.inp) {
-          msg(0,f,WARNING,  'Metric does not have a inp metric',metric.metricId)
+          msg(0,f,WARNING,  'Metric does not have an inp metric',metric.metricId)
         } else {
           metric.inp.value = values.value
         }
@@ -219,7 +222,7 @@ const processInflux = (topic, payloadStr) => {
         break;
       case 'out':
         if (!metric.out) {
-          msg(0,f, WARNING, 'Metric does not have a out metric',metric.metricId)
+          msg(0,f, WARNING, 'Metric does not have an out metric',metric.metricId)
         } else {
           metric.out.value = values.value
         }
@@ -227,7 +230,7 @@ const processInflux = (topic, payloadStr) => {
         break;
       case 'hum':
         if (!metric.hum) {
-          msg(0,f, WARNING, 'Metric does not have a hum metric',metric.metricId)
+          msg(0,f, WARNING, 'Metric does not have an hum metric',metric.metricId)
         } else {
           metric.hum.value = values.value
         }

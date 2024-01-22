@@ -12,15 +12,17 @@ import {
 //import './ControlMetric.scss'
 
 const ControlMetric = (props) => {
-  const [value, setValue] = useState(0);
-//const [metric, setMetric] = useState({});
-
-  const { processId, metricId } = props
+  var { projectId, metricId, sourceId } = props
+  metricId = metricId.toLowerCase()
+  projectId = projectId.toLowerCase()
+  const metric = global.aaa.metrics[metricId]
+  const v = metric?.v?.[sourceId]?.["value"]?.v
+  const [value, setValue] = useState(v);
 
   const metricCB = useCallback((metric, topic, payload, tags, values) => {
 //    const f = "ControlMetric::metricCB"
 //    console.log(f,"enter ", topic)
-    if (props.sourceId !== tags.SourceId) return
+    if (sourceId !== tags.SourceId) return
     setValue((prevValue) => {
       let val = values.value
       if (metric.convert === 'c2f') {
@@ -37,7 +39,7 @@ const ControlMetric = (props) => {
     // request metrics from admin
     var payload = {
       "cmd": "getMetric",
-      "processId": processId,
+      "projectId": projectId,
       "metricId": metricId,
       "clientId": global.aaa.clientId,
     }
