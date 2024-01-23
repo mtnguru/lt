@@ -58,7 +58,7 @@ function MqttFilterClient(props) {
   }
 
   return (
-    <Box className="mqtt-filter-client filters">
+    <Box className={`mqtt-filter-client filters ${props.show ? "show" : ""}`}>
       <div>
         <Heading as="h3">Client</Heading>
       </div>

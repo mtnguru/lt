@@ -135,8 +135,8 @@ const MqttPanel = (props) => {
   return (
     <div className="panel mqtt-panel">
       <Flex className="content">
-        {showClients && <MqttFilterClient onChangeH={onFilterClientChangeH} />}
-        {showSource  && <MqttFilterSource onChangeH={onFilterSourceChangeH} />}
+        <MqttFilterClient show={showClients} onChangeH={onFilterClientChangeH} />
+        <MqttFilterSource show={showSource} onChangeH={onFilterSourceChangeH} />
         <Box className="mqtt-display" flexGrow={1}>
           <div className="mqtt-display-actions">
             <div className="buttons">

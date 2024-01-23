@@ -8,16 +8,17 @@ require('dotenv').config();
 
 const mqttNode  = require('./utils/mqttNode')
 const {ckTopic, completeAllTopics, completeTopic}  = require('./utils/topics')
-const {msg} = require("./utils/msg")
+const {msg, setDebugLevel} = require("./utils/msg")
 const influx = require("./utils/influx")
 const {currentDate} = require("./utils/tools")
 const os = require('os')
 
 const seedrandom  = require('seedrandom')
 const clientId = "administrator"
-var sourceIds;
 const generator = seedrandom(Date.now())
 const mqttClientId = `${clientId}_${generator().toString(16).slice(10)}`
+
+var sourceIds;
 
 const f = "administrator:main - "
 
@@ -204,6 +205,11 @@ const addMetricValues = (projectId, metricId, sourceId, values, userId) => {
  * @param projectId
  * @param metricId
  *
+ * Check the status of a metric and publish a message if the status changes
+ * Check against high and low first
+ * Then check upper alarm and lower alarm
+ * If current status is different then
+ *   publish a message to the bus
  */
 const checkMetricValues = (projectId, metricId) => {
   const f = 'administrator::checkMetricValues'
@@ -250,23 +256,6 @@ const checkMetricValues = (projectId, metricId) => {
     }
   } catch(err) {
     msg(1, f, ERROR, err, err.lineNumber);
-  }
-}
-
-/**
- * checkMetricStatus
- * @param _projectId
- * @param _metricId
- * Check the status of a metric and publish a message if the status changes
- * Check against high and low first
- * Then check upper alarm and lower alarm
- * If current status is different then
- *   publish a message to the bus
- */
-const checkMetricStatus = (_projectId, _metricId) => {
-  var metric = V?.[_projectId]?.[_metricId]
-  if (metric) {
-    // check values
   }
 }
 
@@ -341,7 +330,7 @@ const processMqttInput = (_topic, _payload) => {
   // Add to V array
   addMetricValues(projectId, metricId, sourceId, values, userId)
   checkMetricValues(projectId, metricId)
-  var status = checkMetricStatus(projectId, metricId)
+//var status = checkMetricStatus(projectId, metricId)
 
   return ['', null];
 }
@@ -416,7 +405,7 @@ const processCmd = (_topic, _payload) => {
   try {
     if (clientId === global.aaa.clientId || clientId === 'all') {  // commands specifically for the server
       if (_payload.cmd === 'setDebugLevel') {
-        global.aaa.status.debugLevel = _payload.debugLevel;
+        setDebugLevel(_payload.debugLevel)
       } else if (_payload.cmd === 'requestReset') {
         out = resetServer();
       } else if (_payload.cmd === 'requestStatus') {
@@ -584,22 +573,32 @@ const loadProjectMetrics = (_projectId) => {
       for (var id in fMetrics) {
         var fMetric = fMetrics[id]
         var metricId = id.toLowerCase();  // Change key to lower case
-        if (metrics[metricId]) {
+        if (metrics[metricId]) {   // Metric has already been created - add new data
           metric = metrics[metricId]
-          if (fMetric.inp)        { metric.inp  = fMetric.inp }
-          if (fMetric.out)        { metric.inp  = fMetric.out }
-          if (fMetric.hum)        { metric.inp  = fMetric.hum }
-          if (fMetric.lower)      { metric.lower = fMetric.lower }
-          if (fMetric.upper)      { metric.upper = fMetric.upper }
-          if (fMetric.low)        { metric.low  = fMetric.low }
-          if (fMetric.high)       { metric.high = fMetric.high }
-        } else {
+          const srcIds = ['inp', 'out', 'hum', 'upper', 'lower', 'high', 'low']
+          for (var s in srcIds) {
+            const srcId = srcIds[s]
+            if (fMetric[srcId]) {
+              metric[srcId] = fMetric[srcId]
+            }
+          }
+        } else {  // Metric is new - copy in full record
           metrics[metricId] = metric = fMetrics[id]
           metric.name = id
           metric.metricId = id.toLowerCase()
           metric.projectId = _projectId                // add projectId to each metric
           var flds = id.split('_')
           metric.units = flds[flds.length - 1]
+        }
+        // Go through all srcIds and update the V array with new values
+        const srcIds = ['inp', 'out', 'hum', 'upper', 'lower', 'high', 'low']
+        for (var s in srcIds) {
+          const srcId = srcIds[s]
+          const value = [{
+            value: 1,
+          }]
+          addMetricValues(_projectId, metricId, srcId, values, 'default')
+          checkMetricValues(projectId, metricId)
         }
       }
     }

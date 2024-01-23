@@ -1,26 +1,29 @@
+Get the mosquitto monitor working and plotting in Grafana
+
+
 What now?
-  you are now setting the default value
-  make controlSlider use it
-  make controlMetric use it
+* you are now setting the default value
+* make controlSlider use it
+* make controlMetric use it
 
 
 
 administrator
-  Change how it subscribes 
-    Subscribe once - mqttConnected === 1
+* Change how it subscribes 
+*   Subscribe once - mqttConnected === 1
   Test unsubscribe - create a command to unsubscribe and resubscribe
     resubscribe won't work, it won't receive the message.
  *Check if already connected and don't resubscribe
   Use shared memory to save .v array
     How do I know how big to make it?  Will it grow?
- *Set a default value - 
- *  if there is a value in V array
- *    use that - initialize v in administrator
- *    use the user.
- *  else if there is a default value - use that.
- *    default
- *  else 
- *    0 if it's anything hum, inp, out
+* Set a default value - 
+*   if there is a value in V array
+*     use that - initialize v in administrator
+*     use the user.
+*   else if there is a default value - use that.
+*     default
+*   else 
+*     0 if it's anything hum, inp, out
 
   Upon receipt of hum, inp, out, high, low, upper, lower
     A metric has a valueState and staleState 

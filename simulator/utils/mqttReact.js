@@ -50,7 +50,9 @@ const connectPromise = (connectCB, messageCB) => {
       global.aaa.status.mqttConnected++;
       connectCB();
 
-      resolve('connected')
+      if (global.aaa.status.mqttConnected === 1) {
+        resolve('connected')
+      }
     })
 
     mqttClient.on('message', (inTopic, payloadRaw) => {
@@ -60,20 +62,23 @@ const connectPromise = (connectCB, messageCB) => {
 
     mqttClient.on('reconnect', () => {
 //    mqttUnsubscribe(global.aaa.topics.subscribe);
-      mgNotify(0, f, "MQTT Reconnect ")
+//    mgNotify(0, f, "MQTT Reconnect ")
+      console.log(f, "MQTT Reconnect ")
     });
 
-    mqttClient.on('offline', (msg) => {
-      mgWarning(0, f, "MQTT offline " + msg)
+    mqttClient.on('offline', () => {
+//    mgWarning(0, f, "MQTT offline ")
+      console.log(f, "MQTT offline ")
     });
 
-    mqttClient.on('end', (msg) => {
-      mgWarning(0, f, "MQTT end " + msg)
+    mqttClient.on('end', () => {
+//    mgWarning(0, f, "MQTT end")
+      console.log(f, "MQTT end ")
     });
 
-
-    mqttClient.on('close', (msg) => {
-      mgWarning(0, f, "MQTT close " + msg)
+    mqttClient.on('close', () => {
+      console.log(f, "MQTT close ")
+//    mgWarning(0, f, "MQTT close")
       setTimeout(() => {
         mqttClient.reconnect();
       }, 1000); // Wait for 1 second before trying to reconnect

@@ -21,6 +21,7 @@ const connectPromise = (connectCB, messageCB) => {
     msg(1, f, NOTIFY, 'Execute connect to MQTT broker ' + mc.url)
     mqttClient = mqtt.connect((mc.ip) ? mc.ip : mc.url, {
       clientId: mc.mqttClientId,
+      clean: false,
       protocol: mc.protocol,
       protocolVersion: mc.protocolVersion,
       username: mc.username,

@@ -79,7 +79,7 @@ function MqttManager (props) {
       }
       global.aaa = _payload
 
-      mgDebug(0,f, 'call mqttSubscribe ', _topic)
+      mgDebug(1,f, 'call mqttSubscribe ', _topic)
       mqttSubscribe(global.aaa.topics.subscribe, )
       mqttRegisterTopicCB(ckTopic("register","cmd"),cmdCB)
 
@@ -111,10 +111,8 @@ function MqttManager (props) {
   const connectCB = useCallback(() => {
     const f = "MqttManager::connectCB - "
     mgDebug(1,f, 'enter')
-    if (connected) return;
-
     setConnected(true)
-   if (global.aaa.status.mqttConnected > 1) return;
+    if (global.aaa.status.mqttConnected > 1) return;
 
     mqttUnsubscribe(global.aaa.topics.subscribe);
     mqttSubscribe(global.aaa.topics.subscribe);
@@ -150,8 +148,8 @@ useEffect(() => {
       mqttClientId: global.aaa.mqttClientId,
       protocol: 'MQTT',
       protocolVersion: 4,
-      connectTimeout: 3000,
-      reconnectPeriod: 5000,
+      connectTimeout: 10000,
+      reconnectPeriod: 10000,
       keepAlive: 60,
     }
     mqttConnect(connectCB, mqttProcessCB);
