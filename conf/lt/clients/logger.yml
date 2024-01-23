@@ -1,0 +1,14 @@
+name: Logger
+clientType: logger
+userId: Arwin
+format: yml
+statusDefault:
+  debugLevel: 0
+  mqttConnected: 0
+  mqttSubscribe: 0
+  mqttUnsubscribe: 0
+topics:
+  subscribe:
+    all: #
+  publish:
+    cod: a/cod/CLIENTID

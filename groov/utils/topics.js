@@ -6,7 +6,15 @@ const completeTopic = (_topic,_args) => {
     console.log('completeTopic ' + _topic)
     return;
   }
-  var fields = _topic.split('/');
+  if (_topic === null) {
+    return;
+  }
+  var fields;
+  try {
+    fields = _topic.split('/');
+  } catch (err) {
+    console.log(`Error in complete Topic ${_topic}`)
+  }
   // console.log('topic ' + _topic);
   // console.log('fields ' + fields);
   for (let f in fields) {

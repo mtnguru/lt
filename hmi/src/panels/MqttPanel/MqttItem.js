@@ -81,7 +81,7 @@ const MqttItem = (props) => {
                 short = `cmd ${payload.cmd} - ${payload.sampleInterval}`
                 break
               case 'requestConfig':
-                var id = (payload.clientId) ? payload.clientId : (payload.ip) ? payload.ip : "None"
+                var id = (payload.mqttClientId) ? payload.mqttClientId : (payload.ip) ? payload.ip : "None"
                 short = `cmd ${payload.cmd} - ` + id
                 break
               case 'requestStatus':
@@ -92,7 +92,7 @@ const MqttItem = (props) => {
                 break
             }
           } else if (props.item.sourceId === 'rsp') {
-            short = `rsp ${payload.rsp} ${payload.clientId}`
+            short = `rsp ${payload.rsp} - ${payload.clientId}`
             switch (payload.rsp) {
               case 'setEnabled':
                 short += ` - ${payload.enabled}`
@@ -103,7 +103,11 @@ const MqttItem = (props) => {
               case 'setSampleInterval':
                 short += ` - ${payload.sampleInterval}`
                 break
+              case 'requestStatus':
+                short = `rsp ${payload.rsp} - ${payload.mqttClientId}`
+                break
               default:
+//              short += ` - ${payload.ClientId}`
                 break
             }
           } else if (props.item.sourceId === 'cod') {

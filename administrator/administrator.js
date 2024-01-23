@@ -1,35 +1,5 @@
 // File: administrator.js
 
-/*
-
-Get a list of all metrics from administrator
-
-No, I'll know everything I need to identify a value
-   projectId   RF
-   instance    42
-   metricId    LivingRoom_Desk_K_F
-   sourceId
-     inp
-     hum
-     out
-     ala
-
-Functions
-   GetValue
-   SetValue
-   Upon receipt of IOHA
-      if new value is out of alarm
-        if alarm == false
-           Post alarm OFF message to mqtt
-           Set alarm true
-      else if new value is ok
-        If alarm == true
-          Post alarm ON message to mqtt
-          Set Alarm false
-*/
-
-
-var metrics = {}
 
 const fs = require('fs')
 const YAML = require('yaml-parser')
@@ -38,18 +8,22 @@ require('dotenv').config();
 
 const mqttNode  = require('./utils/mqttNode')
 const {ckTopic, completeAllTopics, completeTopic}  = require('./utils/topics')
-const {msg} = require("./utils/msg")
+const {msg, setDebugLevel} = require("./utils/msg")
 const influx = require("./utils/influx")
 const {currentDate} = require("./utils/tools")
 const os = require('os')
 
 const seedrandom  = require('seedrandom')
 const clientId = "administrator"
-var sourceIds;
 const generator = seedrandom(Date.now())
 const mqttClientId = `${clientId}_${generator().toString(16).slice(10)}`
 
+var sourceIds;
+
 const f = "administrator:main - "
+
+var V = {}
+const SourceIds = ['inp', 'hum', 'out', 'upper', 'lower', 'high', 'low']
 
 var adminId = "none"
 if (process.argv[2]) {
@@ -81,9 +55,9 @@ global.aam = {
   password: "datath",
   protocol: 'MQTT',
 //protocolVersion: 4,
-  connectTimeout: 60000,
-  reconnectPeriod: 120000,
-  keepAlive: 5000,
+  connectTimeout: 5000,
+  reconnectPeriod: 5000,
+  keepAlive: 60,
 }
 */
 
@@ -142,6 +116,15 @@ const getStatus = () => {
     hostname: os.hostname(),
     debugLevel: global.aaa.status.debugLevel,
     uptime: uptime,
+
+    clientId: global.aaa.clientId,
+    userId: global.aaa.userId,
+    mqttClientId: global.aaa.mqttClientId,
+    mqttConnected: global.aaa.status.mqttConnected,
+    mqttSubscribe: global.aaa.status.mqttSubscribe,
+    mqttUnsubscribe: global.aaa.status.mqttUnsubscribe,
+    debugLevel: global.aaa.status.debugLevel,
+    uptime: uptime,
   }
 }
 
@@ -194,49 +177,94 @@ const addStatus = (out) => {
   }
 }
 
-const addMetricValues = (processId, metricId, sourceId, values, userId) => {
-  //   Process  Instance  MetricId  SourceIdunc - inp, out, hum, upper, lower, high, low
-  if (!metrics?.[processId]?.[metricId]?.[sourceId]) {
-    if (!(processId in metrics)) {
-      metrics[processId] = {[metricId]: {[sourceId]: {}}}
-    } else if (!(metricId in metrics[processId])) {
-      metrics[processId][metricId] = {[sourceId]: {}}
-    } else if (!(sourceId in metrics[processId][metricId])) {
-      metrics[processId][metricId][sourceId] = {}
+const addMetricValues = (projectId, metricId, sourceId, values, userId) => {
+  if (!V?.[projectId]?.[metricId]?.[sourceId]) {
+    if (!(projectId in V)) {
+      V[projectId] = {[metricId]: {[sourceId]: {value: {state: 'unknown'}}}}
+    } else if (!(metricId in V[projectId])) {
+      V[projectId][metricId] = {[sourceId]: {value: {state: 'unknown'}}}
+    } else if (!(sourceId in V[projectId][metricId])) {
+      V[projectId][metricId][sourceId] = {value: {state: 'unknown'}}
     }
   }
-  for (var key in values) {
-    metrics[processId][metricId][sourceId][key] = {
-      v: values[key],
+  for (var valueId in values) {
+    const state = V[projectId][metricId][sourceId][valueId].state || 'unknown'
+    V[projectId][metricId][sourceId][valueId] = {
+      v: values[valueId],
       date: Date.now(),
       userId: userId,
+      state: state,
     }
   }
 }
 
 /**
- * checkMetricStatus
- * @param _processId
- * @param _metricId
+ * checkMetricValues - check inp, hum, out against upper, lower, high, low
+ *   Set the valueState for each, if changed then send a message
+ *
+ * @param projectId
+ * @param metricId
+ *
  * Check the status of a metric and publish a message if the status changes
  * Check against high and low first
  * Then check upper alarm and lower alarm
  * If current status is different then
  *   publish a message to the bus
  */
-const checkMetricStatus = (_processId, _metricId) => {
-  var metric = metrics?.[_processId]?.[_metricId]
-  if (metric) {
-    // check values
+const checkMetricValues = (projectId, metricId) => {
+  const f = 'administrator::checkMetricValues'
+
+  try {
+    var vm = V[projectId][metricId];
+    const srcIds = ['inp', 'out', 'hum']
+    for (var s in srcIds) {
+      const srcId = srcIds[s]
+      if (vm[srcId]) {
+        var state = 'unknown'
+        const value = vm[srcId].value.v
+        var setPoint;
+        if (vm.high && val > vm.high.value.v) {          // high range
+          setPoint = vm.high.value.v
+          state = "high"
+        } else if (vm.low && val < vm.low.value.v) {     // low range
+          setPoint = vm.low.value.v
+          state = "low"
+        } else if (vm.upper && val > vm.upper.value.v) { // upper alarm
+          setPoint = vm.upper.value.v
+          state = "upper"
+        } else if (vm.lower && val < vm.lower.value.v) { // lower alarm
+          setPoint = vm.lower.value.v
+          state = "lower"
+        }
+        if (state !== vm[srcId].value.state) {
+          vm[srcId].value.state = state
+
+          const payload = {
+            metricId: metricId,
+            projectId: projectId,
+            valueState: state,
+            setPoint: setPoint,
+            value: value,
+            vm: vm,
+          }
+          var topic = `${projectId}/rsp/${clientId}`
+          var str = JSON.stringify(payload)
+          msg(1, f, DEBUG, `call mqttNode.publish - topic: ${topic} length:${str.length}`)
+          mqttNode.publish(topic, str);
+        }
+      }
+    }
+  } catch(err) {
+    msg(1, f, ERROR, err, err.lineNumber);
   }
 }
 
 //  output to MQTT all values of a metric
-const publishMetricValues = (processId, metricId, clientId) => {
+const publishMetricValues = (projectId, metricId, clientId) => {
   // publish values
-  // topic PROCESSID/rsp/clientId
+  // topic PROJECTID/rsp/clientId
   var mv;
-  if (mv = metrics[metricId][processId]) {
+  if (mv = V[metricId][projectId]) {
     var payload = {}
     if (mv.stale)  { payload['stale'] = mv.stale}
     if (mv.status) { payload['status'] = mv.status}
@@ -246,7 +274,7 @@ const publishMetricValues = (processId, metricId, clientId) => {
     if (mv.upper)  { payload['upper'] = mv.upper }
     if (mv.lower)  { payload['lower'] = mv.lower }
 
-    var outTopic = `${processId}/rsp/${clientId}`
+    var outTopic = `${projectId}/rsp/${clientId}`
     var outStr = JSON.stringify(payload)
     msg(1,f, DEBUG,`call mqttNode.publish - topic: ${outTopic} length:${outStr.length}`)
     mqttNode.publish(outTopic, outStr);
@@ -257,14 +285,16 @@ const publishMetricValues = (processId, metricId, clientId) => {
 }
 
 const processMqttInput = (_topic, _payload) => {
-  // Values array - Save by
-  //   ProcessId - cb, oxy
-  //     MetricId
-  //       SourceId - inp, out, hum
-  //         val
-  //         datetime
-  var [processId,sourceId,clientId,userId,edgeId] = _topic.split('/')
-  processId = processId.toLowerCase()
+  // V array - Save by
+  //   projectId - cb, oxy
+  //     metricId
+  //       sourceId - inp, out, hum, upper, lower, high, low
+  //         valueId = value
+  //           v
+  //           datetime
+  //           userId
+  var [projectId,sourceId,clientId,userId,edgeId] = _topic.split('/')
+  projectId = projectId.toLowerCase()
   sourceId = sourceId.toLowerCase()
   userId = userId.toLowerCase()
 
@@ -283,48 +313,64 @@ const processMqttInput = (_topic, _payload) => {
       break;
     }
   }
-
-  console.log('processMqttInput - payload - ' + payload)
-
+  msg(2,f, DEBUG,"processMqttInput", payload)
   // Extract values into values array
-  var ivalues = flds[1].split(',')
+  var ivalues;
+  if (flds[1] === undefined) {
+    ivalues['value']
+    msg(0,f, ERROR,"no flds[1] === undefined " + metricId)
+  } else {
+    ivalues = flds[1].split(',')
+  }
   for (var v = 0; v < ivalues.length; v++) {
     var [key, val] = ivalues[v].split('=')
     values[key.toLowerCase()] = val
   }
 
-  // Add to metrics array
-  addMetricValues(processId, metricId, sourceId, values, userId)
-  var status = checkMetricStatus(processId, metricId)
+  // Add to V array
+  addMetricValues(projectId, metricId, sourceId, values, userId)
+  checkMetricValues(projectId, metricId)
+//var status = checkMetricStatus(projectId, metricId)
 
   return ['', null];
 }
 
-const getMetric = (processId, metricId, sourceId, valueId) => {
-  const f = 'administrator::getMetric'
+/**
+ * getMetric - get the V array for a process, metric, source or value
+ * returns all metric V, all metric V's for a process,
+ * a metric within a process, and the value of a metric
+ *
+ * @param projectId
+ * @param metricId
+ * @param sourceId
+ * @param valueId
+ * @returns {{}|null|*}
+ */
+const getMetric = (_projectId, _metricId, _sourceId, _valueId) => {
+  const f = 'administrator::getMetricV'
   var vp, vm, vs, vv;
-  var processId = (processId) ? processId.toLowerCase() : null
-  var metricId  = (metricId)  ? metricId.toLowerCase()  : null
-  var sourceID  = (sourceId)  ? sourceId.toLowerCase()  : null
-  var valueId   = (valueId)   ? valueId.toLowerCase()   : null
-  if (processId) {
-    if (!(vp = metrics[processId])) {
-      msg(0,f, ERROR,"Cannot find processID - ", processId)
+  const projectId = (_projectId) ? _projectId.toLowerCase() : null
+  const metricId  = (_metricId)  ? _metricId.toLowerCase()  : null
+  const sourceId  = (_sourceId)  ? _sourceId.toLowerCase()  : null
+  const valueId   = (_valueId)   ? _valueId.toLowerCase()   : null
+  if (projectId) {
+    if (!(vp = V[projectId])) {
+      msg(1,f, ERROR,"Not found - Cannot find projectId - ", projectId)
       return null;
     }
     if (metricId) {
-      if (!(vm = metrics[processId][metricId])) {
-        msg(0,f, ERROR,"Cannot find metricId - ", processId + ' ' + metricId)
+      if (!(vm = V[projectId][metricId])) {
+        msg(1,f, ERROR,"Not found - Cannot find metricId - ", projectId + ' ' + metricId)
         return null;
       }
       if (sourceId) {
-        if (!(vs = metrics[processId][metricId][sourceId])) {
-          msg(0,f, ERROR,"Cannot find sourceId - ", processId+ ' ' + metricId + ' ' + sourceId)
+        if (!(vs = V[projectId][metricId][sourceId])) {
+          msg(1,f, ERROR,"Not found - Cannot find sourceId - ", projectId+ ' ' + metricId + ' ' + sourceId)
           return null;
         }
         if (valueId) {
-          if (!(vv = metrics[processId][metricId][sourceId][valueId])) {
-            msg(0,f, ERROR,"Cannot find valueId- ", processId+ ' ' + metricId + ' ' + sourceId + ' ' + valueId)
+          if (!(vv = V[projectId][metricId][sourceId][valueId])) {
+            msg(1,f, ERROR,"Not found - Cannot find valueId- ", projectId+ ' ' + metricId + ' ' + sourceId + ' ' + valueId)
             return null;
           }
           vs.type = 'value'
@@ -334,16 +380,16 @@ const getMetric = (processId, metricId, sourceId, valueId) => {
           return vs
         }
       } else {
-        vs.type = 'metric'
+        vm.type = 'metric'
         return vm
       }
     } else {
-      vs.type = 'process'
+      vp.type = 'project'
       return vp
     }
   } else {
-    vs.type = 'metrics'
-    return metrics
+    V.type = 'V'
+    return V
   }
 }
 
@@ -359,7 +405,7 @@ const processCmd = (_topic, _payload) => {
   try {
     if (clientId === global.aaa.clientId || clientId === 'all') {  // commands specifically for the server
       if (_payload.cmd === 'setDebugLevel') {
-        global.aaa.status.debugLevel = _payload.debugLevel;
+        setDebugLevel(_payload.debugLevel)
       } else if (_payload.cmd === 'requestReset') {
         out = resetServer();
       } else if (_payload.cmd === 'requestStatus') {
@@ -379,7 +425,7 @@ const processCmd = (_topic, _payload) => {
           addStatus(out)
         }
       } else if (_payload.cmd === 'getMetric') {
-        out.values = getMetric(_payload.processId, _payload.metricId, _payload.sourceId, _payload.valueId)
+        out.v = getMetric(_payload.projectId, _payload.metricId, _payload.sourceId, _payload.valueId)
       } else if (_payload.cmd === 'requestJsonFile') {
         msg(2, f, DEBUG, "Read json file: ", filepath)
         const filepath = `${process.env.ROOT_PATH}/${_payload.filepath}`
@@ -441,7 +487,6 @@ const compressConfig = (inp) => {
 const processCB = (_topic, _payload) => {
   const f = 'administrator::processCB'
   msg(1,f,DEBUG, 'enter');
-//console.log(f, 'enter', _topic);
   var out;
   var outTopic;
   try {
@@ -483,15 +528,10 @@ const processCB = (_topic, _payload) => {
           global.aas.clients[clientId].enabled = input.enabled
         }
       }
-    // If this is inp, out, hum influx data then update values in the metrics array
-    } else if (sourceId === 'inp' ||
-               sourceId === 'out' ||
-               sourceId === 'hum' ||
-               sourceId === 'upper' ||
-               sourceId === 'lower' ||
-               sourceId === 'high' ||
-               sourceId === 'low') {
-      [outTopic, out] = processMqttInput(_topic,inputStr)
+    // If this is inp, out, hum influx data then update values in the V array
+    } else if (SourceIds.includes(sourceId)) {
+        var payload = inputStr.toString;
+        [outTopic, out] = processMqttInput(_topic,inputStr)
     }
     var short = global.aaa.topics.subscribe.rsp.replace(/\/#/,'')
     var ind = _topic.indexOf(short)
@@ -523,6 +563,7 @@ const loadProjectMetrics = (_projectId) => {
   // Read in all the metrics/*.yml files for this project
   var dirPath = `${process.env.ROOT_PATH}/${adminId}/projects/${_projectId}/metrics`
   var files = fs.readdirSync(dirPath);
+  var metrics = {}
 
   // forEach file in CONF/ADMINID/PROJECTID/metrics with suffix .yml
   files.forEach(filename => {
@@ -532,21 +573,32 @@ const loadProjectMetrics = (_projectId) => {
       for (var id in fMetrics) {
         var fMetric = fMetrics[id]
         var metricId = id.toLowerCase();  // Change key to lower case
-        if (metrics[metricId]) {
+        if (metrics[metricId]) {   // Metric has already been created - add new data
           metric = metrics[metricId]
-          if (fMetric.lowerAlarm) { metric.lowerAlarm = fMetric.lowerAlarm }
-          if (fMetric.upperAlarm) { metric.upperAlarm = fMetric.upperAlarm }
-          if (fMetric.low)        { metric.low  = fMetric.low }
-          if (fMetric.high)       { metric.high = fMetric.high }
-          if (fMetric.inp)        { metric.inp  = fMetric.inp }
-          if (fMetric.out)        { metric.inp  = fMetric.out }
-          if (fMetric.hum)        { metric.inp  = fMetric.hum }
-        } else {
+          const srcIds = ['inp', 'out', 'hum', 'upper', 'lower', 'high', 'low']
+          for (var s in srcIds) {
+            const srcId = srcIds[s]
+            if (fMetric[srcId]) {
+              metric[srcId] = fMetric[srcId]
+            }
+          }
+        } else {  // Metric is new - copy in full record
           metrics[metricId] = metric = fMetrics[id]
           metric.name = id
+          metric.metricId = id.toLowerCase()
           metric.projectId = _projectId                // add projectId to each metric
           var flds = id.split('_')
           metric.units = flds[flds.length - 1]
+        }
+        // Go through all srcIds and update the V array with new values
+        const srcIds = ['inp', 'out', 'hum', 'upper', 'lower', 'high', 'low']
+        for (var s in srcIds) {
+          const srcId = srcIds[s]
+          const value = [{
+            value: 1,
+          }]
+          addMetricValues(_projectId, metricId, srcId, values, 'default')
+          checkMetricValues(projectId, metricId)
         }
       }
     }
@@ -559,23 +611,22 @@ const getProjectMetrics = (_projectId, _client) => {
   var project = global.aaa.projects[_projectId]
 
   try {
-
     var metrics = loadProjectMetrics(_projectId)
 
-    const sourceIds = ["inp", "out", "hum", "upper", "lower", "high", "low"]
     var args = {
       "projectId": _projectId,
       "msgId": project.msgId,
       "edgeId": project.edgeId,
     }
 
-    // for each metricId/sourceId maketags and topics
-    for (var id in metrics) {
-      var metric = metrics[id]
-      for (sourceId of sourceIds) {
+    // for each metricId/sourceId - maketags and topics
+    for (var metricId in metrics) {
+      var metric = metrics[metricId]
+      for (sourceId of SourceIds) {
         if (metric[sourceId]) {
           metric[sourceId].tags = influx.makeTagsFromMetricId(metric.name, sourceId, _projectId)
           metric[sourceId].topic = completeTopic(_client.topics.publish[sourceId], args)
+          setDefaults(metric)
         }
       }
     }
@@ -618,9 +669,7 @@ const loadClientMetrics = (_client) => {
             "messageId": project.messageId,
             "telegrafId": project.telegrafId,
           }
-          const sourceIds = ["inp", "out", "hum", "upper", "lower", "high", "low"]
-
-          for (sourceId of sourceIds) {
+          for (sourceId of SourceIds) {
             if (_client.topics.publish[sourceId] && metric[sourceId]) {
               if (metric[sourceId] && metric[sourceId].clientId === _client.clientId) {
                 metric[sourceId].tags = influx.makeTagsFromMetricId(metric.name, "inp", projectId)
@@ -633,6 +682,58 @@ const loadClientMetrics = (_client) => {
         }
       }
     });
+  }
+}
+
+/**
+ * setDefaults
+ * @param metric
+ *
+ * Set the defaults for inp, hum, out, upper, lower, high, low
+ *   if possible get the V[projectId, metridId record set to v
+ */
+const setDefaults = (_metric) => {
+
+  const f = "administrator::setDefaults"
+  const projectId = _metric.projectId
+  const metricId = _metric.metricId
+  // Get V for this metric first - there is only one
+  try {
+    var vm = getMetric(projectId, metricId)
+    vm = (vm && vm.type === "metric") ? vm : undefined
+    if (!_metric.v) _metric.v = {}
+
+    for (var sourceId in sourceIds) {
+      if (!_metric[sourceId]) continue    // skip unconfigured sources
+      var v;
+      if (vm && vm[sourceId]) {                 // if there is a current value
+        _metric.v[sourceId] = vm[sourceId]
+      } else if ('default' in _metric[sourceId]) {  // if there is a default valu
+        const vms = {
+          value: {
+            v: _metric[sourceId].default,
+            date: Date.now(),
+            state: 'unknown',
+            userId: 'default',
+          }
+        }
+        _metric.v[sourceId] = vms
+//      addMetricValues(projectId,metricId,sourceId,vms, 'default')
+      } else {          // no V, no default
+        const vms = {
+          value: {
+            v: -999999,
+            date: Date.now(),
+            state: 'unknown',
+            userId: 'unspecified',
+          }
+        }
+        _metric.v[sourceId] = vms
+//      addMetricValues(projectId,metricId,sourceId,vms, 'unspecified')
+      }
+    }
+  } catch(err) {
+    msg(0,f,ERROR,err);
   }
 }
 
@@ -697,7 +798,7 @@ const initClients = (projectId, instance, project, sourceIds) => {
 */
 
 const loadProject = (projectId) => {
-  const f = "adminisgtrator::loadProject - "
+  const f = "administrator::loadProject - "
   try {
     var ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${adminId}/projects/${projectId}/project.yml`)
     var yml = YAML.safeLoad(ymlStr)
@@ -731,7 +832,6 @@ const loadAdministratorConfig = () => {
       delete global.aaa.projects[projectId]
     }
   }
-
   sourceIds = readSourceIds()
 }
 
@@ -811,6 +911,7 @@ const loadEdgeConfig = (_payload) => {
   }
 
   loadClientMetrics(client)
+//setDefaults(client.metrics)
   return client
 }
 

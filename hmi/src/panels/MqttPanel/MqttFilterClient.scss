@@ -2,7 +2,14 @@
 @import "../../styles/base";
 
 .mqtt-filter-client {
-  display: inline;
+  display: none;
+  margin: 0;
+  right: 10px;
+  width: 275px;
+
+  &.show {
+    display: block;
+  }
 
   h3 {
     margin-bottom: 3px;
@@ -13,7 +20,6 @@
   .client-list {
     padding: 0 0;
     .all {
-      padding-top: 10px;
       padding-bottom: 10px;
     }
   }

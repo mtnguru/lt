@@ -10,9 +10,9 @@ const findMetric = (_metricId) => {
     if (metric)  {
       return metric;
     }
-    console.log('metrics::findMetric - WARNING - could not find metric ' + metricId)
+    console.error('metrics::findMetric - WARNING - could not find metric ' + metricId)
   } catch(err) {
-    console.log('ERROR in metrics::findMetric', err)
+    console.error('ERROR in metrics::findMetric', err)
 //  msg(0, f, ERROR, `Cannot find metric ${metricId}`);
   }
   return null;

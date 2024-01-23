@@ -30,8 +30,8 @@ global.aaa = {
     url: "mqtt://labtime.org:1883",
     username: "data",
     password: "datawp",
-    connectTimeout: 4000,
-    reconnectPeriod: 10000
+    connectTimeout: 5000,
+    reconnectPeriod: 5000
   },
   subscribeTopics: {
     admin: "lab1/admin/+/project"

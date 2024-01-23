@@ -3,6 +3,7 @@ edgeId: cb_edge
 msgId: cb_msg
 clients:
   epiclc:     enabled
+  arduino1:   enabled
   arduino2:   enabled
   arduino3:   enabled
   arduino4:   enabled

@@ -1,4 +1,4 @@
-name: Arduino7
+name: Arduino 7
 ip: 192.168.0.19
 model: arduino
 clientType: edge

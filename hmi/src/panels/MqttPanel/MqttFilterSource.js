@@ -4,16 +4,16 @@ import { Heading, Box } from '@chakra-ui/react'
 
 import CheckboxList from "../../components/ui/CheckboxList";
 
-import "./MqttFilterFunc.scss";
+import "./MqttFilterSource.scss";
 
-const lsKey = "ltFilterFunc"
+const lsKey = "ltFilterSource"
 
-function MqttFilterFunc(props) {
+function MqttFilterSource(props) {
 
   const [allSelected, setAllSelected] = useState(false)
 
   useEffect(() => {
-    const f = "MqttFilterFunc::useEffect"
+    const f = "MqttFilterSource::useEffect"
     let lsstr = localStorage.getItem(lsKey);
     console.log(f, lsstr)
     let ls;
@@ -26,7 +26,7 @@ function MqttFilterFunc(props) {
     } else {
       ls = {};
       for (let type in global.aaa.sourceIds) {
-        console.log(f,'initialize localStorage ', type)
+        console.log(f, 'initialize localStorage ', type)
         if (!ls[type]) ls[type] = {}
         ls[type].selected = true
         global.aaa.sourceIds[type].selected = true
@@ -34,11 +34,12 @@ function MqttFilterFunc(props) {
       localStorage.setItem(lsKey, JSON.stringify(ls))
     }
     setAllSelected(global.aaa.sourceIds.all.selected)
-    console.log(f,'exit', ls)
+    console.log(f, 'exit', ls)
+//}, [global.aaa.mqttConnected])
   }, [])
 
   const onChangeH = event => {
-    console.log('MqttFilterFunc::onChangeH',event.target.checked)
+    console.log('MqttFilterSource::onChangeH',event.target.checked)
     global.aaa.sourceIds[event.target.id]['selected'] = event.target.checked
 
     if (event.target.id === 'all') {
@@ -55,13 +56,13 @@ function MqttFilterFunc(props) {
   }
 
   return (
-    <Box className="mqtt-filter-func filters">
+    <Box className={`mqtt-filter-source filters ${props.show ? "show" : ""}`}>
       <Heading as="h3">Source</Heading>
-      <Box className={`select mqtt-func-bg ${allSelected ? "all-selected" : ""}`}>
+      <Box className={`select mqtt-source-bg ${allSelected ? "all-selected" : ""}`}>
         <CheckboxList list={(global.aaa.sourceIds) ? global.aaa.sourceIds : {}} onChangeH={onChangeH} />
       </Box>
     </Box>
   );
 }
 
-export default MqttFilterFunc
+export default MqttFilterSource

@@ -5,9 +5,10 @@ import {
   Box,
   Flex,
   Button,
-  Container } from '@chakra-ui/react'
+//Container
+} from '@chakra-ui/react'
 
-import MqttFilterFunc from './MqttFilterFunc';
+import MqttFilterSource from './MqttFilterSource';
 import MqttFilterClient from './MqttFilterClient';
 import MqttList from './MqttList';
 import {mqttRegisterTopicCB} from "../../utils/mqttReact";
@@ -111,8 +112,8 @@ const MqttPanel = (props) => {
     })
   }
 
-  const onFilterFuncChangeH = event => {
-    console.log('======================== onFilterFuncChangedH',event.target.id)
+  const onFilterSourceChangeH = event => {
+    console.log('======================== onFilterSourceChangedH',event.target.id)
     applyFilters(list)
   }
 
@@ -134,18 +135,20 @@ const MqttPanel = (props) => {
   return (
     <div className="panel mqtt-panel">
       <Flex className="content">
-        {showClients && <MqttFilterClient onChangeH={onFilterClientChangeH} />}
-        {showSource  && <MqttFilterFunc onChangeH={onFilterFuncChangeH} />}
+        <MqttFilterClient show={showClients} onChangeH={onFilterClientChangeH} />
+        <MqttFilterSource show={showSource} onChangeH={onFilterSourceChangeH} />
         <Box className="mqtt-display" flexGrow={1}>
           <div className="mqtt-display-actions">
             <div className="buttons">
+              <span className="actions">
+                <SelectPretty onChangeH={onPretty} />
+                <Button type="push" className="clear" size="sm" variant="solid" colorScheme="yellow" onClick={onClearList}>Clear</Button>
+              </span>
               <span className="filter-buttons">
                 <span className="filters-label">Filters</span>
                 <Button className="show-source-filter" size="sm" variant="solid" colorScheme="purple" onClick={onSourceFilterH}>Source</Button>
                 <Button className="show-clients-filter" size="sm" variant="solid" colorScheme="purple" onClick={onClientFilterH}>Clients</Button>
               </span>
-              <SelectPretty onChangeH={onPretty} />
-              <Button type="push" className="clear" size="sm" variant="solid" colorScheme="yellow" onClick={onClearList}>Clear</Button>
             </div>
           </div>
           <MqttList className="mqtt-clientId-bg" pretty={pretty} list={filteredList}></MqttList>

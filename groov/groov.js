@@ -50,9 +50,9 @@ global.aam = {
   password: process.env.MQTT_PASSWORD,
   protocol: 'MQTT',
   protocolVersion: 4,
-  connectTimeout: 60000,
-  reconnectPeriod: 120000,
-  keepAlive: 5000
+  connectTimeout: 5000,
+  reconnectPeriod: 5000,
+  keepAlive: 60
 }
 
 /**

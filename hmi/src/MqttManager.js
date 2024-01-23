@@ -19,8 +19,8 @@ import {mqttConnect,
 
 import "./MqttManager.scss"
 
-import seedrandom from 'seedrandom'
-const generator = seedrandom(Date.now())
+//import seedrandom from 'seedrandom'
+//const generator = seedrandom(Date.now())
 
 function MqttManager (props) {
   const [connected, setConnected] = useState(false)
@@ -50,7 +50,7 @@ function MqttManager (props) {
   }, [])
 
   const loadConfigCB = useCallback((_topic, _payload) => {
-    const f = "index::loadConfigCB - "
+    const f = "MqttManager::loadConfigCB - "
 //  mgDebug(0,f, 'enter ',_payload.cmd, _topic)
 
     // Ignore all responses that aren't requestConfig and this clientId
@@ -79,7 +79,7 @@ function MqttManager (props) {
       }
       global.aaa = _payload
 
-      mgDebug(0,f, 'call mqttSubscribe ', _topic)
+      mgDebug(1,f, 'call mqttSubscribe ', _topic)
       mqttSubscribe(global.aaa.topics.subscribe, )
       mqttRegisterTopicCB(ckTopic("register","cmd"),cmdCB)
 
@@ -110,10 +110,11 @@ function MqttManager (props) {
 
   const connectCB = useCallback(() => {
     const f = "MqttManager::connectCB - "
-    mgDebug(0,f, 'enter')
-    if (connected) return;
-
+    mgDebug(1,f, 'enter')
     setConnected(true)
+    if (global.aaa.status.mqttConnected > 1) return;
+
+    mqttUnsubscribe(global.aaa.topics.subscribe);
     mqttSubscribe(global.aaa.topics.subscribe);
     mqttRegisterTopicCB(ckTopic("register","rsp"), loadConfigCB,{})
 
@@ -147,13 +148,13 @@ useEffect(() => {
       mqttClientId: global.aaa.mqttClientId,
       protocol: 'MQTT',
       protocolVersion: 4,
-      connectTimeout: 60000,
-      reconnectPeriod: 120000,
-      keepAlive: 50000,
+      connectTimeout: 10000,
+      reconnectPeriod: 10000,
+      keepAlive: 60,
     }
     mqttConnect(connectCB, mqttProcessCB);
-//}, [props,connectCB])
-  }, [])
+// }, [props.password, props.url, props.username, props.clientId,connectCB])
+}, [])
 
 const publishStatus = () => {
     var timeDiff = parseInt((Date.now() - global.aaa.startTime) / 1000)

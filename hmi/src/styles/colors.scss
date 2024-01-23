@@ -27,9 +27,9 @@ $button-fg-color: $fg-color;
 $button-bg-color: #445588;
 $button-bd-color: #556699;
 $button-bd2-color: #334477;
-$button-green-color: #00aa00;
-$button-red-color: #cc2222;
-$button-grey-color: #444444;
+$button-green-color: #119911;
+$button-red-color: #aa2222;
+$button-grey-color: #333;
 $button-bd-width: 2px;
 $button-bd-radius: 5px;
 
@@ -89,43 +89,50 @@ $metric-fg-color: #ccff33;
 
 .mqtt-clientId-bg {
   // MQTT message client
-  .all           { background-color: #1a1a1a; }
-  .rio1          { background-color: #608; }
-  .epiclc        { background-color: #529; }
-  .arduino2      { background-color: #184; }
-  .arduino3      { background-color: #052; }
-  .arduino4      { background-color: #15f; }
-  .arduino5      { background-color: #22b; }
-  .arduino6      { background-color: #b60; }
-  .arduino7      { background-color: #90b; }
-  .arduino_gm    { background-color: #081; }
-  .hmi           { background-color: #941; }
-  .hmi-mqtt      { background-color: #951; }
-  .hmi-cb        { background-color: #962; }
-  .hmi-oxy       { background-color: #973; }
-  .hmi-sl        { background-color: #984; }
-  .administrator { background-color: #520; }
-  .controller    { background-color: #820; }
-  .drupal        { background-color: #a71; }
+  .all             { background-color: #222; }
+  .administrator   { background-color: #245; }
+  .drupal          { background-color: #367; }
+  .logger          { background-color: #489; }
+  .hmi-mqtt        { background-color: #632; }
+  .hmi-cb          { background-color: #843; }
+  .hmi-oxy         { background-color: #a54; }
+  .hmi-sl          { background-color: #c65; }
+  .arduino1        { background-color: #040; }
+  .arduino2        { background-color: #051; }
+  .arduino3        { background-color: #062; }
+  .arduino4        { background-color: #073; }
+  .arduino5        { background-color: #017; }
+  .arduino6        { background-color: #029; }
+  .arduino7        { background-color: #03b; }
+  .arduino8        { background-color: #04d; }
+  .arduino_gm      { background-color: #509; }
+  .epiclc          { background-color: #60b; }
+  .rio1            { background-color: #70d; }
+  .controller-cb   { background-color: #611; }
+  .controller-oxy  { background-color: #822; }
+  .controller-sl   { background-color: #a33; }
+
+  .ckmosq          { background-color: #555; }
+//.hmi           { background-color: #941; }
 }
 
-.mqtt-func-bg {
+.mqtt-source-bg {
   // MQTT Message function
   .Activity,  .act    { background-color: #421; }
   .Alarm,     .alm    { background-color: #c32; }
-  .Input,     .inp    { background-color: #239; }
-  .Output,    .out    { background-color: #45a; }
+  .Input,     .inp    { background-color: #128; }
+  .Output,    .out    { background-color: #45b; }
   .Human,     .hum    { background-color: #952; }
-  .LowerRange,.low    { background-color: #406; }
-  .HighRange, .high   { background-color: #609; }
-  .LowerAlarm,.lower  { background-color: #920 }
-  .UpperAlarm,.upper  { background-color: #a11; }
-  .Command,   .cmd    { background-color: #305; }
-  .Response,  .rsp    { background-color: #537; }
-  .Get,       .get    { background-color: #030; }
-  .Send,      .snd    { background-color: #383; }
+  .LowerRange,.low    { background-color: #606; }
+  .HighRange, .high   { background-color: #a09; }
+  .LowerAlarm,.lower  { background-color: #600 }
+  .UpperAlarm,.upper  { background-color: #a00; }
+  .Command,   .cmd    { background-color: #307; }
+  .Response,  .rsp    { background-color: #519; }
+  .Get,       .get    { background-color: #040; }
+  .Send,      .snd    { background-color: #080; }
   .Code,      .cod    { background-color: #222; }
-  .Message,   .msg    { background-color: #078; }
+  .Message,   .msg    { background-color: #076; }
 
   // Code sub categories
   .Debug             { background-color: #72c; }

@@ -624,7 +624,8 @@ void unsubscribeCB() {
 void mqttConnect() {
   const char *f = "mqttConnect";
   logit(1,MN,f,"enter",NULL);
-  mqttClient.setKeepAlive(300);
+  mqttClient.setKeepAlive(60);
+  mqttClient.setReconnectPeriod(5000);
   mqttClient.setBufferSize(payloadSize);
   int attempts = 0;
 
