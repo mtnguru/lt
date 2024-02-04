@@ -20,6 +20,13 @@ int debugLevel = 2;
 unsigned long sampleInterval = 30000;
 int mqttConnected = 0;
 
+///////////// Mqtt server credentials
+//const char* mqttIp = "172.16.45.7";   // merlin
+const char* mqttIp = "194.195.214.212"; // labtime.org
+const char* mqttUser = "data";
+const char* mqttPassword = "datawp";
+const int mqttPort = 1883;
+
 ///////////// WiFi
 #include <ESP8266WiFi.h>
 //#include <WiFi.h>
@@ -89,12 +96,6 @@ char projectId[projectIdSize];
 char clientId[clientIdSize];
 char ip[ipSize];
 
-///////////// Mqtt server credentials
-//const char* mqttIp = "172.16.45.7";   // merlin
-const char* mqttIp = "194.195.214.212"; // labtime.org
-const char* mqttUser = "data";
-const char* mqttPassword = "datawp";
-const int mqttPort = 1883;
 
 boolean connected = false;
 boolean res = true;   // Error results

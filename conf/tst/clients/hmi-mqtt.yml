@@ -11,20 +11,20 @@ clients:
   logger:         enabled
   hmi-mqtt:       enabled
   hmi-cb:         enabled
-  hmi-oxy:        enabled
-  hmi-sl:         enabled
+  hmi-oxy:        disabled
+  hmi-sl:         disabled
   arduino1:       enabled
   arduino2:       enabled
   arduino3:       enabled
-  arduino4:       enabled
+  arduino4:       disabled
   arduino5:       enabled
-  arduino6:       enabled
+  arduino6:       disabled
   arduino7:       enabled
-  arduino8:       enabled
+  arduino8:       disabled
   epiclc:         enabled
   controller-cb:  enabled
-  controller-oxy: enabled
-  controller-sl:  enabled
+  controller-oxy: disabled
+  controller-sl:  disabled
 topics:
   subscribe:
     adm: '#'

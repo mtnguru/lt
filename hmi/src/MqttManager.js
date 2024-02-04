@@ -141,10 +141,9 @@ useEffect(() => {
 
 // MQTT configuration
     global.aam = {
-      url: `mqtt://${props.url}:8081`,
+      url: `mqtt://${props.url}`,
       username: props.username,
       password: props.password,
-//    mqttClientId: mqttClientId,
       mqttClientId: global.aaa.mqttClientId,
       protocol: 'MQTT',
       protocolVersion: 4,

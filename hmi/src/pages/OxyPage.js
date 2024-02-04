@@ -12,7 +12,7 @@ function OxyPage() {
 
   return (
     <MqttManager
-      url="labtime.org"
+      url="labtime.org:8081"
       username="data"
       password="datawp"
       type="hmi"

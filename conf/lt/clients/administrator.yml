@@ -51,12 +51,12 @@ projects:
   oxy: enabled
   sl:  enabled
 clients:
-  arduino4   : enabled
-  arduino6   : enabled
-  arduino_gm : disabled
-  hmi-oxy    : enabled
-  hmi-sl     : enabled
-  hmi-cb     : disabled
-  hmi-mqtt   : enabled
-  drupal     : disabled
-  controller : disabled
+  arduino2       : enabled
+  arduino6       : enabled
+  arduino_gm     : disabled
+  hmi-oxy        : enabled
+  hmi-sl         : enabled
+  hmi-mqtt       : enabled
+  drupal         : disabled
+  controller-oxy : disabled
+  controller-sl  : disabled

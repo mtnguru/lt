@@ -121,14 +121,14 @@ $metric-fg-color: #ccff33;
   // MQTT Message function
   .all                { background-color: #222; }
   .Activity,  .act    { background-color: #632; }
-  .Alarm,     .alm    { background-color: #c43; }
+  .Alarm,     .alm    { background-color: #a50; }
   .Input,     .inp    { background-color: #24b; }
   .Output,    .out    { background-color: #56c; }
-  .Human,     .hum    { background-color: #a63; }
-  .LowerRange,.low    { background-color: #827; }
-  .HighRange, .high   { background-color: #b3a; }
-  .LowerAlarm,.lower  { background-color: #922 }
-  .UpperAlarm,.upper  { background-color: #c33; }
+  .Human,     .hum    { background-color: #952; }
+  .LowerRange,.low    { background-color: #717; }
+  .HighRange, .high   { background-color: #a0a; }
+  .LowerAlarm,.lower  { background-color: #700 }
+  .UpperAlarm,.upper  { background-color: #a00; }
   .Command,   .cmd    { background-color: #529; }
   .Response,  .rsp    { background-color: #74a; }
   .Get,       .get    { background-color: #252; }
@@ -146,7 +146,7 @@ $metric-fg-color: #ccff33;
   .Notify            { background-color: #00f; }
   .Chat              { background-color: #0c0; }
   .Questions         { background-color: #72c; }
-  .Warning           { background-color: #d70; }
+  .warning           { background-color: #d70; }
   .System            { background-color: #a0f; }
 }
 

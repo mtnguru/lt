@@ -6,12 +6,14 @@ import MqttPanel from '../panels/MqttPanel/MqttPanel.js'
 function MqttPage() {
   return (
     <MqttManager
-      url="labtime.org:8081"
+      url="labtime.org"
       username="data"
       password="datawp"
-      clientId="hmi-mqtt"
+      port="8084"
+      clientId="hmi-mqtt-tst"
       type="mqtt"
       pageId="hmi">
+
 
       <div className="mqtt-page">
         <MqttPanel title='MQTT Activity Panel'/>

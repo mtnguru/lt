@@ -50,13 +50,13 @@ topicSets:
 projects:
   cb:  enabled
   fg:  disabled
-  oxy: enabled
-  sl:  enabled
+  oxy: disabled
+  sl:  disabled
 clients:
   arduino1   : enabled
-  arduino2   : enabled
+  arduino2   : disabled
   arduino3   : enabled
-  arduino4   : disabled
+  arduino4   : enabled
   arduino5   : enabled
   arduino6   : disabled
   arduino7   : enabled

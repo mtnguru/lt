@@ -1,5 +1,5 @@
-name: Arduino 4
-ip: 192.168.0.16
+name: Arduino 2
+ip: 192.168.0.17
 model: arduino
 clientType: edge
 topicSet: edge

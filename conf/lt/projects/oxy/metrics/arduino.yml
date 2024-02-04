@@ -10,12 +10,12 @@ arduino-gm_Onboard_LED_On:
     channel: 16
 
 # Cabin arduinos for testing
-Bathroom_Door_K_F:
-  label: Bathroom
-  desc: Bathroom - K thermocouple
+Outside_Bunkhouse_K_F:
+  label: Bunkhouse
+  desc: Bunkhouse - K thermocouple
   decimals: 2
   inp:
-    clientId: arduino4
+    clientId: arduino2
     channelType: max6675
     thermoDO:  2
     thermoCS:  4

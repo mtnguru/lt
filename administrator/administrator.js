@@ -972,7 +972,7 @@ const loadEdgeConfig = (_payload) => {
     client = loadClient("clients", _payload.clientId, _payload.projectId)
   }
   if (!client) {
-    msg(0, f, ERROR, "Client not found", id);
+    msg(0, f, WARNING, "Client not found", id);
     return;
   }
 
@@ -994,7 +994,7 @@ const loadMqttConfig = (_payload) => {
         client.clients[clientId] = loadClient('clients', clientId, "UNK")
         var nc = client.clients[clientId]
         if (!nc) {
-          msg(0,f,ERROR, `Client not found ${clientId}`)
+          msg(1,f,ERROR, `Client not found ${clientId}`)
           continue;
         }
         delete nc.topics

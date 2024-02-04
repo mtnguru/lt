@@ -55,6 +55,7 @@ const timeAgo = (time) => {
 }
 
 const addDateString = (obj) => {
+  if (obj === null) return;
   const keys = Object.keys(obj)
   for (var key in keys) {
     const name = keys[key]
@@ -109,9 +110,7 @@ const MqttItem = (props) => {
           addDateString(payload)
           payloadStr = yaml.dump(payload,{lineWidth: -1})
 
-          if (payload.content) {
-            short = `???: ${payload["function"]} - ${payload.content}`
-          } else if (props.item.sourceId === 'out' ||
+          if (props.item.sourceId === 'out' ||
             props.item.sourceId === 'inp' ||
             props.item.sourceId === 'hum' ||
             props.item.sourceId === 'upper' ||

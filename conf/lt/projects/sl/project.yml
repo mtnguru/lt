@@ -2,11 +2,7 @@ name: SAFIRE
 edgeId: sl_edge
 msgId: sl_msg
 clients:
-  epiclc:      enabled
   hmi-sl:      enabled
-  arduino2:    disabled
-  arduino3:    disabled
-  arduino4:    disabled
   arduino5:    disabled
   arduino6:    disabled
   controller:  disabled

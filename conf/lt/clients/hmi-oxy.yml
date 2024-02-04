@@ -9,15 +9,10 @@ clients:
     name: All
   hmi-oxy:        enabled
   administrator:  enabled
-  controller:     disabled
+  controller-oxy: disabled
   drupal:         disabled
-  epiclc:         disabled
   arduino2:       enabled
-  arduino3:       enabled
-  arduino4:       enabled
-  arduino5:       enabled
   arduino6:       enabled
-  arduino7:       enabled
 topics:
   subscribe:
     adm: '#'

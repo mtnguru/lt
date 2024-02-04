@@ -94,7 +94,8 @@ char ip[ipSize];
 const char* mqttIp = "194.195.214.212"; // labtime.org
 const char* mqttUser = "data";
 const char* mqttPassword = "datawp";
-const int mqttPort = 1883;
+//const int mqttPort = 1883;
+const int mqttPort = 1884;
 
 boolean connected = false;
 boolean res = true;   // Error results

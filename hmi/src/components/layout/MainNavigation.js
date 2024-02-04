@@ -24,7 +24,8 @@ function MainNavigation() {
           <li key="oxy" className="oxy"><Link to='/oxy'>Oxy</Link></li>
           <li key="safire" className="safire"><Link to='/safire'>Safire</Link></li>
           <li key="cabin" className="cabin"><Link to='/cabin'>Cabin</Link></li>
-          <li key="mqtt" className="mqtt"><Link to='/mqtt'>MQTT</Link></li>
+          <li key="mqtt-lt"  className="mqtt"><Link to='/mqtt'>MQTT</Link></li>
+          <li key="mqtt-tst" className="mqtt"><Link to='/mqtt-tst'>MQTT-Tst</Link></li>
           <li key="status" className={`status ${mqttStatus}`}>{mqttStatus}</li>
         </ul>
       </nav>

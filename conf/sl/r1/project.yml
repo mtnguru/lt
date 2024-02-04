@@ -9,16 +9,11 @@ topics:
       out: PROJECTID/out/CLIENTID
     publish:
       rsp: a/rsp/CLIENTID
-      inp: PROJECTID/inp/CLIENTID/USERID/cabin_lt
+      inp: PROJECTID/inp/CLIENTID/USERID/sl_lt
       cod: PROJECTID/cod/CLIENTID
       msg: PROJECTID/msg/CLIENTID
 clients:
-  epiclc:      enabled
-  arduino2:    enabled
-  arduino3:    enabled
-  arduino4:    enabled
-  arduino5:    enabled
-  arduino6:    enabled
-  hmi:         enabled
-  controller:  enabled
-  drupal:      enabled
+  dataq1:        enabled
+  hmi-sl:        enabled
+  controller-sl: enabled
+  drupal:        enabled

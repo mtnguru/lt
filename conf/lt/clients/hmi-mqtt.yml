@@ -10,19 +10,10 @@ clients:
   drupal:         enabled
   logger:         enabled
   hmi-mqtt:       enabled
-  hmi-cb:         enabled
   hmi-oxy:        enabled
   hmi-sl:         enabled
-  arduino1:       enabled
   arduino2:       enabled
-  arduino3:       enabled
-  arduino4:       enabled
-  arduino5:       enabled
   arduino6:       enabled
-  arduino7:       enabled
-  arduino8:       enabled
-  epiclc:         enabled
-  controller-cb:  disabled
   controller-oxy: disabled
   controller-sl:  disabled
 topics:

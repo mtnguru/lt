@@ -2,14 +2,14 @@ name: Cabin in Red Feather Lakes
 edgeId: cb_edge
 msgId: cb_msg
 clients:
-  epiclc:     enabled
-  arduino1:   enabled
-  arduino2:   enabled
-  arduino3:   enabled
-  arduino4:   disabled
-  arduino5:   enabled
-  arduino6:   disabled
-  arduino7:   enabled
-  hmi-cb:     enabled
-  control-cb: enabled
-  drupal:      disabled
+  epiclc:        enabled
+  arduino1:      enabled
+  arduino2:      disabled
+  arduino3:      enabled
+  arduino4:      enabled
+  arduino5:      enabled
+  arduino6:      disabled
+  arduino7:      enabled
+  hmi-cb:        enabled
+  controller-cb: enabled
+  drupal:        disabled

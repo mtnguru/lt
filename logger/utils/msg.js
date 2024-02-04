@@ -29,7 +29,7 @@ const msg = (level, func, _sourceId, ...snippets) => {
     let payload = {
       function: func,
       name: global.aaa.name,
-      sourceId: msgE[_sourceId],
+      type: msgE[_sourceId],
       content: snippets.join(' '),
     }
 
