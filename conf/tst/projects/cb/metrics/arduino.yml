@@ -3,7 +3,6 @@
 arduino1_dev_OW_F:
   label: Arduino1 development
   desc: Arduino1 development
-  value: 0
   decimals: 2
   inp:
     clientId: arduino1
@@ -15,7 +14,6 @@ arduino1_dev_OW_F:
 Outside_Bunkhouse_K_F:
   label: Bunkhouse Outside
   desc: Bunkhouse outside - K thermocouple
-  value: 0
   decimals: 2
   inp:
     clientId: arduino2
@@ -26,7 +24,6 @@ Outside_Bunkhouse_K_F:
 MiddleBedroom_Window_K_F:
   label: Grow room
   desc: Grow room - K thermocouple
-  value: 0
   decimals: 2
   inp:
     clientId: arduino3
@@ -34,21 +31,19 @@ MiddleBedroom_Window_K_F:
     thermoDO:  2
     thermoCS:  4
     thermoCLK: 5
-Bathroom_Door_K_F:
-  label: Bathroom
-  desc: Bathroom - K thermocouple
-  value: 0
-  decimals: 2
-  inp:
-    clientId: arduino4
-    channelType: max6675
-    thermoDO:  2
-    thermoCS:  4
-    thermoCLK: 5
+#Bathroom_Door_K_F:
+#  label: Bathroom
+#  desc: Bathroom - K thermocouple
+#  decimals: 2
+#  inp:
+#    clientId: arduino4
+#    channelType: max6675
+#    thermoDO:  2
+#    thermoCS:  4
+#    thermoCLK: 5
 LivingRoom_Desk_K_F:
   label: Living room desk
   desc: Living room desk - K thermocouple
-  value: 0
   decimals: 2
   inp:
     clientId: arduino5
@@ -59,7 +54,6 @@ LivingRoom_Desk_K_F:
 #arduino6_tst_K_F:
 #  label: Arduino6 test - K TC
 #  desc: Arduino6 test - K TC
-#  value: 0
 #  decimals: 2
 #  inp:
 #    clientId: arduino6
@@ -67,20 +61,18 @@ LivingRoom_Desk_K_F:
 #    thermoDO:  25
 #    thermoCS:  17
 #    thermoCLK: 16
-arduino6_tst_OW_F:
-  label: Arduino6 test - Onewire
-  desc: Arduino6 test - Onewire
-  value: 0
-  decimals: 2
-  inp:
-    clientId: arduino6
-    channelType: onewire_f
-    channel: 14
-    deviceId: [0x28,0xC0,0x9C,0x57,0x4,0xE1,0x3D,0x25]
+#arduino6_tst_OW_F:
+#  label: Arduino6 test - Onewire
+#  desc: Arduino6 test - Onewire
+#  decimals: 2
+#  inp:
+#    clientId: arduino6
+#    channelType: onewire_f
+#    channel: 14
+#    deviceId: [0x28,0xC0,0x9C,0x57,0x4,0xE1,0x3D,0x25]
 arduino7_tst2_OW_F:
   label: Arduino7 test 2 - Onewire
   desc: Arduino7 test 2 - Onewire
-  value: 0
   decimals: 2
   inp:
     clientId: arduino7
@@ -90,7 +82,6 @@ arduino7_tst2_OW_F:
 arduino7_tst_OW_F:
   label: Arduino7 test 1 - Onewire
   desc: Arduino7 test 1 - Onewire
-  value: 0
   decimals: 2
   inp:
     clientId: arduino7
@@ -104,7 +95,6 @@ arduino7_tst_OW_F:
 arduino2_Onboard_LED_On:
   label: Arduino2 Onboard LED
   desc: Arduino2 Onboard LED
-  value: 0
   decimals: 0
   out:
     clientId: arduino2
@@ -113,25 +103,22 @@ arduino2_Onboard_LED_On:
 arduino3_Onboard_LED_On:
   label: Arduino3 Onboard LED
   desc: Arduino3 Onboard LED - my desk
-  value: 0
   decimals: 0
   out:
     clientId: arduino3
     channelType: digital
     channel: 16
-arduino4_Onboard_LED_On:
-  label: Arduino4 Onboard LED
-  desc: Arduino4 Onboard LED
-  value: 0
-  decimals: 0
-  out:
-    clientId: arduino4
-    channelType: digital
-    channel: 16
+#arduino4_Onboard_LED_On:
+#  label: Arduino4 Onboard LED
+#  desc: Arduino4 Onboard LED
+#  decimals: 0
+#  out:
+#    clientId: arduino4
+#    channelType: digital
+#    channel: 16
 arduino5_Onboard_LED_On:
   label: Arduino5 Onboard LED
   desc: Arduino5 Onboard LED
-  value: 0
   decimals: 0
   out:
     clientId: arduino5

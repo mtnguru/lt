@@ -46,24 +46,27 @@ const connectPromise = (connectCB, messageCB) => {
       messageCB(inTopic, payloadRaw)
     })
 
-    mqttClient.on('reconnect', (msg) => {
+    mqttClient.on('reconnect', () => {
 //    unsubscribe(global.aaa.topics.subscribe);
-      console.error('on mqtt reconnect -', msg);
+      console.error('on mqtt reconnect');
     });
 
-    mqttClient.on('offline', (msg) => {
-      console.error('on mqtt offline -', msg);
+    mqttClient.on('offline', () => {
+      console.error('on mqtt offline');
     });
 
-    mqttClient.on('end', (msg) => {
-      console.log('on mqtt end -', msg);
+    mqttClient.on('end', () => {
+      console.log('on mqtt end');
     });
 
-    mqttClient.on('close', (msg) => {
-      console.log('on mqtt close -', msg);
+    mqttClient.on('close', () => {
+      console.log('on mqtt close');
       setTimeout(() => {
-        mqttClient.reconnect();
-      }, 1000); // Wait for 1 second before trying to reconnect
+        if (!mqtt.connected) {
+          console.log('on mqtt close - call reconnect');
+          mqttClient.reconnect();
+        }
+      }, 5000); // Wait for 1 second before trying to reconnect
     });
 
     mqttClient.on('error', (err) => {

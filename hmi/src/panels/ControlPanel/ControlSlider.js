@@ -24,8 +24,8 @@ const ControlSlider = (props) => {
   const sourceId = props.sourceId || 'UNK'
 
   const [metric, setMetric] = useState(findMetric(metricId));
-  const v = metric?.v?.[sourceId]?.["value"]?.v
-  const [value, setValue] = useState(v);
+  const v = metric?.v?.[sourceId]?.["value"]?.val
+  const [val, setVal] = useState(v);
 
   const metricCB = useCallback((metric, topic, payload, tags, values) => {
     const f = "ControlMetric::metricCB"
@@ -34,9 +34,9 @@ const ControlSlider = (props) => {
       return;
     }
     if (msgSourceId === sourceId) {
-      setValue(values.value)
+      setVal(values.value)
     } else if (msgSourceId === 'out') {
-//    setOutValue(parseFloat(values.value).toFixed(metric.decimals))
+//    setOutVal(parseFloat(values.value).toFixed(metric.decimals))
     }
     console.log(f, "enter ", topic)
   }, [sourceId])
@@ -48,24 +48,24 @@ const ControlSlider = (props) => {
 
   const onKeyH = (e) => {
     if (e.key === "ArrowRight") {
-      setValue((prev) => Math.min(prev + metric[sourceId].step, 100));
+      setVal((prev) => Math.min(prev + metric[sourceId].step, 100));
     } else if (e.key === "ArrowLeft") {
-      setValue((prev) => Math.max(prev - metric[sourceId].step, 10));
+      setVal((prev) => Math.max(prev - metric[sourceId].step, 10));
     }
   }
 
-  const onChangeH = (_value) => {
+  const onChangeH = (_val) => {
     const f = "ControlSliderPanel::onChange"
     if (!global.aaa.topics.publish[sourceId]) return;
-    console.log(f,'onChange', _value);
+    console.log(f,'onChange', _val);
     if (!metric) {
       mgError(0, f, "Metric not found: ")
       return;
     }
-    setValue(parseFloat(_value).toFixed(metric.decimals))
+    setVal(parseFloat(_val).toFixed(metric.decimals))
     const topic = metric[sourceId].topic.replace('DUSERID', `${global.aaa.userId}-${global.aaa.mqttClientId}`);
 
-    let payload = `${metric[sourceId].tags} value=${parseFloat(_value).toFixed(metric.decimals)}`
+    let payload = `${metric[sourceId].tags} value=${parseFloat(_val).toFixed(metric.decimals)}`
     mqttPublish(topic, payload)
   }
 
@@ -81,7 +81,7 @@ const ControlSlider = (props) => {
           h="30px"
           size="sm"
           mr='1rem'
-          value={value}
+          value={val}
           onChange={onChangeH}
         >
           <NumberInputField/>
@@ -90,7 +90,6 @@ const ControlSlider = (props) => {
             <NumberDecrementStepper/>
           </NumberInputStepper>
         </NumberInput>
-
         <Flex flex="3" align="center" justify="center">
           <Box
             flex='1'
@@ -101,7 +100,61 @@ const ControlSlider = (props) => {
               step={metric[sourceId].step}
               size="sm"
               focusThumbOnChange={false}
-              value={value}
+              value={val}
+              onChange={onChangeH}
+              mb={0}
+              pb={0}
+              onKeyDown={onKeyH}
+            >
+              <SliderTrack>
+                <SliderFilledTrack />
+              </SliderTrack>
+              <SliderThumb fontSize='60%' boxSize='20px' children={val} />
+            </Slider>
+
+            <Flex mt={-2} justifyContent="space-between">
+              <Text verticalAlign="middle" fontSize="xs" mb="1">{metric[sourceId].min}</Text>
+              <Text verticalAlign="middle" fontSize="xs" mb="1">{metric[sourceId].min + (metric[sourceId].max-metric[sourceId].min)/2}</Text>
+              <Text verticalAlign="middle" fontSize="xs" mb="1">{metric[sourceId].max}</Text>
+            </Flex>
+          </Box>
+        </Flex>
+      </Flex>
+    </Box>
+  )
+  /*
+  return (
+    <Box>
+      {props.title && <h4 className="title">{props.title}</h4>}
+      <Flex w="full">
+        <NumberInput
+          min={metric[sourceId].min}
+          max={metric[sourceId].max}
+          step={metric[sourceId].step}
+          w="5em"
+          h="30px"
+          size="sm"
+          mr='1rem'
+          value={value.v}
+          onChange={onChangeH}
+        >
+          <NumberInputField/>
+          <NumberInputStepper>
+            <NumberIncrementStepper/>
+            <NumberDecrementStepper/>
+          </NumberInputStepper>
+        </NumberInput>
+        <Flex flex="3" align="center" justify="center">
+          <Box
+            flex='1'
+          >
+            <Slider
+              min={metric[sourceId].min}
+              max={metric[sourceId].max}
+              step={metric[sourceId].step}
+              size="sm"
+              focusThumbOnChange={false}
+              value={value.v}
               onChange={onChangeH}
               mb={0}
               pb={0}
@@ -123,6 +176,7 @@ const ControlSlider = (props) => {
       </Flex>
     </Box>
   )
+   */
 }
 
 export default ControlSlider

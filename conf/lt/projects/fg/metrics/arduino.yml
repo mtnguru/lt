@@ -3,7 +3,6 @@
 Outside_Bunkhouse_K_F:
   label: Bunkhouse Outside
   desc: Bunkhouse outside - K thermocouple
-  value: 0
   decimals: 2
   inp:
     clientId: arduino2
@@ -14,7 +13,6 @@ Outside_Bunkhouse_K_F:
 MiddleBedroom_Window_K_F:
   label: Grow room
   desc: Grow room - K thermocouple
-  value: 0
   decimals: 2
   inp:
     clientId: arduino3
@@ -25,7 +23,6 @@ MiddleBedroom_Window_K_F:
 Bathroom_Door_K_F:
   label: Bathroom
   desc: Bathroom - K thermocouple
-  value: 0
   decimals: 2
   inp:
     clientId: arduino4
@@ -36,7 +33,6 @@ Bathroom_Door_K_F:
 LivingRoom_Desk_K_F:
   label: Living room desk
   desc: Living room desk - K thermocouple
-  value: 0
   decimals: 2
   inp:
     clientId: arduino5
@@ -50,7 +46,6 @@ LivingRoom_Desk_K_F:
 arduino2_Onboard_LED_On:
   label: Arduino2 Onboard LED
   desc: Arduino2 Onboard LED
-  value: 0
   decimals: 0
   out:
     clientId: arduino2
@@ -59,7 +54,6 @@ arduino2_Onboard_LED_On:
 arduino3_Onboard_LED_On:
   label: Arduino3 Onboard LED
   desc: Arduino3 Onboard LED - my desk
-  value: 0
   decimals: 0
   out:
     clientId: arduino3
@@ -68,7 +62,6 @@ arduino3_Onboard_LED_On:
 arduino4_Onboard_LED_On:
   label: Arduino4 Onboard LED
   desc: Arduino4 Onboard LED
-  value: 0
   decimals: 0
   out:
     clientId: arduino4
@@ -77,7 +70,6 @@ arduino4_Onboard_LED_On:
 arduino5_Onboard_LED_On:
   label: Arduino5 Onboard LED
   desc: Arduino5 Onboard LED
-  value: 0
   decimals: 0
   out:
     clientId: arduino5

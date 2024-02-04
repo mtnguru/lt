@@ -89,7 +89,7 @@ const MsgPane = (props) => {
 
   return (
     <AccordionItem className={`msg-pane ${paneId}`}>
-      {/*paneId !== "Notifications" &&
+      {/*paneId !== "Notify" &&
       <Button onClick={clickH} size="xsm" className="msg-submit">Submit</Button>*/}
       <AccordionButton ps={0} pe={0} py={0} my={0}>
         <Box as="span" flex='1' textAlign='left'>
@@ -98,7 +98,7 @@ const MsgPane = (props) => {
         <AccordionIcon width="30px" height="30px"/>
       </AccordionButton>
       <AccordionPanel px={0} pb={2} pt={1}>
-          {props.paneId !== 'Notifications' &&
+          {props.paneId !== 'Notify' &&
             <Textarea px="5px" py="0px" mb={2} borderRadius={4} bg="metricBg" h="25px" minH="25px" onChange ={onChangeH} onKeyDown={onKeyH} className="msg" ref={ref}/>}
          <MsgList className="msg-list" pretty={pretty} list={list}></MsgList>
       </AccordionPanel>

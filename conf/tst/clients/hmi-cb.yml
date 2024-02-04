@@ -69,6 +69,6 @@ page:
       children: 
         Notes:
         Chat:
-        Notifications: 
+        Notify: 
 statusDefault:
   debugLevel: 0

@@ -13,6 +13,8 @@ const findMetric = (_metricId) => {
     console.error('metrics::findMetric - WARNING - could not find metric ' + metricId)
   } catch(err) {
     console.error('ERROR in metrics::findMetric', err)
+    const terr = new Error();
+    console.error('   LineNumber', terr.lineNumber)
 //  msg(0, f, ERROR, `Cannot find metric ${metricId}`);
   }
   return null;

@@ -1,0 +1,15 @@
+
+What is this?
+
+const V = an array of v's
+const v = a single v record
+what is the v variable - it's one of these.
+V is a group of v's
+
+t i
+V[processId][metricId][sourceId][valueId] = {
+  val: 19.2
+  date: 1111111111111
+  userId: james
+  state: unknown, ok, upper, lower, high, low
+  stale: unknown, ok, stale, dead

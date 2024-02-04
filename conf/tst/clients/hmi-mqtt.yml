@@ -22,9 +22,9 @@ clients:
   arduino7:       enabled
   arduino8:       enabled
   epiclc:         enabled
-  controller-cb:  disabled
-  controller-oxy: disabled
-  controller-sl:  disabled
+  controller-cb:  enabled
+  controller-oxy: enabled
+  controller-sl:  enabled
 topics:
   subscribe:
     adm: '#'

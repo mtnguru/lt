@@ -1,17 +1,31 @@
 import * as React from "react";
+import {useEffect, useState} from 'react'
 import { Link } from "react-router-dom";
-import classes from './MainNavigation.module.scss';
+import './MainNavigation.scss';
+import {mqttRegisterMqttStatusCB} from '../../utils/mqttReact'
 
 function MainNavigation() {
+
+  const [mqttStatus, setMqttStatus] = useState('unknown')
+
+  useEffect(() => {
+    mqttRegisterMqttStatusCB(statusCB)
+  }, [] );
+
+  const statusCB = (status) => {
+    setMqttStatus(status)
+  }
+
   return (
-    <header className={classes.header}>
-      <div className={classes.logo}><h2>LabTime</h2></div>
+    <header className='main-nav'>
+      <div className='logo'><h2>LabTime</h2></div>
       <nav>
-        <ul>
-          <li key="oxy"><Link to='/oxy'>Oxy</Link></li>
-          <li key="safire"><Link to='/safire'>Safire</Link></li>
-          <li key="cabin"><Link to='/cabin'>Cabin</Link></li>
-          <li key="mqtt"><Link to='/mqtt'>MQTT</Link></li>
+        <ul className="mqttStatus">
+          <li key="oxy" className="oxy"><Link to='/oxy'>Oxy</Link></li>
+          <li key="safire" className="safire"><Link to='/safire'>Safire</Link></li>
+          <li key="cabin" className="cabin"><Link to='/cabin'>Cabin</Link></li>
+          <li key="mqtt" className="mqtt"><Link to='/mqtt'>MQTT</Link></li>
+          <li key="status" className={`status ${mqttStatus}`}>{mqttStatus}</li>
         </ul>
       </nav>
     </header>

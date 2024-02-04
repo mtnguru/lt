@@ -32,25 +32,7 @@
     }
   }
 
-  .settings {
-    background-color: inherit;
-    color: $fg-color;
-    opacity: .7;
-    border: none;
-    float: right;
-    width: auto;
-    height: auto;
-    min-width: auto;
-    font-size: 90%;
-    margin-right: 12px;
-    margin-top: 38px;
-    &:hover {
-      opacity: 1;
-    }
-  }
-
   .administrator {
-
   }
 
   input:checked {

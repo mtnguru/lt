@@ -16,14 +16,14 @@ const ControlMetric = (props) => {
   metricId = metricId.toLowerCase()
   projectId = projectId.toLowerCase()
   const metric = global.aaa.metrics[metricId]
-  const v = metric?.v?.[sourceId]?.["value"]?.v
-  const [value, setValue] = useState(v);
+  const v = metric?.v?.[sourceId]?.["value"]?.val
+  const [val, setVal] = useState(v);
 
   const metricCB = useCallback((metric, topic, payload, tags, values) => {
 //    const f = "ControlMetric::metricCB"
 //    console.log(f,"enter ", topic)
     if (sourceId !== tags.SourceId) return
-    setValue((prevValue) => {
+    setVal((prevValue) => {
       let val = values.value
       if (metric.convert === 'c2f') {
         val = c2f(val)
@@ -56,13 +56,25 @@ const ControlMetric = (props) => {
 
   const valueLink = ""
 
+  /*
   return (
     <Flex mb={1}>
       <button onClick={onClickH}>
         <Text as="h3" mt={-1} w={28} pt={0} pw={4} fontWeight="bold" fontSize="120%">{props.label}</Text>
       </button>
       <Text variant="metric" display={props.display ? props.display : null}>
-        <span>{value}</span>
+        <span>{value.v}</span>
+      </Text>
+    </Flex>
+  )
+  */
+  return (
+    <Flex mb={1}>
+      <button onClick={onClickH}>
+        <Text as="h3" mt={-1} w={28} pt={0} pw={4} fontWeight="bold" fontSize="120%">{props.label}</Text>
+      </button>
+      <Text variant="metric" display={props.display ? props.display : null}>
+        <span>{val}</span>
       </Text>
     </Flex>
   )
