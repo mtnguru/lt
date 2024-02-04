@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {extractFromTags} from '../../utils/influxr'
+import {convertDate} from '../../utils/tools'
 import {mgError} from '../../utils/mg'
 import {
   Box,
@@ -21,6 +22,54 @@ const makeJsonPretty = (payloadStr) => {
   return payloadStr
 }
  */
+
+/**
+ * addDateString(obj) - recursively peruse object and add human readable
+ * date to date: properties
+ * @param obj
+ */
+const timeAgo = (time) => {
+  const seconds = Math.floor((new Date() - time) / 1000);
+  let interval = Math.floor(seconds / 315360) / 100;
+
+  if (interval > 1) {
+   return interval + " years ago";
+  }
+  interval = Math.floor(seconds / 25920) / 100;
+  if (interval > 1) {
+    return interval + " months ago";
+  }
+  interval = Math.floor(seconds / 864) / 100;
+  if (interval > 1) {
+    return interval + " days ago";
+  }
+  interval = Math.floor(seconds / 36) / 100;
+  if (interval > 1) {
+    return interval + " hours ago";
+  }
+  interval = Math.floor(seconds / .6) / 100;
+  if (interval > 1) {
+    return interval + " minutes ago";
+  }
+  return Math.floor(seconds) + " seconds ago";
+}
+
+const addDateString = (obj) => {
+  const keys = Object.keys(obj)
+  for (var key in keys) {
+    const name = keys[key]
+    console.log('name ', name, '  typeof ', typeof(obj[name]))
+    if (name === 'date') {
+      if (typeof obj[name] === 'number') {
+        const ago = Date.now() - obj[name]
+        obj[name] = `${obj[name]} -- ${convertDate(obj[name], 'full')} -- ${timeAgo(obj[name])}`
+      }
+    }
+    if (typeof obj[name] === 'object') {
+      addDateString(obj[name])
+    }
+  }
+}
 
 const MqttItem = (props) => {
   const f = 'MqttItem';
@@ -57,6 +106,7 @@ const MqttItem = (props) => {
           mgError(0, f, 'ERROR parsing JSON payload: ' + err)
         }
         if (props.pretty === "pretty") {
+          addDateString(payload)
           payloadStr = yaml.dump(payload,{lineWidth: -1})
 
           if (payload.content) {
@@ -121,7 +171,10 @@ const MqttItem = (props) => {
             }
             short = ` ${payload.msg}`
             setType(payload.type)
+          } else if (props.item.sourceId === 'alm') {
+            short = `alm ${payload.metricId}`
           } else {
+            short = props.item.sourceId
           }
         } else {   // props.pretty != 'pretty -- display as JSON
           payloadStr = JSON.stringify(payload, null, 2)

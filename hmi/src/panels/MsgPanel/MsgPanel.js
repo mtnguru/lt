@@ -10,7 +10,7 @@ const MsgPanel = (props) => {
     <Accordion defaultIndex={[0]} id='msg-panel' className={props.classC} allowMultiple>
       <MsgPane paneId="Notes"></MsgPane>
       <MsgPane paneId="Chat"></MsgPane>
-      <MsgPane paneId="Notifications"></MsgPane>
+      <MsgPane paneId="Notify"></MsgPane>
     </Accordion>
   )
 }

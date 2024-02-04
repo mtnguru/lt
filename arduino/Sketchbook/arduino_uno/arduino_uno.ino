@@ -215,7 +215,7 @@ void logit(int _debugLevel,
       topic = mqttCodPub;
       break;
     case MN:
-      strcpy(typeName,"Notifications");
+      strcpy(typeName,"Notify");
       topic = mqttMsgPub;
       break;
     default:

@@ -7,7 +7,7 @@ mqtt:  # Each client must have it's own mqtt config
   mqttClientId: "create-at-runtime"
 # url:  http://172.16.45.7
 # url:  http://192.168.122.90
-  url:  http://labtime.org:1883
+  url:  http://labtime.org:1884
   username: data
   password: datawp
   protocol: 'MQTT'
@@ -15,8 +15,8 @@ mqtt:  # Each client must have it's own mqtt config
   connectTimeout: 5000
   reconnectPeriod: 5000
   keepAlive: 60
-  port: 1883
-  websocket: 8081
+  port: 1884
+  websocket: 8084
 topics:
   subscribe:
     cmd: a/cmd/CLIENTID
@@ -48,15 +48,23 @@ topicSets:
       cod:  a/cod/CLIENTID
       msg:  a/msg/CLIENTID/USERID/MSGID
 projects:
+  cb:  enabled
+  fg:  disabled
   oxy: enabled
   sl:  enabled
 clients:
-  arduino4   : enabled
-  arduino6   : enabled
-  arduino_gm : disabled
-  hmi-oxy    : enabled
-  hmi-sl     : enabled
-  hmi-cb     : disabled
+  arduino1   : enabled
+  arduino2   : enabled
+  arduino3   : enabled
+  arduino4   : disabled
+  arduino5   : enabled
+  arduino6   : disabled
+  arduino7   : enabled
+  arduino8   : disabled
+  arduino9   : disabled
+  hmi-oxy    : disabled
+  hmi-sf     : disabled
+  hmi-cb     : enabled
   hmi-mqtt   : enabled
-  drupal     : disabled
-  controller : disabled
+  drupal     : enabled
+  controller : enabled

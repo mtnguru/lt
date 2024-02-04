@@ -1,11 +1,29 @@
-Get the mosquitto monitor working and plotting in Grafana
 
 
-What now?
+* Get the mosquitto monitor working and plotting in Grafana
+
 * you are now setting the default value
 * make controlSlider use it
 * make controlMetric use it
 
+*Get the oxy screen working again
+*   Initialize the values
+
+Setup a production and test environment on labtime.org
+  They both feed into grafana as they do now.  I need to setup duplicate telegraf sessions
+  production
+    oxy - outside
+      arduino6  
+      arduino4  
+    safire
+  test
+    cabin - internal
+      arduino1
+      arduino2
+      arduino3
+      arduino4
+      arduino5
+      arduino7
 
 
 administrator
@@ -452,7 +470,7 @@ UI
     Messages
       Chat
       Notes
-      Notifications
+      Notify
     MQTT Activity - I like this on a separate page
   
     
@@ -798,5 +816,4 @@ Arduino
      10 times - wait 25 milliseconds - try again = total of 250 milliseconds
   Get output working on the arduino
   Wire an arduino to connect an output back to an input
-    Output a voltage and measure the input
-
+    Output a voltage and measure the inp

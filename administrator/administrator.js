@@ -20,7 +20,7 @@ const mqttClientId = `${clientId}_${generator().toString(16).slice(10)}`
 
 var sourceIds;
 
-const f = "administrator:main - "
+const fm = "administrator:main - "
 
 var V = {}
 const SourceIds = ['inp', 'hum', 'out', 'upper', 'lower', 'high', 'low']
@@ -151,6 +151,10 @@ const connectCB = () => {
   mqttNode.publish(global.aaa.topics.publish.all,`{"cmd": "requestStatus", "clientId": "all"}`)
 }
 
+/**
+ * addStatus - add client status information to client config
+ * @param out
+ */
 const addStatus = (out) => {
   if (global.aas.clients[out.clientId]) {
     out.status = global.aas.clients[out.clientId]
@@ -177,24 +181,45 @@ const addStatus = (out) => {
   }
 }
 
+/**
+ * addMetricValues -- Add Metric values to client config
+ *
+ * @param projectId
+ * @param metricId
+ * @param sourceId
+ * @param values
+ * @param userId
+ */
 const addMetricValues = (projectId, metricId, sourceId, values, userId) => {
-  if (!V?.[projectId]?.[metricId]?.[sourceId]) {
-    if (!(projectId in V)) {
-      V[projectId] = {[metricId]: {[sourceId]: {value: {state: 'unknown'}}}}
-    } else if (!(metricId in V[projectId])) {
-      V[projectId][metricId] = {[sourceId]: {value: {state: 'unknown'}}}
-    } else if (!(sourceId in V[projectId][metricId])) {
-      V[projectId][metricId][sourceId] = {value: {state: 'unknown'}}
+  const f = "administrator::addMetricValues"
+  try {
+    // Add object to V tree if necessary
+    if (!V?.[projectId]?.[metricId]?.[sourceId]) {
+      if (!(projectId in V)) {
+        V[projectId] = {[metricId]: {[sourceId]: {}}}
+      } else if (!(metricId in V[projectId])) {
+        V[projectId][metricId] = {[sourceId]: {}}
+      } else if (!(sourceId in V[projectId][metricId])) {
+        V[projectId][metricId][sourceId] = {}
+      }
     }
-  }
-  for (var valueId in values) {
-    const state = V[projectId][metricId][sourceId][valueId].state || 'unknown'
-    V[projectId][metricId][sourceId][valueId] = {
-      v: values[valueId],
-      date: Date.now(),
-      userId: userId,
-      state: state,
+
+    // for each valueId in values array
+    for (var valueId in values) {
+      // Add a new v object to the tree for each valueId
+      // If there is already a valueId - copy new properties - don't touch state and stale
+      if (valueId in V[projectId][metricId][sourceId]) {
+        V[projectId][metricId][sourceId][valueId].val = values[valueId].val
+        V[projectId][metricId][sourceId][valueId].date = values[valueId].date
+        V[projectId][metricId][sourceId][valueId].userId = values[valueId].userId
+      } else { // if there is no valueId
+        V[projectId][metricId][sourceId][valueId] = values[valueId]
+        V[projectId][metricId][sourceId][valueId].state = 'unk8'
+        V[projectId][metricId][sourceId][valueId].stale = 'unk8'
+      }
     }
+  } catch(err) {
+    console.error(f, err)
   }
 }
 
@@ -202,8 +227,8 @@ const addMetricValues = (projectId, metricId, sourceId, values, userId) => {
  * checkMetricValues - check inp, hum, out against upper, lower, high, low
  *   Set the valueState for each, if changed then send a message
  *
- * @param projectId
- * @param metricId
+ * @param _projectId
+ * @param _metricId
  *
  * Check the status of a metric and publish a message if the status changes
  * Check against high and low first
@@ -211,43 +236,44 @@ const addMetricValues = (projectId, metricId, sourceId, values, userId) => {
  * If current status is different then
  *   publish a message to the bus
  */
-const checkMetricValues = (projectId, metricId) => {
+const checkMetricValues = (_projectId, _metricId) => {
   const f = 'administrator::checkMetricValues'
 
   try {
-    var vm = V[projectId][metricId];
+    var vm = V[_projectId][_metricId];
     const srcIds = ['inp', 'out', 'hum']
     for (var s in srcIds) {
-      const srcId = srcIds[s]
-      if (vm[srcId]) {
-        var state = 'unknown'
-        const value = vm[srcId].value.v
-        var setPoint;
-        if (vm.high && val > vm.high.value.v) {          // high range
+      const sourceId = srcIds[s]
+      if (vm[sourceId]) {
+        var state = 'ok'
+        const value = vm[sourceId].value.val
+        var setPoint = -999;
+        if (vm.high && val > vm.high.value.val) {          // high range
           setPoint = vm.high.value.v
           state = "high"
-        } else if (vm.low && val < vm.low.value.v) {     // low range
+        } else if (vm.low && val < vm.low.value.val) {     // low range
           setPoint = vm.low.value.v
           state = "low"
-        } else if (vm.upper && val > vm.upper.value.v) { // upper alarm
+        } else if (vm.upper && val > vm.upper.value.val) { // upper alarm
           setPoint = vm.upper.value.v
           state = "upper"
-        } else if (vm.lower && val < vm.lower.value.v) { // lower alarm
+        } else if (vm.lower && val < vm.lower.value.val) { // lower alarm
           setPoint = vm.lower.value.v
           state = "lower"
         }
-        if (state !== vm[srcId].value.state) {
-          vm[srcId].value.state = state
-
+        if (state !== vm[sourceId].value.state) {
           const payload = {
-            metricId: metricId,
-            projectId: projectId,
-            valueState: state,
+            metricId: _metricId,
+            projectId: _projectId,
+            initialState: vm[sourceId].value.state,
+            state: state,
             setPoint: setPoint,
             value: value,
             vm: vm,
           }
-          var topic = `${projectId}/rsp/${clientId}`
+          vm[sourceId].value.state = state
+          var topic = global.aaa.topics.publish.alm
+          topic = topic.replace(/DPROJECTID/, _projectId)
           var str = JSON.stringify(payload)
           msg(1, f, DEBUG, `call mqttNode.publish - topic: ${topic} length:${str.length}`)
           mqttNode.publish(topic, str);
@@ -260,37 +286,46 @@ const checkMetricValues = (projectId, metricId) => {
 }
 
 //  output to MQTT all values of a metric
-const publishMetricValues = (projectId, metricId, clientId) => {
+const publishMetricValues = (_projectId, _metricId, _clientId) => {
   // publish values
   // topic PROJECTID/rsp/clientId
   var mv;
-  if (mv = V[metricId][projectId]) {
+  if (mv = V[_projectId][_metricId]) {
     var payload = {}
     if (mv.stale)  { payload['stale'] = mv.stale}
     if (mv.status) { payload['status'] = mv.status}
-    if (mv.value)  { payload['value'] = mv.value}
+    if (mv.inp)    { payload['inp'] = mv.value}
+    if (mv.hum)    { payload['hum'] = mv.value}
+    if (mv.out)    { payload['out'] = mv.value}
     if (mv.high)   { payload['high'] = mv.high}
     if (mv.low)    { payload['low'] = mv.low}
     if (mv.upper)  { payload['upper'] = mv.upper }
     if (mv.lower)  { payload['lower'] = mv.lower }
 
-    var outTopic = `${projectId}/rsp/${clientId}`
+    var outTopic = `${_projectId}/rsp/${_clientId}`
     var outStr = JSON.stringify(payload)
     msg(1,f, DEBUG,`call mqttNode.publish - topic: ${outTopic} length:${outStr.length}`)
     mqttNode.publish(outTopic, outStr);
   } else {
-
-
+    msg(0,f, WARNING,`metric not found ${_projectId} ${_metricId}`)
   }
 }
 
+/**
+ * processMqttInput - Add inp, hum, out values to V array
+ *
+ * @param _topic
+ * @param _payload
+ * @returns {[string,null]}
+ */
 const processMqttInput = (_topic, _payload) => {
+  const f = 'administrator::processMqttInput'
   // V array - Save by
-  //   projectId - cb, oxy
+  //   _projectId - cb, oxy
   //     metricId
   //       sourceId - inp, out, hum, upper, lower, high, low
   //         valueId = value
-  //           v
+  //           val
   //           datetime
   //           userId
   var [projectId,sourceId,clientId,userId,edgeId] = _topic.split('/')
@@ -313,8 +348,10 @@ const processMqttInput = (_topic, _payload) => {
       break;
     }
   }
-  msg(2,f, DEBUG,"processMqttInput", payload)
+
   // Extract values into values array
+  // Typically there is only one - "value"   However there can be more in rare cases
+  msg(2,f, DEBUG,"payload - ", payload)
   var ivalues;
   if (flds[1] === undefined) {
     ivalues['value']
@@ -324,7 +361,12 @@ const processMqttInput = (_topic, _payload) => {
   }
   for (var v = 0; v < ivalues.length; v++) {
     var [key, val] = ivalues[v].split('=')
-    values[key.toLowerCase()] = val
+    key = key.toLowerCase()
+    values[key] = {
+      val: val,
+      date: Date.now(),
+      userId: userId,
+    }
   }
 
   // Add to V array
@@ -336,9 +378,7 @@ const processMqttInput = (_topic, _payload) => {
 }
 
 /**
- * getMetric - get the V array for a process, metric, source or value
- * returns all metric V, all metric V's for a process,
- * a metric within a process, and the value of a metric
+ * getMetricV - get the V array for a process, metric, source or value
  *
  * @param projectId
  * @param metricId
@@ -346,7 +386,7 @@ const processMqttInput = (_topic, _payload) => {
  * @param valueId
  * @returns {{}|null|*}
  */
-const getMetric = (_projectId, _metricId, _sourceId, _valueId) => {
+const getMetricV = (_projectId, _metricId, _sourceId, _valueId) => {
   const f = 'administrator::getMetricV'
   var vp, vm, vs, vv;
   const projectId = (_projectId) ? _projectId.toLowerCase() : null
@@ -395,6 +435,7 @@ const getMetric = (_projectId, _metricId, _sourceId, _valueId) => {
 
 
 const processCmd = (_topic, _payload) => {
+  const f = 'administrator::processCmd'
   var id = (_payload.clientId) ? _payload.clientId : _payload.ip
   var outTopic = global.aaa.topics.publish.rsp;
   outTopic = outTopic.replace(/DCLIENTID/, id)
@@ -425,7 +466,7 @@ const processCmd = (_topic, _payload) => {
           addStatus(out)
         }
       } else if (_payload.cmd === 'getMetric') {
-        out.v = getMetric(_payload.projectId, _payload.metricId, _payload.sourceId, _payload.valueId)
+        out.v = getMetricV(_payload.projectId, _payload.metricId, _payload.sourceId, _payload.valueId)
       } else if (_payload.cmd === 'requestJsonFile') {
         msg(2, f, DEBUG, "Read json file: ", filepath)
         const filepath = `${process.env.ROOT_PATH}/${_payload.filepath}`
@@ -560,49 +601,66 @@ const findProject = (projectId) => {
 }
 
 const loadProjectMetrics = (_projectId) => {
+  const f = 'administrator::loadProjectMetrics'
+  const userId = 'default'
   // Read in all the metrics/*.yml files for this project
   var dirPath = `${process.env.ROOT_PATH}/${adminId}/projects/${_projectId}/metrics`
   var files = fs.readdirSync(dirPath);
   var metrics = {}
 
-  // forEach file in CONF/ADMINID/PROJECTID/metrics with suffix .yml
-  files.forEach(filename => {
-    if (path.extname(filename) === '.yml') {
-      var filepath = dirPath + '/' + filename;
-      var fMetrics = YAML.safeLoad(fs.readFileSync(filepath));
-      for (var id in fMetrics) {
-        var fMetric = fMetrics[id]
-        var metricId = id.toLowerCase();  // Change key to lower case
-        if (metrics[metricId]) {   // Metric has already been created - add new data
-          metric = metrics[metricId]
-          const srcIds = ['inp', 'out', 'hum', 'upper', 'lower', 'high', 'low']
-          for (var s in srcIds) {
-            const srcId = srcIds[s]
-            if (fMetric[srcId]) {
-              metric[srcId] = fMetric[srcId]
+  try {
+    // forEach file in CONF/ADMINID/PROJECTID/metrics with suffix .yml
+    files.forEach(filename => {
+      if (path.extname(filename) === '.yml') {
+        var filepath = dirPath + '/' + filename;
+        var fMetrics = YAML.safeLoad(fs.readFileSync(filepath));
+        for (var id in fMetrics) {
+          var fMetric = fMetrics[id]
+          var metricId = id.toLowerCase();  // Change key to lower case
+          if (metrics[metricId]) {   // Metric has already been created - add new data
+            metric = metrics[metricId]
+            for (var s in SourceIds) {
+              const sourceId = SourceIds[s]
+              if (fMetric[sourceId]) {
+                metric[sourceId] = fMetric[sourceId]
+              }
+            }
+          } else {  // Metric is new - copy in full record
+            metrics[metricId] = metric = fMetrics[id]
+            metric.name = id
+            metric.metricId = id.toLowerCase()
+            metric.projectId = _projectId                // add projectId to each metric
+            var flds = id.split('_')
+            metric.units = flds[flds.length - 1]
+          }
+          // Go through all SourceIds and update the V array with default values
+          for (var s in SourceIds) {
+            const sourceId = SourceIds[s]
+            var values = {}
+            if (metric[sourceId]) {
+              if (V?.[_projectId]?.[metricId]?.[sourceId]?.['value']) {
+                // do nothing?
+              } else if (metric[sourceId].default) {
+                values = {
+                  value: {
+                    val: metric[sourceId].default,
+                    date: Date.now(),
+                    userId: userId,
+                    state: 'unk1',
+                    stale: 'unk1',
+                  },
+                }
+                addMetricValues(_projectId, metricId, sourceId, values, userId)
+                checkMetricValues(_projectId, metricId)
+              }
             }
           }
-        } else {  // Metric is new - copy in full record
-          metrics[metricId] = metric = fMetrics[id]
-          metric.name = id
-          metric.metricId = id.toLowerCase()
-          metric.projectId = _projectId                // add projectId to each metric
-          var flds = id.split('_')
-          metric.units = flds[flds.length - 1]
-        }
-        // Go through all srcIds and update the V array with new values
-        const srcIds = ['inp', 'out', 'hum', 'upper', 'lower', 'high', 'low']
-        for (var s in srcIds) {
-          const srcId = srcIds[s]
-          const value = [{
-            value: 1,
-          }]
-          addMetricValues(_projectId, metricId, srcId, values, 'default')
-          checkMetricValues(projectId, metricId)
         }
       }
-    }
-  });
+    });
+  } catch(err) {
+    msg(0,f, ERROR, err)
+  }
   return metrics;
 }
 
@@ -637,6 +695,7 @@ const getProjectMetrics = (_projectId, _client) => {
 }
 
 const loadClientMetrics = (_client) => {
+  const f = 'administrator::loadClientMetrics'
   // for each projectId
   for (var projectId in global.aaa.projects) {
     var project = global.aaa.projects[projectId]
@@ -693,43 +752,45 @@ const loadClientMetrics = (_client) => {
  *   if possible get the V[projectId, metridId record set to v
  */
 const setDefaults = (_metric) => {
-
   const f = "administrator::setDefaults"
   const projectId = _metric.projectId
   const metricId = _metric.metricId
   // Get V for this metric first - there is only one
   try {
-    var vm = getMetric(projectId, metricId)
+    var vm = getMetricV(projectId, metricId)
     vm = (vm && vm.type === "metric") ? vm : undefined
     if (!_metric.v) _metric.v = {}
 
     for (var sourceId in sourceIds) {
       if (!_metric[sourceId]) continue    // skip unconfigured sources
-      var v;
+      var v
+      var vms
       if (vm && vm[sourceId]) {                 // if there is a current value
         _metric.v[sourceId] = vm[sourceId]
       } else if ('default' in _metric[sourceId]) {  // if there is a default valu
-        const vms = {
+        vms = {
           value: {
-            v: _metric[sourceId].default,
+            val: _metric[sourceId].default,
             date: Date.now(),
-            state: 'unknown',
-            userId: 'default',
+            userId: 'unk2',  // should be default
+            state: 'unk2',
+            stale: 'unk2',
           }
         }
         _metric.v[sourceId] = vms
-//      addMetricValues(projectId,metricId,sourceId,vms, 'default')
-      } else {          // no V, no default
-        const vms = {
+        addMetricValues(projectId,metricId,sourceId,vms, 'default')
+      } else {          // no V && no default
+        vms = {
           value: {
-            v: -999999,
+            val: -999999,
             date: Date.now(),
-            state: 'unknown',
-            userId: 'unspecified',
+            userId: 'unk3',
+            state: 'unk3',
+            stale: 'unk3',
           }
         }
         _metric.v[sourceId] = vms
-//      addMetricValues(projectId,metricId,sourceId,vms, 'unspecified')
+        addMetricValues(projectId,metricId,sourceId,vms, 'unspecified')
       }
     }
   } catch(err) {
@@ -738,6 +799,7 @@ const setDefaults = (_metric) => {
 }
 
 const readSourceIds = () => {
+  const f = "administrator::readSourceIds"
   var ymlStr
   var filepath
   var sourceIds
@@ -757,6 +819,7 @@ const readSourceIds = () => {
 
 /*
 const initClients = (projectId, instance, project, sourceIds) => {
+  const f = "administrator::initClients"
   // For each client create lookup lists by clientId and IP
   var c
   for (c in project.clients) {
@@ -797,7 +860,7 @@ const initClients = (projectId, instance, project, sourceIds) => {
 }
 */
 
-const loadProject = (projectId) => {
+const loadProjectFile = (projectId) => {
   const f = "administrator::loadProject - "
   try {
     var ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${adminId}/projects/${projectId}/project.yml`)
@@ -810,6 +873,7 @@ const loadProject = (projectId) => {
 }
 
 const loadAdministratorConfig = () => {
+  const f = "administrator::loadAdministratorConfig"
   var ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${adminId}/clients/administrator.yml`)
   var conf = YAML.safeLoad(ymlStr)
   conf.status    = global.aaa.status
@@ -827,7 +891,8 @@ const loadAdministratorConfig = () => {
   // load each project - delete disabled ones
   for (var projectId in global.aaa.projects) {
     if (global.aaa.projects[projectId] === "enabled") {
-      global.aaa.projects[projectId] = loadProject(projectId)
+      global.aaa.projects[projectId] = loadProjectFile(projectId)
+      global.aaa.projects[projectId].metrics = loadProjectMetrics(projectId)
     } else {
       delete global.aaa.projects[projectId]
     }
@@ -891,6 +956,7 @@ const findClientByIp = (_dir, _ip, _projectId) => {
 }
 
 const loadEdgeConfig = (_payload) => {
+  const f = 'administrator::loadEdgeConfig'
   console.log('Read in administrator configuration')
 
   if (!_payload.clientId && !_payload.ip) {
@@ -916,6 +982,7 @@ const loadEdgeConfig = (_payload) => {
 }
 
 const loadMqttConfig = (_payload) => {
+  const f = "administrator::loadMqttConfig"
   try {
     var client = loadClient("clients", _payload.clientId, _payload.projectId)
     for (var clientId in client.clients) {
@@ -959,6 +1026,6 @@ const loadHmiConfig = (_payload) => {
 loadAdministratorConfig();
 //loadProjectMetrics()
 
-console.log(f, 'Connect to mqtt server and initiate process callback')
+console.log(fm, 'Connect to mqtt server and initiate process callback')
 mqttNode.connect(connectCB, processCB);
-console.log(f, 'Exit main thread')
+console.log(fm, 'Exit main thread')

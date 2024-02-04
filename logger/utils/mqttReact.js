@@ -8,7 +8,8 @@ import {ckTopic} from './topics'
 //import {msg} from "../../../../../apps/lt/administrator/utils/msg";
 import YAML from "yaml-parser";
 
-var mqttClient;
+var mqttClient
+var mqttStatusCB
 var topicsCB = {}
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
@@ -46,8 +47,12 @@ const connectPromise = (connectCB, messageCB) => {
 
     mgNotify(1, f, "Connect to MQTT broker " + mc.url)
     mqttClient.on('connect', (event) => {
-      mgNotify(1, f, "Connected" + mc.url)
+      if (mqttStatusCB) {
+        mqttStatusCB('connect')
+      }
+//    mgNotify(1, f, "Connected" + mc.url)
       global.aaa.status.mqttConnected++;
+      console.log(f, "MQTT on connect ")
       connectCB();
 
       if (global.aaa.status.mqttConnected === 1) {
@@ -56,36 +61,57 @@ const connectPromise = (connectCB, messageCB) => {
     })
 
     mqttClient.on('message', (inTopic, payloadRaw) => {
+      if (mqttStatusCB) {
+        mqttStatusCB('message')
+      }
       mgNotify(1, f, "Message received " + inTopic + " -- " + payloadRaw)
       messageCB(inTopic, payloadRaw)
     })
 
     mqttClient.on('reconnect', () => {
+      if (mqttStatusCB) {
+        mqttStatusCB('reconnect')
+      }
 //    mqttUnsubscribe(global.aaa.topics.subscribe);
 //    mgNotify(0, f, "MQTT Reconnect ")
-      console.log(f, "MQTT Reconnect ")
+      console.log(f, "MQTT on reconnect ")
     });
 
     mqttClient.on('offline', () => {
+      if (mqttStatusCB) {
+        mqttStatusCB('offline')
+      }
 //    mgWarning(0, f, "MQTT offline ")
-      console.log(f, "MQTT offline ")
+      console.log(f, "MQTT on offline ")
     });
 
     mqttClient.on('end', () => {
+      if (mqttStatusCB) {
+        mqttStatusCB('end')
+      }
 //    mgWarning(0, f, "MQTT end")
-      console.log(f, "MQTT end ")
+      console.log(f, "MQTT on end ")
     });
 
     mqttClient.on('close', () => {
-      console.log(f, "MQTT close ")
+      if (mqttStatusCB) {
+        mqttStatusCB('close')
+      }
+      console.log(f, "MQTT on close ")
 //    mgWarning(0, f, "MQTT close")
       setTimeout(() => {
-        mqttClient.reconnect();
-      }, 1000); // Wait for 1 second before trying to reconnect
+        if (!mqttClient.connected) {
+          console.log(f, "MQTT call reconnect ")
+          mqttClient.reconnect();
+        }
+      }, 10); // Wait for 1 second before trying to reconnect
     });
 
     mqttClient.on('error', (msg) => {
-      mgError(0, f, "MQTT error " + msg)
+      if (mqttStatusCB) {
+        mqttStatusCB('close')
+      }
+      mgError(0, f, "MQTT on error " + msg)
       mqttClient.end();
       reject(msg);
     });
@@ -363,6 +389,10 @@ const mqttProcessCB = (_topic, _payload) => {
   }
 }
 
+const mqttRegisterMqttStatusCB = (cb) => {
+  mqttStatusCB = cb
+}
+
 export {
   mqttConnect,
   mqttConnected,
@@ -373,6 +403,7 @@ export {
   mqttUnregisterMetricCB,
   mqttRegisterTopicCB,
   mqttUnregisterTopicCB,
+  mqttRegisterMqttStatusCB,
   mqttProcessCB,
   mqttRequestFile,
 }

@@ -3,7 +3,6 @@
 Ch_Anode_K_C:
   label: Anode Temperature
   desc: Anode temperature
-  value: 1
   decimals: 1
   hum:
     clientId: player
@@ -15,7 +14,6 @@ Ch_Anode_K_C:
 Ch_Gas_MFC_D2_sccm:
   label: Deuterium Gas Flow
   desc: Deuterium gas flow
-  value: 0
   decimals: 0
   hum:
     clientId: player
@@ -28,7 +26,6 @@ Ch_Gas_MFC_D2_sccm:
 Ch_Gas_MFC_N2_sccm:
   label: Nitrogen Gas Flow
   desc: Nitrogen gas flow
-  value: 0
   decimals: 0
   hum:
     clientId: player
@@ -41,7 +38,6 @@ Ch_Gas_MFC_N2_sccm:
 Ch_TopCenter_K_C:
   label: Chamber TopCenter Temperature
   desc: Chamber temperature - top center
-  value: 0
   decimals: 1
   hum:
     clientId: player
@@ -54,7 +50,6 @@ Ch_TopCenter_K_C:
 Ch_NA_Baratron_torr:
   label: Chamber Pressure
   desc: Chamber pressure - Baratron
-  value: 0
   decimals: 0
   hum:
     clientId: player
@@ -67,7 +62,6 @@ Ch_NA_Baratron_torr:
 PS_DC_V:
   label: DC Power Supply Volts
   desc: DC Power supply output voltage
-  value: 0
   decimals: 0
   hum:
     clientId: player

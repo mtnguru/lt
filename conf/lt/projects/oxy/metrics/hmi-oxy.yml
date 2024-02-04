@@ -3,10 +3,9 @@
 PS_NA_Human_V:
   label: PS Volts
   desc: Power Supply Voltage - Human Input
-  value: 0
   decimals: 1
   hum:
-    clientId: hmi
+    clientId: hmi-oxy
     channelType: slider
     default: 25
     min: 20
@@ -16,10 +15,9 @@ PS_NA_Human_V:
 PS_NA_Human_A:
   label: PS Amps
   desc: Power Supply Amps - Human Input
-  value: 0
   decimals: 0
   hum:
-    clientId: hmi
+    clientId: hmi-oxy
     channelType: slider
     default: 40
     min: 0
@@ -29,10 +27,9 @@ PS_NA_Human_A:
 Ez_NA_MTR_C:
   label: Ez Temperature
   desc: Electrolyzer Temperature
-  value: 0
   decimals: 1
   hum:
-    clientId: hmi
+    clientId: hmi-oxy
     channelType: slider
     default: 20
     min: 10
@@ -42,7 +39,6 @@ Ez_NA_MTR_C:
 Ez_NA_SmartTrack_slpm:
   label: HHO Flowrate
   desc: HHO Flowrate
-  value: 0
   decimals: 1
   hum:
     clientId: hmi-oxy

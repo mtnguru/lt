@@ -7,8 +7,7 @@ function sleep(milliseconds) {
   } while (currentDate - date < milliseconds);
 }
 
-function currentDate(format) {
-  const time = Date.now();
+function convertDate(time, format) {
   const now = new Date(time);
   var datestr = '';
   if (format === 'full') {
@@ -35,5 +34,10 @@ function currentDate(format) {
   return datestr
 }
 
+const currentDate = (format) => {
+  return convertDate(Date.now(),format)
+}
+
 module.exports = { sleep,
+                   convertDate,
                    currentDate }

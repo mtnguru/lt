@@ -3,7 +3,8 @@ edgeId: oxy_edge
 msgId: oxy_msg
 clients:
   arduino_gm:  enabled
-  arduino5:    disabled
-  hmi:         enabled
-  controller:  enabled
+  arduino4:    enabled
+  arduino6:    enabled
+  hmi-oxy:     enabled
+  control-oxy: enabled
   drupal:      enabled
