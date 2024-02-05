@@ -33,6 +33,9 @@ const connectPromise = (connectCB, messageCB) => {
 //topicsCB = {};
 
   return new Promise((resolve, reject) => {
+    if (mqttStatusCB) {
+      mqttStatusCB('connect')
+    }
     mqttClient = mqtt.connect((mc.ip) ? mc.ip : mc.url, {
       clientId: mc.mqttClientId,
       clean: false,
@@ -48,7 +51,7 @@ const connectPromise = (connectCB, messageCB) => {
     mgNotify(1, f, "Connect to MQTT broker " + mc.url)
     mqttClient.on('connect', (event) => {
       if (mqttStatusCB) {
-        mqttStatusCB('connect')
+        mqttStatusCB('connected')
       }
 //    mgNotify(1, f, "Connected" + mc.url)
       global.aaa.status.mqttConnected++;

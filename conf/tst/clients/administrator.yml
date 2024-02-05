@@ -12,8 +12,8 @@ mqtt:  # Each client must have it's own mqtt config
   password: datawp
   protocol: 'MQTT'
   protocolVersion: 4
-  connectTimeout: 5000
-  reconnectPeriod: 5000
+  connectTimeout: 70000
+  reconnectPeriod: 50000
   keepAlive: 60
   port: 1884
   websocket: 8084
@@ -53,18 +53,18 @@ projects:
   oxy: disabled
   sl:  disabled
 clients:
-  arduino1   : enabled
-  arduino2   : disabled
-  arduino3   : enabled
-  arduino4   : enabled
-  arduino5   : enabled
-  arduino6   : disabled
-  arduino7   : enabled
-  arduino8   : disabled
-  arduino9   : disabled
-  hmi-oxy    : disabled
-  hmi-sf     : disabled
-  hmi-cb     : enabled
-  hmi-mqtt   : enabled
-  drupal     : enabled
-  controller : enabled
+  arduino1: enabled
+  arduino2: disabled
+  arduino3: enabled
+  arduino4: enabled
+  arduino5: enabled
+  arduino6: disabled
+  arduino7: enabled
+  arduino8: disabled
+  arduino9: disabled
+  hmi-oxy: disabled
+  hmi-sf: disabled
+  hmi-cb: enabled
+  hmi-mqtt: enabled
+  drupal: enabled
+  controller: enabled

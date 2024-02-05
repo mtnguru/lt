@@ -25,7 +25,7 @@ int mqttConnected = 0;
 const char* mqttIp = "194.195.214.212"; // labtime.org
 const char* mqttUser = "data";
 const char* mqttPassword = "datawp";
-const int mqttPort = 1883;
+const int mqttPort = 1884;
 
 ///////////// WiFi
 #include <ESP8266WiFi.h>

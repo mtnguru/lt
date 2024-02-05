@@ -20,12 +20,13 @@
   }
   .nitems {
     font-weight: bold;
-    margin: -20px 0 0 10px;
+    margin: -35px 0 0 10px;
   }
 
   .mqtt-display {
-    display: inline-block;
+    display: block;
     .mqtt-list {
+      margin-top: 20px;
       height: calc(100vh - 146px);
   //  max-height: 800px;
       overflow-y: auto;
@@ -35,7 +36,7 @@
   .filter-buttons {
     display: inline-block;
     background: #333;
-    margin-right: 20px;
+    margin-right: 203px;
     float: right;
 //  height: 40px;
     padding: 3px 10px;

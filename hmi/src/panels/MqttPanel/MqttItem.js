@@ -168,7 +168,7 @@ const MqttItem = (props) => {
               setAuthor(payload.author)
               short += ` ${payload.author}`
             }
-            short = ` ${payload.msg}`
+            short = ` ${payload.msg || payload.content}`
             setType(payload.type)
           } else if (props.item.sourceId === 'alm') {
             short = `alm ${payload.metricId}`

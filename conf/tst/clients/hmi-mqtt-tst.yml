@@ -1,4 +1,4 @@
-name: HMI - MQTT
+name: HMI-MQTT Tst
 clientType: hmi
 userId: Bilbo
 format: yml
@@ -9,13 +9,18 @@ clients:
   administrator:  enabled
   drupal:         enabled
   logger:         enabled
-  hmi-mqtt:       enabled
-  hmi-oxy:        disabled
-  hmi-sl:         disabled
-  arduino2:       enabled
+  hmi-mqtt-tst:   enabled
+  hmi-cb:         enabled
+  arduino1:       enabled
+  arduino2:       disabled
+  arduino3:       enabled
+  arduino4:       enabled
+  arduino5:       enabled
   arduino6:       disabled
-  controller-oxy: disabled
-  controller-sl:  disabled
+  arduino7:       enabled
+  arduino8:       disabled
+  epiclc:         enabled
+  controller-cb:  enabled
 topics:
   subscribe:
     adm: '#'
