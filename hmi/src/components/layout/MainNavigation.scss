@@ -45,8 +45,13 @@
   margin-left: 1.5rem;
   display: inline-block;
   &.status {
+    width: 95px;
     padding: 5px 10px;
     border-radius: 5px;
+    text-align: center;
+    span {
+      width: 100%;
+    }
   }
 }
 

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 name: HMI - MQTT Tst
+=======
+name: HMI-MQTT Tst
+>>>>>>> 26f33c7445118998467089eb8386e92f0917c39e
 clientType: hmi
 userId: Bilbo
 format: yml
@@ -12,9 +16,15 @@ clients:
   hmi-mqtt-tst:   enabled
   hmi-cb:         enabled
   arduino1:       enabled
+<<<<<<< HEAD
   arduino2:       enabled
   arduino3:       enabled
   arduino4:       disabled
+=======
+  arduino2:       disabled
+  arduino3:       enabled
+  arduino4:       enabled
+>>>>>>> 26f33c7445118998467089eb8386e92f0917c39e
   arduino5:       enabled
   arduino6:       disabled
   arduino7:       enabled

@@ -12,8 +12,8 @@ mqtt:  # Each client must have it's own mqtt config
   password: datawp
   protocol: 'MQTT'
   protocolVersion: 4
-  connectTimeout: 5000
-  reconnectPeriod: 5000
+  connectTimeout: 70000
+  reconnectPeriod: 50000
   keepAlive: 60
   port: 1884
   websocket: 8084

@@ -90,10 +90,11 @@ $metric-fg-color: #ccff33;
 .mqtt-clientId-bg {
   // MQTT message client
   .all             { background-color: #222; }
-  .administrator   { background-color: #245; }
-  .drupal          { background-color: #367; }
-  .logger          { background-color: #489; }
+  .administrator   { background-color: #356; }
+  .drupal          { background-color: #478; }
+  .logger          { background-color: #59a; }
   .hmi-mqtt        { background-color: #632; }
+  .hmi-mqtt-tst    { background-color: #632; }
   .hmi-cb          { background-color: #843; }
   .hmi-oxy         { background-color: #a54; }
   .hmi-sl          { background-color: #c65; }
@@ -151,7 +152,8 @@ $metric-fg-color: #ccff33;
 }
 
 .mqttStatus {
-  .connect           { background-color: #08f; }
+  .connect           { background-color: #0bb; }
+  .connected         { background-color: #08d; }
   .message           { background-color: #090; }
   .reconnect         { background-color: #a30; }
   .close             { background-color: #52c }

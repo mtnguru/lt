@@ -1,5 +1,5 @@
-name: Arduino 2
-ip: 192.168.0.17
+name: Arduino 4
+ip: 192.168.0.16
 #ip: 172.16.45.32
 model: arduino
 clientType: edge
