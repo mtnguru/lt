@@ -125,8 +125,8 @@ struct inputS {
   byte deviceId[8];  // channelType == onewire
 };
 
-const int inputMax = 2;
-const int outputMax = 2;
+const int inputMax = 4;
+const int outputMax = 4;
 inputS inputA[inputMax];
 outputS outputA[outputMax];
 int inputN = 0;
@@ -474,6 +474,9 @@ void findOneWireDevices(char *devices) {
   } else {
     strcpy(devices,"\"devices\": \"none\"");
   }
+
+  Serial.println("Done searching for OneWire devices...");
+
 }
 
 float readOneWireTemp(char corf, byte *deviceId) {
@@ -693,7 +696,7 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
         sampleInterval = (unsigned long)jsonDoc["sampleInterval"];
         snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"sampleInterval\":%ld}", cmd, clientId, sampleInterval);
       } else if (!strcmp(cmd, "findOneWireDevices")) {     // Find one wire devices
-        char devices[160];
+        char devices[500];
         findOneWireDevices(devices);
         snprintf(out,outSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", %s}", cmd, clientId, devices);
       }

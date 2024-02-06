@@ -5,6 +5,6 @@ model: arduino
 clientType: edge
 topicSet: edge
 statusDefault:
-  sampleInterval: 30000
+  sampleInterval: 2000
   enabled: 1
   debugLevel: 0

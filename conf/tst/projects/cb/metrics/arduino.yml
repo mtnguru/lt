@@ -1,16 +1,34 @@
 ######################### arduinos ###################
 
-arduino1_dev_OW_F:
-  label: Arduino1 development
-  desc: Arduino1 development
+arduino1_dev1_OW_F:
+  label: Arduino1 dev 1
+  desc: Arduino1 dev 1
   decimals: 2
   inp:
     clientId: arduino1
     channelType: onewire_f
     channel: 14 
-    deviceId: [40,200,178,168,1,0,0,242]
-#   deviceId: [40,241,148,168,1,0,0,237]
-#   deviceId: [40,161,154,168,1,0,0,97]
+    deviceId: [40,224,233,67,212,225,61,3]
+arduino1_dev2_OW_F:
+  label: Arduino1 dev 2
+  desc: Arduino1 dev 2
+  decimals: 2
+  inp:
+    clientId: arduino1
+    channelType: onewire_f
+    channel: 14 
+#   deviceId: [40,80,173,168,1,0,0,241]
+    deviceId: [40,73,200,67,212,225,61,252]
+arduino1_dev3_OW_F:
+  label: Arduino1 dev3
+  desc: Arduino1 dev3
+  decimals: 2
+  inp:
+    clientId: arduino1
+    channelType: onewire_f
+    channel: 14 
+#   deviceId: [40,80,173,168,1,0,0,241]
+    deviceId: [40,173,201,67,212,225,61,196]
 MiddleBedroom_Window_K_F:
   label: Grow room
   desc: Grow room - K thermocouple

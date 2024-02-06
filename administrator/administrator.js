@@ -16,7 +16,6 @@ const os = require('os')
 const seedrandom  = require('seedrandom')
 const clientId = "administrator"
 const generator = seedrandom(Date.now())
-const mqttClientId = `${clientId}_${generator().toString(16).slice(10)}`
 
 var sourceIds;
 
@@ -32,6 +31,8 @@ if (process.argv[2]) {
   console.log('ERROR: No adminId specified')
   process.exit(1);
 }
+
+const mqttClientId = `${clientId}_${adminId}_${generator().toString(16).slice(10)}`
 
 // global.aaa is overwritten when the configuration is read in from a file
 global.aaa = {
@@ -109,6 +110,7 @@ const getStatus = () => {
   return {
     rsp: "requestStatus",
     clientId: global.aaa.clientId,
+    adminId: adminId,
     mqttClientId: mqttClientId,
     mqttConnected: global.aaa.status.mqttConnected,
     mqttSubscribe: global.aaa.status.mqttSubscribe,
@@ -945,7 +947,7 @@ const findClientByIp = (_dir, _ip, _projectId) => {
     for (var clientId in global.aaa.clients) {
       if (clientId !== "all" && global.aaa.clients[clientId] === "enabled") {
         var client = loadClient(_dir, clientId, _projectId)
-        if (client.ip === _ip) {
+        if (client.ip && client.ip === _ip) {
           return client;
         }
       }
@@ -957,7 +959,7 @@ const findClientByIp = (_dir, _ip, _projectId) => {
 
 const loadEdgeConfig = (_payload) => {
   const f = 'administrator::loadEdgeConfig'
-  console.log('Read in administrator configuration')
+  msg(0,f,DEBUG, 'enter - ', _payload.clientId || _payload.ip)
 
   if (!_payload.clientId && !_payload.ip) {
     msg(0,f,ERROR,"neither the clientId or ip is defined");
@@ -983,6 +985,7 @@ const loadEdgeConfig = (_payload) => {
 
 const loadMqttConfig = (_payload) => {
   const f = "administrator::loadMqttConfig"
+  msg(0,f,DEBUG, 'enter - ', _payload.clientId)
   try {
     var client = loadClient("clients", _payload.clientId, _payload.projectId)
     for (var clientId in client.clients) {
@@ -1014,6 +1017,7 @@ const loadMqttConfig = (_payload) => {
 
 const loadHmiConfig = (_payload) => {
   const f = 'administrator::loadHmiConfig - '
+  msg(0,f,DEBUG, 'enter - ', _payload.clientId)
   try {
     var client = loadClient("clients", _payload.clientId, _payload.projectId)
     client.metrics = getProjectMetrics(_payload.projectId, client)

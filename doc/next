@@ -1,3 +1,6 @@
+Get onewire working without the board
+Merge in the changes in chatgpt into mqttReact and mqttNode
+
 
 
 * Get the mosquitto monitor working and plotting in Grafana
@@ -10,20 +13,22 @@
 *   Initialize the values
 
 Setup a production and test environment on labtime.org
-  They both feed into grafana as they do now.  I need to setup duplicate telegraf sessions
-  production
-    oxy - outside
-      arduino6  
-      arduino4  
-    safire
-  test
-    cabin - internal
-      arduino1
-      arduino2
-      arduino3
-      arduino4
-      arduino5
-      arduino7
+* They both feed into grafana as they do now.  
+* Change cb_* telegraf sessions to use the 1884
+
+* production
+*   oxy - outside
+*     arduino6  
+*     arduino4  
+*   safire
+* test
+*   cabin - internal
+*     arduino1
+*     arduino2
+*     arduino3
+*     arduino4
+*     arduino5
+*     arduino7
 
 
 administrator
@@ -83,8 +88,6 @@ administrator
     else
       
 
-     
-
 What now?
 administrator
 *  getMetric
@@ -101,49 +104,49 @@ save the status in
 *    Add the current v from where? global.aaa.projects_last/
    
 Each environment - app or dev
-   ufw for the new ports
-   start a second mosquitto under a different port   both
-     mosquitto-tst = 
-   use different administrators
-   hmi uses two different domains - app.labtime.org and dev.latbime.org
-     uses different code directories - /apps/lt  /apps/lt.dev 
+*  ufw for the new ports
+*  start a second mosquitto under a different port   both
+*    mosquitto-tst = 
+*  use different administrators
+*  hmi uses two different domains - app.labtime.org and dev.latbime.org
+*    uses different code directories - /apps/lt  /apps/lt.dev 
 
-   administrator-dev
-   administrator-app
-   hmi-oxy-dev
-   hmi-oxy-app
-   hmi-mqtt-dev
-   hmi-mqtt-app
-   resetRequest - must use the c
+*  administrator-dev
+*  administrator-app
+*  hmi-oxy-dev
+*  hmi-oxy-app
+*  hmi-mqtt-dev
+*  hmi-mqtt-app
+*  resetRequest - must use the c
 
-   arduino5-dev   name comes from the administrator
-   arduino6-app
+*  arduino5-dev   name comes from the administrator
+*  arduino6-app
 
-   How do I make a production/app and development environment
-     Administrators need to be separate
-     Change all topics to the administrator Id - lt or sl
-       Moving an arduino between production and development requires downloading code
-     Then I can start multiple administrators on the same server
-       Each client must know it's administrator in advance - unless there is a broadcast 
-       Initial request for config tells the client its administrator
-         AdminId
-     Initial request for mommy is a/cmd/administrator - response is a/rsp/DCLIENTID
-       Both administrators check to see if it's their client 
-       Both can respond whether they found the client
+*  How do I make a production/app and development environment
+*    Administrators need to be separate
+*    Change all topics to the administrator Id - lt or sl
+*      Moving an arduino between production and development requires downloading code
+*    Then I can start multiple administrators on the same server
+*      Each client must know it's administrator in advance - unless there is a broadcast 
+*      Initial request for config tells the client its administrator
+*        AdminId
+*    Initial request for mommy is a/cmd/administrator - response is a/rsp/DCLIENTID
+*      Both administrators check to see if it's their client 
+*      Both can respond whether they found the client
 
-       Two administrators cannot have clients with the same name
-       Response tells the client it's adminId from then on respond with that
-         lt-prod/cmd/arduino  requestStatus - clientId
-         lt-dev/cmd/
+*      Two administrators cannot have clients with the same name
+*      Response tells the client it's adminId from then on respond with that
+*        lt-prod/cmd/arduino  requestStatus - clientId
+*        lt-dev/cmd/
+*        
+*        requestReset
+*        requestConfig
+*        setEnabled
+*        setDebugLevel
+*        getMetricValue
          
-         requestReset
-         requestConfig
-         setEnabled
-         setDebugLevel
-         getMetricValue
-         
-   Enable ability for mosquitto to restart and remember connections
-      Already enabled - then why does the administrator and hmi's get disconnected
+*  Enable ability for mosquitto to restart and remember connections
+*     Already enabled - then why does the administrator and hmi's get disconnected
       Goto level QOS=2
    Use port 8883 - certificate
       First get administrator working

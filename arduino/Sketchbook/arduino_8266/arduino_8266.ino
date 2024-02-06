@@ -17,7 +17,7 @@ unsigned long startTime = 0;
 unsigned long lastSample = 0;
 int enabled = 1;
 int debugLevel = 2;
-unsigned long sampleInterval = 30000;
+unsigned long sampleInterval = 2000;
 int mqttConnected = 0;
 
 ///////////// Mqtt server credentials
@@ -516,8 +516,10 @@ void setConfig(const char *topic,
   strcpy(clientId, jsonDoc["clientId"]);
 
   sampleInterval = (unsigned long)jsonDoc["status"]["sampleInterval"];
+  logit(0,MD, f, "enter", topic);
   if (sampleInterval == 0) {
-    sampleInterval = 30000;
+    sampleInterval = 2000;
+    logit(0,MD, f, "enter", topic);
   }
   lastSample = millis() - sampleInterval + 500;
 

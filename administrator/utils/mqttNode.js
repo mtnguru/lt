@@ -12,8 +12,8 @@ const {findMetric} = require('./metrics')
 let mqttClient;
 let topicsCB = {}
 
-const connectPromise = (connectCB, messageCB) => {
-  const f = 'mqttNode:connectPromise'
+const connectToBroker = (connectCB, messageCB) => {
+  const f = 'mqttNode:connectToBroker'
   const mc = global.aam;
   topicsCB = {};
 
@@ -40,46 +40,6 @@ const connectPromise = (connectCB, messageCB) => {
       connectCB();
       resolve('connected')
     })
-
-    mqttClient.on('message', (inTopic, payloadRaw) => {
-      msg(3, f, NOTIFY, 'MQTT message received ', inTopic)
-      messageCB(inTopic, payloadRaw)
-    })
-
-    mqttClient.on('reconnect', () => {
-//    unsubscribe(global.aaa.topics.subscribe);
-      console.error('on mqtt reconnect');
-    });
-
-    mqttClient.on('offline', () => {
-      console.error('on mqtt offline');
-    });
-
-    mqttClient.on('end', () => {
-      console.log('on mqtt end');
-    });
-
-    mqttClient.on('close', () => {
-      console.log('on mqtt close');
-      setTimeout(() => {
-        if (!mqtt.connected) {
-          console.log('on mqtt close - call reconnect');
-          mqttClient.reconnect();
-        }
-      }, 5000); // Wait for 1 second before trying to reconnect
-    });
-
-    mqttClient.on('error', (err) => {
-      console.log('Connection error -', err);
-      mqttClient.end();
-      reject(err);
-    });
-
-    process.on('SIGINT', (msg) => {
-      console.log('SIGINT received -', msg);
-      mqttClient.end();
-      process.exit();
-    })
   })
 }
 
@@ -89,13 +49,54 @@ const connectPromise = (connectCB, messageCB) => {
  */
 const connect = (connectCB, messageCB) => {
   const f = 'mqttNode:connect'
-  connectPromise(connectCB, messageCB)
+  connectToBroker(connectCB, messageCB)
     .then((status) => {
       console.log('MQTT client -', status);
     })
     .catch((error) => {
       console.error('MQTT client NOT connected -',error);
     })
+
+  mqttClient.on('message', (inTopic, payloadRaw) => {
+    msg(3, f, NOTIFY, 'MQTT message received ', inTopic)
+    messageCB(inTopic, payloadRaw)
+  })
+
+  mqttClient.on('reconnect', () => {
+//    unsubscribe(global.aaa.topics.subscribe);
+    console.error('on mqtt reconnect');
+  });
+
+  mqttClient.on('offline', () => {
+    console.error('on mqtt offline');
+  });
+
+  mqttClient.on('end', () => {
+    console.log('on mqtt end');
+  });
+
+  mqttClient.on('close', () => {
+    console.log('on mqtt close');
+    setTimeout(() => {
+      if (!mqtt.connected) {
+        console.log('on mqtt close - call reconnect');
+        mqttClient.reconnect();
+      }
+    }, 5000); // Wait for 1 second before trying to reconnect
+  });
+
+  mqttClient.on('error', (err) => {
+    console.log('Connection error -', err);
+    mqttClient.end();
+    reject(err);
+  });
+
+  process.on('SIGINT', (msg) => {
+    console.log('SIGINT received -', msg);
+    mqttClient.end();
+    process.exit();
+  })
+
   msg(1,f,NOTIFY,'exit')
 }
 

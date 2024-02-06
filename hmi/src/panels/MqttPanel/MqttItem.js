@@ -62,7 +62,6 @@ const addDateString = (obj) => {
     console.log('name ', name, '  typeof ', typeof(obj[name]))
     if (name === 'date') {
       if (typeof obj[name] === 'number') {
-        const ago = Date.now() - obj[name]
         obj[name] = `${obj[name]} -- ${convertDate(obj[name], 'full')} -- ${timeAgo(obj[name])}`
       }
     }
