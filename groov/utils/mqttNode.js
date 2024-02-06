@@ -29,6 +29,7 @@ const connectToBroker = (connectCB, messageCB) => {
       reconnectPeriod: mc.reconnectPeriod,
       connectTimeout: mc.connectTimeout,
       keepAlive: mc.keepAlive,
+      keepalive: mc.keepAlive,
     });
 
     mqttClient.on('connect', (event) => {
