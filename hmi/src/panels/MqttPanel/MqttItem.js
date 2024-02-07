@@ -135,6 +135,9 @@ const MqttItem = (props) => {
               case 'requestStatus':
                 short = `cmd ${payload.cmd} - ` + payload.clientId
                 break
+              case 'getMetric':
+                short = `cmd ${payload.cmd} - ` + payload.metricId +  ' - ' + payload.clientId
+                break
               default:
                 short = `cmd ${payload.cmd}`
                 break
@@ -153,6 +156,9 @@ const MqttItem = (props) => {
                 break
               case 'requestStatus':
                 short = `rsp ${payload.rsp} - ${payload.mqttClientId}`
+                break
+              case 'getMetric':
+                short = `rsp ${payload.rsp} - ` + payload.metricId + ' - ' + payload.clientId
                 break
               default:
 //              short += ` - ${payload.ClientId}`

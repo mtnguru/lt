@@ -44,7 +44,7 @@ const connectToBroker = (connectCB, messageCB) => {
       password: mc.password,
       reconnectPeriod: mc.reconnectPeriod,
       connectTimeout: mc.connectTimeout,
-//    keepAlive: mc.keepAlive,
+      keepAlive: mc.keepAlive,
       keepalive: mc.keepAlive,
     });
 

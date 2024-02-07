@@ -65,7 +65,7 @@ function MqttClient (props) {
     const f = "Button::clickH"
     const classList = event.target.classList;
     const name = event.target.name;
-    mgDebug(1, f,'Button pressed',name)
+    mgDebug(1, f, 'Button pressed', name)
     let topic;
     let payload;
     if (classList.contains('reset')) {
@@ -74,7 +74,11 @@ function MqttClient (props) {
     } else if (classList.contains("status")) {
       topic = `a/cmd/${props.client.clientId}`
       payload = `{"cmd": "requestStatus", "clientId": "${props.client.clientId}"}`;
-      if (clientId === 'all') {}
+      if (clientId === 'all') {
+      }
+    } else if (classList.contains("findOneWireDevices")) {
+      topic = `a/cmd/${props.client.clientId}`
+      payload = `{"cmd": "findOneWireDevices", "clientId": "${props.client.clientId}"}`;
     } else if (classList.contains("enabled")) {
       // Set the "all" button on other hmi instances
       // Set the enabled button
@@ -133,6 +137,11 @@ function MqttClient (props) {
             </Select>
           </Tooltip>
         </Box>
+      }
+      {props.client.clientId.indexOf("arduino") > -1 &&
+        <Tooltip label="Find One wire sensors" bg="white" p="10px" placement="bottom">
+          <Button variant="client" className={`small findOneWireDevices`} onClick={onClickH}>F</Button>
+        </Tooltip>
       }
     </Box> )
 }
