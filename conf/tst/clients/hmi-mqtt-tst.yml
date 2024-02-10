@@ -18,7 +18,7 @@ clients:
   arduino5:       enabled
   arduino6:       disabled
   arduino7:       enabled
-  arduino8:       disabled
+  arduino8:       enabled
   epiclc:         enabled
   controller-cb:  enabled
 topics:

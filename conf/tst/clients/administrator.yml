@@ -60,7 +60,7 @@ clients:
   arduino5:       enabled
   arduino6:       disabled
   arduino7:       enabled
-  arduino8:       disabled
+  arduino8:       enabled
   arduino9:       disabled
   hmi-oxy:        disabled
   hmi-sf:         disabled

@@ -41,10 +41,6 @@ const ControlOxyPanel = (props) => {
         <Box className="control-bar gas-flow"       mb={10}>
           <ControlMetric                     projectId={global.aaa.projectId} sourceId="hum"   metricId="Ez_NA_SmartTrack_slpm" label="HHO Flow" cname=""></ControlMetric>
           <ControlSlider title="Value"       projectId={global.aaa.projectId} sourceId="hum"   metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
-          <ControlSlider title="Upper Alarm" projectId={global.aaa.projectId} sourceId="upper" metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
-          <ControlSlider title="Lower Alarm" projectId={global.aaa.projectId} sourceId="lower" metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
-          <ControlSlider title="Upper Range" projectId={global.aaa.projectId} sourceId="high"  metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
-          <ControlSlider title="Lower Range" projectId={global.aaa.projectId} sourceId="low"   metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
         </Box>
         <Box className="control-bar voltage"        mb={10}>
           <ControlMetric projectId={global.aaa.projectId} sourceId="hum" metricId="PS_NA_Human_V" label="PS Volts" cname=""></ControlMetric>

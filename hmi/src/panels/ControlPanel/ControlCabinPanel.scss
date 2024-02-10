@@ -1,0 +1,45 @@
+@import "../../styles/base";
+@import "../../styles/colors";
+
+.control-cabin-panel {
+  header {
+    width: 100%;
+  }
+
+  .control-flex {
+    display: flex;
+  }
+
+  h2 {
+    width: 100%;
+  }
+  .controls {
+ // width: 400px;
+    @media(min-width: $bp-md) {
+//    margin-right: 2rem;
+    }
+  }
+
+  .control-bar {
+//  height: 30px;
+    margin: 0 0 20px;
+    padding: 3px 0;
+    border-radius: 4px;
+    .label {
+      display: inline-block;
+      width: 75px;
+    }
+
+    .value {
+
+    }
+  }
+
+  .card {
+    margin-bottom: 10px;
+  }
+
+  .title {
+    font-size: 80%;
+  }
+}

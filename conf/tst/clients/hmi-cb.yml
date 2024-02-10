@@ -1,6 +1,7 @@
 name: HMI-CB
 projectId: cb
 clientType: hmi
+clientId: hmi-cb
 userId: Bilbo
 format: yml
 clients:
@@ -12,12 +13,13 @@ clients:
   controller:     disabled
   drupal:         disabled
   epiclc:         disabled
-  arduino2:       enabled
+  arduino2:       disabled
   arduino3:       enabled
   arduino4:       enabled
   arduino5:       enabled
-  arduino6:       enabled
+  arduino6:       disabled
   arduino7:       enabled
+  arduino8:       enabled
 topics:
   subscribe:
     adm: '#'

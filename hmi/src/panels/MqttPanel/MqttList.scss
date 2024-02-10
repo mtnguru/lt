@@ -5,10 +5,11 @@
   display: inline;
   width: 100%;
   @media(min-width: $bp-md) {
-    width: calc(100% - 138px);
+//  width: calc(100% - 138px);
   }
   .mqtt-list {
     height: calc(100vh - 146px);
+    margin: 0 10px;
 //  max-height: 800px;
     overflow-y: auto;
   }

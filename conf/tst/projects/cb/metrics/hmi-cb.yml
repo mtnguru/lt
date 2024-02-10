@@ -1,0 +1,41 @@
+############################## Input development
+
+Manual_Test_V:
+  label: Test - Manual entry
+  desc: Test - Manual entry
+  decimals: 1
+  hum:
+    clientId: hmi-cb
+    channelType: slider
+    default: 3
+    min: 0
+    max: 6
+    step: .1
+  upper:
+    clientId: hmi-cb
+    channelType: slider
+    default: 8
+    min: 5
+    max: 10
+    step: .1
+  lower:
+    clientId: hmi-cb
+    channelType: slider
+    default: 2
+    min: 0
+    max: 5
+    step: .1
+  high:
+    clientId: hmi-cb
+    channelType: slider
+    default: 12
+    min: 5
+    max: 20
+    step: .1
+  low:
+    clientId: hmi-oxy
+    channelType: slider
+    default: 0
+    min: -5
+    max: 5
+    step: .1

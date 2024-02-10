@@ -1,7 +1,14 @@
-Get onewire working without the board
-Merge in the changes in chatgpt into mqttReact and mqttNode
+
+Set up the ASUS
+   I set it up but I can't see Wifi - Connect to my laptop through ethernet
+   Where is my USB/Ethernet adapter?  Do I even have one?  I think so
+
+Make the cabin page - setup a screen for me!
 
 
+
+*`Get onewire working without the board
+*Merge in the changes in chatgpt into mqttReact and mqttNode
 
 * Get the mosquitto monitor working and plotting in Grafana
 

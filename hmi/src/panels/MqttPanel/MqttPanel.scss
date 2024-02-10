@@ -6,11 +6,6 @@
     margin-top: 0;
     margin-bottom: 5px;
   }
-  .filters {
-  }
-  .mqtt-display {
-//  width: calc(100% - 170px);
-  }
   header {
     width: 100%;
   }
@@ -28,7 +23,6 @@
     .mqtt-list {
       margin-top: 20px;
       height: calc(100vh - 146px);
-  //  max-height: 800px;
       overflow-y: auto;
     }
   }
@@ -38,7 +32,6 @@
     background: #333;
     margin-right: 216px;
     float: right;
-//  height: 40px;
     padding: 3px 10px;
     border-radius: 5px;
     .filters-label {

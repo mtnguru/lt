@@ -20,7 +20,7 @@ import {mgError} from "../../utils/mg";
 const ControlSlider = (props) => {
 
   const metricId = props.metricId.toLowerCase()
-  const projectId = props.projectId.toLowerCase
+//const projectId = props.projectId.toLowerCase
   const sourceId = props.sourceId || 'UNK'
 
   const [metric, setMetric] = useState(findMetric(metricId));
@@ -42,9 +42,32 @@ const ControlSlider = (props) => {
   }, [sourceId])
 
   useEffect(() => {
+    const f = 'ControlSlider::useEffect'
+    const m = findMetric(metricId)
+    var err;
+    if (!m) {
+      err = `Metric not found: ${metricId}`
+    } else {
+      if (!(sourceId in metric)) {
+        err = `${metricId} - Add ${sourceId} section to configuration`
+      } else {
+        if (!('min' in metric[sourceId])) {
+          err = `${metricId} - ${sourceId} -- Add 'min' to slider configuration`
+        }
+        if (!('max' in metric[sourceId])) {
+          err = `${metricId} - ${sourceId} -- Add 'max' to slider configuration`
+        }
+        if (!('step' in metric[sourceId])) {
+          err = `${metricId} - ${sourceId} -- Add 'step' to slider configuration`
+        }
+      }
+    }
     setMetric(findMetric(metricId))
     mqttRegisterMetricCB(metricId, metricCB)
-  }, [metricId, metricCB])
+    if (err) {
+      mgError(0, f, err)
+    }
+  }, [metric, metricId, metricCB, sourceId])
 
   const onKeyH = (e) => {
     if (e.key === "ArrowRight") {
@@ -67,6 +90,14 @@ const ControlSlider = (props) => {
 
     let payload = `${metric[sourceId].tags} value=${parseFloat(_val).toFixed(metric.decimals)}`
     mqttPublish(topic, payload)
+  }
+
+  if (!metric) {
+    return (
+      <Box>
+        <div>Metric not found {metricId}</div>
+      </Box>
+    )
   }
 
   return (
