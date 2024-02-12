@@ -89,7 +89,7 @@ $metric-fg-color: #ccff33;
 
 .mqtt-clientId-bg {
   // MQTT message client
-  .all             { background-color: #222; }
+  .all             { background-color: #333; }
   .administrator   { background-color: #356; }
   .drupal          { background-color: #478; }
   .logger          { background-color: #59a; }
@@ -120,7 +120,7 @@ $metric-fg-color: #ccff33;
 
 .mqtt-source-bg {
   // MQTT Message function
-  .all                { background-color: #222; }
+  .all                { background-color: #333; }
   .Activity,  .act    { background-color: #632; }
   .Alarm,     .alm    { background-color: #d70 }
   .Input,     .inp    { background-color: #24b; }
@@ -156,8 +156,8 @@ $metric-fg-color: #ccff33;
   .connected         { background-color: #08d; }
   .message           { background-color: #090; }
   .reconnect         { background-color: #a30; }
-  .close             { background-color: #52c }
-  .offline           { background-color: #94e; }
+  .close             { background-color: #80e }
+  .offline           { background-color: #a5f; }
   .error             { background-color: #c00; }
 }
 

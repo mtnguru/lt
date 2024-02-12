@@ -33,7 +33,7 @@ const ControlMetric = (props) => {
     if (props.metricCB) {
       props.metricCB(metric, topic, payload, tags, values)
     }
-  }, [props])
+  }, [props, sourceId])
 
   const onClickH = (event) => {
     // request metrics from admin
@@ -54,8 +54,6 @@ const ControlMetric = (props) => {
     mqttRegisterMetricCB(metricId, metricCB)
   }, [metricId, metricCB])
 
-  const valueLink = ""
-
   /*
   return (
     <Flex mb={1}>
@@ -71,7 +69,7 @@ const ControlMetric = (props) => {
   return (
     <Flex mb={1}>
       <button onClick={onClickH}>
-        <Text as="h3" mt={-1} w={28} pt={0} pw={4} fontWeight="bold" fontSize="120%">{props.label}</Text>
+        <Text as="h3" mt={-1} w="180px" pt={0} pw={4} fontWeight="bold" fontSize="120%">{props.label}</Text>
       </button>
       <Text variant="metric" display={props.display ? props.display : null}>
         <span>{val}</span>
