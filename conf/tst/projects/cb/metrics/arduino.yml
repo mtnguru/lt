@@ -38,7 +38,7 @@ Desk_Top_OW_F:
     channelType: onewire_f
     channel: 14 
     deviceId: [40,17,212,87,4,225,61,1]
-Desk_Monitor: 
+Desk_Monitor_OW_F: 
   label: Desk Monitor
   desc: Desk Monitor
   decimals: 2
