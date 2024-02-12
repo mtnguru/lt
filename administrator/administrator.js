@@ -948,7 +948,7 @@ const findClientByIp = (_dir, _ip, _projectId) => {
       if (clientId !== "all" && global.aaa.clients[clientId] === "enabled") {
         var client = loadClient(_dir, clientId, _projectId)
         if (client.ip && client.ip === _ip) {
-          return client;
+          return client
         }
       }
     }
@@ -959,7 +959,7 @@ const findClientByIp = (_dir, _ip, _projectId) => {
 
 const loadEdgeConfig = (_payload) => {
   const f = 'administrator::loadEdgeConfig'
-  msg(0,f,DEBUG, 'enter - ', _payload.clientId || _payload.ip)
+  msg(1,f,DEBUG, 'enter - ', _payload.clientId || _payload.ip)
 
   if (!_payload.clientId && !_payload.ip) {
     msg(0,f,ERROR,"neither the clientId or ip is defined");

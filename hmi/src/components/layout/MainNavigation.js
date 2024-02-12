@@ -14,6 +14,14 @@ function MainNavigation() {
 
   const statusCB = (status) => {
     setMqttStatus(status)
+    if (status === 'message') {
+      setTimeout(() => {
+//      if (mqttStatus === 'message') {
+          setMqttStatus('connected')
+//      }
+      },350)
+    } else {
+    }
   }
 
   return (

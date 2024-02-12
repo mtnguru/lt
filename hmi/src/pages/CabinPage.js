@@ -24,7 +24,7 @@ function CabinPage() {
       pageId="cb">
       <Box className="page cabin-page">
         <header>
-          <Heading>Experiment - Red Feather Cabin</Heading>
+          <Heading>Red Feather</Heading>
         </header>
         <Flex className="cabin-flex">
           <Box className="left-col">
