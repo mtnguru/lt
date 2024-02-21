@@ -41,36 +41,59 @@ topics:
     msg: PROJECTID/msg/CLIENTID
     cod: PROJECTID/cod/CLIENTID
     hum: PROJECTID/hum/CLIENTID
-metrics: project
 sourceIds: {}
 page:
-  title: Cabin Weather
+  title: Cabin Temperatures
   id: hmi-cb
   class: page cb-page flex
-  children:
-    container:
-      type: container
-      class: left-col
-      children:
-        ControlPanel:
-          - type: metric
-            metricId: Bathroom_door_K_F 
-          - type: metric
-            metricId: MiddleBedroom_Window_K_F 
-          - type: metric
-            metricId: LivingRoom_Desk_K_F 
-          - type: metric
-            metricId: Outside_Bunkhouse_K_F 
-          - type: metric
-            metricId: arduino6_tst_OW_F 
-          - type: metric
-            metricId: arduino7_tst_OW_F 
-        ControlImagePanel:
+  panels:
+    LineChart:
+      metrics:
+        - Bathroom_Door_K_F
+        - Middle_Window_K_F
+        - Master_Door_OW_F
+        - Desk_Top_OW_F
+        - Desk_Monitor_OW_F
+
+      # chartJs configuration
+      responsive: true,
+      interaction:
+        mode: index
+        intersect: false
+      stacked: false
+      plugins:
+#       title:
+#         display: true
+#         text: Chart.js Line Chart - Multi Axis
+        legend:
+          display: true
+          position: bottom
+      scales:
+        x:
+          type: time
+          display: true,
+          time:
+            unit: hour
+            tooltipFormat: HH:MM
+#         min: date - 432000000
+#         max: date
+        y:
+          type: linear
+          display: true,
+          position: left
+#         min: 50
+#         max: 80
+        y1:
+          type: linear
+          display: true,
+          position: right
+#         grid:
+#           drawOnChartArea: true
     MsgPanel:
       class: right-col
-      children: 
+      children:
         Notes:
         Chat:
-        Notify: 
+        Notify:
 statusDefault:
   debugLevel: 0

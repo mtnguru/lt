@@ -6,7 +6,8 @@ import { Flex,
          Container
        } from '@chakra-ui/react'
 
-import './OxyPage.scss'
+//import './OxyPage.scss'
+import './Page.scss'
 
 function OxyPage() {
 

@@ -79,6 +79,9 @@ function MqttClient (props) {
     } else if (classList.contains("findOneWireDevices")) {
       topic = `a/cmd/${props.client.clientId}`
       payload = `{"cmd": "findOneWireDevices", "clientId": "${props.client.clientId}"}`;
+    } else if (classList.contains("read-inputs")) {
+      topic = `a/cmd/${props.client.clientId}`
+      payload = `{"cmd": "readInputs", "clientId": "${props.client.clientId}"}`;
     } else if (classList.contains("enabled")) {
       // Set the "all" button on other hmi instances
       // Set the enabled button
@@ -113,19 +116,23 @@ function MqttClient (props) {
     <Box className={`client ${props.client.clientId}`} key={`${props.client.id}`}>
       <input id={props.id} type='checkbox' name={props.client.id} onChange={props.onChangeH} checked={props.client.selected ? "checked" : ""} />
       <span className='clientName' htmlFor={props.client.clientId}>{props.client.name}</span>
+
       {props.id !== 'administrator' && props.id !== 'drupal' && props.id.indexOf('hmi') < 0  && props.id !== 'project' && props.id !== "controller" &&
         <Tooltip label="Enable" bg="white" p="10px" placement="bottom">
           <Button variant="client" className={`small enabled ${enabled ? "true" : "false"}`} onClick={onClickH}>E</Button>
         </Tooltip>
       }
+
       <Tooltip label="Request status" bg="white" p="10px" placement="bottom">
         <Button variant="client" className={`small status ${running}`}   onClick={onClickH}>{numRunning}</Button>
       </Tooltip>
+
       {props.id !== 'all' &&
         <Tooltip label="Reset client" bg="white" p="10px" placement="bottom">
           <Button variant="client" className="small reset"    onClick={onClickH}>R</Button>
         </Tooltip>
       }
+
       {props.id !== 'all' &&
         <Box className="debug-level-wrapper">
           <Tooltip label="Set Debug Level" bg="white" p="10px" placement="bottom">
@@ -138,9 +145,16 @@ function MqttClient (props) {
           </Tooltip>
         </Box>
       }
+
       {props.client.clientId.indexOf("arduino") > -1 &&
         <Tooltip label="Find One wire sensors" bg="white" p="10px" placement="bottom">
           <Button variant="client" className={`small findOneWireDevices`} onClick={onClickH}>F</Button>
+        </Tooltip>
+      }
+
+      {props.client.clientId.indexOf("arduino") > -1 &&
+        <Tooltip label="Read Inputs" bg="white" p="10px" placement="bottom">
+          <Button variant="client" className={`small read-inputs`} onClick={onClickH}>I</Button>
         </Tooltip>
       }
     </Box> )

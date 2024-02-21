@@ -52,7 +52,15 @@ const MqttPanel = (props) => {
       const [project, sourceId, clientId] = _topic.split('/')
       let rnd = Math.random().toString(16).slice(3)
       let key = `${clientId}-${dateStr}-${rnd}`
-      let item = {key, date: dateStr, project, sourceId, clientId, topic: _topic, payload: _payload, nitems: ni}
+      let item = {
+        key,
+        date: dateStr,
+        projectId: project.projectId,
+        sourceId,
+        clientId,
+        topic: _topic,
+        payload: _payload,
+        nitems: ni}
 
       setNItems((prevNItems) => {
         return ni = prevNItems + 1

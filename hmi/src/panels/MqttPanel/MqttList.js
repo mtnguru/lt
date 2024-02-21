@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {
   Box,
-  Container,
+//Container,
   } from '@chakra-ui/react'
 
 import { mqttRegisterTopicCB } from '../../utils/mqttReact'
