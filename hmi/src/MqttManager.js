@@ -121,7 +121,7 @@ function MqttManager (props) {
     // Request Config
     const payloadStr = `{"cmd": "requestConfig", "mqttClientId": "${global.aaa.mqttClientId}", "type": "${props.type}", "clientId": "${global.aaa.clientId}", "projectId": "${props.projectId || "UNK"}"}`
     mqttPublish(ckTopic("publish","adm"), payloadStr)
-  }, [props.projectId, props.type, connected, loadConfigCB])
+  }, [props.projectId, props.type, loadConfigCB])
 
 useEffect(() => {
 //  const mqttClientId = `${global.aaa.clientId}_${generator().toString(16).slice(3,7)}`
@@ -148,8 +148,9 @@ useEffect(() => {
       protocol: 'MQTT',
       protocolVersion: 4,
       connectTimeout: 10000,
-      reconnectPeriod: 10000,
+      reconnectPeriod: 30000,
       keepAlive: 60,
+      keepalive: 60,
     }
     mqttConnect(connectCB, mqttProcessCB);
 // }, [props.password, props.url, props.username, props.clientId,connectCB])

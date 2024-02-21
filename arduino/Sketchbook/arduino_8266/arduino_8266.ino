@@ -15,6 +15,7 @@ int configNotReceived = 0;
 int mqttNotConnected = 0;
 unsigned long startTime = 0;
 unsigned long lastSample = 0;
+unsigned long sampleInterval = 30000;
 int enabled = 1;
 int debugLevel = 2;
 unsigned long sampleInterval = 2000;
@@ -474,6 +475,9 @@ void findOneWireDevices(char *devices) {
   } else {
     strcpy(devices,"\"devices\": \"none\"");
   }
+
+  Serial.println("Done searching for OneWire devices...");
+
 }
 
 float readOneWireTemp(char corf, byte *deviceId) {
@@ -518,8 +522,7 @@ void setConfig(const char *topic,
   sampleInterval = (unsigned long)jsonDoc["status"]["sampleInterval"];
   logit(0,MD, f, "enter", topic);
   if (sampleInterval == 0) {
-    sampleInterval = 2000;
-    logit(0,MD, f, "enter", topic);
+    sampleInterval = 30000;
   }
   lastSample = millis() - sampleInterval + 500;
 
@@ -680,22 +683,25 @@ void mqttCB(char* _topic, byte* _payload, unsigned int length) {
         logit(0,MN,f,"Resetting arduino", NULL);
         delay(10000);
         reset();
-      } else if (!strcmp(cmd, "requestStatus")) {  // Ask arduino for its status
+      } else if (!strcmp(cmd, "requestStatus")) {       // Ask arduino for its status
         logit(1,MD,f,"status requested", outTopic);
         getStatus();
-      } else if (!strcmp(cmd, "setDebugLevel")) {          // Set debugLevel
+      } else if (!strcmp(cmd, "readInputs")) {          // Read all inputs
+        logit(1,MD,f,"readInputs requested", outTopic);
+        readInputs();
+      } else if (!strcmp(cmd, "setDebugLevel")) {       // Set debugLevel
         debugLevel = (int)jsonDoc["debugLevel"];
         snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"debugLevel\":%d}", cmd, clientId, debugLevel);
         logit(0,MN,f,"set Debug Level", outTopic);
-      } else if (!strcmp(cmd, "setEnabled")) {             // Enabled arduino
+      } else if (!strcmp(cmd, "setEnabled")) {          // Enabled arduino
         enabled = (int)jsonDoc["enabled"];
-        lastSample = millis() - sampleInterval + 500;      // Force immediate read after changing
+        lastSample = millis() - sampleInterval + 500;   // Force immediate read after changing
         snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"enabled\":%d}", cmd, clientId, enabled);
-      } else if (!strcmp(cmd, "setSampleInterval")) {      // Set sample interval
+      } else if (!strcmp(cmd, "setSampleInterval")) {   // Set sample interval
         sampleInterval = (unsigned long)jsonDoc["sampleInterval"];
-        snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"sampleInterval\": %lu}", cmd, clientId, sampleInterval);
-      } else if (!strcmp(cmd, "findOneWireDevices")) {     // Find one wire devices
-        char devices[160];
+        snprintf(out,msgSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", \"sampleInterval\":%ld}", cmd, clientId, sampleInterval);
+      } else if (!strcmp(cmd, "findOneWireDevices")) {  // Find one wire devices
+        char devices[500];
         findOneWireDevices(devices);
         snprintf(out,outSize,"{\"rsp\":\"%s\", \"clientId\": \"%s\", %s}", cmd, clientId, devices);
       }
@@ -759,10 +765,10 @@ void mqttConnect() {
   connected = true;
 }
 
-void sampleInputs() {
+void readInputs() {
   // Loop through the inp, read value, and post to MQTT
-  const char *f = "sampleInputs";
-  logit(3,MD,f,"sampleInputs enter ", NULL);
+  const char *f = "readInputs";
+  logit(3,MD,f,"readInputs enter ", NULL);
   for (int m = 0; m < inputN; m++) {
     inputS *input = &inputA[m];
     logit(2,MD,f,"sample ", input->metricId);
@@ -862,7 +868,7 @@ void loop() {
         if (now - lastSample > sampleInterval) {
           logit(2,MD,f,"do Sample start",NULL);
           lastSample = now;
-          sampleInputs();
+          readInputs();
           logit(2,MD,f,"do Sample done",NULL);
         }
       } else {  // not enabled

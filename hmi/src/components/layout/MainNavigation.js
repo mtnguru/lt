@@ -29,6 +29,7 @@ function MainNavigation() {
       <div className='logo'><h2>LabTime</h2></div>
       <nav>
         <ul className="mqttStatus">
+          <li key="lab" className="lab"><Link to='/lab'>Lab</Link></li>
           <li key="oxy" className="oxy"><Link to='/oxy'>Oxy</Link></li>
           <li key="safire" className="safire"><Link to='/safire'>Safire</Link></li>
           <li key="cabin" className="cabin"><Link to='/cabin'>Cabin</Link></li>

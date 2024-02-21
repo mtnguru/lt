@@ -44,28 +44,17 @@ topics:
 metrics: project
 sourceIds: {}
 page:
-  title: Cabin Weather
+  title: Cabin Temperatures
   id: hmi-cb
   class: page cb-page flex
-  children:
-    container:
-      type: container
-      class: left-col
-      children:
-        ControlPanel:
-          - type: metric
-            metricId: Bathroom_door_K_F 
-          - type: metric
-            metricId: MiddleBedroom_Window_K_F 
-          - type: metric
-            metricId: LivingRoom_Desk_K_F 
-          - type: metric
-            metricId: Outside_Bunkhouse_K_F 
-          - type: metric
-            metricId: arduino6_tst_OW_F 
-          - type: metric
-            metricId: arduino7_tst_OW_F 
-        ControlImagePanel:
+  panels:
+    LineChart:
+      metrics:
+        - Bathroom_Door_K_F
+        - Middle_Window_K_F
+        - Master_Door_OW_F
+        - Desk_Top_OW_F
+        - Desk_Monitor_OW_F
     MsgPanel:
       class: right-col
       children: 

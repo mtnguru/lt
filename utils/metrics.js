@@ -5,14 +5,14 @@
 
 
 const findMetric = (_metricId) => {
-//const f = "metrics::findMetric"
+  const f = "metrics::findMetric"
   try {
     const metricId = _metricId.toLowerCase()
-    const metric = global.aaa.metrics[metricId]
-    if (metric)  {
-      return metric;
+    if (global.aaa.metrics && metricId in global.aaa.metrics) {
+      return global.aaa.metrics[metricId]
     }
-    console.error('metrics::findMetric - WARNING - could not find metric ' + metricId)
+    console.error(f + '::findMetric - WARNING - could not find metric ' + metricId)
+    return null
   } catch(err) {
     console.error('ERROR in metrics::findMetric', err)
     const terr = new Error();

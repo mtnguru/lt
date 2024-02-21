@@ -1,3 +1,22 @@
+Apply for jobs
+
+Create the logger!
+
+Make sure the oxy page still works
+Create the logger - 
+Add javascript graphs
+   HighCharts - dynamic interaction
+Get the cabin page working
+
+What now?
+  Everything appears to work.  
+  Check the temperatures
+  Create the cabin page
+    Manual_test_V - slider
+    All 5 temperature sensors
+  Create temperature probes - don't have the parts here
+      
+
 
 Set up the ASUS
    I set it up but I can't see Wifi - Connect to my laptop through ethernet
@@ -91,6 +110,39 @@ administrator
       check the age of the value
       
     if high, low then
+      check against high, low
+    else
+      
+
+What now?
+administrator
+*  getMetric
+   popit up over the label
+   
+save the status in 
+   // The administrator has to know all metrics
+*  read in all project metrics
+*  save in global.aaa.projects/PROJECTID/metrics
+*  for all metrics
+*    Save as a separate array - easier to load
+*       load all of v for each metric - copy over old metrics on reload
+*    global.aaa.projects
+*    Add the current v from where? global.aaa.projects_last/
+   
+Each environment - app or dev
+*  ufw for the new ports
+*  start a second mosquitto under a different port   both
+*    mosquitto-tst = 
+*  use different administrators
+*  hmi uses two different domains - app.labtime.org and dev.latbime.org
+*    uses different code directories - /apps/lt  /apps/lt.dev 
+
+*  administrator-dev
+*  administrator-app
+*  hmi-oxy-dev
+*  hmi-oxy-app
+*  hmi-mqtt-dev
+*  hmi-mqtt-app
       check against high, low
     else
       
@@ -708,39 +760,6 @@ Labtime
  - update buttons according to changes in status
    mqttRegisterTopicCB - (topic, {rsp: ??, cmd: ??)
 Administrator
- * After connecting unsubscribe from everything
-   Add mqtt connected
-   Initialize status for clients
-      enabled
-      debug level
-      sample rate
-                                 
-
-
-
-
-What now?
-On boot, have the administrator request the status for each client
-Have the administrator store the status for each client
-Save the status separater from the config - that or copy the config
-
-
-
-
-arduino - create a subscribe function that resubscribes any time the client connects and reconnects
-
-rio1 - connect an out put to an input - first read the voltage, then output a voltage and see the changes 
-- need to have a project running -
-
-all  mqttAdminAllSub        a/cmd/all
-cmd  mqttAdminCmdSub        a/cmd/IP    ->    a/cmd/CLIENTID
-rsp  mqttAdminRspSub        a/rsp/IP    ->    a/rsp/CLIENTID
-out  mqttOutputSub          rf/out/CLIENTID
-
-cmd  mqttAdminCmdPub[topicSize]; a/cmd/administrator  // publish command to administrator
-rsp  mqttAdminRspPub[topicSize]; a/rsp/CLIENTID       // publish responses to administrator commands
-inp  mqttInputPub[topicSize];    a/cmd/administrator
-cod  mqttCodPub[topicSize];      rf/inp/CLIENTID
 msg  mqttMsgPub[topicSize]       rf/msg/CLIENTID
 
 ==========================
