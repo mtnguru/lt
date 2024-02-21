@@ -4,7 +4,7 @@ Bathroom_Door_K_F:
   label: Bathroom Door
   desc: Bathroom Door
   decimals: 2
-  color: #f00
+  color: '#f00'
   inp:
     clientId: arduino5
     channelType: max6675
@@ -15,7 +15,7 @@ Middle_Window_K_F:
   label: Middle Bedroom
   desc: Middle Bedroom
   decimals: 2
-  color: #00f
+  color: '#00f'
   inp:
     clientId: arduino3
     channelType: max6675
@@ -26,7 +26,7 @@ Master_Door_OW_F:
   label: Master Bedroom
   desc: Master Bedroom
   decimals: 2
-  color: #0f0
+  color: '#0f0'
   inp:
     clientId: arduino8
     channelType: onewire_f
@@ -36,7 +36,7 @@ Desk_Top_OW_F:
   label: Desk Top
   desc: Desk Top
   decimals: 2
-  color: #0dd
+  color: '#0dd'
   inp:
     clientId: arduino7
     channelType: onewire_f
@@ -46,7 +46,7 @@ Desk_Monitor_OW_F:
   label: Desk Monitor
   desc: Desk Monitor
   decimals: 2
-  color: #d0d
+  color: '#d0d'
   inp:
     clientId: arduino7
     channelType: onewire_f

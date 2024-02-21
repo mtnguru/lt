@@ -7,7 +7,7 @@ import {
 //Flex,
 } from '@chakra-ui/react'
 
-//import {mqttRegisterMetricCB, mqttPublish} from '../../utils/mqttReact'
+import {mqttRegisterMetricCB, mqttPublish} from '../../utils/mqttReact'
 import {c2f, findMetric} from '../../utils/metrics'
 
 import {
@@ -39,18 +39,50 @@ ChartJS.register(
   Legend
 );
 
-const LineChart = (props) => {
-  const [metrics, setMetrics] = useState({})
-  var { projectId, metricIds, sourceId } = props
-  projectId = projectId.toLowerCase()
+const date=Date.now();
 
-  useEffect(() => {
-    var metrics = {}
-    for (var metricId of metricIds)  {
-      metrics[metricId] = findMetric(metricId)
-    }
-    setMetrics(metrics)
-  }, [metricIds])
+const values = [
+  {
+    x: date - 90000000,
+    y: 66,
+  },
+  {
+    x: date - 80000000,
+    y: 69,
+  },
+  {
+    x: date - 70000000,
+    y: 68,
+  },
+  {
+    x: date - 60000000,
+    y: 68,
+  },
+  {
+    x: date - 50000000,
+    y: 69,
+  },
+  {
+    x: date - 40000000,
+    y: 70,
+  },
+  {
+    x: date - 30000000,
+    y: 72,
+  },
+  {
+    x: date - 20000000,
+    y: 71,
+  },
+]
+
+const LineChart = (props) => {
+  var { projectId, metricIds, sourceId } = props
+//projectId = projectId.toLowerCase()
+
+  const [metrics, setMetrics] = useState({})
+  const [options, setOptions] = useState({})
+  const [data, setData] = useState({})
 
   const metricCB = useCallback((metric, topic, payload, tags, values) => {
     /*
@@ -72,109 +104,39 @@ const LineChart = (props) => {
   }, [props, sourceId])
 
   useEffect(() => {
-//  mqttRegisterMetricCB(metricId, metricCB)
-  }, [metricCB])
+    // Get options from configuration
+    setOptions(global.aaa.page.panels.LineChart)
 
-  const date=Date.now();
+    // Get metrics, set datasets, register metricCB
+    var data = {
+      datasets: [],
+    }
+    var metrics = {}
+    for (var metricId of metricIds)  {
+      var metric = findMetric(metricId)
+      metrics[metricId] = metric
 
-  const options = {
-    responsive: true,
-    interaction: {
-      mode: 'index',
-      intersect: false,
-    },
-    stacked: false,
-    plugins: {
-//    title: {
-//      display: true,
-//      text: 'Chart.js Line Chart - Multi Axis',
-//    },
-    },
-    scales: {
-      x: {
-        type: "time",
-        display: true,
-        time: {
-          unit: "hour",
-          tooltipFormat: "HH:MM",
-        },
-//      min: date - 432000000,
-//      max: date,
-      },
-      y: {
-        type: 'linear',
-        display: true,
-        position: 'left',
-//      min: 50,
-//      max: 80,
-      },
-      y1: {
-        type: 'linear',
-        display: true,
-        position: 'right',
-//      grid: {
-//        drawOnChartArea: true,
-//      },
-      },
-    },
-  };
-
-  const values = [
-    {
-      x: date - 90000000,
-      y: 66,
-    },
-    {
-      x: date - 80000000,
-      y: 69,
-    },
-    {
-      x: date - 70000000,
-      y: 68,
-    },
-    {
-      x: date - 60000000,
-      y: 68,
-    },
-    {
-      x: date - 50000000,
-      y: 69,
-    },
-    {
-      x: date - 40000000,
-      y: 70,
-    },
-    {
-      x: date - 30000000,
-      y: 72,
-    },
-    {
-      x: date - 20000000,
-      y: 71,
-    },
-  ]
-  const data = {
-    datasets: [
-      {
-        label: 'Dataset 1',
+      mqttRegisterMetricCB(metricId, metricCB)
+      data.datasets.push({
+        label: metric.label,
         data: values,
-        borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        borderColor: metric.color,
+        backgroundColor: metric.color,
         yAxisID: 'y',
-      },
-      {
-        label: 'Dataset 2',
-        data: values,
-        borderColor: 'rgb(0, 155, 59)',
-        backgroundColor: 'rgba(0, 155, 59, 0.5)',
-        yAxisID: 'y1',
-      },
-    ],
-  };
+      })
+    }
+    setMetrics(metrics)
+    setData(data)
+  }, [metricIds, metricCB])
+
 
   return (
     <Container className="line-chart" mb={1} >
-      <Line options={options} data={data} />
+      {Object.keys(options).length ? (
+        <Line options={options} data={data} />
+      ) :
+        <p className="loading">Haven't set options yet......</p>
+      }
     </Container>
   )
 }

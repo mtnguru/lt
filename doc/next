@@ -1,3 +1,22 @@
+Have the chart displaying with the legend and datasets set up.
+Now I need to add the MQTT source
+
+Get the LineChart working
+   foundt : in metricids
+   useEffect
+     findMetrics
+     RegisterCallbacks for each metric onChangeCB
+     set options
+      
+   onChangeCB
+     update the graph
+
+   
+    
+
+
+
+
 Apply for jobs
 
 Create the logger!
