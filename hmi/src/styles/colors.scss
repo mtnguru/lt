@@ -157,14 +157,15 @@ $metric-fg-color: #ffffff;
   .System            { background-color: #a0f; }
 }
 
-.mqttStatus {
-  .connecting        { background-color: #922; }
-  .connected         { background-color: #080; }
-  .message           { background-color: #26f; }
-  .reconnect         { background-color: #c42; }
-  .close             { background-color: #ea0; }
-  .offline           { background-color: #a5f; }
-  .error             { background-color: #c00; }
+.mqtt-status {
+  &.connecting        { background-color: #922; }
+  &.connected         { background-color: #080; }
+  &.message           { background-color: #26f; }
+  &.publish           { background-color: #a5f; }
+  &.reconnect         { background-color: #c42; }
+  &.close             { background-color: #ea0; }
+  &.offline           { background-color: #630; }
+  &.error             { background-color: #c00; }
 }
 
 

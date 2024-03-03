@@ -21,11 +21,14 @@ int enabled = 1;
 int debugLevel = 2;
 
 ///////////// Mqtt server credentials
-//const char* mqttIp = "172.16.45.7";   // merlin
+
 const char* mqttIp = "194.195.214.212"; // labtime.org
+
+const int mqttPort = 1884; // tst
+//const int mqttPort = 1883; // lt
+
 const char* mqttUser = "data";
 const char* mqttPassword = "datawp";
-const int mqttPort = 1884;
 
 ///////////// WiFi
 //#include <ESP8266WiFi.h>
@@ -53,8 +56,6 @@ String wifiIP;
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-const int oneWirePin = 14;  // ESP32
-//const int oneWirePin = 7;   // ESP8266
 
 OneWire *oneWireP = NULL;
 //DallasTemperature *sensorsP = NULL;
@@ -416,7 +417,9 @@ void subscribeTopics() {
   res = mqttClient.subscribe(mqttOutputSub);
 }
 
-void startOneWire() {
+void startOneWire(int oneWirePin) {
+  Serial.print("startOneWire: channel ");
+  Serial.println(oneWirePin);
   if (!oneWireP) {
     oneWireP = new OneWire(oneWirePin);
 //  sensorsP = new DallasTemperature(oneWireP);
@@ -571,7 +574,8 @@ void setConfig(const char *topic,
         for (int i = 0; i < 8; i++) {
           inputA[inputN].deviceId[i] = (int)deviceId[i];
         }
-        startOneWire();
+        startOneWire(metric["inp"]["channel"]);
+
       } else if (strcmp(channelType,"onewire_f") == 0) {   // OneWire DS18B20S F
         logit(1,MD,f,"Set channelType as onewire_f ",NULL);
         inputA[inputN].channelType  = IN_ONEWIRE_F;
@@ -579,7 +583,7 @@ void setConfig(const char *topic,
         for (int i = 0; i < 8; i++) {
           inputA[inputN].deviceId[i] = (int)deviceId[i];
         }
-        startOneWire();
+        startOneWire(metric["inp"]["channel"]);
       } else {
         logit(1,ME, f, "Cannot find input channelType - rebooting: ", channelType);
         delay(15000);
@@ -810,6 +814,7 @@ void setup() {
   wifiInit();
 
   logit(1,MD,f,"Init MQTT server",mqttIp);
+//logit(1,MD,f,"   port: ",mqttPort);
   mqttClient.setServer(mqttIp, mqttPort);
   mqttClient.setKeepAlive(15);
 //mqttClient.setCleanSession(false);

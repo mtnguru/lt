@@ -2,6 +2,7 @@
 import React, {useCallback, useState, useEffect} from 'react';
 import {mqttRegisterMetricCB, mqttPublish} from '../../utils/mqttReact'
 import {c2f} from '../../utils/metrics'
+import {WarningIcon} from '@chakra-ui/icons'
 
 import {
   Text,
@@ -69,6 +70,7 @@ const ControlMetric = (props) => {
   return (
     <Box className="control-metric">
       <Box className="right" display={props.display ? props.display : null}>
+        <WarningIcon></WarningIcon>
         <div className="metric">{val}</div>
       </Box>
       <button onClick={onClickH}>
