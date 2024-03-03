@@ -16,13 +16,13 @@
     margin-top: -6px;
     overflow: auto;
     @media(min-width: $bp-md) {
-      width: calc(50% - 10px);
+//    width: calc(50% - 10px);
     }
   }
   .right-col {
 //  flex-grow: 1;
     @media(min-width: $bp-md) {
-      width: calc(50% - 10px);
+//    width: calc(50% - 10px);
     }
     overflow: auto;
   }

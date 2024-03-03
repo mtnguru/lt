@@ -17,6 +17,7 @@ const ControlValue = (props) => {
     const metricCB = (metric, topic, payload, tags, values) => {
 //    const f = "ControlValue::metricCB"
 //    console.log(f,"enter ", topic)
+      if (props.metric.actionId !== tags.ActionId) return
       setValue((prevValue) => {
         let val = values.value;
         if (metric.convert === 'c2f') {
@@ -106,7 +107,9 @@ const ControlValue = (props) => {
          onMouseMove={onDrag}
          onMouseDown={onDragStart}
          onMouseUp={onDragEnd}
-         style={{top: props.metric.position[0] + '%', left:props.metric.position[1] + '%'}}
+         style={{top: props.metric.position[0] + '%',
+                 left:props.metric.position[1] + '%',
+                 backgroundColor:props.metric.color}}
     >
       <div className="Metric">{value}</div>
     </div>

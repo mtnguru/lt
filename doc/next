@@ -1,49 +1,94 @@
-Have the chart displaying with the legend and datasets set up.
-Now I need to add the MQTT source
+What to do?
+get the sliders working
 
-Get the LineChart working
-   foundt : in metricids
-   useEffect
-     findMetrics
-     RegisterCallbacks for each metric onChangeCB
-     set options
-      
-   onChangeCB
-     update the graph
+
+
+metrics
+  projectid
+    metricid
+
+Change the arduino code to use arrays
+
+HMI screens - make them project agnostic
+
+
+  Multiple projects can be displayed
+  All HMI screens will store metrics in tree
+Clients receive metrics - it's just a list of metrics with 
+
+administrator - do this.
+Clients
+  Change metrics objects - inp[metricId], out[metricId] - into arrays 
+    This allows for multiple channels with the same metricId
+Does Administrator need this???
+
+
+
+
+
+ControlWidget
+   Pass in the metric
+ControlSlider
+   metricId, actionId
+   Display Slider init with value
+ControlMetric, multiple srcIds
+   Display metric value and status - receive data from broker
+   Pops up details
+ControlValue - Could just use ControlMetric
+   Position is an option.  Add class of position
 
    
-    
 
 
 
+
+Create the ControlCabinPanel?
+
+Loop through the top, left, right, bottom regions
+
+
+*What next?  Lets fix the cabin image window
+
+
+
+*Actually display the data in the graph - now
+*Figure out how to set the height.
+*Then work on the legend
+
+*The graphs are displayed in a canvas - must style it using chartjs
+*  Read a lot about chartjs
+*  Watch some videos
+
+
+
+Fix the ControlImagePanel.js
+*  Make the image fit the window
+  Get the measurements displaying in the right location
+
+*Have the chart displaying with the legend and datasets set up.
+*Now I need to add the MQTT source
+
+*Get the LineChart working
+*  foundt : in metricids
+*  useEffect
+*    findMetrics
+*    RegisterCallbacks for each metric onChangeCB
+*    set options
+      
 
 Apply for jobs
 
 Create the logger!
 
 Make sure the oxy page still works
-Create the logger - 
-Add javascript graphs
-   HighCharts - dynamic interaction
-Get the cabin page working
 
-What now?
-  Everything appears to work.  
-  Check the temperatures
-  Create the cabin page
-    Manual_test_V - slider
-    All 5 temperature sensors
   Create temperature probes - don't have the parts here
       
-
-
 Set up the ASUS
    I set it up but I can't see Wifi - Connect to my laptop through ethernet
    Where is my USB/Ethernet adapter?  Do I even have one?  I think so
 
 Make the cabin page - setup a screen for me!
-
-
 
 *`Get onewire working without the board
 *Merge in the changes in chatgpt into mqttReact and mqttNode
@@ -426,7 +471,7 @@ administrator
        each of the above stores a record with
           value
           date
-          source?
+          action?
           
        
  

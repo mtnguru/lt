@@ -89,7 +89,7 @@ const connect = (connectCB, messageCB) => {
   mqttClient.on('error', (err) => {
     console.log('Connection error -', err);
     mqttClient.end();
-    reject(err);
+//  reject(err);
   });
 
   process.on('SIGINT', (msg) => {
@@ -207,7 +207,7 @@ const registerMetricCB = (metricId, cb, func) => {
  */
 const processInflux = (topic, payloadStr) => {
   const f = "mqttNode::processInflux"
-  const sourceId = topic.split("/")[2]
+  const actionId = topic.split("/")[2]
   const {tags, values} = extractFromTags(payloadStr)
   if (tags["Metric"]) {
     const metricId = tags["Metric"]
@@ -217,7 +217,7 @@ const processInflux = (topic, payloadStr) => {
     }
 //  console.log(f, 'Metric found ', metricId)
 
-    switch (sourceId) {
+    switch (actionId) {
       case 'inp':
         if (!metric.inp) {
           msg(0,f,WARNING,  'Metric does not have an inp metric',metric.metricId)
@@ -242,7 +242,7 @@ const processInflux = (topic, payloadStr) => {
         }
         break;
       default:
-        msg(0,f,ERROR, 'Unknown tags.sourceId ', tags)
+        msg(0,f,ERROR, 'Unknown tags.actionId ', tags)
         return;
     }
     if (!metric.cbs) {

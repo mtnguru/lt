@@ -1,0 +1,10 @@
+@import "../../styles/base";
+@import "../../styles/colors";
+
+.line-chart {
+  background-color: #111;
+  border-radius: 5px;
+  canvas {
+    height: 500px;
+  }
+}

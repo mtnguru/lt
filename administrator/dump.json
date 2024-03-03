@@ -14,7 +14,7 @@
       "userId": "Bilbo",
       "format": "yml",
       "metrics": "project",
-      "sourceIds": {},
+      "actionIds": {},
       "statusDefault": {
         "debugLevel": 0
       },
@@ -158,7 +158,7 @@
     }
   },
   "metrics": "project",
-  "sourceIds": {},
+  "actionIds": {},
   "statusDefault": {
     "debugLevel": 0
   },

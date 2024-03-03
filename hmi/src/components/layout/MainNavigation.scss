@@ -24,7 +24,6 @@
 
 .main-nav nav {
   font-size: 75%;
-  margin-right: 1rem;
   @media(min-width: $bp-sm) {
     font-size: 100%;
   }
@@ -45,9 +44,10 @@
   margin-left: 1.5rem;
   display: inline-block;
   &.status {
-    width: 95px;
-    padding: 5px 10px;
-    border-radius: 5px;
+    font-size: 80%;
+    width: 80px;
+    padding: 5px 0px;
+    border-radius: 3px;
     text-align: center;
     span {
       width: 100%;

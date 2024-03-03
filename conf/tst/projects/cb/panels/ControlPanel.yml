@@ -1,0 +1,60 @@
+name: Cabin Control Panel
+regions:
+# header:
+#   title: Cabin Controls
+  top:
+  left:
+    metrics:
+      - metricId: middle_window_k_f
+        actionId: inp
+        component: ControlMetric
+        convert: c2f
+
+      - metricId: bathroom_door_k_f
+        actionId: inp
+        component: ControlMetric
+
+      - metricId: desk_monitor_ow_f
+        actionId: inp
+        component: ControlMetric
+        convert: c2f
+
+      - metricId: desk_top_ow_f
+        actionId: inp
+        component: ControlMetric
+        convert: c2f
+
+      - metricId: master_door_ow_f
+        actionId: inp
+        component: ControlMetric
+
+  right:
+    metrics:
+      - metricId: desk_tst1_ow_f
+        actionId: inp
+        component: ControlMetric
+
+      - metricId: desk_tst2_ow_f
+        actionId: inp
+        component: ControlMetric
+
+  bottom:
+    metrics:
+      - metricId: test_status_f
+        actionId: hum
+        component: ControlMetric
+
+      - metricId: test_status_f
+        title: Hum
+        actionId: hum
+        component: ControlSlider
+
+      - metricId: test_status_f
+        title: Upper Alarm
+        actionId: upper
+        component: ControlSlider
+
+      - metricId: test_status_f
+        title: Lower Alarm
+        actionId: lower
+        component: ControlSlider

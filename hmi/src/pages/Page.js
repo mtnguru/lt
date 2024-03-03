@@ -1,5 +1,5 @@
 //import React, {useState, useEffect} from 'react';
-import LineChart from '../panels/Charts/LineChart'
+import LineChartPanel from '../panels/Charts/LineChartPanel'
 import { Box,
          Flex,
 //       Box,
@@ -46,7 +46,7 @@ function Page() {
         </header>
         <Flex className="cabin-flex">
           <Box className="left-col">
-            <LineChart  projectId="cb" metricIds={metricIds} sourceId="inp" valueId="value" panelId="cont_chart" />
+            <LineChartPanel  projectId="cb" metricIds={metricIds} actionId="inp" valueId="value" panelId="cont_chart" />
 
             <ControlImagePanel  panelId="image_cabin" />
             {/* <ControlCabinPanel  panelId="cont_clients" /> */}

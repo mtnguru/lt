@@ -17,12 +17,12 @@ const seedrandom  = require('seedrandom')
 const clientId = "administrator"
 const generator = seedrandom(Date.now())
 
-var sourceIds;
+var actionIds;
 
 const fm = "administrator:main - "
 
 var V = {}
-const SourceIds = ['inp', 'hum', 'out', 'upper', 'lower', 'high', 'low']
+const ActionIds = ['inp', 'hum', 'out', 'upper', 'lower', 'high', 'low']
 
 var adminId = "none"
 if (process.argv[2]) {
@@ -38,7 +38,7 @@ const mqttClientId = `${clientId}_${adminId}_${generator().toString(16).slice(10
 global.aaa = {
   startTime: Date.now(),
   status: {
-    debugLevel: 0,
+    debugLevel: 1,
     mqttConnected: 0,
     mqttSubscribed: 0,
     mqttUnsubscribed: 0,
@@ -188,21 +188,21 @@ const addStatus = (out) => {
  *
  * @param projectId
  * @param metricId
- * @param sourceId
+ * @param actionId
  * @param values
  * @param userId
  */
-const addMetricValues = (projectId, metricId, sourceId, values, userId) => {
+const addMetricValues = (projectId, metricId, actionId, values, userId) => {
   const f = "administrator::addMetricValues"
   try {
     // Add object to V tree if necessary
-    if (!V?.[projectId]?.[metricId]?.[sourceId]) {
+    if (!V?.[projectId]?.[metricId]?.[actionId]) {
       if (!(projectId in V)) {
-        V[projectId] = {[metricId]: {[sourceId]: {}}}
+        V[projectId] = {[metricId]: {[actionId]: {}}}
       } else if (!(metricId in V[projectId])) {
-        V[projectId][metricId] = {[sourceId]: {}}
-      } else if (!(sourceId in V[projectId][metricId])) {
-        V[projectId][metricId][sourceId] = {}
+        V[projectId][metricId] = {[actionId]: {}}
+      } else if (!(actionId in V[projectId][metricId])) {
+        V[projectId][metricId][actionId] = {}
       }
     }
 
@@ -210,14 +210,14 @@ const addMetricValues = (projectId, metricId, sourceId, values, userId) => {
     for (var valueId in values) {
       // Add a new v object to the tree for each valueId
       // If there is already a valueId - copy new properties - don't touch state and stale
-      if (valueId in V[projectId][metricId][sourceId]) {
-        V[projectId][metricId][sourceId][valueId].val = values[valueId].val
-        V[projectId][metricId][sourceId][valueId].date = values[valueId].date
-        V[projectId][metricId][sourceId][valueId].userId = values[valueId].userId
+      if (valueId in V[projectId][metricId][actionId]) {
+        V[projectId][metricId][actionId][valueId].val = values[valueId].val
+        V[projectId][metricId][actionId][valueId].date = values[valueId].date
+        V[projectId][metricId][actionId][valueId].userId = values[valueId].userId
       } else { // if there is no valueId
-        V[projectId][metricId][sourceId][valueId] = values[valueId]
-        V[projectId][metricId][sourceId][valueId].state = 'unk8'
-        V[projectId][metricId][sourceId][valueId].stale = 'unk8'
+        V[projectId][metricId][actionId][valueId] = values[valueId]
+        V[projectId][metricId][actionId][valueId].state = 'unk'
+        V[projectId][metricId][actionId][valueId].stale = 'unk'
       }
     }
   } catch(err) {
@@ -243,12 +243,12 @@ const checkMetricValues = (_projectId, _metricId) => {
 
   try {
     var vm = V[_projectId][_metricId];
-    const srcIds = ['inp', 'out', 'hum']
-    for (var s in srcIds) {
-      const sourceId = srcIds[s]
-      if (vm[sourceId]) {
+    const actionIds = ['inp', 'out', 'hum']
+    for (var s in actionIds) {
+      const actionId = actionIds[s]
+      if (vm[actionId]) {
         var state = 'ok'
-        const value = vm[sourceId].value.val
+        const val = vm[actionId].value.val
         var setPoint = -999;
         if (vm.high && val > vm.high.value.val) {          // high range
           setPoint = vm.high.value.v
@@ -263,17 +263,17 @@ const checkMetricValues = (_projectId, _metricId) => {
           setPoint = vm.lower.value.v
           state = "lower"
         }
-        if (state !== vm[sourceId].value.state) {
+        if (state !== vm[actionId].value.state) {
           const payload = {
             metricId: _metricId,
             projectId: _projectId,
-            initialState: vm[sourceId].value.state,
+            initialState: vm[actionId].value.state,
             state: state,
             setPoint: setPoint,
-            value: value,
+            value: val,
             vm: vm,
           }
-          vm[sourceId].value.state = state
+          vm[actionId].value.state = state
           var topic = global.aaa.topics.publish.alm
           topic = topic.replace(/DPROJECTID/, _projectId)
           var str = JSON.stringify(payload)
@@ -283,7 +283,7 @@ const checkMetricValues = (_projectId, _metricId) => {
       }
     }
   } catch(err) {
-    msg(1, f, ERROR, err, err.lineNumber);
+    msg(1, f, ERROR, _metricId, err);
   }
 }
 
@@ -325,75 +325,78 @@ const processMqttInput = (_topic, _payload) => {
   // V array - Save by
   //   _projectId - cb, oxy
   //     metricId
-  //       sourceId - inp, out, hum, upper, lower, high, low
+  //       actionId - inp, out, hum, upper, lower, high, low
   //         valueId = value
   //           val
   //           datetime
   //           userId
-  var [projectId,sourceId,clientId,userId,edgeId] = _topic.split('/')
-  projectId = projectId.toLowerCase()
-  sourceId = sourceId.toLowerCase()
-  userId = userId.toLowerCase()
+  try {
+    var [projectId,actionId,clientId,userId,edgeId] = _topic.split('/')
+    projectId = projectId.toLowerCase()
+    actionId = actionId.toLowerCase()
+    userId = (userId) ? userId.toLowerCase() : ''
 
-  var payload = _payload.toString()
-  var flds = payload.split(' ')
-  var values = {}
+    var payload = _payload.toString()
+    var flds = payload.split(' ')
+    var values = {}
 
-  // Extract metricId from tags
-  var metricId
-  var tags = flds[0].split(',')
-  for (var t = 1; t < tags.length; t++) {
-    var [key, val] = tags[t].split('=')
-    key = key.toLowerCase();
-    if (key === "metricid") {
-      metricId = val.toLowerCase()
-      break;
+    // Extract metricId from tags
+    var metricId
+    var tags = flds[0].split(',')
+    for (var t = 1; t < tags.length; t++) {
+      var [key, val] = tags[t].split('=')
+      key = key.toLowerCase();
+      if (key === "metricid") {
+        metricId = val.toLowerCase()
+        break;
+      }
     }
-  }
 
-  // Extract values into values array
-  // Typically there is only one - "value"   However there can be more in rare cases
-  msg(2,f, DEBUG,"payload - ", payload)
-  var ivalues;
-  if (flds[1] === undefined) {
-    ivalues['value']
-    msg(0,f, ERROR,"no flds[1] === undefined " + metricId)
-  } else {
-    ivalues = flds[1].split(',')
-  }
-  for (var v = 0; v < ivalues.length; v++) {
-    var [key, val] = ivalues[v].split('=')
-    key = key.toLowerCase()
-    values[key] = {
-      val: val,
-      date: Date.now(),
-      userId: userId,
+    // Extract values into values array
+    // Typically there is only one - "value"   However there can be more in rare cases
+    msg(2,f, DEBUG,"payload - ", payload)
+    var ivalues;
+    if (flds[1] === undefined) {
+      ivalues['value']
+      msg(0,f, ERROR,"no flds[1] === undefined " + metricId)
+    } else {
+      ivalues = flds[1].split(',')
     }
-  }
+    for (var v = 0; v < ivalues.length; v++) {
+      var [key, val] = ivalues[v].split('=')
+      key = key.toLowerCase()
+      values[key] = {
+        val: val,
+        date: Date.now(),
+        userId: userId,
+      }
+    }
 
-  // Add to V array
-  addMetricValues(projectId, metricId, sourceId, values, userId)
-  checkMetricValues(projectId, metricId)
+    // Add to V array
+    addMetricValues(projectId, metricId, actionId, values, userId)
+    checkMetricValues(projectId, metricId)
 //var status = checkMetricStatus(projectId, metricId)
-
+  } catch (err) {
+    msg(0,f,ERROR, 'Error processing Cmd -- ',err)
+  }
   return ['', null];
 }
 
 /**
- * getMetricV - get the V array for a process, metric, source or value
+ * getMetricV - get the V array for a process, metric, action or value
  *
  * @param projectId
  * @param metricId
- * @param sourceId
+ * @param actionId
  * @param valueId
  * @returns {{}|null|*}
  */
-const getMetricV = (_projectId, _metricId, _sourceId, _valueId) => {
+const getMetricV = (_projectId, _metricId, _actionId, _valueId) => {
   const f = 'administrator::getMetricV'
   var vp, vm, vs, vv;
   const projectId = (_projectId) ? _projectId.toLowerCase() : null
   const metricId  = (_metricId)  ? _metricId.toLowerCase()  : null
-  const sourceId  = (_sourceId)  ? _sourceId.toLowerCase()  : null
+  const actionId  = (_actionId)  ? _actionId.toLowerCase()  : null
   const valueId   = (_valueId)   ? _valueId.toLowerCase()   : null
   if (projectId) {
     if (!(vp = V[projectId])) {
@@ -405,20 +408,20 @@ const getMetricV = (_projectId, _metricId, _sourceId, _valueId) => {
         msg(1,f, ERROR,"Not found - Cannot find metricId - ", projectId + ' ' + metricId)
         return null;
       }
-      if (sourceId) {
-        if (!(vs = V[projectId][metricId][sourceId])) {
-          msg(1,f, ERROR,"Not found - Cannot find sourceId - ", projectId+ ' ' + metricId + ' ' + sourceId)
+      if (actionId) {
+        if (!(vs = V[projectId][metricId][actionId])) {
+          msg(1,f, ERROR,"Not found - Cannot find actionId - ", projectId+ ' ' + metricId + ' ' + actionId)
           return null;
         }
         if (valueId) {
-          if (!(vv = V[projectId][metricId][sourceId][valueId])) {
-            msg(1,f, ERROR,"Not found - Cannot find valueId- ", projectId+ ' ' + metricId + ' ' + sourceId + ' ' + valueId)
+          if (!(vv = V[projectId][metricId][actionId][valueId])) {
+            msg(1,f, ERROR,"Not found - Cannot find valueId- ", projectId+ ' ' + metricId + ' ' + actionId + ' ' + valueId)
             return null;
           }
           vs.type = 'value'
           return vv
         } else {
-          vs.type = 'source'
+          vs.type = 'action'
           return vs
         }
       } else {
@@ -468,7 +471,7 @@ const processCmd = (_topic, _payload) => {
           addStatus(out)
         }
       } else if (_payload.cmd === 'getMetric') {
-        out.v = getMetricV(_payload.projectId, _payload.metricId, _payload.sourceId, _payload.valueId)
+        out.v = getMetricV(_payload.projectId, _payload.metricId, _payload.actionId, _payload.valueId)
       } else if (_payload.cmd === 'requestJsonFile') {
         msg(2, f, DEBUG, "Read json file: ", filepath)
         const filepath = `${process.env.ROOT_PATH}/${_payload.filepath}`
@@ -529,15 +532,15 @@ const compressConfig = (inp) => {
  */
 const processCB = (_topic, _payload) => {
   const f = 'administrator::processCB'
-  msg(1,f,DEBUG, 'enter');
+  msg(2,f,DEBUG, 'enter');
   var out;
   var outTopic;
   try {
     var compress = false
-    var [,sourceId, clientId,,] = _topic.split('/')
+    var [,actionId, clientId,,] = _topic.split('/')
 
     const inputStr = _payload.toString();
-    msg(1,f,DEBUG, 'topic: ', _topic, '\n' + ' payload:', inputStr);
+    msg(2,f,DEBUG, 'topic: ', _topic, '\n' + ' payload:', inputStr);
     var input = {}
 
     // If the payload is JSON, parse it
@@ -550,7 +553,7 @@ const processCB = (_topic, _payload) => {
         return;
       }
     }
-    msg(3,f,DEBUG, 'sourceId', sourceId, ' clientId', clientId);
+    msg(3,f,DEBUG, 'actionId', actionId, ' clientId', clientId);
 
     // If this is a cmd to the administrator
     if (global.aaa.topics.subscribe['cmd'] === _topic ||
@@ -572,7 +575,7 @@ const processCB = (_topic, _payload) => {
         }
       }
     // If this is inp, out, hum influx data then update values in the V array
-    } else if (SourceIds.includes(sourceId)) {
+    } else if (ActionIds.includes(actionId)) {
         var payload = inputStr.toString;
         [outTopic, out] = processMqttInput(_topic,inputStr)
     }
@@ -588,7 +591,7 @@ const processCB = (_topic, _payload) => {
       mqttNode.publish(outTopic, outStr);
     }
   } catch (err) {
-    msg(0,f, ERROR, err)
+    msg(0,f, ERROR, 'shitter', input.rsp || input.cmd, err)
   }
   msg(2,f,DEBUG, 'exit');
   return null;
@@ -621,10 +624,10 @@ const loadProjectMetrics = (_projectId) => {
           var metricId = id.toLowerCase();  // Change key to lower case
           if (metrics[metricId]) {   // Metric has already been created - add new data
             metric = metrics[metricId]
-            for (var s in SourceIds) {
-              const sourceId = SourceIds[s]
-              if (fMetric[sourceId]) {
-                metric[sourceId] = fMetric[sourceId]
+            for (var s in ActionIds) {
+              const actionId = ActionIds[s]
+              if (fMetric[actionId]) {
+                metric[actionId] = fMetric[actionId]
               }
             }
           } else {  // Metric is new - copy in full record
@@ -635,24 +638,24 @@ const loadProjectMetrics = (_projectId) => {
             var flds = id.split('_')
             metric.units = flds[flds.length - 1]
           }
-          // Go through all SourceIds and update the V array with default values
-          for (var s in SourceIds) {
-            const sourceId = SourceIds[s]
+          // Go through all ActionIds and update the V array with default values
+          for (var s in ActionIds) {
+            const actionId = ActionIds[s]
             var values = {}
-            if (metric[sourceId]) {
-              if (V?.[_projectId]?.[metricId]?.[sourceId]?.['value']) {
+            if (metric[actionId]) {
+              if (V?.[_projectId]?.[metricId]?.[actionId]?.['value']) {
                 // do nothing?
-              } else if (metric[sourceId].default) {
+              } else if (metric[actionId].default) {
                 values = {
                   value: {
-                    val: metric[sourceId].default,
+                    val: metric[actionId].default,
                     date: Date.now(),
                     userId: userId,
-                    state: 'unk1',
-                    stale: 'unk1',
+                    state: 'unk',
+                    stale: 'unk',
                   },
                 }
-                addMetricValues(_projectId, metricId, sourceId, values, userId)
+                addMetricValues(_projectId, metricId, actionId, values, userId)
                 checkMetricValues(_projectId, metricId)
               }
             }
@@ -679,13 +682,13 @@ const getProjectMetrics = (_projectId, _client) => {
       "edgeId": project.edgeId,
     }
 
-    // for each metricId/sourceId - maketags and topics
+    // for each metricId/actionId - maketags and topics
     for (var metricId in metrics) {
       var metric = metrics[metricId]
-      for (sourceId of SourceIds) {
-        if (metric[sourceId]) {
-          metric[sourceId].tags = influx.makeTagsFromMetricId(metric.name, sourceId, _projectId)
-          metric[sourceId].topic = completeTopic(_client.topics.publish[sourceId], args)
+      for (actionId of ActionIds) {
+        if (metric[actionId]) {
+          metric[actionId].tags = influx.makeTagsFromMetricId(metric.name, actionId, _projectId)
+          metric[actionId].topic = completeTopic(_client.topics.publish[actionId], args)
           setDefaults(metric)
         }
       }
@@ -698,52 +701,60 @@ const getProjectMetrics = (_projectId, _client) => {
 
 const loadClientMetrics = (_client) => {
   const f = 'administrator::loadClientMetrics'
-  // for each projectId
-  for (var projectId in global.aaa.projects) {
-    var project = global.aaa.projects[projectId]
-    // Read in all the metrics/*.yml files for this project
-    var dirPath = `${process.env.ROOT_PATH}/${adminId}/projects/${projectId}/metrics`
-    var files = fs.readdirSync(dirPath);
+  try {
+    for (var projectId in global.aaa.projects) {
+      var project = global.aaa.projects[projectId]
+      // Read in all the metrics/*.yml files for this project
+      var dirPath = `${process.env.ROOT_PATH}/${adminId}/projects/${projectId}/metrics`
+      var files = fs.readdirSync(dirPath);
 
-    // forEach file in CONF/ADMINID/PROJECTID/metrics with suffix .yml
-    files.forEach(filename => {
-      if (path.extname(filename) === '.yml') {
-        var filepath = dirPath + '/' + filename;
-        var metrics = YAML.safeLoad(fs.readFileSync(filepath));
-        for (orgMetricId in metrics) {
-          ``
-          // Change metric key to all small letters - save org name to metric.name
-          var metric = metrics[orgMetricId]
-          metric.name = orgMetricId
-          metric.metricId = orgMetricId.toLowerCase();  // Change key to lower case
-          var metricId = metric.metricId
+      // forEach file in CONF/ADMINID/PROJECTID/metrics with suffix .yml
+      files.forEach(filename => {
+        if (path.extname(filename) === '.yml') {
+          var filepath = dirPath + '/' + filename;
+          var metrics = YAML.safeLoad(fs.readFileSync(filepath));
+          for (orgMetricId in metrics) {
+            ``
+            // Change metric key to all small letters - save org name to metric.name
+            var metric = metrics[orgMetricId]
+            metric.name = orgMetricId
+            metric.metricId = orgMetricId.toLowerCase();
+            var metricId = metric.metricId
 
-          metric.projectId = projectId                // add projectId to each metric
-          var flds = orgMetricId.split('_')
-          metric.units = flds[flds.length - 1]
+            metric.projectId = projectId                // add projectId to each metric
+            var flds = orgMetricId.split('_')
+            metric.units = flds[flds.length - 1]
 
-          var project = global.aaa.projects[projectId]
-          var args = {
-            "clientId": _client.clientId,
-            "projectId": projectId,
-            "edgeId": project.edgeId,
-            "messageId": project.messageId,
-            "telegrafId": project.telegrafId,
-          }
-          for (sourceId of SourceIds) {
-            if (_client.topics.publish[sourceId] && metric[sourceId]) {
-              if (metric[sourceId] && metric[sourceId].clientId === _client.clientId) {
-                metric[sourceId].tags = influx.makeTagsFromMetricId(metric.name, "inp", projectId)
-                metric[sourceId].topic = completeTopic(_client.topics.publish[sourceId], args)
-                if (!_client[sourceId]) _client[sourceId] = {}
-                _client[sourceId][metricId] = metric
+            var project = global.aaa.projects[projectId]
+            var args = {
+              "clientId": _client.clientId,
+              "projectId": projectId,
+              "edgeId": project.edgeId,
+              "messageId": project.messageId,
+              "telegrafId": project.telegrafId,
+            }
+            for (actionId of ActionIds) {
+              if (_client.topics.publish[actionId] && metric[actionId]) {
+                if (metric[actionId] && metric[actionId].clientId === _client.clientId) {
+                  metric[actionId].tags = influx.makeTagsFromMetricId(metric.name, "inp", projectId)
+                  metric[actionId].topic = completeTopic(_client.topics.publish[actionId], args)
+                  if (!_client[actionId]) _client[actionId] = []
+                  // save metric in array - source
+                  // @TODO - Add project Id - must also change edge client code.
+                  // or don't add a new level and make this an array - I like this better
+//                _client[actionId][metricId][projectId] = metric
+                  _client[actionId].push(metric)
+                }
               }
             }
           }
         }
-      }
-    });
+      });
+    }
+  } catch (err) {
+    msg(0,f, ERROR, err)
   }
+  // for each projectId
 }
 
 /**
@@ -763,36 +774,36 @@ const setDefaults = (_metric) => {
     vm = (vm && vm.type === "metric") ? vm : undefined
     if (!_metric.v) _metric.v = {}
 
-    for (var sourceId in sourceIds) {
-      if (!_metric[sourceId]) continue    // skip unconfigured sources
+    for (var actionId in actionIds) {
+      if (!_metric[actionId]) continue    // skip unconfigured actions
       var v
       var vms
-      if (vm && vm[sourceId]) {                 // if there is a current value
-        _metric.v[sourceId] = vm[sourceId]
-      } else if ('default' in _metric[sourceId]) {  // if there is a default valu
+      if (vm && vm[actionId]) {                 // if there is a current value
+        _metric.v[actionId] = vm[actionId]
+      } else if ('default' in _metric[actionId]) {  // if there is a default valu
         vms = {
           value: {
-            val: _metric[sourceId].default,
+            val: _metric[actionId].default,
             date: Date.now(),
-            userId: 'unk2',  // should be default
-            state: 'unk2',
-            stale: 'unk2',
+            userId: 'unk',  // should be default
+            state: 'unk',
+            stale: 'unk',
           }
         }
-        _metric.v[sourceId] = vms
-        addMetricValues(projectId,metricId,sourceId,vms, 'default')
+        _metric.v[actionId] = vms
+        addMetricValues(projectId,metricId,actionId,vms, 'default')
       } else {          // no V && no default
         vms = {
           value: {
             val: -999999,
             date: Date.now(),
-            userId: 'unk3',
-            state: 'unk3',
-            stale: 'unk3',
+            userId: 'unk',
+            state: 'unk',
+            stale: 'unk',
           }
         }
-        _metric.v[sourceId] = vms
-        addMetricValues(projectId,metricId,sourceId,vms, 'unspecified')
+        _metric.v[actionId] = vms
+        addMetricValues(projectId,metricId,actionId,vms, 'unspecified')
       }
     }
   } catch(err) {
@@ -800,27 +811,27 @@ const setDefaults = (_metric) => {
   }
 }
 
-const readSourceIds = () => {
-  const f = "administrator::readSourceIds"
+const readActionIds = () => {
+  const f = "administrator::readActionIds"
   var ymlStr
   var filepath
-  var sourceIds
+  var actionIds
   try {
-    filepath = `${process.env.ROOT_PATH}/${adminId}/hmi/sourceIds.yml`
+    filepath = `${process.env.ROOT_PATH}/${adminId}/hmi/actionIds.yml`
     ymlStr = fs.readFileSync(filepath)
-    sourceIds = YAML.safeLoad(ymlStr)
-    for (var id in sourceIds) {
-      sourceIds[id].typeId = id
+    actionIds = YAML.safeLoad(ymlStr)
+    for (var id in actionIds) {
+      actionIds[id].typeId = id
     }
 
   } catch(err) {
     msg(0,f,ERROR,err,filepath);
   }
-  return sourceIds
+  return actionIds
 }
 
 /*
-const initClients = (projectId, instance, project, sourceIds) => {
+const initClients = (projectId, instance, project, actionIds) => {
   const f = "administrator::initClients"
   // For each client create lookup lists by clientId and IP
   var c
@@ -830,8 +841,8 @@ const initClients = (projectId, instance, project, sourceIds) => {
       continue;
     }
 
-    if (client.sourceIds) {
-      client.sourceIds = sourceIds;
+    if (client.actionIds) {
+      client.actionIds = actionIds;
     }
   }
 
@@ -863,7 +874,7 @@ const initClients = (projectId, instance, project, sourceIds) => {
 */
 
 const loadProjectFile = (projectId) => {
-  const f = "administrator::loadProject - "
+  const f = "administrator::loadProjectFile - "
   try {
     var ymlStr = fs.readFileSync(`${process.env.ROOT_PATH}/${adminId}/projects/${projectId}/project.yml`)
     var yml = YAML.safeLoad(ymlStr)
@@ -899,7 +910,7 @@ const loadAdministratorConfig = () => {
       delete global.aaa.projects[projectId]
     }
   }
-  sourceIds = readSourceIds()
+  actionIds = readActionIds()
 }
 
 const loadClient = (_dir, _clientId, _projectId) => {
@@ -932,8 +943,8 @@ const loadClient = (_dir, _clientId, _projectId) => {
     }
     client.topics = completeAllTopics(JSON.parse(JSON.stringify(client.topics)), args);
 
-    if (client.sourceIds) {
-      client.sourceIds = sourceIds
+    if (client.actionIds) {
+      client.actionIds = actionIds
     }
   } catch(err) {
     msg(0,f,ERROR,"Error loading client ", _clientId, ' - ', err);
@@ -960,27 +971,29 @@ const findClientByIp = (_dir, _ip, _projectId) => {
 const loadEdgeConfig = (_payload) => {
   const f = 'administrator::loadEdgeConfig'
   msg(1,f,DEBUG, 'enter - ', _payload.clientId || _payload.ip)
+  try {
+    if (!_payload.clientId && !_payload.ip) {
+      msg(0,f,ERROR,"neither the clientId or ip is defined");
+      return
+    }
+    var client
+    if (_payload.ip) {
+      id = _payload.ip
+      client = findClientByIp("clients", _payload.ip, _payload.projectId)
+    } else {
+      id = _payload.clientId
+      client = loadClient("clients", _payload.clientId, _payload.projectId)
+    }
+    if (!client) {
+      msg(0, f, WARNING, "Client not found", id);
+      return;
+    }
+    loadClientMetrics(client)
+    return client
+  } catch (err) {
+    msg(0,f,ERROR,  clientId, ' - ', err);
+  }
 
-  if (!_payload.clientId && !_payload.ip) {
-    msg(0,f,ERROR,"neither the clientId or ip is defined");
-    return
-  }
-  var client
-  if (_payload.ip) {
-    id = _payload.ip
-    client = findClientByIp("clients", _payload.ip, _payload.projectId)
-  } else {
-    id = _payload.clientId
-    client = loadClient("clients", _payload.clientId, _payload.projectId)
-  }
-  if (!client) {
-    msg(0, f, WARNING, "Client not found", id);
-    return;
-  }
-
-  loadClientMetrics(client)
-//setDefaults(client.metrics)
-  return client
 }
 
 const loadMqttConfig = (_payload) => {
@@ -1005,7 +1018,7 @@ const loadMqttConfig = (_payload) => {
         delete nc.statusDefault
         delete nc.mqtt
         delete nc.clients
-        delete nc.sourceIds
+        delete nc.actionIds
         delete nc.page
       }
     }
@@ -1015,12 +1028,32 @@ const loadMqttConfig = (_payload) => {
   }
 }
 
+const loadYmlFile = (_client, _panel) => {
+  const f = "administrator::loadYmlFile - "
+  var path
+  try {
+    path = `${process.env.ROOT_PATH}/${adminId}/projects/${_client.projectId}/panels/${_panel}.yml`
+    var ymlStr = fs.readFileSync(path)
+    return YAML.safeLoad(ymlStr)
+  } catch(err) {
+    msg(0,f,ERROR,`Error loading ${path} - `, err);
+  }
+}
+const loadHmiPanels = (_client) => {
+  if (_client?.page?.panels) {
+    for (var panel in _client.page.panels) {
+      _client.page.panels[panel] = loadYmlFile(_client, panel)
+    }
+  }
+}
+
 const loadHmiConfig = (_payload) => {
   const f = 'administrator::loadHmiConfig - '
-  msg(0,f,DEBUG, 'enter - ', _payload.clientId)
+  msg(1,f,DEBUG, 'enter - ', _payload.clientId)
   try {
     var client = loadClient("clients", _payload.clientId, _payload.projectId)
     client.metrics = getProjectMetrics(_payload.projectId, client)
+    loadHmiPanels(client)
     return client;
   } catch(err) {
     msg(0,f,ERROR, 'Error loading config',err)

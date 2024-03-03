@@ -9,7 +9,9 @@ const findMetric = (_metricId) => {
   try {
     const metricId = _metricId.toLowerCase()
     if (global.aaa.metrics && metricId in global.aaa.metrics) {
-      return global.aaa.metrics[metricId]
+      const metric = global.aaa.metrics[metricId]
+      metric.metricId = metricId
+      return metric
     }
     console.error(f + '::findMetric - WARNING - could not find metric ' + metricId)
     return null
@@ -22,7 +24,7 @@ const findMetric = (_metricId) => {
   return null;
 }
 
-const getValue = (metric,sourceId) => {
+const getValue = (metric,actionId) => {
   if (metric.inp && metric.inp.value) return metric.inp.value
   if (metric.out && metric.out.value) return metric.out.value
   if (metric.hum && metric.hum.value) return metric.hum.value

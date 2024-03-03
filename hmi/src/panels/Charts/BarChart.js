@@ -37,17 +37,17 @@ ChartJS.register(
 //import './BarChart.scss'
 
 const BarChart = (props) => {
-  var { projectId, metricId, sourceId } = props
+  var { projectId, metricId, actionId } = props
   metricId = metricId.toLowerCase()
   projectId = projectId.toLowerCase()
   const metric = global.aaa.metrics[metricId]
-  const v = metric?.v?.[sourceId]?.["value"]?.val
+  const v = metric?.v?.[actionId]?.["value"]?.val
   const [val, setVal] = useState(v);
 
   const metricCB = useCallback((metric, topic, payload, tags, values) => {
 //    const f = "BarChart::metricCB"
 //    console.log(f,"enter ", topic)
-    if (sourceId !== tags.SourceId) return
+    if (actionId !== tags.ActionId) return
     setVal((prevValue) => {
       let val = values.value
       if (metric.convert === 'c2f') {
@@ -58,7 +58,7 @@ const BarChart = (props) => {
     if (props.metricCB) {
       props.metricCB(metric, topic, payload, tags, values)
     }
-  }, [props, sourceId])
+  }, [props, actionId])
 
   /*
   const onClickH = (event) => {
