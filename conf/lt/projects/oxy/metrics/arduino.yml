@@ -28,5 +28,4 @@ Outside_FrontDoor_OW_F:
     clientId: arduino6
     channelType: onewire_f
     channel: 14
-    deviceId: [0x28,0xC0,0x9C,0x57,0x4,0xE1,0x3D,0x25]
-
+    deviceId: [40,173,201,67,212,225,61,196] 
