@@ -25,7 +25,7 @@ function MqttList(props) {
   return (
     <Box w="100%" maxW="1200px" className="mqtt-list-display">
       <div className="nitems">{list.length}</div>
-       <div className="mqtt-list mqtt-source-bg mqtt-clientId-bg">
+       <div className="mqtt-list mqtt-action-bg mqtt-clientId-bg">
           {list.map(item => <MqttItem key={item.key} item={item} pretty={props.pretty}/>) }
        </div>
     </Box>

@@ -33,7 +33,7 @@ const connectToBroker = (connectCB, messageCB) => {
 
   return new Promise((resolve, reject) => {
     if (mqttStatusCB) {
-      mqttStatusCB('connect')
+      mqttStatusCB('connecting')
     }
     mqttClient = mqtt.connect((mc.ip) ? mc.ip : mc.url, {
       clientId: mc.mqttClientId,
@@ -315,10 +315,10 @@ const mqttProcessCB = (_topic, _payload) => {
         global.aaa.metrics[metricId] = metric
       }
 
-      const sourceId = tags["SourceId"]
-      var v = metric[sourceId]
+      const actionId = tags["ActionId"]
+      var v = metric[actionId]
       if (!v) {
-        v = metric[sourceId] = {
+        v = metric[actionId] = {
           val: -999,
           date: Date.now()
         }

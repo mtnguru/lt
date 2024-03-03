@@ -4,43 +4,43 @@ import { Heading, Box } from '@chakra-ui/react'
 
 import CheckboxList from "../../components/ui/CheckboxList";
 
-import "./MqttFilterSource.scss";
+import "./MqttFilterAction.scss";
 
-const lsKey = "ltFilterSource"
+const lsKey = "ltFilterAction"
 
-function MqttFilterSource(props) {
+function MqttFilterAction(props) {
 
   const [allSelected, setAllSelected] = useState(false)
 
   useEffect(() => {
-    const f = "MqttFilterSource::useEffect"
+    const f = "MqttFilterAction::useEffect"
     let lsstr = localStorage.getItem(lsKey);
     console.log(f, lsstr)
     let ls;
     if (lsstr) { // if local storage already exists
       ls = JSON.parse(lsstr)
-      for (let type in global.aaa.sourceIds) {  // copy selected values into global records
+      for (let type in global.aaa.actionIds) {  // copy selected values into global records
         const selected = (ls[type]) ? ls[type].selected : true;
-        global.aaa.sourceIds[type].selected = selected
+        global.aaa.actionIds[type].selected = selected
       }
     } else {
       ls = {};
-      for (let type in global.aaa.sourceIds) {
+      for (let type in global.aaa.actionIds) {
         console.log(f, 'initialize localStorage ', type)
         if (!ls[type]) ls[type] = {}
         ls[type].selected = true
-        global.aaa.sourceIds[type].selected = true
+        global.aaa.actionIds[type].selected = true
       }
       localStorage.setItem(lsKey, JSON.stringify(ls))
     }
-    setAllSelected(global.aaa.sourceIds.all.selected)
+    setAllSelected(global.aaa.actionIds.all.selected)
     console.log(f, 'exit', ls)
 //}, [global.aaa.mqttConnected])
   }, [])
 
   const onChangeH = event => {
-    console.log('MqttFilterSource::onChangeH',event.target.checked)
-    global.aaa.sourceIds[event.target.id]['selected'] = event.target.checked
+    console.log('MqttFilterAction::onChangeH',event.target.checked)
+    global.aaa.actionIds[event.target.id]['selected'] = event.target.checked
 
     if (event.target.id === 'all') {
       setAllSelected(event.target.checked)
@@ -56,13 +56,13 @@ function MqttFilterSource(props) {
   }
 
   return (
-    <Box className={`mqtt-filter-source filters ${props.show ? "show" : ""}`}>
-      <Heading as="h3">Source</Heading>
-      <Box className={`select mqtt-source-bg ${allSelected ? "all-selected" : ""}`}>
-        <CheckboxList list={(global.aaa.sourceIds) ? global.aaa.sourceIds : {}} onChangeH={onChangeH} />
+    <Box className={`mqtt-filter-action filters ${props.show ? "show" : ""}`}>
+      <Heading as="h3">Action</Heading>
+      <Box className={`select mqtt-action-bg ${allSelected ? "all-selected" : ""}`}>
+        <CheckboxList list={(global.aaa.actionIds) ? global.aaa.actionIds : {}} onChangeH={onChangeH} />
       </Box>
     </Box>
   );
 }
 
-export default MqttFilterSource
+export default MqttFilterAction

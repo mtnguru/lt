@@ -33,6 +33,7 @@ topics:
     rsp: a/rsp/DCLIENTID
     msg: a/msg/CLIENTID
     hum: a/rsp/DCLIENTID/DUSERID
+    cod: a/cod/CLIENTID/USERID
     all: a/cmd/all
     alm: DPROJECTID/alm/all
 topicSets:
@@ -56,7 +57,7 @@ clients:
   arduino1:       enabled
   arduino2:       disabled
   arduino3:       enabled
-  arduino4:       enabled
+  arduino4:       disabled
   arduino5:       enabled
   arduino6:       disabled
   arduino7:       enabled

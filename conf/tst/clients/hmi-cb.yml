@@ -13,9 +13,10 @@ clients:
   controller:     disabled
   drupal:         disabled
   epiclc:         disabled
+  arduino1:       enabled
   arduino2:       disabled
   arduino3:       enabled
-  arduino4:       enabled
+  arduino4:       disabled
   arduino5:       enabled
   arduino6:       disabled
   arduino7:       enabled
@@ -40,60 +41,20 @@ topics:
     adm: a/cmd/administrator
     msg: PROJECTID/msg/CLIENTID
     cod: PROJECTID/cod/CLIENTID
-    hum: PROJECTID/hum/CLIENTID
-sourceIds: {}
+    hum: PROJECTID/hum/CLIENTID/DUSERID/EDGEID
+    upper: PROJECTID/upper/CLIENTID/DUSERID/EDGEID
+    lower: PROJECTID/lower/CLIENTID/DUSERID/EDGEID
+    high: PROJECTID/high/CLIENTID/DUSERID/EDGEID
+    low: PROJECTID/low/CLIENTID/DUSERID/EDGEID
+actionIds: {}
 page:
   title: Cabin Temperatures
   id: hmi-cb
   class: page cb-page flex
   panels:
-    LineChart:
-      metrics:
-        - Bathroom_Door_K_F
-        - Middle_Window_K_F
-        - Master_Door_OW_F
-        - Desk_Top_OW_F
-        - Desk_Monitor_OW_F
-
-      # chartJs configuration
-      responsive: true,
-      interaction:
-        mode: index
-        intersect: false
-      stacked: false
-      plugins:
-#       title:
-#         display: true
-#         text: Chart.js Line Chart - Multi Axis
-        legend:
-          display: true
-          position: bottom
-      scales:
-        x:
-          type: time
-          display: true,
-          time:
-            unit: hour
-            tooltipFormat: HH:MM
-#         min: date - 432000000
-#         max: date
-        y:
-          type: linear
-          display: true,
-          position: left
-#         min: 50
-#         max: 80
-        y1:
-          type: linear
-          display: true,
-          position: right
-#         grid:
-#           drawOnChartArea: true
+    LineChartPanel:
+    ImagePanel:
+    ControlPanel:
     MsgPanel:
-      class: right-col
-      children:
-        Notes:
-        Chat:
-        Notify:
 statusDefault:
   debugLevel: 0

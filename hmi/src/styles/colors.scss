@@ -1,6 +1,6 @@
 // @import "styles/colors.scss";
 $fg-color: #f0f0ff;
-$topic-fg-color: #fb9;
+$topic-fg-color: #fc5;
 $date-fg-color: #ee0;
 $title-fg-color: #ddff88;
 $title2-fg-color: #88ffaa;
@@ -38,7 +38,7 @@ $table-bd-color: #345;
 $table-odd-bg-color: #245;
 $table-even-bg-color: #36a;
 
-$metric-fg-color: #ccff33;
+$metric-fg-color: #ffffff;
 
 :root {
    /**
@@ -90,7 +90,7 @@ $metric-fg-color: #ccff33;
 .mqtt-clientId-bg {
   // MQTT message client
   .all             { background-color: #333; }
-  .administrator   { background-color: #356; }
+  .administrator   { background-color: #a70; }
   .drupal          { background-color: #478; }
   .logger          { background-color: #59a; }
   .hmi-mqtt        { background-color: #632; }
@@ -118,19 +118,25 @@ $metric-fg-color: #ccff33;
 //.hmi           { background-color: #941; }
 }
 
-.mqtt-source-bg {
+.card {
+  .type {
+    &.debug        { background-color: #099; }
+  }
+}
+
+.mqtt-action-bg {
   // MQTT Message function
   .all                { background-color: #333; }
   .Activity,  .act    { background-color: #632; }
-  .Alarm,     .alm    { background-color: #d70 }
-  .Input,     .inp    { background-color: #24b; }
+  .Alarm,     .alm    { background-color: #b40 }
+  .Input,     .inp    { background-color: #249; }
   .Output,    .out    { background-color: #56c; }
   .Human,     .hum    { background-color: #952; }
   .LowerRange,.low    { background-color: #717; }
   .HighRange, .high   { background-color: #a0a; }
   .LowerAlarm,.lower  { background-color: #700 }
   .UpperAlarm,.upper  { background-color: #a00; }
-  .Command,   .cmd    { background-color: #529; }
+  .Command,   .cmd    { background-color: #428; }
   .Response,  .rsp    { background-color: #74a; }
   .Get,       .get    { background-color: #252; }
   .Send,      .snd    { background-color: #292; }
@@ -139,8 +145,8 @@ $metric-fg-color: #ccff33;
   .System,    .sys    { background-color: #666; }
 
   // Code sub categories
-  .Debug             { background-color: #72c; }
-  .Error             { background-color: #b00; }
+  .Debug, debug      { background-color: #72c; }
+  .Error             { background-color: #d22; }
 
   // Message sub categories
   .Notes             { background-color: #06a; }
@@ -152,11 +158,11 @@ $metric-fg-color: #ccff33;
 }
 
 .mqttStatus {
-  .connect           { background-color: #0bb; }
-  .connected         { background-color: #08d; }
-  .message           { background-color: #090; }
-  .reconnect         { background-color: #a30; }
-  .close             { background-color: #80e }
+  .connecting        { background-color: #922; }
+  .connected         { background-color: #080; }
+  .message           { background-color: #26f; }
+  .reconnect         { background-color: #c42; }
+  .close             { background-color: #ea0; }
   .offline           { background-color: #a5f; }
   .error             { background-color: #c00; }
 }

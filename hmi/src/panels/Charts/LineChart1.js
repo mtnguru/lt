@@ -1,4 +1,4 @@
-// File: LineChart.js
+// File: LineChartPanel.js
 import React, {useCallback, useState, useEffect} from 'react';
 
 import {
@@ -27,7 +27,7 @@ import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-moment';
 import 'chartjs-plugin-streaming';
 
-import './LineChart.scss'
+import './LineChartPanel.scss'
 
 ChartJS.register(
   TimeScale,
@@ -39,9 +39,9 @@ ChartJS.register(
   Legend
 );
 
-const LineChart = (props) => {
+const LineChartPanel = (props) => {
   const [metrics, setMetrics] = useState({})
-  var { projectId, metricIds, sourceId } = props
+  var { projectId, metricIds, actionId } = props
   projectId = projectId.toLowerCase()
 
   useEffect(() => {
@@ -54,12 +54,12 @@ const LineChart = (props) => {
 
   const metricCB = useCallback((metric, topic, payload, tags, values) => {
     /*
-//    const f = "LineChart::metricCB"
+//    const f = "LineChartPanel::metricCB"
 //    console.log(f,"enter ", topic)
-    if (sourceId !== tags.SourceId) return
+    if (actionId !== tags.ActionId) return
     setVal((prevValue) => {
       let val = values.value
-//    data[projectId][metricId][sourceId]
+//    data[projectId][metricId][actionId]
       if (metric.convert === 'c2f') {
         val = c2f(val)
       }
@@ -69,7 +69,7 @@ const LineChart = (props) => {
       props.metricCB(metric, topic, payload, tags, values)
     }
     */
-  }, [props, sourceId])
+  }, [props, actionId])
 
   useEffect(() => {
 //  mqttRegisterMetricCB(metricId, metricCB)
@@ -180,4 +180,4 @@ const LineChart = (props) => {
   )
 }
 
-export default LineChart
+export default LineChartPanel

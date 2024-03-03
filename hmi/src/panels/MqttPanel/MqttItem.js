@@ -59,7 +59,7 @@ const addDateString = (obj) => {
   const keys = Object.keys(obj)
   for (var key in keys) {
     const name = keys[key]
-    console.log('name ', name, '  typeof ', typeof(obj[name]))
+//  console.log('name ', name, '  typeof ', typeof(obj[name]))
     if (name === 'date') {
       if (typeof obj[name] === 'number') {
         obj[name] = `${obj[name]} -- ${convertDate(obj[name], 'full')} -- ${timeAgo(obj[name])}`
@@ -75,6 +75,7 @@ const MqttItem = (props) => {
   const f = 'MqttItem';
   const [payloadOut, setPayloadOut] = useState('')
   const [short, setShort] = useState('')
+  const [short2, setShort2] = useState('')
   const [author, setAuthor] = useState('')
   const [type, setType] = useState('')
   const [expand, setExpand] = useState('')
@@ -83,7 +84,8 @@ const MqttItem = (props) => {
   useEffect(() => {
     var payloadStr = props.item.payload         // Display the Raw payload
 
-    var short = ''
+    var lshort = ''
+    var lshort2 = ''
 //  var author = ''
     if (props.pretty === 'raw') {
        // Already set
@@ -96,89 +98,96 @@ const MqttItem = (props) => {
           for (var i = 0; i < 7 - len; i++) {
             val += ' '
           }
-          short = `${props.item.sourceId} ${val} ${tags["MetricId"]}`
+          lshort = `${props.item.actionId} ${val} ${tags["MetricId"]}`
         }
       } else {                               // Format is JSON
         var payload = JSON.parse(props.item.payload);
         try {
         } catch (err) {
-          console.log(f, 'ERROR: parsing JSON payload: ' + props.item.topic + '  ' + err)
+//        console.log(f, 'ERROR: parsing JSON payload: ' + props.item.topic + '  ' + err)
           mgError(0, f, 'ERROR parsing JSON payload: ' + err)
         }
         if (props.pretty === "pretty") {
           addDateString(payload)
           payloadStr = yaml.dump(payload,{lineWidth: -1})
 
-          if (props.item.sourceId === 'out' ||
-            props.item.sourceId === 'inp' ||
-            props.item.sourceId === 'hum' ||
-            props.item.sourceId === 'upper' ||
-            props.item.sourceId === 'lower' ||
-            props.item.sourceId === 'high' ||
-            props.item.sourceId === 'low') {
-            short = `out ${payload.value} - ${payload.metric}`
-          } else if (props.item.sourceId === 'cmd') {
+          if (props.item.actionId === 'out' ||
+            props.item.actionId === 'inp' ||
+            props.item.actionId === 'hum' ||
+            props.item.actionId === 'upper' ||
+            props.item.actionId === 'lower' ||
+            props.item.actionId === 'high' ||
+            props.item.actionId === 'low') {
+            lshort = `out ${payload.value} - ${payload.metric}`
+          } else if (props.item.actionId === 'cmd') {
+            lshort = `cmd ${payload.cmd}`
             switch (payload.cmd) {
               case 'setEnabled':
-                short = `cmd ${payload.cmd} - ${payload.enabled}`
+                lshort += ` - ${payload.clientId} - ${payload.enabled}`
                 break
               case 'setDebugLevel':
-                short = `cmd ${payload.cmd} - ${payload.debugLevel}`
+                lshort += ` - ${payload.clientId} - ${payload.debugLevel}`
                 break
               case 'setSampleInterval':
-                short = `cmd ${payload.cmd} - ${payload.sampleInterval}`
+                lshort += ` - ${payload.clientId} - ${payload.sampleInterval}`
                 break
               case 'requestConfig':
                 var id = (payload.mqttClientId) ? payload.mqttClientId : (payload.ip) ? payload.ip : "None"
-                short = `cmd ${payload.cmd} - ` + id
+                lshort += ` - ${id}`
                 break
               case 'requestStatus':
-                short = `cmd ${payload.cmd} - ` + payload.clientId
+                lshort += ` - ${payload.clientId}`
                 break
               case 'getMetric':
-                short = `cmd ${payload.cmd} - ` + payload.metricId +  ' - ' + payload.clientId
+                lshort += ` - ${payload.clientId} - ` + payload.metricId +  ' - ' + payload.clientId
                 break
               default:
-                short = `cmd ${payload.cmd}`
+//              lshort += `${payload.cmd}`
                 break
             }
-          } else if (props.item.sourceId === 'rsp') {
-            short = `rsp ${payload.rsp} - ${payload.clientId}`
+          } else if (props.item.actionId === 'rsp') {
+            lshort = `rsp ${payload.rsp} - ${payload.clientId}`
             switch (payload.rsp) {
               case 'setEnabled':
-                short += ` - ${payload.enabled}`
+                lshort += ` - ${payload.enabled}`
                 break
               case 'setDebugLevel':
-                short += ` - ${payload.debugLevel}`
+                lshort += ` - ${payload.debugLevel}`
                 break
               case 'setSampleInterval':
-                short += ` - ${payload.sampleInterval}`
+                lshort += ` - ${payload.sampleInterval}`
                 break
               case 'requestStatus':
-                short = `rsp ${payload.rsp} - ${payload.mqttClientId}`
+                lshort = `rsp ${payload.rsp} - ${payload.mqttClientId}`
                 break
               case 'getMetric':
-                short = `rsp ${payload.rsp} - ` + payload.metricId + ' - ' + payload.clientId
+                lshort = `rsp ${payload.rsp} - ` + payload.metricId + ' - ' + payload.clientId
                 break
               default:
-//              short += ` - ${payload.ClientId}`
+//              lshort += ` - ${payload.ClientId}`
                 break
             }
-          } else if (props.item.sourceId === 'cod') {
-            short = `cod ${payload["function"]} ${payload.msg}`;
+          } else if (props.item.actionId === 'cod') {
+            if (payload.msg) {
+              lshort = `${payload["function"]}`;
+              lshort2 = `${payload.msg}`;
+            } else if (payload.content) {
+              lshort = `${payload["function"]}`;
+              lshort2 = `${payload.content}`;
+            }
             setType(payload.type)
-          } else if (props.item.sourceId === 'msg') {
-            short = 'msg'
+          } else if (props.item.actionId === 'msg') {
+            lshort = 'msg'
             if (payload.author) {
               setAuthor(payload.author)
-              short += ` ${payload.author}`
+              lshort += ` ${payload.author}`
             }
-            short = ` ${payload.msg || payload.content}`
+            lshort = ` ${payload.msg || payload.content}`
             setType(payload.type)
-          } else if (props.item.sourceId === 'alm') {
-            short = `alm ${payload.metricId}`
+          } else if (props.item.actionId === 'alm') {
+            lshort = `alm ${payload.metricId}`
           } else {
-            short = props.item.sourceId
+            lshort = props.item.actionId
           }
         } else {   // props.pretty != 'pretty -- display as JSON
           payloadStr = JSON.stringify(payload, null, 2)
@@ -186,12 +195,9 @@ const MqttItem = (props) => {
       } // if format is JSON
     } // if format is JSON
     setPayloadOut(payloadStr)
-    if (short) {
-      setShort(short);
-    } else {
-      setShort('')
-    }
-  }, [expand, props.item.topic, props.item.action, props.item.sourceId, props.item.payload, props.pretty])
+    setShort(lshort);
+    setShort2(lshort2);
+  }, [expand, props.item.topic, props.item.action, props.item.actionId, props.item.payload, props.pretty])
 
   const onClickH = (event) => {
     setExpand((expand === 'expand') ? '' : "expand")
@@ -199,7 +205,7 @@ const MqttItem = (props) => {
 
   return (
     <div className='mqtt-item'>
-      <Box className={`card ${props.pretty} ${expand} ${props.item.sourceId}`}>
+      <Box className={`card ${props.pretty} ${expand} ${props.item.actionId}`}>
         <div className='right'>
           <span className='topic'>{props.item.topic}</span>
           <span className='date'>{props.item.date}</span>
@@ -211,6 +217,7 @@ const MqttItem = (props) => {
             {type   && <span className={`type ${type}`}>{type}</span>}
             {author && <span className='author'>{author}</span>}
             {short  && <span className={`short`}><pre>{short}</pre></span>}
+            {short2  && <div className={`short2`}><pre>{short2}</pre></div>}
           </button>
         </div>
         <pre className='payload'>

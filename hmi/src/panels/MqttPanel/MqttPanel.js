@@ -8,7 +8,7 @@ import {
 //Container
 } from '@chakra-ui/react'
 
-import MqttFilterSource from './MqttFilterSource';
+import MqttFilterAction from './MqttFilterAction';
 import MqttFilterClient from './MqttFilterClient';
 import MqttList from './MqttList';
 import {mqttRegisterTopicCB} from "../../utils/mqttReact";
@@ -26,8 +26,8 @@ const MqttPanel = (props) => {
   const [filteredList, setFilteredList] = useState([])
   const [nitems, setNItems] = useState(0);
   const [pretty, setPretty] = useState("pretty")
-  const [showClients, setShowClients] = useState(false)
-  const [showSource, setShowSource] = useState(false)
+  const [showClients, setShowClients] = useState(true)
+  const [showAction, setShowAction] = useState(false)
   let ni = 0
 
   const onClearList = (event) => {
@@ -49,14 +49,14 @@ const MqttPanel = (props) => {
 //  if (_topic.indexOf('a/cmd') > -1) return;
     try {
       const dateStr = currentDate()
-      const [project, sourceId, clientId] = _topic.split('/')
+      const [project, actionId, clientId] = _topic.split('/')
       let rnd = Math.random().toString(16).slice(3)
       let key = `${clientId}-${dateStr}-${rnd}`
       let item = {
         key,
         date: dateStr,
         projectId: project.projectId,
-        sourceId,
+        actionId,
         clientId,
         topic: _topic,
         payload: _payload,
@@ -98,16 +98,16 @@ const MqttPanel = (props) => {
    * @returns {boolean}
    */
   const validMsg = (item) => {
-    const [,sourceId,clientId] = item.topic.split('/')
+    const [,actionId,clientId] = item.topic.split('/')
     if (global.aaa.clients.all.selected) {
     } else {
       if (global.aaa.clients[clientId] && !global.aaa.clients[clientId].selected) {
         return false;
       }
     }
-    if (global.aaa.sourceIds.all.selected) {
+    if (global.aaa.actionIds.all.selected) {
     } else {
-      if (global.aaa.sourceIds[sourceId] && !global.aaa.sourceIds[sourceId].selected) {
+      if (global.aaa.actionIds[actionId] && !global.aaa.actionIds[actionId].selected) {
         return false;
       }
     }
@@ -120,8 +120,8 @@ const MqttPanel = (props) => {
     })
   }
 
-  const onFilterSourceChangeH = event => {
-    console.log('======================== onFilterSourceChangedH',event.target.id)
+  const onFilterActionChangeH = event => {
+    console.log('======================== onFilterActionChangedH',event.target.id)
     applyFilters(list)
   }
 
@@ -130,9 +130,9 @@ const MqttPanel = (props) => {
     applyFilters(list)
   }
 
-  const onSourceFilterH = event => {
+  const onActionFilterH = event => {
     console.log('======================== onFilterClientChangedH',event.target.id)
-    setShowSource(!showSource)
+    setShowAction(!showAction)
   }
 
   const onClientFilterH = event => {
@@ -144,7 +144,7 @@ const MqttPanel = (props) => {
     <div className="panel mqtt-panel">
       <Flex className="content">
         <MqttFilterClient show={showClients} onChangeH={onFilterClientChangeH} />
-        <MqttFilterSource show={showSource} onChangeH={onFilterSourceChangeH} />
+        <MqttFilterAction show={showAction} onChangeH={onFilterActionChangeH} />
         <Box className="mqtt-display">
           <div className="mqtt-display-actions">
             <div className="buttons">
@@ -154,8 +154,8 @@ const MqttPanel = (props) => {
               </span>
               <span className="filter-buttons">
                 <span className="filters-label">Filters</span>
-                <Button className="show-source-filter" size="sm" variant="solid" colorScheme="purple" onClick={onSourceFilterH}>Source</Button>
-                <Button className="show-clients-filter" size="sm" variant="solid" colorScheme="purple" onClick={onClientFilterH}>Clients</Button>
+                <Button className="show-action-filter" size="sm" variant="solid" colorScheme="purple" onClick={onActionFilterH}>Action</Button>
+                <Button className="show-clients-filter" size="sm" variant="solid" colorScheme="purple" onClick={onClientFilterH}>Client</Button>
               </span>
             </div>
           </div>

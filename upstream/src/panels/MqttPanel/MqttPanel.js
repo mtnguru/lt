@@ -48,14 +48,14 @@ const MqttPanel = (props) => {
       ('0' + date.getSeconds()).slice(-2)+ ' - ' +
       ('00' + date.getMilliseconds()).slice(-3)
 
-//  const [loc, type, action, source, telegraf] = topic.split('/')
-    const [loc, type, action, source] = topic.split('/')
+//  const [loc, type, action, action, telegraf] = topic.split('/')
+    const [loc, type, action, action] = topic.split('/')
     let rnd = Math.random().toString(16).slice(3)
-    let key = `${source}-${time.toString()}-${rnd})}`
+    let key = `${action}-${time.toString()}-${rnd})}`
     if (nitems) {
     }
 //  console.log("nitems ", nitems, ni);
-    let item = { key, date: dateStr, loc, type, action, source, topic, payload, nitems: ni }
+    let item = { key, date: dateStr, loc, type, action, action, topic, payload, nitems: ni }
 
     setNItems((prevNItems) => {
       return ni = prevNItems + 1

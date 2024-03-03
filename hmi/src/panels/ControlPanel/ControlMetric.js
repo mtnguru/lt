@@ -5,6 +5,7 @@ import {c2f} from '../../utils/metrics'
 
 import {
   Text,
+  Box,
   Flex,
 } from '@chakra-ui/react'
 
@@ -12,17 +13,16 @@ import {
 //import './ControlMetric.scss'
 
 const ControlMetric = (props) => {
-  var { projectId, metricId, sourceId } = props
-  metricId = metricId.toLowerCase()
-  projectId = projectId.toLowerCase()
-  const metric = global.aaa.metrics[metricId]
-  const v = metric?.v?.[sourceId]?.["value"]?.val
+  const { metric } = props
+  const projectId = metric.projectId
+  const metricId = metric.metricId
+  const v = metric?.v?.[metricId.actionId]?.["value"]?.val
   const [val, setVal] = useState(v);
 
   const metricCB = useCallback((metric, topic, payload, tags, values) => {
 //    const f = "ControlMetric::metricCB"
 //    console.log(f,"enter ", topic)
-    if (sourceId !== tags.SourceId) return
+    if (props.metric.actionId !== tags.ActionId) return
     setVal((prevValue) => {
       let val = values.value
       if (metric.convert === 'c2f') {
@@ -33,7 +33,7 @@ const ControlMetric = (props) => {
     if (props.metricCB) {
       props.metricCB(metric, topic, payload, tags, values)
     }
-  }, [props, sourceId])
+  }, [props])
 
   const onClickH = (event) => {
     // request metrics from admin
@@ -67,14 +67,14 @@ const ControlMetric = (props) => {
   )
   */
   return (
-    <Flex mb={1}>
+    <Box className="control-metric">
+      <Box className="right" display={props.display ? props.display : null}>
+        <div className="metric">{val}</div>
+      </Box>
       <button onClick={onClickH}>
-        <Text as="h3" mt={-1} w="180px" pt={0} pw={4} fontWeight="bold" fontSize="120%">{props.label}</Text>
+        <Text as="h3" fontWeight="bold" fontSize="120%">{props.metric.label}</Text>
       </button>
-      <Text variant="metric" display={props.display ? props.display : null}>
-        <span>{val}</span>
-      </Text>
-    </Flex>
+    </Box>
   )
 }
 

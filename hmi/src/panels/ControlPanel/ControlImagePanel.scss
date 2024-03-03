@@ -11,10 +11,9 @@
     color: $title2-fg-color;
     width: 100%;
     font-weight: 400;
-    padding: 10px;
+    padding: .5vw;
     z-index: 2;
   }
-
 
   .controls {
     position: absolute;
@@ -23,6 +22,18 @@
     bottom: 0;
     right: 0;
     left: 0;
+  }
+  .control-value {
+    position: absolute;
+    padding: 1px 3px;
+    border-radius: 4px;
+    line-height: 1.2;
+    .Metric {
+      width: 5.5vw;
+      text-align: right;
+      padding: 0 5px;
+      font-size: 1.65vw;
+    }
   }
   img.bg-image {
     display: block;

@@ -33,6 +33,7 @@ topics:
     rsp: a/rsp/DCLIENTID
     msg: a/msg/CLIENTID
     hum: a/rsp/DCLIENTID/DUSERID
+    cod: a/cod/CLIENTID
     all: a/cmd/all
     alm: DPROJECTID/alm/all
 topicSets:

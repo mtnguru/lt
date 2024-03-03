@@ -35,6 +35,6 @@ topics:
     cod: PROJECTID/cod/CLIENTID/all
     hum: PROJECTID/hum/CLIENTID/DUSERID/sl_edge
 metrics: project
-sourceIds: {}
+actionIds: {}
 statusDefault:
   debugLevel: 0

@@ -40,7 +40,7 @@ topics:
     high: PROJECTID/high/CLIENTID/DUSERID/EDGEID
     low: PROJECTID/low/CLIENTID/DUSERID/EDGEID
 metrics: project
-sourceIds: {}
+actionIds: {}
 statusDefault:
   debugLevel: 0
 page:

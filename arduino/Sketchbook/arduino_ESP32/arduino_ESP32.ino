@@ -12,14 +12,13 @@
 const char *version = "2.1";
 const char *programId = "arduino.js";
 int configNotReceived = 0;
+int mqttConnected = 0;
 int mqttNotConnected = 0;
 unsigned long startTime = 0;
 unsigned long lastSample = 0;
 unsigned long sampleInterval = 30000;
 int enabled = 1;
 int debugLevel = 2;
-unsigned long sampleInterval = 2000;
-int mqttConnected = 0;
 
 ///////////// Mqtt server credentials
 //const char* mqttIp = "172.16.45.7";   // merlin
@@ -394,8 +393,8 @@ void getStatus() {
   snprintf(uptime,20,"%d %d:%d:%d", days, hours, minutes, seconds);
 
   snprintf(status,statusSize,
-    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": %d, \"enabled\":%d, \"debugLevel\":%d, \"uptime\":\"%s\", \"sampleInterval\":%lu, \"version\":\"%s\"}",
-    clientId, mqttClientId.c_str(), mqttConnected, enabled, debugLevel, uptime, sampleInterval, (char *)version);
+    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": %d, \"enabled\":%d, \"debugLevel\":%d, \"sampleInterval\":%lu, \"version\":\"%s\", \"uptime\":\"%s\" }",
+    clientId, mqttClientId.c_str(), mqttConnected, enabled, debugLevel, sampleInterval, (char *)version, uptime);
 
   logit(2,MD, f, status, NULL);
 //char statusLen[10];
@@ -438,15 +437,7 @@ void findOneWireDevices(char *devices) {
       nDevices++;
       char deviceId[80];
       snprintf(deviceId,80,
-        "\"0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x  %d,%d,%d,%d,%d,%d,%d,%d\"",
-        address[0],
-        address[1],
-        address[2],
-        address[3],
-        address[4],
-        address[5],
-        address[6],
-        address[7],
+        "\"%d,%d,%d,%d,%d,%d,%d,%d\"",
         address[0],
         address[1],
         address[2],
@@ -550,13 +541,15 @@ void setConfig(const char *topic,
   inputN = 0;
   logit(2,MD,f,"Check Inputs",NULL);
   if (jsonDoc.hasOwnProperty("inp")) {
-    JSONVar keys = jsonDoc["inp"].keys();
+    JSONVar metrics = jsonDoc["inp"];
     logit(2,MD,f,"Process input metrics ",NULL);
-    for (int i = 0; i < keys.length(); i++) {
-      const char *metricId = keys[i];
-      strcpy(inputA[inputN].metricId, metricId);
-      JSONVar metric = jsonDoc["inp"][metricId];
+    for (int m = 0; m < metrics.length(); m++) {
+      JSONVar metric = metrics[m];
+      char metricId[metricIdSize];
+      strcpy (metricId, metric["metricId"]);
       logit(1,MD,f,"Input ",metricId);
+
+      strcpy(inputA[inputN].metricId, metricId);
       const char *channelType = metric["inp"]["channelType"];
       strcpy(inputA[inputN].tags, metric["inp"]["tags"]);
       logit(2,MD,f,"tags ",inputA[inputN].tags);

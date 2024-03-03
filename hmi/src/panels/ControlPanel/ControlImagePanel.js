@@ -9,32 +9,37 @@ import React, {useState, useEffect} from 'react'
 // import ControlBar from './ControlBar'
 // import {findMetric} from '../../utils/metrics'
 
+import "./ControlImagePanel.scss";
+
 import ControlValue from './ControlValue'
 
 //import './ControlImagePanel.scss'
-import {mqttRequestFile} from "../../utils/mqttReact";
+import {mqttRegisterMetricCB, mqttRequestFile} from "../../utils/mqttReact";
+import {findMetric} from "../../utils/metrics";
+
+var metrics = {}
 
 const ControlImagePanel = (props) => {
-  const [hmi, setHmi] = useState({ inputs: {}})
-
-  const panelId = props.panelId
-  useEffect(() => {
-    const onLoadCB = (topic, payload) => {
-      global.aaa[panelId] = payload;
-      setHmi(global.aaa[panelId])
+  var keys = Object.keys(metrics)
+  if (keys.length === 0) {
+    for (var m = 0; m < props.options.metrics.length; m++) {
+      var metricId = props.options.metrics[m].metricId.toLowerCase()
+      var metric = findMetric(metricId)
+      metrics[metricId] = { ...metric, ...props.options.metrics[m] }
     }
-    mqttRequestFile(global.aaa.clientId, panelId, `labtime/panels/${panelId}.yml`, 'yml', onLoadCB)
-  }, [panelId])
-
-//var backgroundImage = "../../../assets/cabin.png";
+  } else {
+  }
+  useEffect(() => {
+    // Merge config metrics with global metrics
+  }, [props.options.metrics])
 
   return (
     <div className="panel control-image-panel" style={{ backgroundImage: `url(${process.env.PUBLIC_URL + "/cabin.png"})`, aspectRatio: 1.1275 }} >
       {/* <Heading as="h3">Overlay Image Panel</Heading> */}
       <div className="controls">
         <div className="metrics">
-          {Object.keys(hmi.inputs).map((metricId) => {
-            return <ControlValue key={metricId} metric={hmi.inputs[metricId]} metricId={metricId}></ControlValue>
+          {Object.keys(metrics).map((metricId) => {
+            return <ControlValue key={metricId} metric={metrics[metricId]} metricId={metricId}></ControlValue>
           })}
         </div>
       </div>

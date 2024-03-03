@@ -1,21 +1,22 @@
 ############################## Input development
 
-Manual_Test_V:
+Test_Status_F:
   label: Test - Manual entry
   desc: Test - Manual entry
   decimals: 1
+  color: '#5843d4'
   hum:
     clientId: hmi-cb
     channelType: slider
     default: 3
     min: 0
-    max: 6
+    max: 10
     step: .1
   upper:
     clientId: hmi-cb
     channelType: slider
     default: 8
-    min: 5
+    min: 0
     max: 10
     step: .1
   lower:
@@ -23,7 +24,7 @@ Manual_Test_V:
     channelType: slider
     default: 2
     min: 0
-    max: 5
+    max: 10
     step: .1
   high:
     clientId: hmi-cb

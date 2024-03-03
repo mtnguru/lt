@@ -15,27 +15,27 @@ function MqttFilterFunc(props) {
     let ls;
     if (lsstr) { // if local storage already exists
       ls = JSON.parse(lsstr)
-      for (let type in global.aaa.sourceIds) {  // copy selected values into global records
+      for (let type in global.aaa.actionIds) {  // copy selected values into global records
         const selected = (ls[type]) ? ls[type].selected : true;
-        global.aaa.sourceIds[type].selected = selected
+        global.aaa.actionIds[type].selected = selected
       }
     } else {
       ls = {};
-      for (let type in global.aaa.sourceIds) {
+      for (let type in global.aaa.actionIds) {
         console.log(f,'initialize localStorage ', type)
         if (!ls[type]) ls[type] = {}
         ls[type].selected = true
-        global.aaa.sourceIds[type].selected = true
+        global.aaa.actionIds[type].selected = true
       }
       localStorage.setItem(lsKey, JSON.stringify(ls))
     }
-    setAllSelected(global.aaa.sourceIds.all.selected)
+    setAllSelected(global.aaa.actionIds.all.selected)
     console.log(f,'exit', ls)
   }, [])
 
   const onChangeH = event => {
     console.log('MqttFilterFunc::onChangeH',event.target.checked)
-    global.aaa.sourceIds[event.target.id]['selected'] = event.target.checked
+    global.aaa.actionIds[event.target.id]['selected'] = event.target.checked
 
     if (event.target.id === 'all') {
       setAllSelected(event.target.checked)
@@ -54,7 +54,7 @@ function MqttFilterFunc(props) {
     <div className="mqtt-filter-type">
       <h3>Msg Type</h3>
       <div className={`select mqtt-type-bg ${allSelected ? "all-selected" : ""}`}>
-        <CheckboxList list={global.aaa.sourceIds} onChangeH={onChangeH} />
+        <CheckboxList list={global.aaa.actionIds} onChangeH={onChangeH} />
       </div>
     </div>
   );

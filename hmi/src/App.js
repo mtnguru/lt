@@ -4,10 +4,10 @@ import { Route, Routes } from 'react-router-dom'
 
 import { CSSReset, Box } from '@chakra-ui/react';
 
-import Page from          './pages/Page'
 import CabinPage from     './pages/CabinPage'
-import SafirePage from    './pages/SafirePage'
-import OxyPage from       './pages/OxyPage'
+//import Page from          './pages/Page'
+//import SafirePage from    './pages/SafirePage'
+//import OxyPage from       './pages/OxyPage'
 import MqttPage from      './pages/MqttPage'
 import MqttTstPage from   './pages/MqttTstPage'
 
@@ -19,17 +19,20 @@ function App() {
   const f = "App:App - ";
   console.log(f,'enter')
   return (
-    <Box id="app" bg="bg" color="fg">
+    <Box id="app" color="fg">
       <CSSReset />
       <MainNavigation />
       <Box as="main">
         <Routes>
-          <Route path='/'         element={<Page />}  />
-          <Route path='/lab'      element={<Page />}  />
-          <Route path='/oxy'      element={<OxyPage />}  />
+          <Route path='/'         element={<CabinPage />}  />
+          <Route path='/cabin'    element={<CabinPage />}  />
           <Route path='/mqtt'     element={<MqttPage />}  />
           <Route path='/mqtt-tst' element={<MqttTstPage />}  />
-          <Route path='/safire'   element={<SafirePage />}  />
+          {/*
+            <Route path='/lab'      element={<Page />}  />
+            <Route path='/oxy'      element={<OxyPage />}  />
+            <Route path='/safire'   element={<SafirePage />}  />
+          */}
           <Route path='/cabin'    element={<CabinPage />}  />
         </Routes>
       </Box>

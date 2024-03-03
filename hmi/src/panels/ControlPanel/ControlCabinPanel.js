@@ -35,19 +35,19 @@ const ControlCabinPanel = (props) => {
     <Box className="panel control-cabin-panel mqtt-clientId-bg">
       <Box className="controls" >
         <Box className="control-bar desk-top" mt="20px">
-          <ControlMetric projectId={global.aaa.projectId} sourceId="inp" metricId="Desk_Top_OW_F" label="Desk Top" cname=""></ControlMetric>
+          <ControlMetric projectId={global.aaa.projectId} actionId="inp" metricId="Desk_Top_OW_F" label="Desk Top" cname=""></ControlMetric>
         </Box>
         <Box className="control-bar desk-monitor">
-          <ControlMetric projectId={global.aaa.projectId} sourceId="inp" metricId="Desk_Monitor_OW_F" label="Desk Monitor" cname=""></ControlMetric>
+          <ControlMetric projectId={global.aaa.projectId} actionId="inp" metricId="Desk_Monitor_OW_F" label="Desk Monitor" cname=""></ControlMetric>
         </Box>
         <Box className="control-bar bathroom">
-          <ControlMetric projectId={global.aaa.projectId} sourceId="inp" metricId="Bathroom_Door_K_F" label="Bathroom" cname=""></ControlMetric>
+          <ControlMetric projectId={global.aaa.projectId} actionId="inp" metricId="Bathroom_Door_K_F" label="Bathroom" cname=""></ControlMetric>
         </Box>
         <Box className="control-bar master">
-          <ControlMetric projectId={global.aaa.projectId} sourceId="inp" metricId="Master_Door_OW_F" label="Master Bedroom" cname=""></ControlMetric>
+          <ControlMetric projectId={global.aaa.projectId} actionId="inp" metricId="Master_Door_OW_F" label="Master Bedroom" cname=""></ControlMetric>
         </Box>
         <Box className="control-bar middle">
-          <ControlMetric projectId={global.aaa.projectId} sourceId="inp" metricId="Middle_Window_K_F" label="Middle Bedroom" cname=""></ControlMetric>
+          <ControlMetric projectId={global.aaa.projectId} actionId="inp" metricId="Middle_Window_K_F" label="Middle Bedroom" cname=""></ControlMetric>
         </Box>
       </Box>
     </Box>
