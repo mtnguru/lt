@@ -26,7 +26,7 @@ const ControlButton = (props) => {
       })
       topic = 'rf/user/influx/' + props.client
 
-      const metric = findMetric(props.metricId)
+      const metric = findMetric(props.projectId, props.metricId)
       if (metric == null) return;
       payload = `${makeTagsFromMetric(props.metricId)} value=${btnState ? "1" : "0"}`
     }

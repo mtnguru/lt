@@ -15,8 +15,8 @@ function SafirePage() {
       url="labtime.org"
       username="data"
       password="datawp"
-      type="hmi"
       projectId="sl"
+      type="hmi"
       clientId="hmi-oxy"
       pageId="sl">
 

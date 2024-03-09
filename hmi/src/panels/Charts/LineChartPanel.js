@@ -74,7 +74,7 @@ const LineChartPanel = (props) => {
         data: [...updatedDatasets[metric.index].data, {x: dateStr, y: val}],
       };
 
-      // Update state and return new state object
+      // Update actionId and return new actionId object
       return {
         ...prevChartData,
         datasets: updatedDatasets,
@@ -103,15 +103,20 @@ const LineChartPanel = (props) => {
       labels: [],
       datasets: [],
     }
-    var metrics = {}
-    for (var m = 0; m < options.metrics.length; m++) {
-      const metricId = options.metrics[m].metricId.toLowerCase()
-      var metric = findMetric(metricId)
-      metric.metricId = metricId
+    for (var m = 0; m < options.cmetrics.length; m++) {
+      const cmetric = options.cmetrics[m]
+      const metricId = cmetric.metricId.toLowerCase()
+      cmetric.metricId = metricId // ?? why do this? shouldn't it be there already?
+      const projectId = cmetric.projectId || props.options.projectId || global.aaa.projectId
+      const metric = findMetric(projectId, metricId)
+      cmetric.metric = metric
       metric.index = m
-      metrics[metricId] = { ...metric, ...options.metrics[m] }
+//    if (!metrics[projectId]) {
+//      metrics[projectId] = {}
+//    }
+//    metrics[projectId][metricId] = { ...metric, ...options.cmetrics[m] }
 
-      mqttRegisterMetricCB(metricId, metricCB)
+      mqttRegisterMetricCB(projectId, metricId, metricCB)
       chartData.datasets.push({
         label: metric.label || metric.name,
         data: [],

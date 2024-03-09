@@ -176,6 +176,9 @@ const mqttPublish = (_topic, _payload) => {
   if (!mqttClient.connected) {
     console.log(f, "ERROR: mqtt not connected")
   }
+  if (mqttStatusCB) {
+    mqttStatusCB("publish")
+  }
   const res = mqttClient.publish(_topic, _payload)
   return res
 }

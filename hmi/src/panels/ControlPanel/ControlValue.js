@@ -3,21 +3,22 @@ import React, {useState, useEffect} from 'react';
 //import useMousePosition from '../../hooks/useMousePosition';
 import {mqttRegisterMetricCB} from '../../utils/mqttReact'
 import {c2f} from '../../utils/metrics'
+import ControlMetricPopup from "./ControlMetricPopup";
 
-//import './ControlValue.scss'
+import './ControlValue.scss'
 
 const ControlValue = (props) => {
-//const [register, setRegister] = useState(true);
   const [value, setValue] = useState(0);
-//const [metric, setMetric] = useState({});
-
-  const {metricId, metric} = props
+  const {cmetric} = props
+  const metric = cmetric.metric
 
   useEffect(() => {
     const metricCB = (metric, topic, payload, tags, values) => {
 //    const f = "ControlValue::metricCB"
 //    console.log(f,"enter ", topic)
-      if (props.metric.actionId !== tags.ActionId) return
+//    const actionId = topic.split('/')[1]
+      if (!(tags.ActionId in cmetric.metric)) return
+      if (tags.ActionId !== cmetric.actionId) return
       setValue((prevValue) => {
         let val = values.value;
         if (metric.convert === 'c2f') {
@@ -30,9 +31,12 @@ const ControlValue = (props) => {
 //    }
     }
 
-//  setMetric(findMetric(props.metricId))
-    mqttRegisterMetricCB(metricId, metricCB)
-  }, [metricId])
+    mqttRegisterMetricCB(cmetric.projectId, cmetric.metricId, metricCB)
+
+    var v = metric?.v?.[cmetric.actionId]?.["value"]?.val
+    v = parseFloat(v).toFixed(metric.decimals);
+    setValue(v)
+  }, [])
 
 //const [ref, mousePosition] = useMousePosition();
 
@@ -101,17 +105,29 @@ const ControlValue = (props) => {
     el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
   }
 
+  const content = () => {
+    return (
+      <div className="content">
+        <div className="name">{`MetricId: ${metric.name}`}</div>
+        <div className="desc">{`Description: ${metric.desc}`}</div>
+        <div className="clientId">{`ClientId: ${metric[cmetric.actionId].clientId}`}</div>
+        <div className="action">{`Action: ${cmetric.actionId}`}</div>
+        <div className="channel">{`Channel: ${metric[cmetric.actionId].channelType}`}</div>
+      </div>
+    )
+  }
+
   return (
     <div className="control-value"
          title={metric.label}
          onMouseMove={onDrag}
          onMouseDown={onDragStart}
          onMouseUp={onDragEnd}
-         style={{top: props.metric.position[0] + '%',
-                 left:props.metric.position[1] + '%',
-                 backgroundColor:props.metric.color}}
+         style={{top: cmetric.position[0] + '%',
+                 left:cmetric.position[1] + '%',
+                 backgroundColor:metric.color}}
     >
-      <div className="Metric">{value}</div>
+      <ControlMetricPopup title={metric.label || metric.name} content={content()} trigger={value}/>
     </div>
   )
 }

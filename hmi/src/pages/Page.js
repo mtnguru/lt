@@ -36,13 +36,12 @@ function Page() {
       url="labtime.org:8084"
       username="data"
       password="datawp"
-      projectId="cb"
       clientId="hmi-cb"
       type="hmi"
       pageId="cb">
       <Box className="page cabin-page">
         <header>
-          <Heading>Red Feather</Heading>
+          <Heading>Red Feather Cabin</Heading>
         </header>
         <Flex className="cabin-flex">
           <Box className="left-col">

@@ -66,7 +66,7 @@ function MqttFilterClient(props) {
         <MqttClientList list={(global.aaa.clients) ? global.aaa.clients : {}} onChangeH={onChangeH} />
       </Box>
     </Box>
-  );
+  )
 }
 
 export default MqttFilterClient

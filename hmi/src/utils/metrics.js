@@ -4,12 +4,12 @@
 
 
 
-const findMetric = (_metricId) => {
+const findMetric = (_projectId, _metricId) => {
   const f = "metrics::findMetric"
   try {
     const metricId = _metricId.toLowerCase()
-    if (global.aaa.metrics && metricId in global.aaa.metrics) {
-      const metric = global.aaa.metrics[metricId]
+    if (global.aaa.metrics?.[_projectId]?.[metricId]) {
+      const metric = global.aaa.metrics?.[_projectId]?.[metricId]
       metric.metricId = metricId
       return metric
     }

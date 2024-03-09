@@ -16,41 +16,42 @@ import { Container,
 
 import './ControlPanel.scss'
 import MqttItem from "../MqttPanel/MqttItem";
-import {mqttRegisterMetricCB} from "../../utils/mqttReact";
+//import {mqttRegisterMetricCB} from "../../utils/mqttReact";
 
 var initialized = false
 
 const ControlPanel = (props) => {
   const regions = props.options.regions
-  const top = regions?.top?.metrics || {}
-  const left = regions?.left?.metrics || {}
-  const right = regions?.right?.metrics || {}
-  const bottom = regions?.bottom?.metrics || {}
+  const top = regions?.top?.cmetrics || {}
+  const left = regions?.left?.cmetrics || {}
+  const right = regions?.right?.cmetrics || {}
+  const bottom = regions?.bottom?.cmetrics || {}
 
   if (!initialized) {
+    // Add the metric and projectId to each cmetric
     initialized = true
     if (Object.keys(top).length) {
-      top.map((metric,index) => {
-        var fmetric = findMetric(metric.metricId)
-        top[index] = {...fmetric, ...metric}
+      top.map((cmetric,index) => {
+        cmetric.projectId = cmetric.projectId || props.options.projectId || global.aaa.projectId
+        cmetric.metric = findMetric(cmetric.projectId, cmetric.metricId)
       })
     }
     if (Object.keys(left).length) {
-      left.map((metric,index) => {
-        var fmetric = findMetric(metric.metricId)
-        left[index] = {...fmetric, ...metric}
+      left.map((cmetric,index) => {
+        cmetric.projectId = cmetric.projectId || props.options.projectId || global.aaa.projectId
+        cmetric.metric = findMetric(cmetric.projectId, cmetric.metricId)
       })
     }
     if (Object.keys(right).length) {
-      right.map((metric,index) => {
-        var fmetric = findMetric(metric.metricId)
-        right[index] = { ...fmetric, ...metric }
+      right.map((cmetric,index) => {
+        cmetric.projectId = cmetric.projectId || props.options.projectId || global.aaa.projectId
+        cmetric.metric = findMetric(cmetric.projectId, cmetric.metricId)
       })
     }
     if (Object.keys(bottom,).length) {
-      bottom.map((metric,index) => {
-        var fmetric = findMetric(metric.metricId)
-        bottom[index] = { ...fmetric, ...metric }
+      bottom.map((cmetric,index) => {
+        cmetric.projectId = cmetric.projectId || props.options.projectId || global.aaa.projectId
+        cmetric.metric = findMetric(cmetric.projectId, cmetric.metricId)
       })
     }
   }
@@ -64,24 +65,24 @@ const ControlPanel = (props) => {
       { regions.header && <h3>Control panel</h3> }
       <Box className="control-top">
         { top.length > 0 && top.map(
-          metric => <ControlWidget key={metric.metricId + metric.actionId} projectId={props.options.projectId} metric={metric} />)
+          (cmetric,index) => <ControlWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric} />)
         }
       </Box>
       <Flex className="control-middle">
         <Box className="control-left">
           { left.length > 0 && left.map(
-            metric => <ControlWidget key={metric.metricId + metric.actionId} projectId={props.options.projectId} metric={metric} />)
+            (cmetric,index) => <ControlWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric} />)
           }
         </Box>
         <Box className="control-right">
           { right.length > 0 && right.map(
-            metric => <ControlWidget key={metric.metricId + metric.actionId} projectId={props.options.projectId} metric={metric} />)
+            (cmetric,index) => <ControlWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric} />)
           }
         </Box>
       </Flex>
       <Box className="control-bottom">
         { bottom.length > 0 && bottom.map(
-          metric => <ControlWidget key={metric.metricId + metric.actionId} projectId={props.options.projectId} metric={metric} /> )
+          (cmetric,index) => <ControlWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric} /> )
         }
       </Box>
     </Container>

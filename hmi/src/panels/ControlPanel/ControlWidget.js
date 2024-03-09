@@ -10,9 +10,9 @@ import ControlMetric from './ControlMetric'
 import './ControlWidget.scss'
 
 const ControlWidget = (props) => {
-  const {projectId, metric} = props
+  const {cmetric} = props
+  const metric = cmetric.metric
   const [value, setValue] = useState(0);
-  const metricId = metric.metricId
 
   useEffect(() => {
     const metricCB = (metric, topic, payload, tags, values) => {
@@ -30,9 +30,8 @@ const ControlWidget = (props) => {
 //    }
     }
 
-//  setMetric(findMetric(props.metricId))
-    mqttRegisterMetricCB(metricId, metricCB)
-  }, [metricId])
+    mqttRegisterMetricCB(cmetric.projectId, cmetric.metricId, metricCB)
+  }, [])
 
 //const [ref, mousePosition] = useMousePosition();
 
@@ -102,18 +101,18 @@ const ControlWidget = (props) => {
   }
 
   return (
-    <div className="control-widget"
+    <div className="control-widget mqtt-action-bg"
          onMouseMove={onDrag}
          onMouseDown={onDragStart}
          onMouseUp={onDragEnd}
-         style={{ /* top: props.metric.position[0] + '%',
-                 left:props.metric.position[1] + '%', */
-                 backgroundColor:props.metric.color}}
+         style={{ /* top: metric.position[0] + '%',
+                     left:metric.position[1] + '%', */
+                  backgroundColor:metric.color}}
     >
-      { metric.title && <div className="title">{ metric.title }</div> }
-      { metric.component === 'ControlLabel' && <div>ControlLabel</div> }
-      { metric.component === 'ControlSlider' && <ControlSlider metric={props.metric}></ControlSlider> }
-      { metric.component === 'ControlMetric' && <ControlMetric metric={props.metric}></ControlMetric> }
+      {/* { cmetric.title && <div className={`title ${cmetric.actionId}`}>{metric.title}</div> } */}
+      { cmetric.component === 'ControlLabel' && <div>ControlLabel</div> }
+      { cmetric.component === 'ControlSlider' && <ControlSlider cmetric={cmetric}></ControlSlider> }
+      { cmetric.component === 'ControlMetric' && <ControlMetric cmetric={cmetric}></ControlMetric> }
     </div>
   )
 }

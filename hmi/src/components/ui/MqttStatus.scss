@@ -1,0 +1,48 @@
+@import "../../styles/base";
+@import "../../styles/colors";
+
+.mqtt-status-bar {
+  position: relative;
+  top: 27px;
+  margin-bottom: -39px;
+  float: right;
+  .label {
+    display: inline-block;
+    margin-right: 20px;
+    margin-top: 5px;
+    vertical-align: middle;
+  }
+  .mqtt-status {
+    margin-top: -12px;
+    display: inline-block;
+    text-align: center;
+    width: 90px;
+    border-radius: 3px;
+    padding: 4px 10px;
+    color: white;
+    font-size: 90%;
+    vertical-align: middle;
+  }
+  .action {
+    display: inline-block;
+    margin-right: 5px;
+    border-radius: 5px;
+    .indicator {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      margin: 0 4px;
+      border-radius: 50%;
+      border: 2px solid #aaa;
+      &.message.inactive {
+        background-color: inherit;
+        border: 2px solid #555;
+      }
+      &.publish.inactive {
+        background-color: inherit;
+        border: 2px solid #555;
+      }
+    }
+
+  }
+}

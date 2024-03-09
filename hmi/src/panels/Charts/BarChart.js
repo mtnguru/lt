@@ -77,8 +77,7 @@ const BarChart = (props) => {
    */
 
   useEffect(() => {
-//  setMetric(findMetric(metricId))
-    mqttRegisterMetricCB(metricId, metricCB)
+    mqttRegisterMetricCB(projectId,metricId, metricCB)
   }, [metricId, metricCB])
 
   const options = {

@@ -140,7 +140,11 @@ const unsubscribe = (topics) => {
 }
 
 const publish = (topic, payload) => {
-  const res = mqttClient.publish(topic, payload)
+  if (mqttClient) {
+    const res = mqttClient.publish(topic, payload)
+  } else {
+    console.log('NOTICE mqttClient has not been created yet')
+  }
 };
 
 /**

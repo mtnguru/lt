@@ -119,7 +119,7 @@ function MqttManager (props) {
     mqttRegisterTopicCB(ckTopic("register","rsp"), loadConfigCB,{})
 
     // Request Config
-    const payloadStr = `{"cmd": "requestConfig", "mqttClientId": "${global.aaa.mqttClientId}", "type": "${props.type}", "clientId": "${global.aaa.clientId}", "projectId": "${props.projectId || "UNK"}"}`
+    const payloadStr = `{"cmd": "requestConfig", "mqttClientId": "${global.aaa.mqttClientId}", "type": "${props.type}", "clientId": "${global.aaa.clientId}", "projectId": "${props.projectId}"}`
     mqttPublish(ckTopic("publish","adm"), payloadStr)
   }, [props.projectId, props.type, loadConfigCB])
 

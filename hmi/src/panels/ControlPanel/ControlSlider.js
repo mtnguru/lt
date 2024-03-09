@@ -20,13 +20,12 @@ import "./ControlSlider.scss"
 
 const ControlSlider = (props) => {
 
-  const metricId = props.metric.metricId
-  const projectId = props.projectId
-  const actionId = props.metric.actionId || 'UNK'
+  const metricId = props.cmetric.metricId
+  const projectId = props.cmetric.projectId
+  const actionId = props.cmetric.actionId || 'UNK'
 
-  const v = props.metric?.v?.[actionId]?.["value"]?.val
+  const v = props.cmetric.metric?.v?.[actionId]?.["value"]?.val
   const [val, setVal] = useState(v);
-
   const metricCB = useCallback((metric, topic, payload, tags, values) => {
     const f = "ControlMetric::metricCB"
     const [,msgActionId,,userId] = topic.split('/')
@@ -43,36 +42,35 @@ const ControlSlider = (props) => {
 
   useEffect(() => {
     const f = 'ControlSlider::useEffect'
-    const m = findMetric(metricId)
     var err;
-    if (!m) {
+    if (!props.cmetric.metric) {
       err = `Metric not found: ${metricId}`
     } else {
-      if (!(actionId in props.metric)) {
+      if (!(actionId in props.cmetric.metric)) {
         err = `${metricId} - Add ${actionId} section to configuration`
       } else {
-        if (!('min' in props.metric[actionId])) {
+        if (!('min' in props.cmetric.metric[actionId])) {
           err = `${metricId} - ${actionId} -- Add 'min' to slider configuration`
         }
-        if (!('max' in props.metric[actionId])) {
+        if (!('max' in props.cmetric.metric[actionId])) {
           err = `${metricId} - ${actionId} -- Add 'max' to slider configuration`
         }
-        if (!('step' in props.metric[actionId])) {
+        if (!('step' in props.cmetric.metric[actionId])) {
           err = `${metricId} - ${actionId} -- Add 'step' to slider configuration`
         }
       }
     }
-    mqttRegisterMetricCB(metricId, metricCB)
+    mqttRegisterMetricCB(projectId,metricId, metricCB)
     if (err) {
       mgError(0, f, err)
     }
-  }, [props.metric, metricId, metricCB, actionId])
+  }, [props.cmetric, metricId, metricCB, actionId])
 
   const onKeyH = (e) => {
     if (e.key === "ArrowRight") {
-      setVal((prev) => Math.min(prev + props.metric[actionId].step, 100));
+      setVal((prev) => Math.min(prev + props.cmetric.metric[actionId].step, 100));
     } else if (e.key === "ArrowLeft") {
-      setVal((prev) => Math.max(prev - props.metric[actionId].step, 10));
+      setVal((prev) => Math.max(prev - props.cmetric.metric[actionId].step, 10));
     }
   }
 
@@ -80,18 +78,18 @@ const ControlSlider = (props) => {
     const f = "ControlSliderPanel::onChange"
     if (!global.aaa.topics.publish[actionId]) return;
     console.log(f,'onChange', _val);
-    if (!props.metric) {
+    if (!props.cmetric.metric) {
       mgError(0, f, "Metric not found: ")
       return;
     }
-    setVal(parseFloat(_val).toFixed(props.metric.decimals))
-    const topic = props.metric[actionId].topic.replace('DUSERID', `${global.aaa.userId}-${global.aaa.mqttClientId}`);
+    setVal(parseFloat(_val).toFixed(props.cmetric.metric.decimals))
+    const topic = props.cmetric.metric[actionId].topic.replace('DUSERID', `${global.aaa.userId}-${global.aaa.mqttClientId}`);
 
-    let payload = `${props.metric[actionId].tags} value=${parseFloat(_val).toFixed(props.metric.decimals)}`
+    let payload = `${props.cmetric.metric[actionId].tags} value=${parseFloat(_val).toFixed(props.cmetric.metric.decimals)}`
     mqttPublish(topic, payload)
   }
 
-  if (!props.metric) {
+  if (!props.cmetric.metric) {
     return (
       <Box>
         <div>Metric not found {metricId}</div>
@@ -101,18 +99,15 @@ const ControlSlider = (props) => {
 
   return (
     <Box className="control-slider">
-      {props.title && <h4 className="title">{props.title}</h4>}
+      {props.cmetric.title && <h4 className={`title ${actionId}`}>{props.cmetric.title}</h4>}
       <Flex w="full">
         <NumberInput
-          min={props.metric[actionId].min}
-          max={props.metric[actionId].max}
-          step={props.metric[actionId].step}
-          w="6em"
-          h="30px"
-          size="sm"
-          mr='1rem'
+          min={props.cmetric.metric[actionId].min}
+          max={props.cmetric.metric[actionId].max}
+          step={props.cmetric.metric[actionId].step}
           value={val}
           onChange={onChangeH}
+          className="number"
         >
           <NumberInputField/>
           <NumberInputStepper>
@@ -125,9 +120,9 @@ const ControlSlider = (props) => {
             flex='1'
           >
             <Slider
-              min={props.metric[actionId].min}
-              max={props.metric[actionId].max}
-              step={props.metric[actionId].step}
+              min={props.cmetric.metric[actionId].min}
+              max={props.cmetric.metric[actionId].max}
+              step={props.cmetric.metric[actionId].step}
               size="sm"
               focusThumbOnChange={false}
               value={val}
@@ -143,9 +138,9 @@ const ControlSlider = (props) => {
             </Slider>
 
             <Flex mt={-2} justifyContent="space-between">
-              <Text verticalAlign="middle" fontSize="xs" mb="1">{props.metric[actionId].min}</Text>
-              <Text verticalAlign="middle" fontSize="xs" mb="1">{props.metric[actionId].min + (props.metric[actionId].max-props.metric[actionId].min)/2}</Text>
-              <Text verticalAlign="middle" fontSize="xs" mb="1">{props.metric[actionId].max}</Text>
+              <Text verticalAlign="middle">{props.cmetric.metric[actionId].min}</Text>
+              <Text verticalAlign="middle">{props.cmetric.metric[actionId].min + (props.cmetric.metric[actionId].max-props.cmetric.metric[actionId].min)/2}</Text>
+              <Text verticalAlign="middle">{props.cmetric.metric[actionId].max}</Text>
             </Flex>
           </Box>
         </Flex>

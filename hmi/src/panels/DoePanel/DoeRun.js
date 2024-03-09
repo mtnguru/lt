@@ -37,7 +37,7 @@ const DoeRun = (props) => {
     // must use staticm - static is a reserved word
     const staticm = {}
     for (let metricId in global.aaa.doe.static) {
-      const metric = findMetric(metricId)
+      const metric = findMetric(props.projectId, metricId)
       if (!metric) return;
       staticm[metricId] = getValue(metric)
     }

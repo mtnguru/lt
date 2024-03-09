@@ -185,7 +185,7 @@ const MqttItem = (props) => {
             lshort = ` ${payload.msg || payload.content}`
             setType(payload.type)
           } else if (props.item.actionId === 'alm') {
-            lshort = `alm ${payload.metricId}`
+            lshort = `alm ${payload.metricId} - ${payload.initialActionId} > ${payload.actionId} -- ${payload.value}`
           } else {
             lshort = props.item.actionId
           }
