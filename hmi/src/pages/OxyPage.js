@@ -16,8 +16,8 @@ function OxyPage() {
       url="labtime.org:8081"
       username="data"
       password="datawp"
-      type="hmi"
       projectId="oxy"
+      type="hmi"
       clientId="hmi-oxy"
       pageId="oxy">
       <Flex w="100%" className="page oxy-page flex">

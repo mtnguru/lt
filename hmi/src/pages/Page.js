@@ -36,7 +36,6 @@ function Page() {
       url="labtime.org:8084"
       username="data"
       password="datawp"
-      projectId="cb"
       clientId="hmi-cb"
       type="hmi"
       pageId="cb">

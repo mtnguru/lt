@@ -2,7 +2,6 @@
 @import "../../styles/colors";
 .control-slider {
   display: inline-block;
-  font-size: 75%;
   padding: 0 10px;
   width: 100%;
   label {
@@ -33,7 +32,6 @@
     margin-left: 1rem;
     display: inline-block;
     position: relative;
-    font-size: 85%;
     width: calc(100% - 70px);
     max-width: 300px;
 
@@ -59,8 +57,14 @@
     }
   }
 
+  .number {
+    margin-right: 20px;
+
+  }
   input {
     border: 1px solid $input-bd-color;
-    width: 100%;
+    padding: 1px 5px;
+    width: 5vw;
+    margin-right: 10px;
   }
 }

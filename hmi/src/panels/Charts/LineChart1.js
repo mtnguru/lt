@@ -47,7 +47,7 @@ const LineChartPanel = (props) => {
   useEffect(() => {
     var metrics = {}
     for (var metricId of metricIds)  {
-      metrics[metricId] = findMetric(metricId)
+      metrics[metricId] = findMetric(projectId, metricId)
     }
     setMetrics(metrics)
   }, [metricIds])
@@ -72,7 +72,7 @@ const LineChartPanel = (props) => {
   }, [props, actionId])
 
   useEffect(() => {
-//  mqttRegisterMetricCB(metricId, metricCB)
+//  mqttRegisterMetricCB(projectId,metricId, metricCB)
   }, [metricCB])
 
   const date=Date.now();

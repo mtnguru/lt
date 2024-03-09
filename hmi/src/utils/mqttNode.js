@@ -171,13 +171,13 @@ const registerTopicCB = (topic, cb) => {
  * @param metric
  * @param cb
  */
-const registerMetricCB = (metricId, cb, func) => {
+const registerMetricCB = (metricId, cb, actionId) => {
   const f = "mqttNode::registerMetricCB"
   // If necessary intialize new metric
   try {
     const id = metricId.toLowerCase()
     var metric;
-    switch (func) {
+    switch (actionId) {
       case 'inp': metric = global.aaa.inp[id]; break;
       case 'out': metric = global.aaa.out[id]; break;
       case 'hum': metric = global.aaa.hum[id]; break;
@@ -215,7 +215,7 @@ const processInflux = (topic, payloadStr) => {
   const {tags, values} = extractFromTags(payloadStr)
   if (tags["Metric"]) {
     const metricId = tags["Metric"]
-    const metric = findMetric(metricId)
+    const metric = findMetric(projectId,metricId)
     if (metric == null) {
       msg(1,f,ERROR, "Metric not found ",metricId);
     }
@@ -265,17 +265,17 @@ const processInflux = (topic, payloadStr) => {
 const processCB = (_topic, _payload) => {
   const f = 'mqttNode::processCB - '
   let payloadStr = _payload.toString();
-  let func = _topic.split('/')[2]
+  let actionId = _topic.split('/')[2]
 //console.log(f, 'enter ', _topic)
 
   try {
-    if (func === 'inp' ||
-        func === 'out' ||
-        func === 'hum' ||
-        func === 'upper' ||
-        func === 'lower' ||
-        func === 'high' ||
-        func === 'low') {
+    if (actionId === 'inp' ||
+        actionId === 'out' ||
+        actionId === 'hum' ||
+        actionId === 'upper' ||
+        actionId === 'lower' ||
+        actionId === 'high' ||
+        actionId === 'low') {
       processInflux(_topic, payloadStr)
     }
     for (let itopic in topicsCB) {

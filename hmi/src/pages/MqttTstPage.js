@@ -9,6 +9,7 @@ function MqttPage() {
       url="labtime.org:8084"
       username="data"
       password="datawp"
+      projectId="all"
       clientId="hmi-mqtt-tst"
       type="mqtt"
       pageId="hmi">

@@ -1,6 +1,6 @@
 // @import "styles/colors.scss";
 $fg-color: #f0f0ff;
-$topic-fg-color: #fc5;
+$topic-fg-color: #fd9;
 $date-fg-color: #ee0;
 $title-fg-color: #ddff88;
 $title2-fg-color: #88ffaa;
@@ -129,14 +129,14 @@ $metric-fg-color: #ffffff;
   .all                { background-color: #333; }
   .Activity,  .act    { background-color: #632; }
   .Alarm,     .alm    { background-color: #b40 }
-  .Input,     .inp    { background-color: #249; }
-  .Output,    .out    { background-color: #56c; }
-  .Human,     .hum    { background-color: #952; }
-  .LowerRange,.low    { background-color: #717; }
-  .HighRange, .high   { background-color: #a0a; }
-  .LowerAlarm,.lower  { background-color: #700 }
-  .UpperAlarm,.upper  { background-color: #a00; }
-  .Command,   .cmd    { background-color: #428; }
+  .Input,     .inp    { background-color: #14a; }
+  .Output,    .out    { background-color: #48e; }
+  .Human,     .hum    { background-color: #a66a2a; }
+  .LowerRange,.low    { background-color: #680; }
+  .HighRange, .high   { background-color: #8a0}
+  .LowerAlarm,.lower  { background-color: #800 }
+  .UpperAlarm,.upper  { background-color: #b00; }
+  .Command,   .cmd    { background-color: #539; }
   .Response,  .rsp    { background-color: #74a; }
   .Get,       .get    { background-color: #252; }
   .Send,      .snd    { background-color: #292; }

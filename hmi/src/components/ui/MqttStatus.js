@@ -9,19 +9,19 @@ var initialized = false
 function MqttStatus(props) {
 
   const [status, setStatus] = useState('unknown')
-  const [messageActive, setMessageActive] = useState('inactive')
-  const [publishActive, setPublishActive] = useState('inactive')
+  const [messageAction, setMessageAction] = useState('inactive')
+  const [publishAction, setPublishAction] = useState('inactive')
 
-  const statusCB = (status) => {
+  const statusCB = (status, actionId) => {
     if (status === 'message') {
-      setMessageActive('active')
+      setMessageAction(actionId)
       setTimeout(() => {
-        setMessageActive('inactive')
+        setMessageAction('inactive')
       }, 750)
     } else if (status === 'publish') {
-      setPublishActive('active')
+      setPublishAction(actionId)
       setTimeout(() => {
-        setPublishActive('inactive')
+        setPublishAction('inactive')
       },750)
     } else {
       setStatus(status)
@@ -34,10 +34,10 @@ function MqttStatus(props) {
   }
 
   return (
-    <div className="mqtt-status-bar">
+    <div className="mqtt-status-bar mqtt-action-bg">
       <div className={'action'}>
-        <span className={`message indicator ${messageActive}`} />
-        <span className={`publish indicator ${publishActive}`} />
+        <span className={`publish indicator ${publishAction}`} />
+        <span className={`message indicator ${messageAction}`} />
       </div>
       <div className={`mqtt-status ${status}`}>{status}</div>
     </div>
