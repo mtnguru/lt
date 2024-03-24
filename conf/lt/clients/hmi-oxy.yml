@@ -39,7 +39,7 @@ topics:
     lower: PROJECTID/lower/CLIENTID/DUSERID/EDGEID
     high: PROJECTID/high/CLIENTID/DUSERID/EDGEID
     low: PROJECTID/low/CLIENTID/DUSERID/EDGEID
-metrics: project
+cmetrics: project
 actionIds: {}
 statusDefault:
   debugLevel: 0

@@ -12,7 +12,7 @@ topics:
     out: PROJECTID/out/CLIENTID
     hum: PROJECTID/hum/CLIENTID/USERID/oxy_edge
     alm: PROJECTID/alm/CLIENTID
-metrics:
+cmetrics:
   all
 statusDefault:
   debugLevel: 0
