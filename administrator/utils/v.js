@@ -3,23 +3,7 @@
 const {msg} = require("./msg")
 const yaml = require('js-yaml')
 
-/*
-const fs = require('fs')
-const YAML = require('yaml-parser')
-const path = require('path')
-require('dotenv').config();
-
-const mqttNode  = require('./utils/mqttNode')
-const {ckTopic, completeAllTopics, completeTopic}  = require('./utils/topics')
-const influx = require("./utils/influx")
-const {currentDate} = require("./utils/tools")
-const os = require('os')
-
-const seedrandom  = require('seedrandom')
-const clientId = "administrator"
-const generator = seedrandom(Date.now())
- */
-
+const mqttNode  = require('./mqttNode')
 
 const fm = "v:main - "
 
