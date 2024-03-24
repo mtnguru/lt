@@ -5,11 +5,11 @@ import { Route, Routes } from 'react-router-dom'
 import { CSSReset, Box } from '@chakra-ui/react';
 
 import CabinPage from     './pages/CabinPage'
-//import Page from          './pages/Page'
-//import SafirePage from    './pages/SafirePage'
-//import OxyPage from       './pages/OxyPage'
+import OxyPage from       './pages/OxyPage'
 import MqttPage from      './pages/MqttPage'
 import MqttTstPage from   './pages/MqttTstPage'
+//import Page from          './pages/Page'
+//import SafirePage from    './pages/SafirePage'
 
 import MainNavigation from './components/layout/MainNavigation'
 import Footer from './panels/Footer/Footer'
@@ -28,9 +28,9 @@ function App() {
           <Route path='/cabin'    element={<CabinPage />}  />
           <Route path='/mqtt'     element={<MqttPage />}  />
           <Route path='/mqtt-tst' element={<MqttTstPage />}  />
+          <Route path='/oxy'      element={<OxyPage />}  />
           {/*
             <Route path='/lab'      element={<Page />}  />
-            <Route path='/oxy'      element={<OxyPage />}  />
             <Route path='/safire'   element={<SafirePage />}  />
           */}
           <Route path='/cabin'    element={<CabinPage />}  />

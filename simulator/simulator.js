@@ -13,7 +13,7 @@ require('dotenv').config();
 
 const mqttNode  = require('./utils/mqttNode')
 const groov_api = require('./groov_api');
-const { msg, setDebugLevel } = require('./utils/msg')
+const { msg, msgE, setDebugLevel } = require('./utils/msg')
 const os = require('os')
 let started = false
 const sampling = false
@@ -70,11 +70,11 @@ global.aam = {
 const getConfig = () => {
   const f = 'groov::getConfig'
 
-  msg(2, f, DEBUG, 'enter ')
+  msg(2, f, msgE.debug, 'enter ')
   const payloadStr = `{\"clientId\": \"${clientId}\", \"cmd\": \"requestConfig\"}`
   mqttNode.publish(ckTopic("publish","adm"), payloadStr)
   mqttNode.registerTopicCB(ckTopic("subscribe","rsp"), loadConfigCB)
-  msg(2, f,DEBUG,'exit')
+  msg(2, f,msgE.debug,'exit')
 }
 
 const getStatus = () => {
@@ -150,13 +150,13 @@ const cmdCB = (_topic, _payload) => {
       mqttNode.publish(global.aaa.topics.publish.rsp, JSON.stringify(out))
     }
   } catch(err) {
-    msg(0,f, ERROR, "Error processing:", _topic, "Error", err);
+    msg(0,f, msgE.error, "Error processing:", _topic, "Error", err);
   }
 }
 
 const loadConfigCB = (_topic, _payload) => {
   const f = "groov::loadConfigCB"
-  msg(2, f, DEBUG, 'enter ', _topic)
+  msg(2, f, msgE.debug, 'enter ', _topic)
 
   var config = JSON.parse(_payload.toString())
   if (config.rsp !== 'requestConfig') return;
@@ -187,7 +187,7 @@ const loadConfigCB = (_topic, _payload) => {
  */
 const startGroov = () => {
   const f = 'groov::startGroov'
-  msg(2, f, DEBUG,'enter')
+  msg(2, f, msgE.debug,'enter')
   if (!started) {  // Prevents multiple samplers from being started
     started = true
     readInputs();
@@ -196,7 +196,7 @@ const startGroov = () => {
 
 const outputCB = (metric, _topic, _payload, tags, values) => {
   const f = "groov::outputCB"
-  msg(2,f,DEBUG, "enter ", _topic)
+  msg(2,f,msgE.debug, "enter ", _topic)
 
   let value;
   if (values.value === 'On') {

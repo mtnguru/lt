@@ -1,5 +1,6 @@
 name: cabin image
-metrics:
+projectId: cb
+cmetrics:
   - metricId: middle_window_k_f
     actionId: inp
     component: ControlValue

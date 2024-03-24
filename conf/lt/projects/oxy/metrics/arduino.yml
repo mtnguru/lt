@@ -14,6 +14,7 @@ Outside_Bunkhouse_K_F:
   label: Bunkhouse
   desc: Bunkhouse - K thermocouple
   decimals: 2
+  color: '#00aadd'
   inp:
     clientId: arduino2
     channelType: max6675
@@ -24,8 +25,9 @@ Outside_FrontDoor_OW_F:
   label: Arduino6 test - Onewire
   desc: Arduino6 test - Onewire
   decimals: 2
+  color: '#0088ff'
   inp:
     clientId: arduino6
     channelType: onewire_f
     channel: 14
-    deviceId: [40,173,201,67,212,225,61,196] 
+    deviceId: [40,173,201,67,212,225,61,196]

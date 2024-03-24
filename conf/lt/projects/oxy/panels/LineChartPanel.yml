@@ -1,0 +1,81 @@
+name: Dude Chart 
+projectId: oxy
+cmetrics:
+  - metricId: ps_na_human_v
+    actionId: hum
+  - metricId: ps_na_human_a
+    actionId: hum
+  - metricId: ez_na_mtr_c
+    actionId: hum
+  - metricId: ez_na_smarttrack_slpm
+    actionId: hum
+  - metricId: outside_bunkhouse_k_f
+    actionId: inp
+  - metricId: outside_frontdoor_ow_f
+    actionId: inp
+
+# chartJs configuration
+backgroundColor: "yellow"
+responsive: true,
+interaction:
+  mode: index
+  intersect: false
+stacked: false
+plugins:
+  title:
+    display: true
+    text: Current Readings 
+    fontColor: green
+  legend:
+    display: true
+    position: bottom
+    labels:
+      fontSize: 5
+      boxWidth: 10
+      padding: 5
+scales:
+  x:
+    type: time
+    display: true,
+    format: DD hh:mm:ss
+    time:
+      unit: minute
+      displayFormats:
+        day: MMM D
+        hour: hh:mm
+        minute: hh:mm
+        second: hh:mm
+      tooltipFormat: DD hh:mm:ss
+    grid:
+      display: true
+      backgroundColor: white
+    scaleLabel:
+      display: true
+      labelString: 'Time'
+      fontColor: 'white'
+#   min: now - 1000000
+#   max: now
+  yleft:
+    type: linear
+    display: true,
+    position: left
+    grid:
+      display: true
+      backgroundColor: white
+    scaleLabel:
+      display: true
+      labelString: Temperature
+      fontColor: white
+#   min: 50
+#   max: 80
+  yright:
+    type: linear
+    display: true,
+    position: right
+    grid:
+      display: false
+    scaleLabel:
+      display: false
+      fontColor: 'white'
+#   grid:
+#     drawOnChartArea: true

@@ -1,14 +1,21 @@
-// File: administrator.js
-
 
 const fs = require('fs')
 const YAML = require('yaml-parser')
 const path = require('path')
-require('dotenv').config();
+require('dotenv').config()
 
 const mqttNode  = require('./utils/mqttNode')
-const {ckTopic, completeAllTopics, completeTopic}  = require('./utils/topics')
-const {msg, setDebugLevel} = require("./utils/msg")
+const {ckTopic, completeAllTopics, completeTopic, ActionIds}  = require('./utils/topics')
+const {
+  addMetricValues,
+  checkMetricValues,
+  publishMetricValues,
+  getMetricV,
+  setDefaults,
+  haveValue,
+}  = require('./utils/v')
+
+const {msg, msgE, setDebugLevel} = require("./utils/msg")
 const influx = require("./utils/influx")
 const {currentDate} = require("./utils/tools")
 const os = require('os')
@@ -21,14 +28,12 @@ var actionIds;
 
 const fm = "administrator:main - "
 
-var V = {}
-const ActionIds = ['inp', 'hum', 'out', 'upper', 'lower', 'high', 'low']
 
 var adminId = "none"
 if (process.argv[2]) {
   adminId = process.argv[2]
 } else {
-  console.log('ERROR: No adminId specified')
+  console.log('msgE.error: No adminId specified')
   process.exit(1);
 }
 
@@ -38,7 +43,7 @@ const mqttClientId = `${clientId}_${adminId}_${generator().toString(16).slice(10
 global.aaa = {
   startTime: Date.now(),
   status: {
-    debugLevel: 0,
+    debugLevel: 1,
     mqttConnected: 0,
     mqttSubscribed: 0,
     mqttUnsubscribed: 0,
@@ -73,7 +78,7 @@ global.aas = {
  */
 const findClient = (id) => {
   const f = 'administrator:findClient'
-  msg(2,f,DEBUG,'enter',id);
+  msg(2,f,msgE.error,'enter',id);
 
   // Find the client first by clientId, then by searching the IP's of all devices.
   var client;
@@ -84,10 +89,10 @@ const findClient = (id) => {
     client = global.aaa.ips[id]
   }
   if (!client) {
-    msg(0, f, WARNING, 'Cannot find client', id)
+    msg(0, f, msgE.warning, 'Cannot find client', id)
     return null;
   }
-  msg(2,f,DEBUG, 'exit');
+  msg(2,f,msgE.error, 'exit');
   return client;
 }
 
@@ -110,21 +115,12 @@ const getStatus = () => {
   return {
     rsp: "requestStatus",
     clientId: global.aaa.clientId,
-    adminId: adminId,
+    userId: global.aaa.userId,
     mqttClientId: mqttClientId,
     mqttConnected: global.aaa.status.mqttConnected,
     mqttSubscribe: global.aaa.status.mqttSubscribe,
     mqttUnsubscribe: global.aaa.status.mqttUnsubscribe,
     hostname: os.hostname(),
-    debugLevel: global.aaa.status.debugLevel,
-    uptime: uptime,
-
-    clientId: global.aaa.clientId,
-    userId: global.aaa.userId,
-    mqttClientId: global.aaa.mqttClientId,
-    mqttConnected: global.aaa.status.mqttConnected,
-    mqttSubscribe: global.aaa.status.mqttSubscribe,
-    mqttUnsubscribe: global.aaa.status.mqttUnsubscribe,
     debugLevel: global.aaa.status.debugLevel,
     uptime: uptime,
   }
@@ -184,136 +180,6 @@ const addStatus = (out) => {
 }
 
 /**
- * addMetricValues -- Add Metric values to client config
- *
- * @param projectId
- * @param metricId
- * @param actionId
- * @param values
- * @param userId
- */
-const addMetricValues = (projectId, metricId, actionId, values, userId) => {
-  const f = "administrator::addMetricValues"
-  try {
-    // Add object to V tree if necessary
-    if (!V?.[projectId]?.[metricId]?.[actionId]) {
-      if (!(projectId in V)) {
-        V[projectId] = {[metricId]: {[actionId]: {}}}
-      } else if (!(metricId in V[projectId])) {
-        V[projectId][metricId] = {[actionId]: {}}
-      } else if (!(actionId in V[projectId][metricId])) {
-        V[projectId][metricId][actionId] = {}
-      }
-    }
-
-    // for each valueId in values array
-    for (var valueId in values) {
-      // Add a new v object to the tree for each valueId
-      // If there is already a valueId - copy new properties - don't touch state and stale
-      if (valueId in V[projectId][metricId][actionId]) {
-        V[projectId][metricId][actionId][valueId].val = values[valueId].val
-        V[projectId][metricId][actionId][valueId].date = values[valueId].date
-        V[projectId][metricId][actionId][valueId].userId = values[valueId].userId
-      } else { // if there is no valueId
-        V[projectId][metricId][actionId][valueId] = values[valueId]
-        V[projectId][metricId][actionId][valueId].state = 'unk'
-        V[projectId][metricId][actionId][valueId].stale = 'unk'
-      }
-    }
-  } catch(err) {
-    console.error(f, err)
-  }
-}
-
-/**
- * checkMetricValues - check inp, hum, out against upper, lower, high, low
- *   Set the valueState for each, if changed then send a message
- *
- * @param _projectId
- * @param _metricId
- *
- * Check the status of a metric and publish a message if the status changes
- * Check against high and low first
- * Then check upper alarm and lower alarm
- * If current status is different then
- *   publish a message to the bus
- */
-const checkMetricValues = (_projectId, _metricId) => {
-  const f = 'administrator::checkMetricValues'
-
-  try {
-    var vm = V[_projectId][_metricId];
-    const actionIds = ['inp', 'out', 'hum']
-    for (var s in actionIds) {
-      const actionId = actionIds[s]
-      if (vm[actionId]) {
-        var state = 'ok'
-        const val = vm[actionId].value.val
-        var setPoint = -999;
-        if (vm.high && val > vm.high.value.val) {          // high range
-          setPoint = vm.high.value.v
-          state = "high"
-        } else if (vm.low && val < vm.low.value.val) {     // low range
-          setPoint = vm.low.value.v
-          state = "low"
-        } else if (vm.upper && val > vm.upper.value.val) { // upper alarm
-          setPoint = vm.upper.value.v
-          state = "upper"
-        } else if (vm.lower && val < vm.lower.value.val) { // lower alarm
-          setPoint = vm.lower.value.v
-          state = "lower"
-        }
-        if (state !== vm[actionId].value.state) {
-          const payload = {
-            metricId: _metricId,
-            projectId: _projectId,
-            initialState: vm[actionId].value.state,
-            state: state,
-            setPoint: setPoint,
-            value: val,
-            vm: vm,
-          }
-          vm[actionId].value.state = state
-          var topic = global.aaa.topics.publish.alm
-          topic = topic.replace(/DPROJECTID/, _projectId)
-          var str = JSON.stringify(payload)
-          msg(1, f, DEBUG, `call mqttNode.publish - topic: ${topic} length:${str.length}`)
-          mqttNode.publish(topic, str);
-        }
-      }
-    }
-  } catch(err) {
-    msg(1, f, ERROR, _metricId, err);
-  }
-}
-
-//  output to MQTT all values of a metric
-const publishMetricValues = (_projectId, _metricId, _clientId) => {
-  // publish values
-  // topic PROJECTID/rsp/clientId
-  var mv;
-  if (mv = V[_projectId][_metricId]) {
-    var payload = {}
-    if (mv.stale)  { payload['stale'] = mv.stale}
-    if (mv.status) { payload['status'] = mv.status}
-    if (mv.inp)    { payload['inp'] = mv.value}
-    if (mv.hum)    { payload['hum'] = mv.value}
-    if (mv.out)    { payload['out'] = mv.value}
-    if (mv.high)   { payload['high'] = mv.high}
-    if (mv.low)    { payload['low'] = mv.low}
-    if (mv.upper)  { payload['upper'] = mv.upper }
-    if (mv.lower)  { payload['lower'] = mv.lower }
-
-    var outTopic = `${_projectId}/rsp/${_clientId}`
-    var outStr = JSON.stringify(payload)
-    msg(1,f, DEBUG,`call mqttNode.publish - topic: ${outTopic} length:${outStr.length}`)
-    mqttNode.publish(outTopic, outStr);
-  } else {
-    msg(0,f, WARNING,`metric not found ${_projectId} ${_metricId}`)
-  }
-}
-
-/**
  * processMqttInput - Add inp, hum, out values to V array
  *
  * @param _topic
@@ -354,11 +220,11 @@ const processMqttInput = (_topic, _payload) => {
 
     // Extract values into values array
     // Typically there is only one - "value"   However there can be more in rare cases
-    msg(2,f, DEBUG,"payload - ", payload)
+    msg(2,f, msgE.error,"payload - ", payload)
     var ivalues;
     if (flds[1] === undefined) {
       ivalues['value']
-      msg(0,f, ERROR,"no flds[1] === undefined " + metricId)
+      msg(0,f, msgE.error,"no flds[1] === undefined " + metricId)
     } else {
       ivalues = flds[1].split(',')
     }
@@ -377,67 +243,10 @@ const processMqttInput = (_topic, _payload) => {
     checkMetricValues(projectId, metricId)
 //var status = checkMetricStatus(projectId, metricId)
   } catch (err) {
-    msg(0,f,ERROR, 'Error processing Cmd -- ',err)
+    msg(0,f,msgE.error, 'Error processing Cmd -- ',err)
   }
   return ['', null];
 }
-
-/**
- * getMetricV - get the V array for a process, metric, action or value
- *
- * @param projectId
- * @param metricId
- * @param actionId
- * @param valueId
- * @returns {{}|null|*}
- */
-const getMetricV = (_projectId, _metricId, _actionId, _valueId) => {
-  const f = 'administrator::getMetricV'
-  var vp, vm, vs, vv;
-  const projectId = (_projectId) ? _projectId.toLowerCase() : null
-  const metricId  = (_metricId)  ? _metricId.toLowerCase()  : null
-  const actionId  = (_actionId)  ? _actionId.toLowerCase()  : null
-  const valueId   = (_valueId)   ? _valueId.toLowerCase()   : null
-  if (projectId) {
-    if (!(vp = V[projectId])) {
-      msg(1,f, ERROR,"Not found - Cannot find projectId - ", projectId)
-      return null;
-    }
-    if (metricId) {
-      if (!(vm = V[projectId][metricId])) {
-        msg(1,f, ERROR,"Not found - Cannot find metricId - ", projectId + ' ' + metricId)
-        return null;
-      }
-      if (actionId) {
-        if (!(vs = V[projectId][metricId][actionId])) {
-          msg(1,f, ERROR,"Not found - Cannot find actionId - ", projectId+ ' ' + metricId + ' ' + actionId)
-          return null;
-        }
-        if (valueId) {
-          if (!(vv = V[projectId][metricId][actionId][valueId])) {
-            msg(1,f, ERROR,"Not found - Cannot find valueId- ", projectId+ ' ' + metricId + ' ' + actionId + ' ' + valueId)
-            return null;
-          }
-          vs.type = 'value'
-          return vv
-        } else {
-          vs.type = 'action'
-          return vs
-        }
-      } else {
-        vm.type = 'metric'
-        return vm
-      }
-    } else {
-      vp.type = 'project'
-      return vp
-    }
-  } else {
-    V.type = 'V'
-    return V
-  }
-}
-
 
 const processCmd = (_topic, _payload) => {
   const f = 'administrator::processCmd'
@@ -473,18 +282,18 @@ const processCmd = (_topic, _payload) => {
       } else if (_payload.cmd === 'getMetric') {
         out.v = getMetricV(_payload.projectId, _payload.metricId, _payload.actionId, _payload.valueId)
       } else if (_payload.cmd === 'requestJsonFile') {
-        msg(2, f, DEBUG, "Read json file: ", filepath)
+        msg(2, f, msgE.error, "Read json file: ", filepath)
         const filepath = `${process.env.ROOT_PATH}/${_payload.filepath}`
         const data = fs.readFileSync(filepath);
         out = JSON.parse(data)
       } else if (_payload.cmd === 'requestYmlFile') {
         const filepath = `${process.env.ROOT_PATH}/${_payload.filepath}`
-        msg(2, f, DEBUG, "Read yml file: ", filepath)
+        msg(2, f, msgE.error, "Read yml file: ", filepath)
         out = YAML.safeLoad(fs.readFileSync(filepath));
       }
     }
   } catch(err) {
-    msg(0,f,ERROR, 'Error processing Cmd -- ',err)
+    msg(0,f,msgE.error, 'Error processing Cmd -- ',err)
   }
   return [outTopic, out]
 }
@@ -532,7 +341,7 @@ const compressConfig = (inp) => {
  */
 const processCB = (_topic, _payload) => {
   const f = 'administrator::processCB'
-  msg(2,f,DEBUG, 'enter');
+  msg(2,f,msgE.error, 'enter');
   var out;
   var outTopic;
   try {
@@ -540,20 +349,20 @@ const processCB = (_topic, _payload) => {
     var [,actionId, clientId,,] = _topic.split('/')
 
     const inputStr = _payload.toString();
-    msg(2,f,DEBUG, 'topic: ', _topic, '\n' + ' payload:', inputStr);
+    msg(2,f,msgE.error, 'topic: ', _topic, '\n' + ' payload:', inputStr);
     var input = {}
 
     // If the payload is JSON, parse it
     if (inputStr && inputStr[0] === '{' && inputStr !== '{}') {
       try {
-        msg(3, f, DEBUG, "Parse inputStr:", inputStr.toString)
+        msg(3, f, msgE.error, "Parse inputStr:", inputStr.toString)
         input = JSON.parse(inputStr)
       } catch(err) {
-        msg(0,f,ERROR, 'Error parsing JSON -- ',inputStr)
+        msg(0,f,msgE.error, 'Error parsing JSON -- ',inputStr)
         return;
       }
     }
-    msg(3,f,DEBUG, 'actionId', actionId, ' clientId', clientId);
+    msg(3,f,msgE.error, 'actionId', actionId, ' clientId', clientId);
 
     // If this is a cmd to the administrator
     if (global.aaa.topics.subscribe['cmd'] === _topic ||
@@ -587,13 +396,13 @@ const processCB = (_topic, _payload) => {
       out.rsp = input.cmd;
       out.date = currentDate()
       var outStr = JSON.stringify(out)
-      msg(1,f, DEBUG,`call mqttNode.publish - topic: ${outTopic} length:${outStr.length}`)
+      msg(1,f, msgE.error,`call mqttNode.publish - topic: ${outTopic} length:${outStr.length}`)
       mqttNode.publish(outTopic, outStr);
     }
   } catch (err) {
-    msg(0,f, ERROR, 'shitter', input.rsp || input.cmd, err)
+    msg(0,f, msgE.error, 'shitter', input.rsp || input.cmd, err)
   }
-  msg(2,f,DEBUG, 'exit');
+  msg(2,f,msgE.error, 'exit');
   return null;
 }
 
@@ -643,7 +452,7 @@ const loadProjectMetrics = (_projectId) => {
             const actionId = ActionIds[s]
             var values = {}
             if (metric[actionId]) {
-              if (V?.[_projectId]?.[metricId]?.[actionId]?.['value']) {
+              if (haveValue(_projectId,metricId,actionId,'value')) {
                 // do nothing?
               } else if (metric[actionId].default) {
                 values = {
@@ -651,7 +460,7 @@ const loadProjectMetrics = (_projectId) => {
                     val: metric[actionId].default,
                     date: Date.now(),
                     userId: userId,
-                    state: 'unk',
+                    status: 'unk',
                     stale: 'unk',
                   },
                 }
@@ -664,7 +473,7 @@ const loadProjectMetrics = (_projectId) => {
       }
     });
   } catch(err) {
-    msg(0,f, ERROR, err)
+    msg(0,f, msgE.error, err)
   }
   return metrics;
 }
@@ -694,7 +503,7 @@ const getProjectMetrics = (_projectId, _client) => {
       }
     }
   } catch(err) {
-    msg(0,f, ERROR, err)
+    msg(0,f, msgE.error, err)
   }
   return metrics;
 }
@@ -752,63 +561,9 @@ const loadClientMetrics = (_client) => {
       });
     }
   } catch (err) {
-    msg(0,f, ERROR, err)
+    msg(0,f, msgE.error, err)
   }
   // for each projectId
-}
-
-/**
- * setDefaults
- * @param metric
- *
- * Set the defaults for inp, hum, out, upper, lower, high, low
- *   if possible get the V[projectId, metridId record set to v
- */
-const setDefaults = (_metric) => {
-  const f = "administrator::setDefaults"
-  const projectId = _metric.projectId
-  const metricId = _metric.metricId
-  // Get V for this metric first - there is only one
-  try {
-    var vm = getMetricV(projectId, metricId)
-    vm = (vm && vm.type === "metric") ? vm : undefined
-    if (!_metric.v) _metric.v = {}
-
-    for (var actionId in actionIds) {
-      if (!_metric[actionId]) continue    // skip unconfigured actions
-      var v
-      var vms
-      if (vm && vm[actionId]) {                 // if there is a current value
-        _metric.v[actionId] = vm[actionId]
-      } else if ('default' in _metric[actionId]) {  // if there is a default valu
-        vms = {
-          value: {
-            val: _metric[actionId].default,
-            date: Date.now(),
-            userId: 'unk',  // should be default
-            state: 'unk',
-            stale: 'unk',
-          }
-        }
-        _metric.v[actionId] = vms
-        addMetricValues(projectId,metricId,actionId,vms, 'default')
-      } else {          // no V && no default
-        vms = {
-          value: {
-            val: -999999,
-            date: Date.now(),
-            userId: 'unk',
-            state: 'unk',
-            stale: 'unk',
-          }
-        }
-        _metric.v[actionId] = vms
-        addMetricValues(projectId,metricId,actionId,vms, 'unspecified')
-      }
-    }
-  } catch(err) {
-    msg(0,f,ERROR,err);
-  }
 }
 
 const readActionIds = () => {
@@ -825,7 +580,7 @@ const readActionIds = () => {
     }
 
   } catch(err) {
-    msg(0,f,ERROR,err,filepath);
+    msg(0,f,msgE.error,err,filepath);
   }
   return actionIds
 }
@@ -864,7 +619,7 @@ const initClients = (projectId, instance, project, actionIds) => {
             addStatus(client.clients[c2])
           } else {
             delete client.clients[c2]
-            msg(2, f, ERROR, `${c} - Client not found ${c2} in administrator config`);
+            msg(2, f, msgE.error, `${c} - Client not found ${c2} in administrator config`);
           }
         }
       }
@@ -881,7 +636,7 @@ const loadProjectFile = (projectId) => {
     yml.projectId = projectId
     return yml
   } catch(err) {
-    msg(0,f,ERROR,"Error loading project.yml file: ", projectId, ' - ', err);
+    msg(0,f,msgE.error,"Error loading project.yml file: ", projectId, ' - ', err);
   }
 }
 
@@ -947,7 +702,7 @@ const loadClient = (_dir, _clientId, _projectId) => {
       client.actionIds = actionIds
     }
   } catch(err) {
-    msg(0,f,ERROR,"Error loading client ", _clientId, ' - ', err);
+    msg(0,f,msgE.error,"Error loading client ", _clientId, ' - ', err);
   }
   return client
 }
@@ -964,16 +719,16 @@ const findClientByIp = (_dir, _ip, _projectId) => {
       }
     }
   } catch(err) {
-    msg(0,f,ERROR,"Reading client file ", clientId, ' - ', err);
+    msg(0,f,msgE.error,"Reading client file ", clientId, ' - ', err);
   }
 }
 
 const loadEdgeConfig = (_payload) => {
   const f = 'administrator::loadEdgeConfig'
-  msg(1,f,DEBUG, 'enter - ', _payload.clientId || _payload.ip)
+  msg(1,f,msgE.error, 'enter - ', _payload.clientId || _payload.ip)
   try {
     if (!_payload.clientId && !_payload.ip) {
-      msg(0,f,ERROR,"neither the clientId or ip is defined");
+      msg(0,f,msgE.error,"neither the clientId or ip is defined");
       return
     }
     var client
@@ -985,32 +740,32 @@ const loadEdgeConfig = (_payload) => {
       client = loadClient("clients", _payload.clientId, _payload.projectId)
     }
     if (!client) {
-      msg(0, f, WARNING, "Client not found", id);
+      msg(0, f, msgE.warning, "Client not found", id);
       return;
     }
-    loadClientMetrics(client)
+    loadClientMetrics(client)  // loads metrics from all projects
     return client
   } catch (err) {
-    msg(0,f,ERROR,  clientId, ' - ', err);
+    msg(0,f,msgE.error,  clientId, ' - ', err);
   }
 
 }
 
 const loadMqttConfig = (_payload) => {
   const f = "administrator::loadMqttConfig"
-  msg(0,f,DEBUG, 'enter - ', _payload.clientId)
+  msg(0,f,msgE.error, 'enter - ', _payload.clientId)
   try {
-    var client = loadClient("clients", _payload.clientId, _payload.projectId)
+    var client = loadClient("clients", _payload.clientId, "NONE")
     for (var clientId in client.clients) {
       if (clientId !== "all") {
         if (client.clients[clientId] !== "enabled") {
           delete client.clients[clientId]
           continue;
         }
-        client.clients[clientId] = loadClient('clients', clientId, "UNK")
+        client.clients[clientId] = loadClient('clients', clientId, "NONE")
         var nc = client.clients[clientId]
         if (!nc) {
-          msg(1,f,ERROR, `Client not found ${clientId}`)
+          msg(1,f,msgE.error, `Client not found ${clientId}`)
           continue;
         }
         delete nc.topics
@@ -1024,7 +779,7 @@ const loadMqttConfig = (_payload) => {
     }
     return client;
   } catch(err) {
-    msg(0,f,ERROR, 'Error loading MQTT config',err)
+    msg(0,f,msgE.error, 'Error loading MQTT config',err)
   }
 }
 
@@ -1036,7 +791,7 @@ const loadYmlFile = (_client, _panel) => {
     var ymlStr = fs.readFileSync(path)
     return YAML.safeLoad(ymlStr)
   } catch(err) {
-    msg(0,f,ERROR,`Error loading ${path} - `, err);
+    msg(0,f,msgE.error,`Error loading ${path} - `, err);
   }
 }
 const loadHmiPanels = (_client) => {
@@ -1049,14 +804,21 @@ const loadHmiPanels = (_client) => {
 
 const loadHmiConfig = (_payload) => {
   const f = 'administrator::loadHmiConfig - '
-  msg(1,f,DEBUG, 'enter - ', _payload.clientId)
+  msg(1,f,msgE.debug, 'enter - ', _payload.clientId)
   try {
     var client = loadClient("clients", _payload.clientId, _payload.projectId)
-    client.metrics = getProjectMetrics(_payload.projectId, client)
+    // load multiple projects if configured as an array
+    // add projectId
+    if (Array.isArray(_payload.projectId))
+    client.metrics = {}
+
+    client.metrics = {
+      [_payload.projectId]: getProjectMetrics(client.projectId, client)
+    }
     loadHmiPanels(client)
     return client;
   } catch(err) {
-    msg(0,f,ERROR, 'Error loading config',err)
+    msg(0,f,msgE.error, 'Error loading config',err)
   }
 }
 

@@ -13,10 +13,9 @@ const ControlValue = (props) => {
   const metric = cmetric.metric
 
   useEffect(() => {
-    const metricCB = (metric, topic, payload, tags, values) => {
+    const metricCB = (metric, actionId, topic, payload, tags, values) => {
 //    const f = "ControlValue::metricCB"
 //    console.log(f,"enter ", topic)
-//    const actionId = topic.split('/')[1]
       if (!(tags.ActionId in cmetric.metric)) return
       if (tags.ActionId !== cmetric.actionId) return
       setValue((prevValue) => {
@@ -31,7 +30,7 @@ const ControlValue = (props) => {
 //    }
     }
 
-    mqttRegisterMetricCB(cmetric.projectId, cmetric.metricId, metricCB)
+    mqttRegisterMetricCB(cmetric.projectId, cmetric.actionId, cmetric.metricId, metricCB)
 
     var v = metric?.v?.[cmetric.actionId]?.["value"]?.val
     v = parseFloat(v).toFixed(metric.decimals);

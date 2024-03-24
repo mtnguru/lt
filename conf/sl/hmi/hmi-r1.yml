@@ -34,7 +34,6 @@ topics:
     msg: PROJECTID/msg/CLIENTID/all/sl_msg
     cod: PROJECTID/cod/CLIENTID/all
     hum: PROJECTID/hum/CLIENTID/DUSERID/sl_edge
-metrics: project
 actionIds: {}
 statusDefault:
   debugLevel: 0

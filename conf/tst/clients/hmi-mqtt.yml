@@ -30,7 +30,6 @@ topics:
     msg: PROJECTID/msg/CLIENTID
     cod: PROJECTID/cod/CLIENTID
     hum: PROJECTID/hum/CLIENTID
-metrics: project
 actionIds: {}
 statusDefault:
   debugLevel: 0

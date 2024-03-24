@@ -1,9 +1,23 @@
 //require('dotenv').config();
-require("./msgE");
 const mqttNode = require('./mqttNode');
 
 const setDebugLevel = (level) => {
   global.aaa.status.debugLevel = level;
+}
+
+msgE = {
+  error: 0,
+  warning: 1,
+  debug: 2,
+  notify: 3,
+  admin: 4,
+  alarm: 5,
+  chat: 6,
+  notes: 7,
+  user: 8,
+  input: 9,
+  output: 10,
+  doe: 11,
 }
 
 const msg = (level, func, _actionId, ...snippets) => {
@@ -16,15 +30,18 @@ const msg = (level, func, _actionId, ...snippets) => {
     return;
   }
 
+  const cdate = new Date();
+  const fdate = `${cdate.getDate()} ${cdate.getHours()}:${cdate.getMinutes()}:${cdate.getSeconds()}`;
+
   var topic = global.aaa.topics.publish.cod
   var actionId = msgE[_actionId]
-  if (_actionId === ERROR) {
+  if (_actionId === msgE.error) {
     topic = global.aaa.topics.publish.cod
     actionId = '********** ERROR'
-  } else if (_actionId === ALARM) {
+  } else if (_actionId === msgE.alarm) {
     topic = global.aaa.topics.publish.cod
     actionId = '---------- ALARM'
-  } else if (_actionId === WARNING) {
+  } else if (_actionId === msgE.warning) {
     topic = global.aaa.topics.publish.cod
     actionId = '!!!!!!!!!! WARNING'
   }
@@ -42,14 +59,14 @@ const msg = (level, func, _actionId, ...snippets) => {
   }
 
   if (snippets.length > 0) {
-    console.log(actionId, func, ...snippets)
+    console.log(fdate, actionId, func, ...snippets)
   } else {
-    console.log(actionId, func);
+    console.log(fdate, actionId, func);
   }
 }
 
 module.exports = {
   msg: msg,
-//msgn: msg,
+  msgE: msgE,
   setDebugLevel: setDebugLevel,
 }

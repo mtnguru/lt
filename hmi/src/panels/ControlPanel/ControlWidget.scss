@@ -2,20 +2,23 @@
 @import "../../styles/colors";
 
 .control-widget {
-  padding: 0 .7vw;
+  padding: 0 .7vw 0 0;
+  border-radius: 4px;
   &.absolute {
     position: absolute;
   }
 //transform: translate(-50%, -50%);
   border: 1px solid $input-bd-color;
-  margin: .3vw;
+  margin: .3vw 0;
   border-radius: 5px;
   background-color: rgba(0,0,0,.5);
-  font-size: 80%;
+  font-size: 1vw;
   h3 {
     color: white;
-    font-size: 1.2vw;
+    font-size: 1vw;
     margin: 0;
+    padding: 0 .5vw;
+    border-radius: 4px;
   }
   .metric {
     font-weight: bold;
@@ -24,6 +27,7 @@
     color: $metric-fg-color;
   }
   button {
+    font-size: 1vw;
     text-align: left;
   }
 
@@ -31,11 +35,11 @@
     margin-top: 1px;
     padding: 2px 10px;
     border-radius: 5px;
-    width: 100px;
+    width: 10vw;
     text-align: center;
   }
   .control-metric {
-    width: 18vw;
+    width: 22vw;
     .right {
       vertical-align: middle;
       float: right;
@@ -46,7 +50,7 @@
       vertical-align: middle;
       text-align: right;
       font-weight: bold;
-      font-size: 1.2vw;
+      font-size: 1vw;
       color: $metric-fg-color;
       border-radius: 3px;
       width: 3.5vw;

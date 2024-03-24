@@ -1,10 +1,11 @@
 name: Cabin Control Panel
+projectId: cb
 regions:
 # header:
 #   title: Cabin Controls
   top:
   left:
-    metrics:
+    cmetrics:
       - metricId: middle_window_k_f
         actionId: inp
         component: ControlMetric
@@ -29,7 +30,7 @@ regions:
         component: ControlMetric
 
   right:
-    metrics:
+    cmetrics:
       - metricId: desk_tst1_ow_f
         actionId: inp
         component: ControlMetric
@@ -37,24 +38,4 @@ regions:
       - metricId: desk_tst2_ow_f
         actionId: inp
         component: ControlMetric
-
   bottom:
-    metrics:
-      - metricId: test_status_f
-        actionId: hum
-        component: ControlMetric
-
-      - metricId: test_status_f
-        title: Hum
-        actionId: hum
-        component: ControlSlider
-
-      - metricId: test_status_f
-        title: Upper Alarm
-        actionId: upper
-        component: ControlSlider
-
-      - metricId: test_status_f
-        title: Lower Alarm
-        actionId: lower
-        component: ControlSlider

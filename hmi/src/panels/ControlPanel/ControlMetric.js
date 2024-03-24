@@ -20,10 +20,10 @@ const ControlMetric = (props) => {
   const metric = cmetric.metric
 
   var v = metric?.v?.[cmetric.actionId]?.["value"]?.val
-  v = parseFloat(v).toFixed(metric.decimals);
+  v = parseFloat(v).toFixed(metric?.decimals || 2);
   const [val, setVal] = useState(v);
 
-  const metricCB = useCallback((metric, topic, payload, tags, values) => {
+  const metricCB = useCallback((metric, actionId, topic, payload, tags, values) => {
 //    const f = "ControlMetric::metricCB"
 //    console.log(f,"enter ", topic)
     if (cmetric.actionId !== tags.ActionId) return
@@ -35,9 +35,9 @@ const ControlMetric = (props) => {
       return parseFloat(val).toFixed(metric.decimals);
     })
     if (props.metricCB) {
-      props.metricCB(metric, topic, payload, tags, values)
+      props.metricCB(metric, actionId, topic, payload, tags, values)
     }
-  }, [props])
+  }, [props, cmetric.actionId])
 
   const onClickH = (event) => {
     // request metrics from admin
@@ -54,7 +54,7 @@ const ControlMetric = (props) => {
   }
 
   useEffect(() => {
-    mqttRegisterMetricCB(cmetric.projectId,cmetric.metricId, metricCB)
+    mqttRegisterMetricCB(cmetric.projectId,cmetric.actionId,cmetric.metricId, metricCB)
   }, [cmetric, metricCB])
 
   const content = () => {
@@ -80,7 +80,7 @@ const ControlMetric = (props) => {
         </Box>
       </Box>
       <button onClick={onClickH}>
-        <Text as="h3" fontWeight="bold" fontSize="120%">{metric.label}</Text>
+        <Text as="h3" fontWeight="bold" fontSize="120%" style={{backgroundColor:metric.color}}>{metric.label}</Text>
       </button>
     </Box>
   )

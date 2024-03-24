@@ -14,7 +14,6 @@ import {NumberInput,
         Box,
         Flex} from "@chakra-ui/react";
 import {mqttPublish, mqttRegisterMetricCB} from '../../utils/mqttReact'
-import {findMetric} from '../../utils/metrics'
 import {mgError} from "../../utils/mg";
 import "./ControlSlider.scss"
 
@@ -26,18 +25,18 @@ const ControlSlider = (props) => {
 
   const v = props.cmetric.metric?.v?.[actionId]?.["value"]?.val
   const [val, setVal] = useState(v);
-  const metricCB = useCallback((metric, topic, payload, tags, values) => {
+  const metricCB = useCallback((_metric, _actionId, _topic, _payload, tags, values) => {
     const f = "ControlMetric::metricCB"
-    const [,msgActionId,,userId] = topic.split('/')
+    const [,msgActionId,,userId] = _topic.split('/')
     if (userId === `${global.aaa.userId}-${global.aaa.mqttClientId}`) {
       return;
     }
-    if (msgActionId === actionId) {
+    if (_actionId === actionId) {
       setVal(values.value)
     } else if (msgActionId === 'out') {
-//    setOutVal(parseFloat(values.value).toFixed(metric.decimals))
+//    setOutVal(parseFloat(values.value).toFixed(_metric.decimals))
     }
-    console.log(f, "enter ", topic)
+    console.log(f, "enter ", _topic)
   }, [actionId])
 
   useEffect(() => {
@@ -60,11 +59,11 @@ const ControlSlider = (props) => {
         }
       }
     }
-    mqttRegisterMetricCB(projectId,metricId, metricCB)
+    mqttRegisterMetricCB(projectId,actionId,metricId, metricCB)
     if (err) {
       mgError(0, f, err)
     }
-  }, [props.cmetric, metricId, metricCB, actionId])
+  }, [props.cmetric, projectId, metricId, metricCB, actionId])
 
   const onKeyH = (e) => {
     if (e.key === "ArrowRight") {

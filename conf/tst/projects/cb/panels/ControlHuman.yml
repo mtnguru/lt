@@ -1,0 +1,36 @@
+name: Cabin Control Panel
+projectId: cb
+regions:
+# header:
+#   title: Cabin Controls
+  top:
+    cmetrics:
+      - metricId: test_status_f
+        actionId: hum
+        component: ControlMetric
+
+      - metricId: test_status_f
+        title: Human
+        actionId: hum
+        component: ControlSlider
+
+      - metricId: test_status_f
+        title: Upper Alarm
+        actionId: upper
+        component: ControlSlider
+
+      - metricId: test_status_f
+        title: Lower Alarm
+        actionId: lower
+        component: ControlSlider
+
+      - metricId: test_status_f
+        title: Upper Range
+        actionId: high
+        component: ControlSlider
+
+      - metricId: test_status_f
+        title: Lower Range
+        actionId: low
+        component: ControlSlider
+

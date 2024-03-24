@@ -8,11 +8,11 @@ const DoeElement = (props) => {
   const [redraw, setRedraw] = useState(false)
 
   useEffect(() => {
-    mqttRegisterMetricCB(projectId,props.metricId,metricCB)
+    mqttRegisterMetricCB(projectId,props.actionId,props.metricId,metricCB)
     setMetric(findMetric(props.projectId, props.metricId))
   }, [props.metricId])
 
-  const metricCB = (metric, topic, payload, tags, values) => {
+  const metricCB = (metric, actionId, topic, payload, tags, values) => {
     const f = "DoeElement::metricCB"
     console.log(f, "enter ", topic)
     setRedraw(prevRedraw => {

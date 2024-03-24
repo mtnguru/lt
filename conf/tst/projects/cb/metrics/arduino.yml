@@ -31,7 +31,7 @@ Master_Door_OW_F:
     clientId: arduino8
     channelType: onewire_f
     channel: 14 
-    deviceId: [40,173,201,67,212,225,61,196]
+    deviceId: [40,17,212,87,4,225,61,1]
 Desk_Top_OW_F: 
   label: Desk Top
   desc: Desk Top
@@ -41,7 +41,7 @@ Desk_Top_OW_F:
     clientId: arduino7
     channelType: onewire_f
     channel: 14 
-    deviceId: [40,17,212,87,4,225,61,1]
+    deviceId: [40,160,31,87,4,225,61,99]
 Desk_Monitor_OW_F: 
   label: Desk Monitor
   desc: Desk Monitor
@@ -51,7 +51,7 @@ Desk_Monitor_OW_F:
     clientId: arduino7
     channelType: onewire_f
     channel: 14 
-    deviceId: [40,160,31,87,4,225,61,99]
+    deviceId: [40,17,212,87,4,225,61,1]
 Desk_Tst1_OW_F: 
   label: Arduino1 Tst1
   desc: Tst 1
@@ -61,7 +61,7 @@ Desk_Tst1_OW_F:
     clientId: arduino1
     channelType: onewire_f
     channel: 14 
-    deviceId: [40,224,233,67,212,225,61,3]
+    deviceId: [40,73,200,67,212,225,61,252]
 Desk_Tst2_OW_F: 
   label: Arduino1 Tst2
   desc: Tst 2
@@ -71,7 +71,7 @@ Desk_Tst2_OW_F:
     clientId: arduino1
     channelType: onewire_f
     channel: 14 
-    deviceId: [40,73,200,67,212,225,61,252]
+    deviceId: [40,224,233,67,212,225,61,3]
 ############################## Input development
 
 arduino3_Onboard_LED_On:

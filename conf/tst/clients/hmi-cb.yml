@@ -52,9 +52,11 @@ page:
   id: hmi-cb
   class: page cb-page flex
   panels:
-    LineChartPanel:
-    ImagePanel:
-    ControlPanel:
+    LineChartHuman:
+    LineChartTemps:
+    ImageTemps:
+    ControlTemps:
+    ControlHuman:
     MsgPanel:
 statusDefault:
   debugLevel: 0
