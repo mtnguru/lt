@@ -52,7 +52,7 @@ const LineChartPanel = (props) => {
     setMetrics(metrics)
   }, [metricIds])
 
-  const metricCB = useCallback((metric, topic, payload, tags, values) => {
+  const metricCB = useCallback((metric, actionId, topic, payload, tags, values) => {
     /*
 //    const f = "LineChartPanel::metricCB"
 //    console.log(f,"enter ", topic)
@@ -72,7 +72,7 @@ const LineChartPanel = (props) => {
   }, [props, actionId])
 
   useEffect(() => {
-//  mqttRegisterMetricCB(projectId,metricId, metricCB)
+//  mqttRegisterMetricCB(projectId,actionId, metricId, metricCB)
   }, [metricCB])
 
   const date=Date.now();

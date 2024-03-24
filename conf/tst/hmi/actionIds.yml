@@ -1,68 +1,85 @@
 all:
   name: All
   num: 0
+  color: '#000000'
   enabled: true
 alm:
   name: Alarm
   num: 6
+  color: '#b40'
   enabled: true
 hum:
   name: Human
   num: 9
+  color: '#a66a2a'
   enabled: true
 inp:
   name: Input
   num: 10
+  color: '#14a'
   enabled: true
 out:
   name: Output
   num: 11
+  color: '#48e'
   enabled: true
 low:
   name: LowRange
   num: 11
+  color: '#680'
   enabled: true
 high:
   name: HighRange
   num: 11
+  color: '#8a0'
   enabled: true
 lower:
   name: LowerAlarm
   num: 11
+  color: '#800'
   enabled: true
 upper:
   name: UpperAlarm
   num: 11
+  color: '#600'
   enabled: true
 msg:
   name: Messages
   num: 8
+  color: '#087'
   enabled: true
 get:
   name: Get
   num: 5
+  color: '#252'
   enabled: true
 snd:
   name: Send
   num: 4
+  color: '#292'
   enabled: true
 cmd:
   name: Command
   num: 5
+  color: '#539'
   enabled: true
 rsp:
   name: Response
   num: 4
+  color: '#74a'
   enabled: true
 act:
   name: Activity
   num: 2
+  color: '#632'
   enabled: true
 cod:
   name: Code
   num: 1
+  color: '#333'
   enabled: true
 sys:
   name: System
   num: 1
+  color: '#666'
   enabled: true

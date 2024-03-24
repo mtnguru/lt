@@ -5,7 +5,6 @@ import {extractFromTags} from './influxr'
 import {mgNotify, mgDebug, mgWarning, mgError} from './mg'
 import {findMetric} from './metrics'
 import {ckTopic} from './topics'
-//import {msg} from "../../../../../apps/lt/administrator/utils/msg";
 import YAML from "yaml-parser";
 
 var mqttClient
@@ -89,7 +88,8 @@ const mqttConnect = (connectCB, messageCB) => {
 
   mqttClient.on('message', (inTopic, payloadRaw) => {
     if (mqttStatusCB) {
-      mqttStatusCB('message')
+      const actionId = inTopic.split('/')[1]
+      mqttStatusCB('message',actionId)
     }
     mgNotify(1, f, "Message received " + inTopic + " -- " + payloadRaw)
     messageCB(inTopic, payloadRaw)
@@ -177,7 +177,8 @@ const mqttPublish = (_topic, _payload) => {
     console.log(f, "ERROR: mqtt not connected")
   }
   if (mqttStatusCB) {
-    mqttStatusCB("publish")
+    const actionId = _topic.split('/')[1]
+    mqttStatusCB("publish", actionId)
   }
   const res = mqttClient.publish(_topic, _payload)
   return res
@@ -238,28 +239,28 @@ const mqttUnregisterTopicCB = (_topic, cb, args) => {
   }
 }
 
-const mqttRegisterMetricCB = (_metricId, cb) => {
+const mqttRegisterMetricCB = (_projectId,_actionId, _metricId, _cb) => {
   const f = "mqttReact::mqttRegisterMetricCB"
   console.log(f, 'enter')
   // If necessary intialize new metric
   var metricId = _metricId.toLowerCase()
-  const metric = global.aaa.metrics[metricId]
+  const metric = global.aaa.metrics?.[_projectId]?.[metricId]
   if (!metric) {
-    mgError(0, f,'Cannot find metric ', _metricId);
+    mgError(0, f,'Cannot find metric ', _projectId, ' ',_metricId);
     return
   }
   if (metric.cbs) {
-    if (metric.cbs.includes(cb)) {
+    if (metric.cbs.includes(_cb)) {
       mgWarning(1, f, "already registered ", _metricId)
     } else {
-      metric.cbs.push(cb)
+      metric.cbs.push(_cb)
     }
   } else {
-    metric.cbs = [cb]
+    metric.cbs = [_cb]
   }
 }
 
-const mqttUnregisterMetricCB = (metric, cb) => {
+const mqttUnregisterMetricCB = (_projectId, _metricId, _cb) => {
 }
 
 const mqttRequestFile = (clientId, name, filepath, fileType, cb) => {
@@ -288,56 +289,81 @@ const mqttRequestFile = (clientId, name, filepath, fileType, cb) => {
 const mqttProcessCB = (_topic, _payload) => {
   const f = 'mqttReact::mqttProcessCB'
   let payloadStr = _payload.toString();
-  mgNotify(1, f, "enter", _topic, payloadStr);
+  mgNotify(1, f, "enter", _topic, payloadStr)
 
   try {
     const fields = _topic.split("/")
-    const func = fields[1]
+    const actionId = fields[1]
+    var metricId
+    var projectId
+    var metric;
 
-    // Metric Callbacks
-    // If inp, out, hum
+    var payload;
+    if (payloadStr[0] === "{") {
+      payload = JSON.parse(payloadStr)
+    }
 
-    if (func === 'inp' ||
-        func === 'out' ||
-        func === 'hum' ||
-        func === 'upper' ||
-        func === 'lower' ||
-        func === 'high' ||
-        func === 'low') {
+    // If inp, out, hum, .... extract the values and
+    if (actionId === 'inp' ||
+        actionId === 'out' ||
+        actionId === 'hum' ||
+        actionId === 'upper' ||
+        actionId === 'lower' ||
+        actionId === 'high' ||
+        actionId === 'low') {
+      // extract influx tags and values from payload
       const {tags, values} = extractFromTags(payloadStr)
       if (!tags["MetricId"]) {
         mgError(0, f, "Could not find Metric field in influx string");
         return;
       }
-      const metricId = tags["MetricId"].toLowerCase()
-      var metric = findMetric(tags["MetricId"])
-      if (!metric) {
+      if (!tags["ProjectId"]) {
+        mgError(0, f, "Could not find Metric field in influx string");
+        return;
+      }
+      metricId = tags["MetricId"].toLowerCase()
+      projectId = tags["ProjectId"].toLowerCase()
+      metric = findMetric(projectId,metricId)
+
+      if (!metric) {   // If not found create a new metric
         metric = {
           metricId,
         }
-        global.aaa.metrics[metricId] = metric
+        if (!global.aaa.metrics)            global.aaa.metrics = {}
+        if (!global.aaa.metrics[projectId]) global.aaa.metrics[projectId] = {}
+        global.aaa.metrics[projectId][metricId] = metric
       }
 
-      const actionId = tags["ActionId"]
       var v = metric[actionId]
-      if (!v) {
+      if (!v) {    // if v does not exist, create a new one
         v = metric[actionId] = {
           val: -999,
           date: Date.now()
         }
       }
 
-      v.val = values.value
+      v.val = values.value  // Assume value is the only valueId
+
       if (metric.cbs) {
+        for (let cb of metric.cbs) {
+          cb(metric, actionId, _topic, payloadStr, tags, values)
+        }
+      }
+    } else if (actionId === 'alm') {
+      metricId = payload.metricId
+      metric = findMetric(payload.projectId, metricId)
+
+      if (metric && metric.cbs) {
+        /*
         for (let cb of metric.cbs) {
           cb(metric, _topic, payloadStr, tags, values)
         }
+        */
       }
     }
 
-    // Topic Callbacks
+// Topic Callbacks
 
-    var payload;
     if (payloadStr[0] === '{') {
       payload = JSON.parse(payloadStr);
     }
@@ -390,7 +416,7 @@ const mqttProcessCB = (_topic, _payload) => {
       }
     }
   } catch (err) {
-    console.log(f, 'ERROR: ' + err)
+    mgError(2, f, err, _topic, _payload)
   }
 }
 

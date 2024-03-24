@@ -1,6 +1,8 @@
 // topics.js
 //   functions to build, complete, and modify topics
 
+const ActionIds = ['inp', 'hum', 'out', 'upper', 'lower', 'high', 'low']
+
 const completeTopic = (_topic,_args) => {
   if (_topic === undefined) {
     console.log('completeTopic ' + _topic)
@@ -37,6 +39,11 @@ const completeTopic = (_topic,_args) => {
           }
           break;
         case "3":
+//        if (field === "METRICID") {   // Not implemented
+//          if (_args && _args["metricId"]) {
+//            fields[3] = _args["metricId"];
+//          }
+//        }
           if (field === "USERID") {
             if (_args && _args["userId"]) {
               fields[3] = _args["userId"];
@@ -87,16 +94,16 @@ const completeTopics = (_topics, args) => {
   return _topics;
 }
 
-const makeTopic = (projectId, func, clientId, userId, telegrafId) => {
+const makeTopic = (projectId, actionId, clientId, userId, telegrafId) => {
   var topic;
   if (telegrafId) {
-    topic = `${projectId}/${func}/${clientId}/${userId}/${telegrafId}`
+    topic = `${projectId}/${actionId}/${clientId}/${userId}/${telegrafId}`
   } else if (userId) {
-    topic = `${projectId}/${func}/${clientId}/${userId}`
+    topic = `${projectId}/${actionId}/${clientId}/${userId}`
   } else if (clientId) {
-    topic = `${projectId}/${func}/${clientId}`
+    topic = `${projectId}/${actionId}/${clientId}`
   } else {
-    topic = `${projectId}/${func}`
+    topic = `${projectId}/${actionId}`
   }
   return topic
 }
@@ -116,5 +123,6 @@ module.exports = {
   completeTopics: completeTopics,
   completeAllTopics: completeAllTopics,
   ckTopic: ckTopic,
+  ActionIds: ActionIds,
   makeTopic: makeTopic,
 };

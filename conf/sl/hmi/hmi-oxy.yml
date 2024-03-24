@@ -32,7 +32,6 @@ topics:
     msg: PROJECTID/msg/CLIENTID/all/oxy_msg
     cod: PROJECTID/cod/CLIENTID/all
     hum: PROJECTID/hum/CLIENTID/DUSERID/oxy_edge
-metrics: project
 funcIds: {}
 statusDefault:
   debugLevel: 0

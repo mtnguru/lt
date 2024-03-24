@@ -1,0 +1,34 @@
+name: Experiment Control Panel
+projectId: oxy
+regions:
+# header:
+#   title: Cabin Controls
+  top:
+  left:
+    cmetrics:
+      - metricId: ps_na_human_v
+        actionId: hum
+        component: ControlSlider
+
+      - metricId: ps_na_human_a
+        actionId: hum
+        component: ControlSlider
+
+      - metricId: ez_na_mtr_c
+        actionId: hum
+        component: ControlSlider
+
+      - metricId: ez_na_smarttrack_slpm
+        actionId: hum
+        component: ControlSlider
+
+  right:
+    cmetrics:
+      - metricId: outside_bunkhouse_k_f
+        actionId: inp
+        component: ControlMetric
+
+      - metricId: outside_frontdoor_ow_f
+        actionId: inp
+        component: ControlMetric
+

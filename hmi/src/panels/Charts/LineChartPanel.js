@@ -42,21 +42,20 @@ ChartJS.register(
 )
 
 const LineChartPanel = (props) => {
-  var { actionId } = props
 //projectId = projectId.toLowerCase()
 
   const [metrics, setMetrics] = useState({})
   const [options, setOptions] = useState({})
   const [chartData, setChartData] = useState({})
 
-  const metricCB = useCallback((metric, topic, payload, tags, values) => {
+  const metricCB = useCallback((metric, actionId, topic, payload, tags, values) => {
 //  const f = "LineChartPanel::metricCB"
 //  console.log(f,"enter ", topic)
 //  if (actionId !== tags.ActionId) return
     setChartData((prevChartData) => {
-      const isMetric = (element) => {
-        return (element === metric.metricId)
-      }
+//    const isMetric = (element) => {
+//      return (element === metric.metricId)
+//    }
 
       let val = values.value
       if (metric.convert === 'c2f') {
@@ -69,9 +68,9 @@ const LineChartPanel = (props) => {
       const dateStr = date.toLocaleString()
 
       // Update the specific dataset with date and val
-      updatedDatasets[metric.index] = {
-        ...updatedDatasets[metric.index],
-        data: [...updatedDatasets[metric.index].data, {x: dateStr, y: val}],
+      updatedDatasets[metric[actionId].index] = {
+        ...updatedDatasets[metric[actionId].index],
+        data: [...updatedDatasets[metric[actionId].index].data, {x: dateStr, y: val}],
       };
 
       // Update actionId and return new actionId object
@@ -84,11 +83,11 @@ const LineChartPanel = (props) => {
 //  if (props.metricCB) {
 //    props.metricCB(metric, topic, payload, tags, values)
 //  }
-  }, [props, actionId])
+  }, [])
 
   useEffect(() => {
     // Get options from configuration
-    if (props.options == undefined ) return
+    if (props.options === undefined ) return
     const options = props.options
 
 //  const now = Date.now();
@@ -104,24 +103,29 @@ const LineChartPanel = (props) => {
       datasets: [],
     }
     for (var m = 0; m < options.cmetrics.length; m++) {
-      const cmetric = options.cmetrics[m]
+      var cmetric = options.cmetrics[m]
       const metricId = cmetric.metricId.toLowerCase()
+      const actionId = cmetric.actionId
       cmetric.metricId = metricId // ?? why do this? shouldn't it be there already?
       const projectId = cmetric.projectId || props.options.projectId || global.aaa.projectId
-      const metric = findMetric(projectId, metricId)
+      var metric = findMetric(projectId, metricId)
+      if (actionId === 'hum') {
+        metric.hum.index = m
+      } else {
+        metric[actionId].index = m
+      }
       cmetric.metric = metric
-      metric.index = m
-//    if (!metrics[projectId]) {
-//      metrics[projectId] = {}
-//    }
-//    metrics[projectId][metricId] = { ...metric, ...options.cmetrics[m] }
+      console.log(`James - ${actionId}`)
 
-      mqttRegisterMetricCB(projectId, metricId, metricCB)
+      const color = (cmetric.colorSrc && cmetric.colorSrc === 'action') ? global.aaa.actionIds[actionId].color : metric.color
+
+      mqttRegisterMetricCB(projectId, actionId, metricId, metricCB)
       chartData.datasets.push({
         label: metric.label || metric.name,
+        actionId: actionId,
         data: [],
-        borderColor: metric.color,
-        backgroundColor: metric.color,
+        borderColor: color,
+        backgroundColor: color,
         yAxisID: 'yleft',
       })
     }

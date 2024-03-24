@@ -1,3 +1,85 @@
+
+Work on the its all electric website
+Write a letter to Slobodan
+
+iet a job.....
+
+MQTT, Edge, Drupal, SQL, React, IIOT, InfluxDB, Grafana, 3D modeling, Image processing
+Read more about these
+Get a job......
+Get a job........
+Get a job..........
+
+What can I do today
+   Research companies
+   Bob Greenyer
+   Alan Smith
+   Send a message to all the recruiters
+  
+Linked In
+
+What can be done on the code - make sure 
+   
+ 
+  
+
+
+
+
+So what to do ? 
+
+  Metrics require a processId and metricId to be unique
+  Edge clients are processId agnostic
+  HMI clients can be either way - multi-project or single project
+  administatrator has to handle all processes currently running
+  Controller are process specific
+  Drupal is by drupal installation - one is normal
+  telegraf can be project independent
+
+  metrics[projectID][metricId]
+    Easy to access.  
+    Two levels, harder to maintain 
+    Initially have one process per hmi screen
+    MQTT panels don't care about projects
+  metrics[metricId][projectId]
+    Requires lots of changes
+  metrics[]
+    Slower to search
+    More general
+
+Configuration currently sends metrics by object
+A projects metrics are read in from the adminId/projects/projectId/metrics directory
+   There can be multiple files, they are read in to a big object by metricId
+   Read in a project at a time - save them by metrics[projectId][metricId] - this keeps them unique
+   Send this as the global.aaa.metrics array - hmi's
+   administrator does not use the global.aaa.metrics array
+cmetrics are a local array of cmetric
+   Create this array first time into the component - ControlPanel, ControlImagePanel
+   It's an array with
+     metricId
+     actionId
+     projectId
+     xposition, yposition
+     metric - ptr to the global.aaa.metrics.projectId.metricId record
+       This metrics is shared by all instances of this metric - for each project
+       contains the v array
+
+Edge clients are already project agnostic?  or are they?
+HMI clients need global.aaa.metrics sent as metrics[projectId][metricId]
+findMetric needs to have the projectId - check that first
+
+Change administrator to 
+  V Values are currently stored by V[projectId][metricId]
+  Output metrics to edge as an array?  Already implemented on Arduinos
+
+Change HMI
+  No, don't - configuration is already an array, keep them that way
+
+Ok, let's do it!!!!
+  
+
+
+
 What to do?
 finish the mqtt indicator
   

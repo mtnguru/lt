@@ -1,4 +1,5 @@
 var mqtt_lt = require('./utils/mqtt_lt');
+var {msgE} = require('/utils/msgE');
 var {msg, setDebugLevel} = require('./utils/msg');
 require('dotenv').config();
 
@@ -33,7 +34,7 @@ const getDeviceConfig = (ip) => {
     }
   }
   if (!device) {
-    msg(1,f, DEBUG `IP address for device not found: ${ip}`)
+    msg(1,f, msgE.debug `IP address for device not found: ${ip}`)
   }
 
   // Find the inp
@@ -94,10 +95,10 @@ const processCB = (topic, payloadRaw) => {
     } else if (topic.indexOf('edge/input' > -1)) {
       console.log(f,'   input: ', topic, payloadStr)
     } else {
-      msg(0,f,WARNING,'Topic not found:',topic)
+      msg(0,f,msgE.warning,'Topic not found:',topic)
     }
   } catch (err) {
-    msg(0,f,ERROR,'catch -',err)
+    msg(0,f,msgE.error,'catch -',err)
   }
   return null;
 }

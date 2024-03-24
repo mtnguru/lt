@@ -44,7 +44,7 @@ const BarChart = (props) => {
   const v = metric?.v?.[actionId]?.["value"]?.val
   const [val, setVal] = useState(v);
 
-  const metricCB = useCallback((metric, topic, payload, tags, values) => {
+  const metricCB = useCallback((metric, actionId, topic, payload, tags, values) => {
 //    const f = "BarChart::metricCB"
 //    console.log(f,"enter ", topic)
     if (actionId !== tags.ActionId) return
@@ -56,7 +56,7 @@ const BarChart = (props) => {
       return parseFloat(val).toFixed(metric.decimals);
     })
     if (props.metricCB) {
-      props.metricCB(metric, topic, payload, tags, values)
+      props.metricCB(metric, actionId, topic, payload, tags, values)
     }
   }, [props, actionId])
 
@@ -77,7 +77,7 @@ const BarChart = (props) => {
    */
 
   useEffect(() => {
-    mqttRegisterMetricCB(projectId,metricId, metricCB)
+    mqttRegisterMetricCB(projectId, actionId, metricId, metricCB)
   }, [metricId, metricCB])
 
   const options = {

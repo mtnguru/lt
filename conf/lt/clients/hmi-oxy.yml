@@ -1,8 +1,8 @@
 name: HMI - Oxy
+projectId: oxy
 clientType: hmi
 userId: Bilbo
 format: yml
-projectId: oxy
 clients:
   all:
     clientId: all
@@ -39,7 +39,6 @@ topics:
     lower: PROJECTID/lower/CLIENTID/DUSERID/EDGEID
     high: PROJECTID/high/CLIENTID/DUSERID/EDGEID
     low: PROJECTID/low/CLIENTID/DUSERID/EDGEID
-metrics: project
 actionIds: {}
 statusDefault:
   debugLevel: 0
@@ -47,16 +46,8 @@ page:
   title: Swiss Oxyhydrogen Energy
   id: hmi-oxy
   class: page oxy-page flex
-  children:
-    container:
-      type: container
-      class: left-col
-      children:
-        ControlOxyPanel:
-        ControlImagePanel:
+  panels:
+    LineChartPanel:
+    ImagePanel:
+    ControlPanel:
     MsgPanel:
-      class: right-col
-      children:
-        Notes:
-        Chat:
-        Notify:

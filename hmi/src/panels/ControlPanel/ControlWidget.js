@@ -1,8 +1,8 @@
 // File: ControlWidget.js
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 //import useMousePosition from '../../hooks/useMousePosition';
 import {mqttRegisterMetricCB} from '../../utils/mqttReact'
-import {c2f} from '../../utils/metrics'
+//import {c2f} from '../../utils/metrics'
 
 import ControlSlider from './ControlSlider'
 import ControlMetric from './ControlMetric'
@@ -11,13 +11,13 @@ import './ControlWidget.scss'
 
 const ControlWidget = (props) => {
   const {cmetric} = props
-  const metric = cmetric.metric
-  const [value, setValue] = useState(0);
+//const [value, setValue] = useState(0);
 
   useEffect(() => {
-    const metricCB = (metric, topic, payload, tags, values) => {
+    const metricCB = (metric, actionId, topic, payload, tags, values) => {
 //    const f = "ControlWidget::metricCB"
 //    console.log(f,"enter ", topic)
+      /*
       setValue((prevValue) => {
         let val = values.value;
         if (metric.convert === 'c2f') {
@@ -25,13 +25,14 @@ const ControlWidget = (props) => {
         }
         return parseFloat(val).toFixed(metric.decimals);
       })
+      */
 //    if (props.metricCB) {
-//      props.metricCB(metric, topic, payload, tags, values)
+//      props.metricCB(metric, actionId, topic, payload, tags, values)
 //    }
     }
 
-    mqttRegisterMetricCB(cmetric.projectId, cmetric.metricId, metricCB)
-  }, [])
+    mqttRegisterMetricCB(cmetric.projectId, cmetric.actionId, cmetric.metricId, metricCB)
+  }, [cmetric.actionId, cmetric.metricId, cmetric.projectId])
 
 //const [ref, mousePosition] = useMousePosition();
 
@@ -101,13 +102,13 @@ const ControlWidget = (props) => {
   }
 
   return (
-    <div className="control-widget mqtt-action-bg"
+    <div className="control-widget mqtt-action-bg clearfix"
          onMouseMove={onDrag}
          onMouseDown={onDragStart}
          onMouseUp={onDragEnd}
          style={{ /* top: metric.position[0] + '%',
-                     left:metric.position[1] + '%', */
-                  backgroundColor:metric.color}}
+                     left:metric.position[1] + '%',
+                  backgroundColor:metric.color */ }}
     >
       {/* { cmetric.title && <div className={`title ${cmetric.actionId}`}>{metric.title}</div> } */}
       { cmetric.component === 'ControlLabel' && <div>ControlLabel</div> }

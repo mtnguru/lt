@@ -30,13 +30,13 @@ Test_Status_F:
     clientId: hmi-cb
     channelType: slider
     default: 12
-    min: 5
-    max: 20
+    min: 0
+    max: 10
     step: .1
   low:
     clientId: hmi-oxy
     channelType: slider
     default: 0
-    min: -5
-    max: 5
+    min: 0
+    max: 10
     step: .1

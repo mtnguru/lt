@@ -1,6 +1,7 @@
 @import "../styles/colors";
 @import "../styles/base";
 
+/*
 .page {
   padding: 0 5px;
   width: 100%;
@@ -13,11 +14,11 @@
   //}
   .left-col {
     flex-basis: 50%;
-//  max-width: 700px;
-//  padding: 0 0 0 10px;
+    max-width: 700px;
+    padding: 0 0 0 10px;
   }
   .right-col {
-    flex-basis: 50%;
+    flex-grow: 3;
     overflow: auto;
   }
   .mqtt-display {
@@ -27,3 +28,4 @@
     height: 200px;
   }
 }
+*/

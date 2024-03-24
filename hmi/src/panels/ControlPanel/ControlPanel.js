@@ -1,5 +1,5 @@
 // File: ControlText.js
-import React, {useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {findMetric} from '../../utils/metrics'
 
@@ -15,10 +15,9 @@ import { Container,
        } from '@chakra-ui/react'
 
 import './ControlPanel.scss'
-import MqttItem from "../MqttPanel/MqttItem";
+//import MqttItem from "../MqttPanel/MqttItem";
 //import {mqttRegisterMetricCB} from "../../utils/mqttReact";
 
-var initialized = false
 
 const ControlPanel = (props) => {
   const regions = props.options.regions
@@ -26,10 +25,10 @@ const ControlPanel = (props) => {
   const left = regions?.left?.cmetrics || {}
   const right = regions?.right?.cmetrics || {}
   const bottom = regions?.bottom?.cmetrics || {}
+  const [isInitialized, setIsInitialized] = useState(false)
 
-  if (!initialized) {
-    // Add the metric and projectId to each cmetric
-    initialized = true
+  useEffect(() => {
+    setIsInitialized(true)
     if (Object.keys(top).length) {
       top.map((cmetric,index) => {
         cmetric.projectId = cmetric.projectId || props.options.projectId || global.aaa.projectId
@@ -54,37 +53,46 @@ const ControlPanel = (props) => {
         cmetric.metric = findMetric(cmetric.projectId, cmetric.metricId)
       })
     }
-  }
+  }, [])
 
 //const clickH = (event) => {
 //  console.log('clickH', event.target);
 //}
 
+  const createPanel = (() => {
+    return (
+      <div>
+        <Box className="control-top">
+          {top.length > 0 && top.map(
+            (cmetric, index) => <ControlWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric}/>)
+          }
+        </Box>
+        <Flex className="control-middle">
+          <Box className="control-left">
+            {left.length > 0 && left.map(
+              (cmetric, index) => <ControlWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric}/>)
+            }
+          </Box>
+          <Box className="control-right">
+            {right.length > 0 && right.map(
+              (cmetric, index) => <ControlWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric}/>)
+            }
+          </Box>
+        </Flex>
+        <Box className="control-bottom">
+          {bottom.length > 0 && bottom.map(
+            (cmetric, index) => <ControlWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric}/>)
+          }
+        </Box>
+      </div>
+    )
+  })
+
   return (
     <Container className="control-panel mqtt-clientId-bg" maxWidth="auto">
-      { regions.header && <h3>Control panel</h3> }
-      <Box className="control-top">
-        { top.length > 0 && top.map(
-          (cmetric,index) => <ControlWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric} />)
-        }
-      </Box>
-      <Flex className="control-middle">
-        <Box className="control-left">
-          { left.length > 0 && left.map(
-            (cmetric,index) => <ControlWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric} />)
-          }
-        </Box>
-        <Box className="control-right">
-          { right.length > 0 && right.map(
-            (cmetric,index) => <ControlWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric} />)
-          }
-        </Box>
-      </Flex>
-      <Box className="control-bottom">
-        { bottom.length > 0 && bottom.map(
-          (cmetric,index) => <ControlWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric} /> )
-        }
-      </Box>
+      { isInitialized ? createPanel() : (
+        <div>Panel is awaiting initialization</div>
+      )}
     </Container>
   )
 }

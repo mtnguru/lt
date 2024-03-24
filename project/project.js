@@ -44,7 +44,7 @@ global.aaa = {
 const loadClientConfigCB = (inTopic, inPayload) => {
   const f = "index::loadClientConfigCB"
   let config = JSON.parse(inPayload.toString(0));
-  msg(2,f,DEBUG, 'enter ', inTopic)
+  msg(2,f,msgE.debug, 'enter ', inTopic)
 
   // Unsubscribe from all current topics
 
@@ -78,18 +78,18 @@ const getConfig = () => {
   const f = 'project::getConfig'
   mqttNode.publish(global.aaa.publishTopics.configReq, "")
   mqttNode.registerTopicCB(global.aaa.subscribeTopics.admin, loadClientConfigCB)
-  msg(2,f,DEBUG,'exit')
+  msg(2,f,msgE.debug,'exit')
 }
 
 
 const metricInputCB = (metric, inTopic, inPayload, tags, values) => {
   const f = "project::metricInputCB"
-  msg(2,f,DEBUG, "enter ", inTopic)
+  msg(2,f,msgE.debug, "enter ", inTopic)
 }
 
 const metricUserCB = (metric, inTopic, inPayload, inTags, inValues) => {
   const f = "project::metricUserCB"
-  msg(2,f,DEBUG, "enter ", inTopic)
+  msg(2,f,msgE.debug, "enter ", inTopic)
 
   const [project, msgType, action, clientId] = inTopic.split("/")
   try {
@@ -99,7 +99,7 @@ const metricUserCB = (metric, inTopic, inPayload, inTags, inValues) => {
       // Create an output message
       const outTopic = mqttNode.makeTopic(OUTPUT, 'influx', {clientId: clientId})
       const outPayload = `${influx.makeTagsFromMetric(tags['Metric'], 'out', 'unknown')} value=${values['value']}`
-      msg(2,f, DEBUG, 'payload ', outPayload)
+      msg(2,f, msgE.debug, 'payload ', outPayload)
       mqttNode.publish(outTopic, outPayload)
     }
   } catch(err) {
@@ -109,7 +109,7 @@ const metricUserCB = (metric, inTopic, inPayload, inTags, inValues) => {
 
 const metricAdminCB = (metric, inTopic, inPayload, tags, values) => {
   const f = "project::metricInputCB"
-  msg(2,f,DEBUG, "enter ", inTopic)
+  msg(2,f,msgE.debug, "enter ", inTopic)
 }
 
 /**
@@ -131,11 +131,11 @@ const startProject = () => {
     for (let metricId in global.aaa.metrics) {
       const metric = global.aaa.metrics[metricId]
       if (metric.user) {
-        msg(2,f, DEBUG, 'register user Metric', metricId)
+        msg(2,f, msgE.debug, 'register user Metric', metricId)
         mqttNode.registerMetricCB(metricId, metricUserCB)
       }
       if (metric.input) {
-        msg(2,f, DEBUG, 'register input Metric', metricId)
+        msg(2,f, msgE.debug, 'register input Metric', metricId)
         mqttNode.registerMetricCB(metricId, metricInputCB)
       }
 //    if (metric.output) {
@@ -143,7 +143,7 @@ const startProject = () => {
 //    }
     }
   } catch(err) {
-    msg(2,f,ERROR,err)
+    msg(2,f,msgE.error,err)
   }
   setTimeout(()=>{
 
@@ -151,6 +151,6 @@ const startProject = () => {
 }
 
 mqttNode.connect(clientId, mqttNode.processCB);
-msg(1,f, DEBUG, ' - requestConfig ')
+msg(1,f, msgE.debug, ' - requestConfig ')
 getConfig();
-msg(1,f, DEBUG, ' - exit main thread ')
+msg(1,f, msgE.debug, ' - exit main thread ')

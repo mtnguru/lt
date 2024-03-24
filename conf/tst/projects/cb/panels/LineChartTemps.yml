@@ -1,5 +1,8 @@
-name: Temperature Chart 
-metrics:
+name: Human Entry 
+animation: 
+  duration: 0
+projectId: cb
+cmetrics:
   - metricId: Middle_Window_K_F
     actionId: inp
   - metricId: Bathroom_Door_K_F

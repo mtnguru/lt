@@ -5,7 +5,6 @@ import {extractFromTags} from './influxr'
 import {mgNotify, mgDebug, mgWarning, mgError} from './mg'
 import {findMetric} from './metrics'
 import {ckTopic} from './topics'
-//import {msg} from "../../../../../apps/lt/administrator/utils/msg";
 import YAML from "yaml-parser";
 
 var mqttClient
@@ -240,7 +239,7 @@ const mqttUnregisterTopicCB = (_topic, cb, args) => {
   }
 }
 
-const mqttRegisterMetricCB = (_projectId,_metricId, _cb) => {
+const mqttRegisterMetricCB = (_projectId,_actionId, _metricId, _cb) => {
   const f = "mqttReact::mqttRegisterMetricCB"
   console.log(f, 'enter')
   // If necessary intialize new metric
@@ -290,19 +289,18 @@ const mqttRequestFile = (clientId, name, filepath, fileType, cb) => {
 const mqttProcessCB = (_topic, _payload) => {
   const f = 'mqttReact::mqttProcessCB'
   let payloadStr = _payload.toString();
-  mgNotify(1, f, "enter", _topic, payloadStr);
+  mgNotify(1, f, "enter", _topic, payloadStr)
 
   try {
     const fields = _topic.split("/")
     const actionId = fields[1]
     var metricId
     var projectId
-    var newActionId
     var metric;
 
     var payload;
-    if (payloadStr[0] === '{') {
-      payload = JSON.parse(payloadStr);
+    if (payloadStr[0] === "{") {
+      payload = JSON.parse(payloadStr)
     }
 
     // If inp, out, hum, .... extract the values and
@@ -325,7 +323,6 @@ const mqttProcessCB = (_topic, _payload) => {
       }
       metricId = tags["MetricId"].toLowerCase()
       projectId = tags["ProjectId"].toLowerCase()
-      newActionId = tags["ActionId"]
       metric = findMetric(projectId,metricId)
 
       if (!metric) {   // If not found create a new metric
@@ -349,24 +346,24 @@ const mqttProcessCB = (_topic, _payload) => {
 
       if (metric.cbs) {
         for (let cb of metric.cbs) {
-          cb(metric, _topic, payloadStr, tags, values)
+          cb(metric, actionId, _topic, payloadStr, tags, values)
         }
       }
     } else if (actionId === 'alm') {
       metricId = payload.metricId
-      newActionId = payload.actionId
       metric = findMetric(payload.projectId, metricId)
 
       if (metric && metric.cbs) {
+        /*
         for (let cb of metric.cbs) {
-//        cb(metric, _topic, payloadStr, tags, values)
+          cb(metric, _topic, payloadStr, tags, values)
         }
+        */
       }
     }
 
 // Topic Callbacks
 
-    var payload;
     if (payloadStr[0] === '{') {
       payload = JSON.parse(payloadStr);
     }
@@ -419,7 +416,7 @@ const mqttProcessCB = (_topic, _payload) => {
       }
     }
   } catch (err) {
-    console.log(f, 'ERROR: ' + err)
+    mgError(2, f, err, _topic, _payload)
   }
 }
 

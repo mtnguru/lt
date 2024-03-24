@@ -4,6 +4,7 @@ PS_NA_Human_V:
   label: PS Volts
   desc: Power Supply Voltage - Human Input
   decimals: 1
+  color: '#ff0000'
   hum:
     clientId: hmi-oxy
     channelType: slider
@@ -16,6 +17,7 @@ PS_NA_Human_A:
   label: PS Amps
   desc: Power Supply Amps - Human Input
   decimals: 0
+  color: '#ed5500'
   hum:
     clientId: hmi-oxy
     channelType: slider
@@ -28,6 +30,7 @@ Ez_NA_MTR_C:
   label: Ez Temperature
   desc: Electrolyzer Temperature
   decimals: 1
+  color: '#ff00ff'
   hum:
     clientId: hmi-oxy
     channelType: slider
@@ -40,6 +43,7 @@ Ez_NA_SmartTrack_slpm:
   label: HHO Flowrate
   desc: HHO Flowrate
   decimals: 1
+  color: '#00cc00'
   hum:
     clientId: hmi-oxy
     channelType: slider
