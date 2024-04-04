@@ -141,10 +141,15 @@ const unsubscribe = (topics) => {
 }
 
 const publish = (topic, payload) => {
-  if (mqttClient) {
-    const res = mqttClient.publish(topic, payload)
-  } else {
-    console.log('NOTICE mqttClient has not been created yet')
+  const f = "mqttNode::publish"
+  try {
+    if (mqttClient) {
+      const res = mqttClient.publish(topic, payload)
+    } else {
+      console.log('NOTICE mqttClient has not been created yet')
+    }
+  } catch(err) {
+    msg(0,f,msgE.error, " register metric",topic, payload);
   }
 };
 

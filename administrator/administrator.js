@@ -396,7 +396,7 @@ const processCB = (_topic, _payload) => {
       out.rsp = input.cmd;
       out.date = currentDate()
       var outStr = JSON.stringify(out)
-      msg(1,f, msgE.error,`call mqttNode.publish - topic: ${outTopic} length:${outStr.length}`)
+      msg(1,f, msgE.debug,`call mqttNode.publish - topic: ${outTopic} length:${outStr.length}`)
       mqttNode.publish(outTopic, outStr);
     }
   } catch (err) {
@@ -725,7 +725,7 @@ const findClientByIp = (_dir, _ip, _projectId) => {
 
 const loadEdgeConfig = (_payload) => {
   const f = 'administrator::loadEdgeConfig'
-  msg(1,f,msgE.error, 'enter - ', _payload.clientId || _payload.ip)
+  msg(2,f,msgE.debug, 'enter - ', _payload.clientId || _payload.ip)
   try {
     if (!_payload.clientId && !_payload.ip) {
       msg(0,f,msgE.error,"neither the clientId or ip is defined");
@@ -739,6 +739,7 @@ const loadEdgeConfig = (_payload) => {
       id = _payload.clientId
       client = loadClient("clients", _payload.clientId, _payload.projectId)
     }
+    msg(1,f,msgE.debug, 'clientId: ',client.clientId)
     if (!client) {
       msg(0, f, msgE.warning, "Client not found", id);
       return;
