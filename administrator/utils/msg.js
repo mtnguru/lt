@@ -34,7 +34,12 @@ const msg = (level, func, _actionId, ...snippets) => {
   const fdate = `${cdate.getDate()} ${cdate.getHours()}:${cdate.getMinutes()}:${cdate.getSeconds()}`;
 
   var topic = global.aaa.topics.publish.cod
-  var actionId = msgE[_actionId]
+  var actionKey;
+  for (actionKey in msgE) {
+    if (msgE[actionKey] === _actionId) {
+      break;
+    }
+  }
   if (_actionId === msgE.error) {
     topic = global.aaa.topics.publish.cod
     actionId = '********** ERROR'
@@ -50,7 +55,7 @@ const msg = (level, func, _actionId, ...snippets) => {
     let payload = {
       function: func,
       name: global.aaa.name,
-      type: msgE[_actionId],
+      type: actionKey,
       content: snippets.join(' '),
     }
 
@@ -59,9 +64,9 @@ const msg = (level, func, _actionId, ...snippets) => {
   }
 
   if (snippets.length > 0) {
-    console.log(fdate, actionId, func, ...snippets)
+    console.log(fdate, actionKey, func, ...snippets)
   } else {
-    console.log(fdate, actionId, func);
+    console.log(fdate, actionKey, func);
   }
 }
 
