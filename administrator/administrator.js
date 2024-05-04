@@ -702,7 +702,7 @@ const loadClient = (_dir, _clientId, _projectId) => {
       client.actionIds = actionIds
     }
   } catch(err) {
-    msg(0,f,msgE.error,"Error loading client ", _clientId, ' - ', err);
+    msg(0,f,msgE.error,"Error loading client ", _clientId, filepath, ' - ', err);
   }
   return client
 }
