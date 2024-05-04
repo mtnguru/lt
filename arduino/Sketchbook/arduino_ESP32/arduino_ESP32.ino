@@ -24,8 +24,8 @@ int debugLevel = 2;
 
 const char* mqttIp = "194.195.214.212"; // labtime.org
 
-const int mqttPort = 1884; // tst
-//const int mqttPort = 1883; // lt
+//const int mqttPort = 1884; // tst
+const int mqttPort = 1883; // lt
 
 const char* mqttUser = "data";
 const char* mqttPassword = "datawp";
@@ -36,12 +36,12 @@ const char* mqttPassword = "datawp";
 WiFiClient wifiClient;
 
 // ASUS at cabin
-//const char* wifiSsid = "NachoWiFi";
-//const char* wifiPassword = "Nemoy1701";
+const char* wifiSsid = "Starbase";
+const char* wifiPassword = "starship";
 
 // Century link at cabin
-const char* wifiSsid = "Solvay";
-const char* wifiPassword = "taichi23";
+//const char* wifiSsid = "Solvay";
+//const char* wifiPassword = "taichi23";
 
 // James Cell Phone
 //const char* wifiSsid = "Verizon-SM-G930V-6ED7";
@@ -290,7 +290,7 @@ void wifiInit() {
   WiFi.persistent(true);
   wifiIP = WiFi.localIP().toString();
   strcpy(ip, WiFi.localIP().toString().c_str());
-  Serial.println((String)"\n   localIP: " + ip);
+  Serial.println((String)"\n  " + wifiSsid + "  localIP: " + ip);
 }
 
 /**

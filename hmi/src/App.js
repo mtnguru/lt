@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 
 import { CSSReset, Box } from '@chakra-ui/react';
 
+import JsPage from        './pages/JsPage'
 import CabinPage from     './pages/CabinPage'
 import OxyPage from       './pages/OxyPage'
 import MqttPage from      './pages/MqttPage'
@@ -25,6 +26,7 @@ function App() {
       <Box as="main">
         <Routes>
           <Route path='/'         element={<CabinPage />}  />
+          <Route path='/js'       element={<JsPage />}  />
           <Route path='/cabin'    element={<CabinPage />}  />
           <Route path='/mqtt'     element={<MqttPage />}  />
           <Route path='/mqtt-tst' element={<MqttTstPage />}  />

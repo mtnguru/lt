@@ -1,0 +1,48 @@
+############################## Input development
+js_weight_lb:
+  label: Weight
+  desc: James Weight
+  decimals: 1
+  color: '#5843d4'
+  hum:
+    clientId: hmi-js
+    channelType: slider
+    default: 200
+    min: 200
+    max: 230
+js_heart_systolic_mm:
+  label: Systolic
+  desc: Systolic
+  decimals: 0
+  color: '#aa5533'
+  hum:
+    clientId: hmi-js
+    channelType: slider
+    default: 130
+    min: 120
+    max: 160
+    step: 1
+js_heart_diastolic_mm:
+  label: Diastolic
+  desc: Diastolic
+  decimals: 0
+  color: '#aa3355'
+  hum:
+    clientId: hmi-js
+    channelType: slider
+    default: 130
+    min: 80
+    max: 110
+    step: 1
+js_heart_pulse_pm:
+  label: Pulse
+  desc: Pulse
+  decimals: 0
+  color: '#994444'
+  hum:
+    clientId: hmi-js
+    channelType: slider
+    default: 70
+    min: 50
+    max: 120
+    step: 1

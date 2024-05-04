@@ -1,0 +1,5 @@
+name: James Biometrics
+edgeId: js_edge
+msgId: js_msg
+clients:
+  hmi-js:        enabled

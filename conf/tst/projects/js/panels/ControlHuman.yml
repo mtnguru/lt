@@ -1,0 +1,35 @@
+name: James Biometrics
+projectId: js
+regions:
+# header:
+#   title: Cabin Controls
+  top:
+    cmetrics:
+      - metricId: js_weight_lb
+        actionId: hum
+        component: ControlMetric
+
+      - metricId: js_weight_lb
+        actionId: hum
+        component: ControlSlider
+
+      - metricId: js_heart_systolic_mm
+        actionId: hum
+        component: ControlMetric
+      - metricId: js_heart_systolic_mm
+        actionId: hum
+        component: ControlSlider
+
+      - metricId: js_heart_diastolic_mm
+        actionId: hum
+        component: ControlMetric
+      - metricId: js_heart_diastolic_mm
+        actionId: hum
+        component: ControlSlider
+
+      - metricId: js_heart_pulse_pm
+        actionId: hum
+        component: ControlMetric
+      - metricId: js_heart_pulse_pm
+        actionId: hum
+        component: ControlSlider

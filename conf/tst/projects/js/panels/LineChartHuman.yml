@@ -1,0 +1,79 @@
+name:  Chart 
+animation: 
+  duration: 0
+projectId: js
+cmetrics:
+  - metricId: js_weight_lb
+    actionId: hum
+  - metricId: js_heart_diastolic_mm
+    actionId: hum
+  - metricId: js_heart_systolic_mm
+    actionId: hum
+  - metricId: js_heart_pulse_pm
+    actionId: hum
+
+# chartJs configuration
+backgroundColor: "yellow"
+responsive: true,
+interaction:
+  mode: index
+  intersect: false
+stacked: false
+plugins:
+  title:
+    display: true
+    text: James Biometrics
+    fontColor: green
+  legend:
+    display: true
+    position: bottom
+    labels:
+      fontSize: 5
+      boxWidth: 10
+      padding: 5
+scales:
+  x:
+    type: time
+    display: true,
+    format: DD hh:mm:ss
+    time:
+      unit: minute
+      displayFormats:
+        day: MMM D
+        hour: hh:mm
+        minute: hh:mm
+        second: hh:mm
+      tooltipFormat: DD hh:mm:ss
+    grid:
+      display: true
+      backgroundColor: white
+    scaleLabel:
+      display: true
+      labelString: 'Time'
+      fontColor: 'white'
+#   min: now - 1000000
+#   max: now
+  yleft:
+    type: linear
+    display: true,
+    position: left
+    grid:
+      display: true
+      backgroundColor: white
+    scaleLabel:
+      display: true
+      labelString: Temperature
+      fontColor: white
+#   min: 50
+#   max: 80
+  yright:
+    type: linear
+    display: true,
+    position: right
+    grid:
+      display: false
+    scaleLabel:
+      display: false
+      fontColor: 'white'
+#   grid:
+#     drawOnChartArea: true
