@@ -43,7 +43,7 @@ const mqttClientId = `${clientId}_${adminId}_${generator().toString(16).slice(10
 global.aaa = {
   startTime: Date.now(),
   status: {
-    debugLevel: 1,
+    debugLevel: 2,
     mqttConnected: 0,
     mqttSubscribed: 0,
     mqttUnsubscribed: 0,
@@ -220,7 +220,7 @@ const processMqttInput = (_topic, _payload) => {
 
     // Extract values into values array
     // Typically there is only one - "value"   However there can be more in rare cases
-    msg(2,f, msgE.error,"payload - ", payload)
+    msg(2,f, msgE.debug,"payload - ", payload)
     var ivalues;
     if (flds[1] === undefined) {
       ivalues['value']
@@ -341,7 +341,7 @@ const compressConfig = (inp) => {
  */
 const processCB = (_topic, _payload) => {
   const f = 'administrator::processCB'
-  msg(2,f,msgE.error, 'enter');
+  msg(2,f,msgE.debug, 'enter');
   var out;
   var outTopic;
   try {
@@ -349,20 +349,20 @@ const processCB = (_topic, _payload) => {
     var [,actionId, clientId,,] = _topic.split('/')
 
     const inputStr = _payload.toString();
-    msg(2,f,msgE.error, 'topic: ', _topic, '\n' + ' payload:', inputStr);
+    msg(2,f,msgE.debug, 'topic: ', _topic, '\n' + ' payload:', inputStr);
     var input = {}
 
     // If the payload is JSON, parse it
     if (inputStr && inputStr[0] === '{' && inputStr !== '{}') {
       try {
-        msg(3, f, msgE.error, "Parse inputStr:", inputStr.toString)
+        msg(3, f, msgE.debug, "Parse inputStr:", inputStr.toString)
         input = JSON.parse(inputStr)
       } catch(err) {
         msg(0,f,msgE.error, 'Error parsing JSON -- ',inputStr)
         return;
       }
     }
-    msg(3,f,msgE.error, 'actionId', actionId, ' clientId', clientId);
+    msg(3,f,msgE.debug, 'actionId', actionId, ' clientId', clientId);
 
     // If this is a cmd to the administrator
     if (global.aaa.topics.subscribe['cmd'] === _topic ||
@@ -402,7 +402,7 @@ const processCB = (_topic, _payload) => {
   } catch (err) {
     msg(0,f, msgE.error, 'shitter', input.rsp || input.cmd, err)
   }
-  msg(2,f,msgE.error, 'exit');
+  msg(2,f,msgE.debug, 'exit');
   return null;
 }
 
