@@ -35,12 +35,12 @@ const int mqttPort = 1883; // lt
 WiFiClient wifiClient;
 
 // ASUS at cabin
-//const char* wifiSsid = "NachoWiFi";
-//const char* wifiPassword = "Nemoy1701";
+const char* wifiSsid = "Starbase";
+const char* wifiPassword = "starship";
 
 // Century link at cabin
-const char* wifiSsid = "Solvay";
-const char* wifiPassword = "taichi23";
+//const char* wifiSsid = "Solvay";
+//const char* wifiPassword = "taichi23";
 
 // James Cell Phone
 //const char* wifiSsid = "Verizon-SM-G930V-6ED7";
@@ -803,8 +803,8 @@ void readInputs() {
 void setup() {
   const char *f = "setup";
   Serial.begin(115200);
-  logit(2,MD,f,"starting program",NULL);
   startTime = millis();
+  Serial.println((String)"starting program");
 
   strcpy(projectId, "unknown");
   randomSeed(micros());

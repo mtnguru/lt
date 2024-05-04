@@ -1,26 +1,15 @@
-name: HMI-CB
-projectId: cb
+name: HMI-JS
+projectId: js
 clientType: hmi
-clientId: hmi-cb
+clientId: hmi-js
 userId: Bilbo
 format: yml
 clients:
   all:
     clientId: all
     name: All
-  hmi-cb:         enabled
+  hmi-js:         enabled
   administrator:  enabled
-  controller:     disabled
-  drupal:         disabled
-  epiclc:         disabled
-  arduino1:       enabled
-  arduino2:       disabled
-  arduino3:       enabled
-  arduino4:       disabled
-  arduino5:       enabled
-  arduino6:       disabled
-  arduino7:       enabled
-  arduino8:       enabled
 topics:
   subscribe:
     adm: '#'
@@ -48,14 +37,11 @@ topics:
     low: PROJECTID/low/CLIENTID/DUSERID/EDGEID
 actionIds: {}
 page:
-  title: Cabin Temperatures
-  id: hmi-cb
-  class: page cb-page flex
+  title: James Biometrics
+  id: hmi-js
+  class: page js-page flex
   panels:
     LineChartHuman:
-    LineChartTemps:
-    ImageTemps:
-    ControlTemps:
     ControlHuman:
     MsgPanel:
 statusDefault:

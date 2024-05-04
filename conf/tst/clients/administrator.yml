@@ -53,6 +53,7 @@ projects:
   fg:  disabled
   oxy: disabled
   sl:  disabled
+  js:  enabled
 clients:
   arduino1:       enabled
   arduino2:       disabled
