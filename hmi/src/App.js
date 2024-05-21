@@ -7,6 +7,7 @@ import { CSSReset, Box } from '@chakra-ui/react';
 import JsPage from        './pages/JsPage'
 import CabinPage from     './pages/CabinPage'
 import OxyPage from       './pages/OxyPage'
+import LabPage from       './pages/LabPage'
 import MqttPage from      './pages/MqttPage'
 import MqttTstPage from   './pages/MqttTstPage'
 //import Page from          './pages/Page'
@@ -31,8 +32,8 @@ function App() {
           <Route path='/mqtt'     element={<MqttPage />}  />
           <Route path='/mqtt-tst' element={<MqttTstPage />}  />
           <Route path='/oxy'      element={<OxyPage />}  />
+          <Route path='/lab'      element={<LabPage />}  />
           {/*
-            <Route path='/lab'      element={<Page />}  />
             <Route path='/safire'   element={<SafirePage />}  />
           */}
           <Route path='/cabin'    element={<CabinPage />}  />

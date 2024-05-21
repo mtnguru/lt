@@ -21,7 +21,7 @@ int enabled = 1;
 int debugLevel = 2;
 
 ///////////// Mqtt server credentials
-
+//const char* mqttIp = "172.16.45.7";   // merlin
 const char* mqttIp = "194.195.214.212"; // labtime.org
 
 //const int mqttPort = 1884; // tst
@@ -394,8 +394,8 @@ void getStatus() {
   snprintf(uptime,20,"%d %d:%d:%d", days, hours, minutes, seconds);
 
   snprintf(status,statusSize,
-    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": %d, \"enabled\":%d, \"debugLevel\":%d, \"sampleInterval\":%lu, \"version\":\"%s\", \"uptime\":\"%s\" }",
-    clientId, mqttClientId.c_str(), mqttConnected, enabled, debugLevel, sampleInterval, (char *)version, uptime);
+    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"model\": \"ESP32\", \"mqttClientId\":\"%s\", \"mqttConnected\": %d, \"ip\": \"%s\", \"wifiSsid\":\"%s\", \"enabled\":%d, \"debugLevel\":%d, \"sampleInterval\":%lu, \"version\":\"%s\", \"uptime\":\"%s\" }",
+    clientId, mqttClientId.c_str(), mqttConnected, ip, wifiSsid, enabled, debugLevel, sampleInterval, (char *)version, uptime);
 
   logit(2,MD, f, status, NULL);
 //char statusLen[10];
@@ -514,6 +514,7 @@ void setConfig(const char *topic,
   strcpy(clientId, jsonDoc["clientId"]);
 
   sampleInterval = (unsigned long)jsonDoc["status"]["sampleInterval"];
+  logit(0,MD, f, "enter", topic);
   if (sampleInterval == 0) {
     sampleInterval = 30000;
   }
@@ -804,8 +805,8 @@ void readInputs() {
 void setup() {
   const char *f = "setup";
   Serial.begin(115200);
-  logit(2,MD,f,"starting program",NULL);
   startTime = millis();
+  Serial.println((String)"starting program");
 
   strcpy(projectId, "unknown");
   randomSeed(micros());

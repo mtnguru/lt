@@ -10,27 +10,27 @@ regions:
         component: ControlMetric
 
       - metricId: test_status_f
-        title: Human
+        label: Human
         actionId: hum
         component: ControlSlider
 
       - metricId: test_status_f
-        title: Upper Alarm
+        label: Upper Alarm
         actionId: upper
         component: ControlSlider
 
       - metricId: test_status_f
-        title: Lower Alarm
+        label: Lower Alarm
         actionId: lower
         component: ControlSlider
 
       - metricId: test_status_f
-        title: Upper Range
+        label: Upper Range
         actionId: high
         component: ControlSlider
 
       - metricId: test_status_f
-        title: Lower Range
+        label: Lower Range
         actionId: low
         component: ControlSlider
 

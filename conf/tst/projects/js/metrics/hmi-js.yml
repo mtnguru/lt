@@ -10,11 +10,12 @@ js_weight_lb:
     default: 200
     min: 200
     max: 230
+    step: .2
 js_heart_systolic_mm:
   label: Systolic
   desc: Systolic
   decimals: 0
-  color: '#aa5533'
+  color: '#aa6622'
   hum:
     clientId: hmi-js
     channelType: slider
@@ -26,13 +27,25 @@ js_heart_diastolic_mm:
   label: Diastolic
   desc: Diastolic
   decimals: 0
-  color: '#aa3355'
+  color: '#aa2266'
   hum:
     clientId: hmi-js
     channelType: slider
     default: 130
     min: 80
     max: 110
+    step: 1
+js_heart_pressure_mm:
+  label: Pulse Pressure
+  desc: Pulse Pressure
+  decimals: 0
+  color: '#aa4444'
+  hum:
+    clientId: hmi-js
+    channelType: slider
+    default: 30
+    min: 20
+    max: 60
     step: 1
 js_heart_pulse_pm:
   label: Pulse

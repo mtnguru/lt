@@ -9,6 +9,8 @@ cmetrics:
     actionId: hum
   - metricId: js_heart_systolic_mm
     actionId: hum
+  - metricId: js_heart_pressure_mm
+    actionId: hum
   - metricId: js_heart_pulse_pm
     actionId: hum
 

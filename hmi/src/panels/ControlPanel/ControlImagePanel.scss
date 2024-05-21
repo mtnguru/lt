@@ -13,7 +13,7 @@
     color: $title2-fg-color;
     width: 100%;
     font-weight: 400;
-    padding: .5vw;
+    padding: .5vmin;
     z-index: 2;
   }
 
@@ -31,10 +31,10 @@
     border-radius: 4px;
     line-height: 1.2;
     .Metric {
-      width: 5.5vw;
+      width: 5.5vmin;
       text-align: right;
       padding: 0 5px;
-      font-size: 1.65vw;
+      font-size: 1.5vmin;
     }
   }
   img.bg-image {

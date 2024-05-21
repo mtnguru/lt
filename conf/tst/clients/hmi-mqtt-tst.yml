@@ -11,6 +11,8 @@ clients:
   logger:         enabled
   hmi-mqtt-tst:   enabled
   hmi-cb:         enabled
+  hmi-js:         enabled
+  hmi-lab:        enabled
   arduino1:       enabled
   arduino2:       disabled
   arduino3:       enabled

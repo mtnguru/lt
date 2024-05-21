@@ -5,8 +5,8 @@
   position: absolute;
   transform: translate(-50%, -50%);
   border: 1px solid $input-bd-color;
-  margin: .5vw;
-  padding: .3vw .5vw;
+  margin: .5vmin;
+  padding: .3vmin .5vmin;
   border-radius: 5px;
   background-color: rgba(0,0,0,.5);
   h3 {
@@ -16,7 +16,7 @@
   .metric {
     font-size: 60%;
     font-weight: bold;
-    font-size: 1.5vw;
+    font-size: 1.5vmin;
     color: $metric-fg-color;
   }
   .trigger {

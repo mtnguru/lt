@@ -11,7 +11,7 @@ import {
 //Flex,
 } from '@chakra-ui/react'
 
-//import './ControlMetric.scss'
+import './ControlMetric.scss'
 
 const yaml = require('js-yaml')
 
@@ -72,16 +72,12 @@ const ControlMetric = (props) => {
   }
 
   return (
-    <Box className="control-metric-wrapper">
-      <Box className="control-metric">
-        <Box className="right" display={props.display ? props.display : null}>
-          <WarningIcon></WarningIcon>
-          <ControlMetricPopup title={metric.label} content={content()} trigger={val}/>
-        </Box>
-      </Box>
+    <Box className="control-metric">
       <button onClick={onClickH}>
-        <Text as="h3" fontWeight="bold" fontSize="120%" style={{backgroundColor:metric.color}}>{metric.label}</Text>
+        <Text as="h3" fontWeight="bold" fontSize="120%" className="label" style={{backgroundColor:metric.color}}>{metric.label}</Text>
       </button>
+      <WarningIcon></WarningIcon>
+      <ControlMetricPopup title={metric.label} content={content()} trigger={val}/>
     </Box>
   )
 }

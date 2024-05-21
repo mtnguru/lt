@@ -1,2 +1,41 @@
 @import "../../styles/base";
 @import "../../styles/colors";
+.control-metric {
+  width: 22.3vw;
+  .right {
+    vertical-align: middle;
+    float: right;
+    text-align: left;
+  }
+  .metric {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: right;
+    color: $metric-fg-color;
+    width: 3.5vw;
+    &.upper {
+      background-color: #a00;
+    }
+    &.lower {
+      background-color: #00f;
+    }
+    &.low,
+    &.high {
+      background-color: #70a
+    }
+  }
+  .chakra-icon {
+    vertical-align: middle;
+    margin: -.3vw .2vw 0 .2vw;
+    width: 1.3vw;
+    height: 1.3vw;
+    color: rgba(255,255,255,.2);
+    background-color: inherit;
+    border-radius: 50%;
+  }
+  .chakra-button {
+    height: 3vw;
+    width: 6vw;
+    padding: 0 0 0 .5vw;
+  }
+}

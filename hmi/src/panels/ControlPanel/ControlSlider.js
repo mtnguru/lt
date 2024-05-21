@@ -98,8 +98,8 @@ const ControlSlider = (props) => {
 
   return (
     <Box className="control-slider">
-      {props.cmetric.title && <h4 className={`title ${actionId}`}>{props.cmetric.title}</h4>}
       <Flex w="full">
+        {props.cmetric.label && <h3 className={`label ${actionId}`}>{props.cmetric.label}</h3>}
         <NumberInput
           min={props.cmetric.metric[actionId].min}
           max={props.cmetric.metric[actionId].max}
@@ -115,14 +115,11 @@ const ControlSlider = (props) => {
           </NumberInputStepper>
         </NumberInput>
         <Flex flex="3" align="center" justify="center">
-          <Box
-            flex='1'
-          >
-            <Slider
+          <Box className="slider-box" flex='1'>
+            <Slider className="slider"
               min={props.cmetric.metric[actionId].min}
               max={props.cmetric.metric[actionId].max}
               step={props.cmetric.metric[actionId].step}
-              size="sm"
               focusThumbOnChange={false}
               value={val}
               onChange={onChangeH}

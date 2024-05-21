@@ -35,7 +35,6 @@ topics:
     lower: PROJECTID/lower/CLIENTID/DUSERID/EDGEID
     high: PROJECTID/high/CLIENTID/DUSERID/EDGEID
     low: PROJECTID/low/CLIENTID/DUSERID/EDGEID
-actionIds: {}
 page:
   title: James Biometrics
   id: hmi-js

@@ -4,26 +4,27 @@ regions:
 # header:
 #   title: Cabin Controls
   top:
-  left:
     cmetrics:
       - metricId: ps_na_human_v
+        title: Volts
         actionId: hum
         component: ControlSlider
 
       - metricId: ps_na_human_a
+        label: Amps
         actionId: hum
         component: ControlSlider
 
       - metricId: ez_na_mtr_c
+        label: EZ Temperature
         actionId: hum
         component: ControlSlider
 
       - metricId: ez_na_smarttrack_slpm
+        label: EZ Flow Rate
         actionId: hum
         component: ControlSlider
 
-  right:
-    cmetrics:
       - metricId: outside_bunkhouse_k_f
         actionId: inp
         component: ControlMetric
@@ -31,4 +32,7 @@ regions:
       - metricId: outside_frontdoor_ow_f
         actionId: inp
         component: ControlMetric
+
+  left:
+  right:
 

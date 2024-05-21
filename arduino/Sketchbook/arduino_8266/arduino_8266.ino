@@ -23,11 +23,12 @@ int debugLevel = 2;
 ///////////// Mqtt server credentials
 //const char* mqttIp = "172.16.45.7";   // merlin
 const char* mqttIp = "194.195.214.212"; // labtime.org
+
+//const int mqttPort = 1884; // tst
+const int mqttPort = 1883; // lt
+
 const char* mqttUser = "data";
 const char* mqttPassword = "datawp";
-
-const int mqttPort = 1883; // lt
-//const int mqttPort = 1884; // tst
 
 ///////////// WiFi
 #include <ESP8266WiFi.h>
@@ -291,7 +292,7 @@ void wifiInit() {
   WiFi.persistent(true);
   wifiIP = WiFi.localIP().toString();
   strcpy(ip, WiFi.localIP().toString().c_str());
-  Serial.println((String)"\n   localIP: " + ip);
+  Serial.println((String)"\n  " + wifiSsid + "  localIP: " + ip);
 }
 
 /**
@@ -395,8 +396,8 @@ void getStatus() {
   snprintf(uptime,20,"%d %d:%d:%d", days, hours, minutes, seconds);
 
   snprintf(status,statusSize,
-    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"mqttClientId\":\"%s\", \"mqttConnected\": %d, \"enabled\":%d, \"debugLevel\":%d, \"sampleInterval\":%lu, \"version\":\"%s\", \"uptime\":\"%s\" }",
-    clientId, mqttClientId.c_str(), mqttConnected, enabled, debugLevel, sampleInterval, (char *)version, uptime);
+    "{\"rsp\": \"requestStatus\", \"clientId\": \"%s\", \"model\": \"8266\", \"mqttClientId\":\"%s\", \"mqttConnected\": %d, \"ip\": \"%s\", \"wifiSsid\":\"%s\", \"enabled\":%d, \"debugLevel\":%d, \"sampleInterval\":%lu, \"version\":\"%s\", \"uptime\":\"%s\" }",
+    clientId, mqttClientId.c_str(), mqttConnected, ip, wifiSsid, enabled, debugLevel, sampleInterval, (char *)version, uptime);
 
   logit(2,MD, f, status, NULL);
 //char statusLen[10];
@@ -418,7 +419,9 @@ void subscribeTopics() {
   res = mqttClient.subscribe(mqttOutputSub);
 }
 
-void startOneWire() {
+void startOneWire(int oneWirePin) {
+  Serial.print("startOneWire: channel ");
+  Serial.println(oneWirePin);
   if (!oneWireP) {
     oneWireP = new OneWire(oneWirePin);
 //  sensorsP = new DallasTemperature(oneWireP);
@@ -574,7 +577,8 @@ void setConfig(const char *topic,
         for (int i = 0; i < 8; i++) {
           inputA[inputN].deviceId[i] = (int)deviceId[i];
         }
-        startOneWire();
+        startOneWire(metric["inp"]["channel"]);
+
       } else if (strcmp(channelType,"onewire_f") == 0) {   // OneWire DS18B20S F
         logit(1,MD,f,"Set channelType as onewire_f ",NULL);
         inputA[inputN].channelType  = IN_ONEWIRE_F;
@@ -582,7 +586,7 @@ void setConfig(const char *topic,
         for (int i = 0; i < 8; i++) {
           inputA[inputN].deviceId[i] = (int)deviceId[i];
         }
-        startOneWire();
+        startOneWire(metric["inp"]["channel"]);
       } else {
         logit(1,ME, f, "Cannot find input channelType - rebooting: ", channelType);
         delay(15000);
@@ -813,6 +817,7 @@ void setup() {
   wifiInit();
 
   logit(1,MD,f,"Init MQTT server",mqttIp);
+//logit(1,MD,f,"   port: ",mqttPort);
   mqttClient.setServer(mqttIp, mqttPort);
   mqttClient.setKeepAlive(15);
 //mqttClient.setCleanSession(false);

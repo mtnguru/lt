@@ -6,6 +6,7 @@ import {mqttRegisterMetricCB} from '../../utils/mqttReact'
 
 import ControlSlider from './ControlSlider'
 import ControlMetric from './ControlMetric'
+import ControlNumber from './ControlNumber'
 
 import './ControlWidget.scss'
 
@@ -112,6 +113,7 @@ const ControlWidget = (props) => {
     >
       {/* { cmetric.title && <div className={`title ${cmetric.actionId}`}>{metric.title}</div> } */}
       { cmetric.component === 'ControlLabel' && <div>ControlLabel</div> }
+      { cmetric.component === 'ControlNumber' && <ControlNumber cmetric={cmetric}></ControlNumber> }
       { cmetric.component === 'ControlSlider' && <ControlSlider cmetric={cmetric}></ControlSlider> }
       { cmetric.component === 'ControlMetric' && <ControlMetric cmetric={cmetric}></ControlMetric> }
     </div>

@@ -2,13 +2,10 @@
 @import "../../styles/colors";
 .control-slider {
   display: inline-block;
-  padding: 0 10px;
   width: 100%;
   label {
     display: inline-block;
-    width: 180px;
   }
-
   .value {
     display: inline-block;
     vertical-align: top;
@@ -18,53 +15,18 @@
     border-radius: 4px;
   }
 
-  .outValue {
-    display: inline-block;
-    text-align: right;
-    width: 36px;
-    margin-left: 1rem;
-    background: #54c;
-    padding: 5px;
-    border-radius: 4px;
+  .slider-box {
+    margin: 0 .8vw;
+    font-size: .9vw;
+    width: 20.5vw;
   }
-
-  .container {
-    margin-left: 1rem;
-    display: inline-block;
-    position: relative;
-    width: calc(100% - 70px);
-    max-width: 300px;
-
-    .left {
-      top: 0;
-      float: left;
-    }
-
-    .labels {
-      margin-top: -6px;
-    }
-
-    .right {
-      float: right;
-    }
-
-    .middle {
-      position: absolute;
-      width: 100%;
-      float: right;
-      text-align: center;
-
-    }
-  }
-
   .number {
-    margin-right: 20px;
-
+    height: 3vw
+//  margin-right: 20px;
   }
-  input {
-    border: 1px solid $input-bd-color;
-    padding: 1px 5px;
-    width: 5vw;
-    margin-right: 10px;
+  .chakra-slider__thumb {
+    font-size: 1.2vw;
+    height: 2vw;
+    width: 3vw;
   }
 }

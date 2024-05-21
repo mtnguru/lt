@@ -29,7 +29,7 @@ stacked: false
 plugins:
   title:
     display: true
-    text: Indoor Temperatures
+    text: Testing Alarms
     fontColor: green
   legend:
     display: true

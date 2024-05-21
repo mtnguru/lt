@@ -2,92 +2,50 @@
 @import "../../styles/colors";
 
 .control-widget {
-  padding: 0 .7vw 0 0;
-  border-radius: 4px;
+  vertical-align: center;
+//border: 1px solid $input-bd-color;
+  border-radius: .5vw;
+  background-color: rgba(0,0,0,.5);
+  font-size: 1.4vw;
+  margin-bottom: .5vh;
+  width: fit-content;
   &.absolute {
     position: absolute;
   }
-//transform: translate(-50%, -50%);
-  border: 1px solid $input-bd-color;
-  margin: .3vw 0;
-  border-radius: 5px;
-  background-color: rgba(0,0,0,.5);
-  font-size: 1vw;
   h3 {
-    color: white;
-    font-size: 1vw;
+    font-size: inherit;
     margin: 0;
-    padding: 0 .5vw;
-    border-radius: 4px;
+    color: white;
+    padding-left: .8vw;
+    border-radius: .5vw;
   }
   .metric {
     font-weight: bold;
 //  padding: 3px 6px;
-//  font-size: 1vw;
+//  font-size: 1.4vw;
     color: $metric-fg-color;
   }
   button {
-    font-size: 1vw;
+    font-size: inherit;
     text-align: left;
   }
 
-  .title {
-    margin-top: 1px;
-    padding: 2px 10px;
-    border-radius: 5px;
-    width: 10vw;
-    text-align: center;
+  input {
+    border: 1px solid $input-bd-color;
+    text-align: right;
+    background-color: var(--color--gray-20);
+    height: 3vw;
+    width: 9vw;
+    font-size: 1.4vw;
+    padding: 0 4vw 0 .5vw;
+    border-radius: .5vw;
   }
-  .control-metric {
-    width: 22vw;
-    .right {
-      vertical-align: middle;
-      float: right;
-      text-align: left;
-    }
-    .metric {
-      display: inline-block;
-      vertical-align: middle;
-      text-align: right;
-      font-weight: bold;
-      font-size: 1vw;
-      color: $metric-fg-color;
-      border-radius: 3px;
-      width: 3.5vw;
-      &.upper {
-        background-color: #a00;
-      }
-      &.lower {
-        background-color: #00f;
-      }
-      &.low,
-      &.high {
-        background-color: #70a
-      }
-    }
-    .chakra-icon {
-      vertical-align: middle;
-      margin-top: -2px;
-      width: 1.3vw;
-      height: 1.3vw;
-      color: rgba(255,255,255,.2);
-      background-color: inherit;
-      border-radius: 50%;
-    }
+
+  .label {
+    margin-right: 1vw;
+    padding-top: .5vw;
+    height: 3vw;
+    width: 13vw;
+    overflow-x: hidden;
   }
 }
-
-
-/*
-.control-metrics {
-  display: inline-block;
-  border: 1px solid white;
-  width: 50px;
-  margin: 0 8px;
-  padding: 2px;
-  border-radius: 4px;
-  //vertical-align: middle;
-  text-align: center;
-  //float: left;
-}
- */

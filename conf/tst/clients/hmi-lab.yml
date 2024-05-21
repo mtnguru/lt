@@ -1,30 +1,18 @@
-name: HMI-CB
-projectId: cb
+name: HMI-LAB
+projectId: lab
 clientType: hmi
-clientId: hmi-cb
+clientId: hmi-lab
 userId: Bilbo
 format: yml
 clients:
   all:
     clientId: all
     name: All
-  hmi-cb:         enabled
+  hmi-lab3:       enabled
   administrator:  enabled
-  controller:     disabled
-  drupal:         disabled
-  epiclc:         disabled
-  arduino1:       enabled
-  arduino2:       disabled
-  arduino3:       enabled
-  arduino4:       disabled
-  arduino5:       enabled
-  arduino6:       disabled
-  arduino7:       enabled
-  arduino8:       enabled
 topics:
   subscribe:
-    adm: 'a/#'
-    prj: 'PROJECTID/#'
+    adm: '#'
   register:
     adm: a
     cmd: a/cmd
@@ -47,18 +35,14 @@ topics:
     lower: PROJECTID/lower/CLIENTID/DUSERID/EDGEID
     high: PROJECTID/high/CLIENTID/DUSERID/EDGEID
     low: PROJECTID/low/CLIENTID/DUSERID/EDGEID
-actionIds: {}
+#actionIds: {}
 page:
-  title: Cabin Temperatures
-  id: hmi-cb
-  class: page cb-page flex
+  title: Demo Laboratory
+  id: hmi-lab
+  class: page lab-page flex
   panels:
     LineChartHuman:
-    LineChartTemps:
-    ImageTemps:
-    ControlTemps:
     ControlHuman:
     MsgPanel:
-
 statusDefault:
   debugLevel: 0

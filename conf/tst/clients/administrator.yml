@@ -67,6 +67,8 @@ clients:
   hmi-oxy:        disabled
   hmi-sf:         disabled
   hmi-cb:         enabled
+  hmi-js:         enabled
+  hmi-lab:        enabled
   hmi-mqtt-tst:   enabled
   drupal:         disabled
   controller-tst: disabled

@@ -43,7 +43,7 @@ const mqttClientId = `${clientId}_${adminId}_${generator().toString(16).slice(10
 global.aaa = {
   startTime: Date.now(),
   status: {
-    debugLevel: 2,
+    debugLevel: 0,
     mqttConnected: 0,
     mqttSubscribed: 0,
     mqttUnsubscribed: 0,
