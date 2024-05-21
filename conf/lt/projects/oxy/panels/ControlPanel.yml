@@ -6,12 +6,12 @@ regions:
   top:
     cmetrics:
       - metricId: ps_na_human_v
-        title: Volts
+        label: Volts
         actionId: hum
         component: ControlSlider
 
       - metricId: ps_na_human_a
-        label: Amps
+        label: Amps Dude
         actionId: hum
         component: ControlSlider
 
@@ -32,7 +32,4 @@ regions:
       - metricId: outside_frontdoor_ow_f
         actionId: inp
         component: ControlMetric
-
-  left:
-  right:
 
