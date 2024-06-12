@@ -1,8 +1,8 @@
 // File: ControlText.js
 // import React, {useState} from 'react';
 
-import ControlMetric from './ControlMetric'
-import ControlSlider from './ControlSlider'
+import MetricFull from './MetricFull'
+import MetricSlider from './MetricSlider'
 
 import {
   Box,
@@ -39,20 +39,20 @@ const ControlOxyPanel = (props) => {
       <Heading as="h2" mt={2} mb={8} fontSize="130%" color="titleFg">Swiss Oxyhydrogen Energy</Heading>
       <Box className="controls" >
         <Box className="control-bar gas-flow"       mb={10}>
-          <ControlMetric                     projectId={global.aaa.projectId} actionId="hum"   metricId="Ez_NA_SmartTrack_slpm" label="HHO Flow" cname=""></ControlMetric>
-          <ControlSlider title="Value"       projectId={global.aaa.projectId} actionId="hum"   metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
+          <Metric                     projectId={global.aaa.projectId} actionId="hum"   metricId="Ez_NA_SmartTrack_slpm" label="HHO Flow" cname=""></Metric>
+          <MetricSlider title="Value"       projectId={global.aaa.projectId} actionId="hum"   metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
         </Box>
         <Box className="control-bar voltage"        mb={10}>
-          <ControlMetric projectId={global.aaa.projectId} actionId="hum" metricId="PS_NA_Human_V" label="PS Volts" cname=""></ControlMetric>
-          <ControlSlider projectId={global.aaa.projectId} actionId="hum" metricId="PS_NA_Human_V" onChange={onChange} />
+          <Metric projectId={global.aaa.projectId} actionId="hum" metricId="PS_NA_Human_V" label="PS Volts" cname=""></Metric>
+          <MetricSlider projectId={global.aaa.projectId} actionId="hum" metricId="PS_NA_Human_V" onChange={onChange} />
         </Box>
         <Box className="control-bar amps"           mb={10}>
-          <ControlMetric projectId={global.aaa.projectId} actionId="hum" metricId="PS_NA_Human_A" label="PS Amps" cname=""></ControlMetric>
-          <ControlSlider projectId={global.aaa.projectId} actionId="hum" metricId="PS_NA_Human_A" onChange={onChange} />
+          <Metric projectId={global.aaa.projectId} actionId="hum" metricId="PS_NA_Human_A" label="PS Amps" cname=""></Metric>
+          <MetricSlider projectId={global.aaa.projectId} actionId="hum" metricId="PS_NA_Human_A" onChange={onChange} />
         </Box>
         <Box className="control-bar ez-temperature" mb={10}>
-          <ControlMetric projectId={global.aaa.projectId} actionId="hum" metricId="Ez_NA_Mtr_C" label="Ez Temp" cname=""></ControlMetric>
-          <ControlSlider projectId={global.aaa.projectId} actionId="hum" metricId="Ez_NA_Mtr_C" onChange={onChange} />
+          <Metric projectId={global.aaa.projectId} actionId="hum" metricId="Ez_NA_Mtr_C" label="Ez Temp" cname=""></Metric>
+          <MetricSlider projectId={global.aaa.projectId} actionId="hum" metricId="Ez_NA_Mtr_C" onChange={onChange} />
         </Box>
       </Box>
     </Box>

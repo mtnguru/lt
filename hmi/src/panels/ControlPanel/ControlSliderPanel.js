@@ -1,7 +1,7 @@
 // File: ControlText.js
 // import React, {useState} from 'react';
 
-import ControlSlider from './ControlSlider'
+import MetricSlider from './MetricSlider'
 import Card from '../../components/ui/Card'
 
 //import './ControlSliderPanel.scss'
@@ -11,19 +11,19 @@ const ControlSliderPanel = (props) => {
   }
 
   return (
-    <div className="panel control-slider">
+    <div className="panel metric-slider">
       <h2>Simulation panel</h2>
       <div className="control-flex">
         <Card>
           <h3>Static</h3>
-          <ControlSlider client="arduino2" metricId="Ch_MFC_Gas_D2_sccm" onChange={onChange} />
-          <ControlSlider client="arduino2" metricId="Ch_K_TopCenter_C" onChange={onChange} />
+          <MetricSlider client="arduino2" metricId="Ch_MFC_Gas_D2_sccm" onChange={onChange} />
+          <MetricSlider client="arduino2" metricId="Ch_K_TopCenter_C" onChange={onChange} />
         </Card>
         <Card>
           <h3>Variable</h3>
-          <ControlSlider client="arduino2" metricId="Ch_Baratron_torr" onChange={onChange} />
-          <ControlSlider client="arduino2" metricId="PS_DC_V" onChange={onChange} />
-          <ControlSlider client="arduino2" metricId="Ch_MFC_Gas_N2_sccm" onChange={onChange} />
+          <MetricSlider client="arduino2" metricId="Ch_Baratron_torr" onChange={onChange} />
+          <MetricSlider client="arduino2" metricId="PS_DC_V" onChange={onChange} />
+          <MetricSlider client="arduino2" metricId="Ch_MFC_Gas_N2_sccm" onChange={onChange} />
         </Card>
       </div>
     </div>

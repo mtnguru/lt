@@ -1,10 +1,10 @@
 @import "../../styles/base";
 @import "../../styles/colors";
 
-.control-value {
+.metric-value {
   position: absolute;
   transform: translate(-50%, -50%);
-  border: 1px solid $input-bd-color;
+  border: 1px solid black;
   margin: .5vmin;
   padding: .3vmin .5vmin;
   border-radius: 5px;

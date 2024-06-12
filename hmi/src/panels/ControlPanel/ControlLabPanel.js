@@ -3,9 +3,9 @@
 
 // import ControlText from './ControlText'
 import ControlButton from './ControlButton'
-// import ControlSlider from './ControlSlider'
+// import MetricSlider from './MetricSlider'
 
-import ControlMetric from './ControlStats'
+import MetricFull from './MetricFull'
 // import ControlBar from './ControlBar'
 
 import { Box,

@@ -1,0 +1,12 @@
+@import "../../styles/base";
+@import "../../styles/colors";
+.metric-label {
+  display: inline-block;
+  margin-right: 1vw;
+  .label {
+    padding-top: .5vw;
+    height: 3vw;
+    width: 13vw;
+    overflow-x: hidden;
+  }
+}

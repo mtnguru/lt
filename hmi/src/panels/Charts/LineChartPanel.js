@@ -117,11 +117,19 @@ const LineChartPanel = (props) => {
       cmetric.metric = metric
       console.log(`James - ${actionId}`)
 
-      const color = (cmetric.colorSrc && cmetric.colorSrc === 'action') ? global.aaa.actionIds[actionId].color : metric.color
 
       mqttRegisterMetricCB(projectId, actionId, metricId, metricCB)
+      var label;
+      var color;
+      if (cmetric.labelSrc && cmetric.labelSrc === 'action') {
+        label = global.aaa.actionIds[actionId].name;
+        color = global.aaa.actionIds[actionId].color
+      } else {
+        label = metric.label || metric.name;
+        color = metric.color
+      }
       chartData.datasets.push({
-        label: metric.label || metric.name,
+        label: label,
         actionId: actionId,
         data: [],
         borderColor: color,

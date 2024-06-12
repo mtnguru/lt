@@ -1,10 +1,10 @@
 // File: ControlText.js
 // import React, {useState} from 'react';
 
-import ControlMetric from './ControlMetric'
-//import ControlNumber from './ControlNumber'
+import MetricFull from './MetricFull'
+//import MetricNumber from './MetricNumber'
 //import ControlButton from './ControlButton'
-import ControlSlider from './ControlSlider'
+import MetricSlider from './MetricSlider'
 
 // import ControlBar from './ControlBar'
 
@@ -44,23 +44,23 @@ const ControlOxyPanel = (props) => {
       <Box className="controls" >
         <div className="control-bar gas-flow">
           <label className="label">Gas Flow</label>
-          <ControlMetric metricId="Ez_NA_SmartTrack_slpm" type="status" label="Gas Flow" cname=""></ControlMetric>
-          <ControlSlider metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
+          <Metric metricId="Ez_NA_SmartTrack_slpm" type="status" label="Gas Flow" cname=""></Metric>
+          <MetricSlider metricId="Ez_NA_SmartTrack_slpm" onChange={onChange} />
         </div>
         <div className="control-bar voltage">
           <label className="label">PS Voltage</label>
-          <ControlMetric metricId="PS_NA_Human_V" type="status" label="Voltage" cname=""></ControlMetric>
-          <ControlSlider metricId="PS_NA_Human_V" onChange={onChange} />
+          <Metric metricId="PS_NA_Human_V" type="status" label="Voltage" cname=""></Metric>
+          <MetricSlider metricId="PS_NA_Human_V" onChange={onChange} />
         </div>
         <div className="control-bar amps">
           <label className="label">PS Amps</label>
-          <ControlMetric metricId="PS_NA_Human_A" type="status" label="Amps" cname=""></ControlMetric>
-          <ControlSlider metricId="PS_NA_Human_A" onChange={onChange} />
+          <Metric metricId="PS_NA_Human_A" type="status" label="Amps" cname=""></Metric>
+          <MetricSlider metricId="PS_NA_Human_A" onChange={onChange} />
         </div>
         <div className="control-bar ez-temperature">
           <label className="label">Ez Temperature</label>
-          <ControlMetric metricId="Ez_NA_Mtr_C" type="status" label="Internal" cname=""></ControlMetric>
-          <ControlSlider metricId="Ez_NA_Mtr_C" onChange={onChange} />
+          <Metric metricId="Ez_NA_Mtr_C" type="status" label="Internal" cname=""></Metric>
+          <MetricSlider metricId="Ez_NA_Mtr_C" onChange={onChange} />
         </div>
       </Box>
     </Box>

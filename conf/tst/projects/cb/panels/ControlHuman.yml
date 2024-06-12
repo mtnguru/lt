@@ -7,30 +7,34 @@ regions:
     cmetrics:
       - metricId: test_status_f
         actionId: hum
-        component: ControlMetric
+        component: MetricFull
 
       - metricId: test_status_f
         label: Human
         actionId: hum
-        component: ControlSlider
+        component: MetricSlider
+        labelSrc: action
 
       - metricId: test_status_f
         label: Upper Alarm
         actionId: upper
-        component: ControlSlider
+        component: MetricSlider
+        labelSrc: action
 
       - metricId: test_status_f
         label: Lower Alarm
         actionId: lower
-        component: ControlSlider
+        component: MetricSlider
+        labelSrc: action
 
       - metricId: test_status_f
         label: Upper Range
         actionId: high
-        component: ControlSlider
+        component: MetricSlider
+        labelSrc: action
 
       - metricId: test_status_f
         label: Lower Range
         actionId: low
-        component: ControlSlider
-
+        component: MetricSlider
+        labelSrc: action

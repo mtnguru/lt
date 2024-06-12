@@ -1,8 +1,8 @@
 // File: ControlText.js
 // import React, {useState} from 'react';
 
-import ControlMetric from './ControlMetric'
-import ControlSlider from './ControlSlider'
+import MetricFull from './MetricFull'
+import MetricSlider from './MetricSlider'
 
 import {
   Box,
@@ -39,12 +39,12 @@ const ControlCabinPanel = (props) => {
       <Heading as="h2" mt={2} mb={8} fontSize="130%" color="titleFg">Manual Entry</Heading>
       <Box className="controls" >
         <Box className="control-bar manual-test"       mb={10}>
-          <ControlMetric                     projectId={global.aaa.projectId} actionId="hum"   metricId="Manual_Test_V" label="Manual Test" cname=""></ControlMetric>
-          <ControlSlider title="Value"       projectId={global.aaa.projectId} actionId="hum"   metricId="Manual_Test_V" onChange={onChange} />
-          <ControlSlider title="Upper Alarm" projectId={global.aaa.projectId} actionId="upper" metricId="Manual_Test_V" onChange={onChange} />
-          <ControlSlider title="Lower Alarm" projectId={global.aaa.projectId} actionId="lower" metricId="Manual_Test_V" onChange={onChange} />
-          <ControlSlider title="Upper Range" projectId={global.aaa.projectId} actionId="high"  metricId="Manual_Test_V" onChange={onChange} />
-          <ControlSlider title="Lower Range" projectId={global.aaa.projectId} actionId="low"   metricId="Manual_Test_V" onChange={onChange} />
+          <Metric                     projectId={global.aaa.projectId} actionId="hum"   metricId="Manual_Test_V" label="Manual Test" cname=""></Metric>
+          <MetricSlider title="Value"       projectId={global.aaa.projectId} actionId="hum"   metricId="Manual_Test_V" onChange={onChange} />
+          <MetricSlider title="Upper Alarm" projectId={global.aaa.projectId} actionId="upper" metricId="Manual_Test_V" onChange={onChange} />
+          <MetricSlider title="Lower Alarm" projectId={global.aaa.projectId} actionId="lower" metricId="Manual_Test_V" onChange={onChange} />
+          <MetricSlider title="Upper Range" projectId={global.aaa.projectId} actionId="high"  metricId="Manual_Test_V" onChange={onChange} />
+          <MetricSlider title="Lower Range" projectId={global.aaa.projectId} actionId="low"   metricId="Manual_Test_V" onChange={onChange} />
         </Box>
       </Box>
     </Box>

@@ -3,36 +3,36 @@ projectId: cb
 cmetrics:
   - metricId: middle_window_k_f
     actionId: inp
-    component: ControlValue
+    component: MetricValue
     convert: c2f
     position: [50,56]
   - metricId: bathroom_door_k_f
     actionId: inp
-    component: ControlValue
+    component: MetricValue
     position: [26,56]
   - metricId: desk_monitor_ow_f
     actionId: inp
-    component: ControlValue
+    component: MetricValue
     convert: c2f
     position: [36,30]
   - metricId: desk_top_ow_f
     actionId: inp
-    component: ControlValue
+    component: MetricValue
     convert: c2f
     position: [42,30]
   - metricId: desk_tst1_ow_f
     actionId: inp
-    component: ControlValue
+    component: MetricValue
     position: [48,30]
   - metricId: desk_tst2_ow_f
     actionId: inp
-    component: ControlValue
+    component: MetricValue
     position: [54,30]
   - metricId: master_door_ow_f
     actionId: inp
-    component: ControlValue
+    component: MetricValue
     position: [59,42]
   - metricId: test_status_f
     actionId: hum
-    component: ControlValue
+    component: MetricValue
     position: [80,22]

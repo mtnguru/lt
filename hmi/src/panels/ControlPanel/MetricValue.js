@@ -1,24 +1,23 @@
-// File: ControlWidget.js
-import React, {useEffect} from 'react';
+// File: MetricValue.js
+import React, {useState, useEffect} from 'react';
 //import useMousePosition from '../../hooks/useMousePosition';
 import {mqttRegisterMetricCB} from '../../utils/mqttReact'
-//import {c2f} from '../../utils/metrics'
+import {c2f} from '../../utils/metrics'
+import MetricPopup from "./MetricPopup";
 
-import ControlSlider from './ControlSlider'
-import ControlMetric from './ControlMetric'
-import ControlNumber from './ControlNumber'
+import './MetricValue.scss'
 
-import './ControlWidget.scss'
-
-const ControlWidget = (props) => {
+const MetricValue = (props) => {
+  const [value, setValue] = useState(0);
   const {cmetric} = props
-//const [value, setValue] = useState(0);
+  const metric = cmetric.metric
 
   useEffect(() => {
     const metricCB = (metric, actionId, topic, payload, tags, values) => {
-//    const f = "ControlWidget::metricCB"
+//    const f = "MetricValue::metricCB"
 //    console.log(f,"enter ", topic)
-      /*
+      if (!(tags.ActionId in cmetric.metric)) return
+      if (tags.ActionId !== cmetric.actionId) return
       setValue((prevValue) => {
         let val = values.value;
         if (metric.convert === 'c2f') {
@@ -26,14 +25,17 @@ const ControlWidget = (props) => {
         }
         return parseFloat(val).toFixed(metric.decimals);
       })
-      */
 //    if (props.metricCB) {
-//      props.metricCB(metric, actionId, topic, payload, tags, values)
+//      props.metricCB(metric, topic, payload, tags, values)
 //    }
     }
 
     mqttRegisterMetricCB(cmetric.projectId, cmetric.actionId, cmetric.metricId, metricCB)
-  }, [cmetric.actionId, cmetric.metricId, cmetric.projectId])
+
+    var v = metric?.v?.[cmetric.actionId]?.["value"]?.val
+    v = parseFloat(v).toFixed(metric.decimals);
+    setValue(v)
+  }, [])
 
 //const [ref, mousePosition] = useMousePosition();
 
@@ -52,7 +54,7 @@ const ControlWidget = (props) => {
   let dragItem;
 
   function onDragStart(e) {
-    const f = 'ControlWidget::onDragStart'
+    const f = 'MetricValue::onDragStart'
     console.log(f,'drag start')
     if (e.type === "touchstart") {
       initialX = e.touches[0].clientX - xOffset;
@@ -68,7 +70,7 @@ const ControlWidget = (props) => {
   }
 
   function onDragEnd(e) {
-    const f = 'ControlWidget::onDragEnd'
+    const f = 'MetricValue::onDragEnd'
     console.log(f,'drag end')
     initialX = currentX;
     initialY = currentY;
@@ -77,7 +79,7 @@ const ControlWidget = (props) => {
   }
 
   const onDrag = (e) => {
-    const f = 'ControlWidget::onDrag'
+    const f = 'MetricValue::onDrag'
     console.log(f,'dragging')
     if (active) {
 
@@ -102,22 +104,31 @@ const ControlWidget = (props) => {
     el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
   }
 
+  const content = () => {
+    return (
+      <div className="content">
+        <div className="name">{`MetricId: ${metric.name}`}</div>
+        <div className="desc">{`Description: ${metric.desc}`}</div>
+        <div className="clientId">{`ClientId: ${metric[cmetric.actionId].clientId}`}</div>
+        <div className="action">{`Action: ${cmetric.actionId}`}</div>
+        <div className="channel">{`Channel: ${metric[cmetric.actionId].channelType}`}</div>
+      </div>
+    )
+  }
+
   return (
-    <div className="control-widget mqtt-action-bg clearfix"
+    <div className="metric-value"
+         title={metric.label}
          onMouseMove={onDrag}
          onMouseDown={onDragStart}
          onMouseUp={onDragEnd}
-         style={{ /* top: metric.position[0] + '%',
-                     left:metric.position[1] + '%',
-                  backgroundColor:metric.color */ }}
+         style={{top: cmetric.position[0] + '%',
+                 left:cmetric.position[1] + '%',
+                 backgroundColor:metric.color}}
     >
-      {/* { cmetric.title && <div className={`title ${cmetric.actionId}`}>{metric.title}</div> } */}
-      { cmetric.component === 'ControlLabel' && <div>ControlLabel</div> }
-      { cmetric.component === 'ControlNumber' && <ControlNumber cmetric={cmetric}></ControlNumber> }
-      { cmetric.component === 'ControlSlider' && <ControlSlider cmetric={cmetric}></ControlSlider> }
-      { cmetric.component === 'ControlMetric' && <ControlMetric cmetric={cmetric}></ControlMetric> }
+      <MetricPopup title={metric.label || metric.name} content={content()} trigger={value}/>
     </div>
   )
 }
 
-export default ControlWidget
+export default MetricValue

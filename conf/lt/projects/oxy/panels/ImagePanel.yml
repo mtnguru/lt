@@ -3,30 +3,30 @@ projectId: oxy
 cmetrics:
   - metricId: ps_na_human_v
     actionId: hum
-    component: ControlValue
+    component: MetricValue
     position: [26,25]
 
   - metricId: ps_na_human_a
     actionId: hum
-    component: ControlValue
+    component: MetricValue
     position: [36,25]
 
   - metricId: ez_na_mtr_c
     actionId: hum
-    component: ControlValue
+    component: MetricValue
     position: [46,25]
 
   - metricId: ez_na_smarttrack_slpm
     actionId: hum
-    component: ControlValue
+    component: MetricValue
     position: [56,25]
 
   - metricId: outside_bunkhouse_k_f
     actionId: inp
-    component: ControlValue
+    component: MetricValue
     position: [66,25]
 
   - metricId: outside_frontdoor_ow_f
     actionId: inp
-    component: ControlValue
+    component: MetricValue
     position: [76,25]

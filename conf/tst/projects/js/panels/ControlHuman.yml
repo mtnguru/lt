@@ -7,45 +7,45 @@ regions:
       - metricId: js_weight_lb
         label: Weight
         actionId: hum
-        component: ControlMetric
+        component: MetricFull
 
       - metricId: js_heart_systolic_mm
         label: Systolic
         actionId: hum
-        component: ControlMetric
+        component: MetricFull
 
       - metricId: js_heart_diastolic_mm
         label: Diastolic
         actionId: hum
-        component: ControlMetric
+        component: MetricFull
 
       - metricId: js_heart_pressure_mm
         label: Diastolic
         actionId: hum
-        component: ControlMetric
+        component: MetricFull
 
       - metricId: js_heart_pulse_pm
         label: Pulse
         actionId: hum
-        component: ControlMetric
+        component: MetricFull
   right:
     cmetrics:
       - metricId: js_weight_lb
         actionId: hum
-        component: ControlNumber
+        component: MetricNumber
 
       - metricId: js_heart_systolic_mm
         actionId: hum
-        component: ControlNumber
+        component: MetricNumber
 
       - metricId: js_heart_diastolic_mm
         actionId: hum
-        component: ControlNumber
+        component: MetricNumber
 
       - metricId: js_heart_pressure_mm
         actionId: hum
-        component: ControlNumber
+        component: MetricNumber
 
       - metricId: js_heart_pulse_pm
         actionId: hum
-        component: ControlNumber
+        component: MetricNumber

@@ -23,25 +23,25 @@ out:
   num: 11
   color: '#48e'
   enabled: true
-low:
-  name: LowRange
-  num: 11
-  color: '#680'
-  enabled: true
-high:
-  name: HighRange
-  num: 11
-  color: '#8a0'
-  enabled: true
 lower:
-  name: LowerAlarm
-  num: 11
-  color: '#800'
+  name: Lower Alarm
+  num: 12
+  color: '#810'
   enabled: true
 upper:
-  name: UpperAlarm
-  num: 11
-  color: '#600'
+  name: Upper Alarm
+  num: 13
+  color: '#b30'
+  enabled: true
+low:
+  name: Low Range
+  num: 14
+  color: '#708'
+  enabled: true
+high:
+  name: High Range
+  num: 15
+  color: '#b0c'
   enabled: true
 msg:
   name: Messages

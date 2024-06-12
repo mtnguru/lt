@@ -1,7 +1,7 @@
 // File: ControlText.js
 // import React, {useState} from 'react';
 
-import ControlMetric from './ControlMetric'
+import MetricFull from './MetricFull'
 
 import {
   Box,
@@ -35,19 +35,19 @@ const ControlCabinPanel = (props) => {
     <Box className="panel control-cabin-panel mqtt-clientId-bg">
       <Box className="controls" >
         <Box className="control-bar desk-top" mt="20px">
-          <ControlMetric projectId={global.aaa.projectId} actionId="inp" metricId="Desk_Top_OW_F" label="Desk Top" cname=""></ControlMetric>
+          <Metric projectId={global.aaa.projectId} actionId="inp" metricId="Desk_Top_OW_F" label="Desk Top" cname=""></Metric>
         </Box>
         <Box className="control-bar desk-monitor">
-          <ControlMetric projectId={global.aaa.projectId} actionId="inp" metricId="Desk_Monitor_OW_F" label="Desk Monitor" cname=""></ControlMetric>
+          <Metric projectId={global.aaa.projectId} actionId="inp" metricId="Desk_Monitor_OW_F" label="Desk Monitor" cname=""></Metric>
         </Box>
         <Box className="control-bar bathroom">
-          <ControlMetric projectId={global.aaa.projectId} actionId="inp" metricId="Bathroom_Door_K_F" label="Bathroom" cname=""></ControlMetric>
+          <Metric projectId={global.aaa.projectId} actionId="inp" metricId="Bathroom_Door_K_F" label="Bathroom" cname=""></Metric>
         </Box>
         <Box className="control-bar master">
-          <ControlMetric projectId={global.aaa.projectId} actionId="inp" metricId="Master_Door_OW_F" label="Master Bedroom" cname=""></ControlMetric>
+          <Metric projectId={global.aaa.projectId} actionId="inp" metricId="Master_Door_OW_F" label="Master Bedroom" cname=""></Metric>
         </Box>
         <Box className="control-bar middle">
-          <ControlMetric projectId={global.aaa.projectId} actionId="inp" metricId="Middle_Window_K_F" label="Middle Bedroom" cname=""></ControlMetric>
+          <Metric projectId={global.aaa.projectId} actionId="inp" metricId="Middle_Window_K_F" label="Middle Bedroom" cname=""></Metric>
         </Box>
       </Box>
     </Box>

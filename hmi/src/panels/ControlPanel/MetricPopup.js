@@ -1,4 +1,4 @@
-// File: ControlMetricPopup.js
+// File: MetricPopup.js
 
 import {
   Portal,
@@ -16,12 +16,12 @@ import {
 //Flex,
 } from '@chakra-ui/react'
 
-import './ControlPopup.scss'
+import './MetricPopup.scss'
 
-const ControlMetricPopup = (props) => {
+const MetricPopup = (props) => {
 
   return (
-    <Popover className="control-metric-popup">
+    <Popover className="metric-popup">
       <PopoverTrigger>
         <Button className="trigger">{props.trigger === "-999.00" ? '---' : props.trigger}</Button>
       </PopoverTrigger>
@@ -39,4 +39,4 @@ const ControlMetricPopup = (props) => {
   )
 }
 
-export default ControlMetricPopup
+export default MetricPopup

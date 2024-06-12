@@ -4,7 +4,7 @@ import React, {useState, useEffect} from 'react';
 import {findMetric} from '../../utils/metrics'
 
 // import ControlText from './ControlText'
-import ControlWidget from './ControlWidget'
+import MetricWidget from './MetricWidget'
 // import ControlBar from './ControlBar'
 
 import { Container,
@@ -64,24 +64,24 @@ const ControlPanel = (props) => {
       <div>
         <Box className="control-top">
           {top.length > 0 && top.map(
-            (cmetric, index) => <ControlWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric}/>)
+            (cmetric, index) => <MetricWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric}/>)
           }
         </Box>
         <Flex className="control-middle">
           <Box className="control-left">
             {left.length > 0 && left.map(
-              (cmetric, index) => <ControlWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric}/>)
+              (cmetric, index) => <MetricWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric}/>)
             }
           </Box>
           <Box className="control-right">
             {right.length > 0 && right.map(
-              (cmetric, index) => <ControlWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric}/>)
+              (cmetric, index) => <MetricWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric}/>)
             }
           </Box>
         </Flex>
         <Box className="control-bottom">
           {bottom.length > 0 && bottom.map(
-            (cmetric, index) => <ControlWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric}/>)
+            (cmetric, index) => <MetricWidget key={cmetric.metricId + cmetric.actionId + index} cmetric={cmetric}/>)
           }
         </Box>
       </div>

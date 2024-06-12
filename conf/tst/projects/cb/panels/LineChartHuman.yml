@@ -5,19 +5,19 @@ projectId: cb
 cmetrics:
   - metricId: test_status_f
     actionId: hum
-    colorSrc: action
+    labelSrc: action
   - metricId: test_status_f
     actionId: upper
-    colorSrc: action
+    labelSrc: action
   - metricId: test_status_f
     actionId: lower
-    colorSrc: action
+    labelSrc: action
   - metricId: test_status_f
     actionId: high
-    colorSrc: action
+    labelSrc: action
   - metricId: test_status_f
     actionId: low
-    colorSrc: action
+    labelSrc: action
 
 # chartJs configuration
 backgroundColor: "yellow"

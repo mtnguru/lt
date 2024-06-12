@@ -8,28 +8,28 @@ regions:
       - metricId: ps_na_human_v
         label: Volts
         actionId: hum
-        component: ControlSlider
+        component: MetricSlider
 
       - metricId: ps_na_human_a
-        label: Amps Dude
+        label: Amps
         actionId: hum
-        component: ControlSlider
+        component: MetricSlider
 
       - metricId: ez_na_mtr_c
         label: EZ Temperature
         actionId: hum
-        component: ControlSlider
+        component: MetricSlider
 
       - metricId: ez_na_smarttrack_slpm
         label: EZ Flow Rate
         actionId: hum
-        component: ControlSlider
+        component: MetricSlider
 
       - metricId: outside_bunkhouse_k_f
         actionId: inp
-        component: ControlMetric
+        component: MetricFull
 
       - metricId: outside_frontdoor_ow_f
         actionId: inp
-        component: ControlMetric
+        component: MetricFull
 

@@ -3,9 +3,9 @@
 
 // import ControlText from './ControlText'
 import ControlButton from './ControlButton'
-// import ControlSlider from './ControlSlider'
+// import MetricSlider from './MetricSlider'
 
-import ControlMetric from './ControlMetric'
+import MetricFull from './MetricFull'
 // import ControlBar from './ControlBar'
 
 import { Box,
@@ -58,16 +58,16 @@ const ControlArduinoPanel = (props) => {
 
       <Box>
         <div className="metrics">
-          <ControlMetric metricId="Outside_Bunkhouse_K_F" type="status" label="Outdoors" cname=""></ControlMetric>
-          <ControlMetric metricId="Outside_Front_K_F" type="status" label="Rio Outside" cname=""></ControlMetric>
+          <Metric metricId="Outside_Bunkhouse_K_F" type="status" label="Outdoors" cname=""></Metric>
+          <Metric metricId="Outside_Front_K_F" type="status" label="Rio Outside" cname=""></Metric>
         </div>
         <div className="metrics">
-          <ControlMetric metricId="LivingRoom_Desk_K_F" type="status" label="Living Room" cname=""></ControlMetric>
-          <ControlMetric metricId="MiddleBedroom_Window_K_F" type="status" label="Kitchen Ceiling" cname=""></ControlMetric>
+          <Metric metricId="LivingRoom_Desk_K_F" type="status" label="Living Room" cname=""></Metric>
+          <Metric metricId="MiddleBedroom_Window_K_F" type="status" label="Kitchen Ceiling" cname=""></Metric>
         </div>
         <div className="metrics">
-          <ControlMetric metricId="MasterBedroom_Door_K_F" type="status" label="Rio Bedroom" cname=""></ControlMetric>
-          <ControlMetric metricId="LivingRoom_Fireplace_K_F" type="status" label="Rio Fireplace" cname=""></ControlMetric>
+          <Metric metricId="MasterBedroom_Door_K_F" type="status" label="Rio Bedroom" cname=""></Metric>
+          <Metric metricId="LivingRoom_Fireplace_K_F" type="status" label="Rio Fireplace" cname=""></Metric>
         </div>
       </Box>
     </Box>

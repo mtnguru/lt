@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import DoeRun from './DoeRun'
-import ControlMetric from "../ControlPanel/ControlMetric";
+import Metric from "../ControlPanel/Metric";
 
 //import './DoeVariableTable.scss'
 
@@ -24,7 +24,7 @@ const DoeVariableTable = (props) => {
         {Object.keys(props.doe.variables).map(variable => {
           return (
             <th key={variable}>
-              <ControlMetric metricId={variable} metricCB={metricCB} type="status" label={props.doe.variables[variable].label} />
+              <Metric metricId={variable} metricCB={metricCB} type="status" label={props.doe.variables[variable].label} />
             </th>
           )
         })}

@@ -1,21 +1,25 @@
-// File: ControlSlider.js
+// File: MetricSlider.js
 import React, {useCallback, useState, useEffect} from 'react';
 
-import {
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-//      Text,
-  Box,
-  Flex, Text
-} from "@chakra-ui/react";
+import {NumberInput,
+        NumberInputField,
+        NumberInputStepper,
+        NumberDecrementStepper,
+        NumberIncrementStepper,
+        Slider,
+        SliderTrack,
+        SliderFilledTrack,
+        SliderThumb,
+        Text,
+        Box,
+        Flex} from "@chakra-ui/react";
+
+import MetricLabel from './MetricLabel'
 import {mqttPublish, mqttRegisterMetricCB} from '../../utils/mqttReact'
 import {mgError} from "../../utils/mg";
-import "./ControlNumber.scss"
+import "./MetricSlider.scss"
 
-const ControlNumber = (props) => {
+const MetricSlider = (props) => {
 
   const metricId = props.cmetric.metricId
   const projectId = props.cmetric.projectId
@@ -24,7 +28,7 @@ const ControlNumber = (props) => {
   const v = props.cmetric.metric?.v?.[actionId]?.["value"]?.val
   const [val, setVal] = useState(v);
   const metricCB = useCallback((_metric, _actionId, _topic, _payload, tags, values) => {
-    const f = "ControlMetric::metricCB"
+    const f = "Metric::metricCB"
     const [,msgActionId,,userId] = _topic.split('/')
     if (userId === `${global.aaa.userId}-${global.aaa.mqttClientId}`) {
       return;
@@ -38,7 +42,7 @@ const ControlNumber = (props) => {
   }, [actionId])
 
   useEffect(() => {
-    const f = 'ControlNumber::useEffect'
+    const f = 'MetricSlider::useEffect'
     var err;
     if (!props.cmetric.metric) {
       err = `Metric not found: ${metricId}`
@@ -47,13 +51,13 @@ const ControlNumber = (props) => {
         err = `${metricId} - Add ${actionId} section to configuration`
       } else {
         if (!('min' in props.cmetric.metric[actionId])) {
-          err = `${metricId} - ${actionId} -- Add 'min' to number configuration`
+          err = `${metricId} - ${actionId} -- Add 'min' to slider configuration`
         }
         if (!('max' in props.cmetric.metric[actionId])) {
-          err = `${metricId} - ${actionId} -- Add 'max' to number configuration`
+          err = `${metricId} - ${actionId} -- Add 'max' to slider configuration`
         }
         if (!('step' in props.cmetric.metric[actionId])) {
-          err = `${metricId} - ${actionId} -- Add 'step' to number configuration`
+          err = `${metricId} - ${actionId} -- Add 'step' to slider configuration`
         }
       }
     }
@@ -63,20 +67,16 @@ const ControlNumber = (props) => {
     }
   }, [props.cmetric, projectId, metricId, metricCB, actionId])
 
-//const onKeyH = (e) => {
-//  if (e.key === "ArrowRight") {
-//    setVal((prev) => Math.min(prev + props.cmetric.metric[actionId].step, 100));
-//  } else if (e.key === "ArrowLeft") {
-//    setVal((prev) => Math.max(prev - props.cmetric.metric[actionId].step, 10));
-//  }
-//}
-
-  const onKeyH = (event) => {
-    return 1;
+  const onKeyH = (e) => {
+    if (e.key === "ArrowRight") {
+      setVal((prev) => Math.min(prev + props.cmetric.metric[actionId].step, 100));
+    } else if (e.key === "ArrowLeft") {
+      setVal((prev) => Math.max(prev - props.cmetric.metric[actionId].step, 10));
+    }
   }
 
-  const onChangeH = (_val, _dude, _dudette) => {
-    const f = "ControlNumberPanel::onChange"
+  const onChangeH = (_val) => {
+    const f = "MetricSlider::onChange"
     if (!global.aaa.topics.publish[actionId]) return;
     console.log(f,'onChange', _val);
     if (!props.cmetric.metric) {
@@ -99,9 +99,9 @@ const ControlNumber = (props) => {
   }
 
   return (
-    <Box className="control-number">
+    <Box className="metric-slider">
       <Flex w="full">
-        {props.cmetric.label && <Text as="h3" className="label" style={{backgroundColor:props.cmetric.metric.color}}>{props.cmetric.metric.label}</Text>}
+        <MetricLabel cmetric={props.cmetric} />
         <NumberInput
           min={props.cmetric.metric[actionId].min}
           max={props.cmetric.metric[actionId].max}
@@ -110,15 +110,41 @@ const ControlNumber = (props) => {
           onChange={onChangeH}
           className="number"
         >
-          <NumberInputField onKeyDown={onKeyH}/>
+          <NumberInputField/>
           <NumberInputStepper>
             <NumberIncrementStepper/>
             <NumberDecrementStepper/>
           </NumberInputStepper>
         </NumberInput>
+        <Flex flex="3" align="center" justify="center">
+          <Box className="slider-box" flex='1'>
+            <Slider className="slider"
+              min={props.cmetric.metric[actionId].min}
+              max={props.cmetric.metric[actionId].max}
+              step={props.cmetric.metric[actionId].step}
+              focusThumbOnChange={false}
+              value={val}
+              onChange={onChangeH}
+              mb={0}
+              pb={0}
+              onKeyDown={onKeyH}
+            >
+              <SliderTrack>
+                <SliderFilledTrack />
+              </SliderTrack>
+              <SliderThumb fontSize='80%' boxSize='20px' children={val} />
+            </Slider>
+
+            <Flex mt={-2} justifyContent="space-between">
+              <Text verticalAlign="middle">{props.cmetric.metric[actionId].min}</Text>
+              <Text verticalAlign="middle">{props.cmetric.metric[actionId].min + (props.cmetric.metric[actionId].max-props.cmetric.metric[actionId].min)/2}</Text>
+              <Text verticalAlign="middle">{props.cmetric.metric[actionId].max}</Text>
+            </Flex>
+          </Box>
+        </Flex>
       </Flex>
     </Box>
   )
 }
 
-export default ControlNumber
+export default MetricSlider

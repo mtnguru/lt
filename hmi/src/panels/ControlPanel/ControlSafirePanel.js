@@ -1,10 +1,10 @@
 // File: ControlText.js
 // import React, {useState} from 'react';
 
-import ControlMetric from './ControlMetric'
-//import ControlNumber from './ControlNumber'
+import MetricFull from './MetricFull'
+//import MetricNumber from './MetricNumber'
 //import ControlButton from './ControlButton'
-import ControlSlider from './ControlSlider'
+import MetricSlider from './MetricSlider'
 
 // import ControlBar from './ControlBar'
 
@@ -45,23 +45,23 @@ const ControlSafirePanel = (props) => {
       {/*<h2>Control panel</h2>*/}
       <Box className="controls" >
         <div className="control-bar pressure">
-          <ControlMetric metricId="Ch_NA_Human_PSI" type="status" label="Pressure" cname=""></ControlMetric>
-          <ControlSlider clientId="hmi" metricId="Ch_NA_Human_PSI" onChange={onChange} />
+          <Metric metricId="Ch_NA_Human_PSI" type="status" label="Pressure" cname=""></Metric>
+          <MetricSlider clientId="hmi" metricId="Ch_NA_Human_PSI" onChange={onChange} />
         </div>
         <div className="control-bar voltage">
-          <ControlMetric metricId="PS_NA_Pico_V" type="status" label="Voltage" cname=""></ControlMetric>
+          <Metric metricId="PS_NA_Pico_V" type="status" label="Voltage" cname=""></Metric>
         </div>
         <div className="control-bar amps">
-          <ControlMetric metricId="PS_NA_Pico_A" type="status" label="Amps" cname=""></ControlMetric>
+          <Metric metricId="PS_NA_Pico_A" type="status" label="Amps" cname=""></Metric>
         </div>
         <div className="control-bar internal">
-          <ControlMetric metricId="Ch_Internal_K_C" type="status" label="Internal" cname=""></ControlMetric>
+          <Metric metricId="Ch_Internal_K_C" type="status" label="Internal" cname=""></Metric>
         </div>
         <div className="control-bar external">
-          <ControlMetric metricId="Ch_External_K_C" type="status" label="External" cname=""></ControlMetric>
+          <Metric metricId="Ch_External_K_C" type="status" label="External" cname=""></Metric>
         </div>
         <div className="control-bar ambient">
-          <ControlMetric metricId="Ch_Ambient_K_C" type="status" label="Ambient" cname=""></ControlMetric>
+          <Metric metricId="Ch_Ambient_K_C" type="status" label="Ambient" cname=""></Metric>
         </div>
       </Box>
     </Box>

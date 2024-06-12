@@ -1,6 +1,6 @@
 @import "../../styles/base";
 @import "../../styles/colors";
-.control-metric {
+.metric-full {
   width: 22.3vw;
   .right {
     vertical-align: middle;
@@ -13,6 +13,7 @@
     text-align: right;
     color: $metric-fg-color;
     width: 3.5vw;
+    /*
     &.upper {
       background-color: #a00;
     }
@@ -23,6 +24,7 @@
     &.high {
       background-color: #70a
     }
+     */
   }
   .chakra-icon {
     vertical-align: middle;

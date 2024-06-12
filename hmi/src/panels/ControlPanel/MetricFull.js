@@ -1,21 +1,21 @@
-// File: ControlMetric.js
+// File: MetricFull.js
 import React, {useCallback, useState, useEffect} from 'react';
-import {mqttRegisterMetricCB, mqttPublish} from '../../utils/mqttReact'
+import {mqttRegisterMetricCB} from '../../utils/mqttReact'
 import {c2f} from '../../utils/metrics'
-import ControlMetricPopup from './ControlMetricPopup'
+import MetricPopup from './MetricPopup'
+import MetricLabel from './MetricLabel'
 import {WarningIcon} from '@chakra-ui/icons'
 
 import {
-  Text,
   Box,
 //Flex,
 } from '@chakra-ui/react'
 
-import './ControlMetric.scss'
+import './MetricFull.scss'
 
 const yaml = require('js-yaml')
 
-const ControlMetric = (props) => {
+const MetricFull = (props) => {
   const { cmetric } = props
   const metric = cmetric.metric
 
@@ -24,7 +24,7 @@ const ControlMetric = (props) => {
   const [val, setVal] = useState(v);
 
   const metricCB = useCallback((metric, actionId, topic, payload, tags, values) => {
-//    const f = "ControlMetric::metricCB"
+//    const f = "MetricFull::metricCB"
 //    console.log(f,"enter ", topic)
     if (cmetric.actionId !== tags.ActionId) return
     setVal((prevValue) => {
@@ -39,6 +39,7 @@ const ControlMetric = (props) => {
     }
   }, [props, cmetric.actionId])
 
+  /*
   const onClickH = (event) => {
     // request metrics from admin
     var payload = {
@@ -52,6 +53,7 @@ const ControlMetric = (props) => {
     mqttPublish(topic,pjson)
     // a/req/administrator a metric id
   }
+  */
 
   useEffect(() => {
     mqttRegisterMetricCB(cmetric.projectId,cmetric.actionId,cmetric.metricId, metricCB)
@@ -72,14 +74,12 @@ const ControlMetric = (props) => {
   }
 
   return (
-    <Box className="control-metric">
-      <button onClick={onClickH}>
-        <Text as="h3" fontWeight="bold" fontSize="120%" className="label" style={{backgroundColor:metric.color}}>{metric.label}</Text>
-      </button>
+    <Box className="metric-full">
+      <MetricLabel cmetric={props.cmetric} />
       <WarningIcon></WarningIcon>
-      <ControlMetricPopup title={metric.label} content={content()} trigger={val}/>
+      <MetricPopup title={metric.label} content={content()} trigger={val}/>
     </Box>
   )
 }
 
-export default ControlMetric
+export default MetricFull

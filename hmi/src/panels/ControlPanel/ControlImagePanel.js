@@ -1,10 +1,10 @@
-import React, {useState, useEffect} from 'react'
+import React, {useEffect} from 'react'
 //import { Heading } from '@chakra-ui/react'
 // File: ControlText.js
 // import React, {useState} from 'react';
 
-import ControlValue from './ControlValue'
-import {mqttRequestFile} from "../../utils/mqttReact";
+import MetricValue from './MetricValue'
+//import {mqttRequestFile} from "../../utils/mqttReact";
 import {findMetric} from "../../utils/metrics";
 
 import "./ControlImagePanel.scss";
@@ -43,10 +43,8 @@ const ControlImagePanel = (props) => {
       <div className="controls">
         <div className="metrics">
           {cmetrics.map((cmetric,index) => {
-            var actionId = 'inp'
-            const metric = cmetric.metric
             const metricId = cmetric.metricId
-            return <ControlValue key={metricId} cmetric={cmetric}></ControlValue>
+            return <MetricValue key={metricId} cmetric={cmetric}></MetricValue>
           })}
         </div>
       </div>
